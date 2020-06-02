@@ -27,10 +27,6 @@
 # value = none. New variables created within the opal environment.
 
 
-df = "bmi_poc"
-vars = exp.vars
-newvar = "exposure"
-
 ## ---- Now create dataframe indicating which are available in each cohort -----
 anyVarExists <- function(df, vars, newvar){
   

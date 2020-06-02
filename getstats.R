@@ -29,27 +29,31 @@ require(meta)
 # summary statistics for (i) categorical and (ii) continuous variables. 
 # These data frames are in longform and contain the following variables.
 #
+# Categorical:
+# 
 #  variable = variable
 #  category = level of variable
 #  value = number of observations
-#  cohort = cohort, including combined values for all cohorts
+#  cohort = name of cohort, including combined values for all cohorts
 #  cohort_n = total number of observations for cohort in dataset 
-#  valid_n = number of valid observations for variable (all categories)
-#  missing_n = number of observations missing for variable 
+#  valid_n = number of valid observations for variable (sum of ns for each 
+#            categories)
+#  missing_n = number of observations missing for variable (cohort_n - valid_n)
 #  valid_perc = observations within a category as percentage of valid_n 
-#  missing_perc = percentage of observations missing for a variable
+#  missing_perc = percentage of observations missing for a variable (valid_n / 
+#                 cohort_n)*100
 #
 # Continuous: 
 #
 #  cohort = cohort, including combined values for all cohorts
 #  variable = variable
 #  mean = mean (for combined value for all cohorts this is calculated by meta-
-#        analysis)
+#        analysis using fixed-effects)
 #  std.dev = standard deviation (again calculated by MA for cohorts combined)
-#  valid_n = number of valid observations for variable as a whole
-#  cohort_n = total number of observations for cohort in dataset 
-#  missing_n = number of observations missing for variable as a whole 
-#  missing_perc = percentage of observations missing for a variable
+#  valid_n = as above
+#  cohort_n = as above
+#  missing_n = as above
+#  missing_perc = as above
 
 getStats <- function(varlist, df){
 
@@ -190,7 +194,7 @@ out_cont <- list()
 
 ## First we need to create a vector with repetitions of the variable names
 ## corresponding to the number of categories each variable has. This code isn't
-## great horrible but it works.
+## great but it works.
 
 tmp <- map(stats_cat[[1]], function(x){
   map(cohorts, function(y){
