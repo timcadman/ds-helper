@@ -19,12 +19,9 @@
 #
 # value = none. New variables created within the opal environment.
 
+require(dsBaseClient)
 
-
-list.functions.in.file(filename, alphabetic = TRUE)
-
-
-cs.anyVarExists <- function(df, vars, newvar){
+cs.anyVarExists <- function(df, vars, new_label){
   
 ## ---- Convert to numeric -----------------------------------------------------
   
@@ -59,16 +56,16 @@ sapply(vars_num, function(x){
 ## ---- Count number of non-missing variables for each subject -----------------
 ds.make(
   toAssign = paste0(paste0(vars_num, "_yn"), collapse = "+"), 
-  newobj = paste0("n_", newvar)
+  newobj = paste0("n_", new_label)
   )
 
 
 ## ---- Create final variable indicating if there are any non-missing values ---
 ds.Boole(
-  V1 = paste0("n_", newvar), 
+  V1 = paste0("n_", new_label), 
   V2 = "0", 
   Boolean.operator = ">", 
   na.assign = 0, 
-  newobj = paste0("any_", newvar))
+  newobj = paste0("any_", new_label))
   
 }
