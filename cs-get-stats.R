@@ -6,14 +6,15 @@
 ## Email: t.cadman@bristol.ac.uk
 ################################################################################
 
-require(magrittr)  
-require(meta)
 require(tidyr)
 require(dplyr)
 require(dsBaseClient)
+require(meta)
 require(purrr)
 require(stringr)
+require(magrittr)  
 
+list.functions.in.file("~/ds-cs-functions/cs-get-stats.R")
 # This function extracts descriptive statistics from variables held in opal 
 # tables via DS. It mainly uses "ds.summary", but it also extracts extra 
 # info not given by default. It also avoids a problem encountered with 
