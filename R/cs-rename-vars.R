@@ -24,7 +24,7 @@ require(purrr)
 cs.renameVars <- function(df, names, new_df_name = NULL){
   
   names %>%
-    pwalk(function(oldvar, newvar){
+    pmap(function(oldvar, newvar){
       
       ds.assign(
         toAssign = paste0(df, "$", names$oldvar),
@@ -42,7 +42,7 @@ cs.renameVars <- function(df, names, new_df_name = NULL){
   }
   
   names(opals) %>%
-    walk(
+    map(
       ~ds.dataFrame(
         x = names$newvar,
         newobj = out_df,

@@ -1,0 +1,23 @@
+Package: dsHelper
+Title: Helper functions for use with DataSHIELD
+Version: 0.0.0.9000
+Authors@R: person("Tim", "Cadman", email = "t.cadman@bristol.ac.uk",
+                  role = c("aut", "cre"))
+Description: Sometimes we need to automate things with DS. These functions help
+  to do that.
+Depends: 
+  R (>= 3.5.0),
+  dsBaseClient (>= 5.1.0)
+Imports:
+  dplyr,
+  meta,
+  purrr,
+  stringr,
+  tidyr
+Suggests: 
+    rmarkdown,
+    testthat
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.0

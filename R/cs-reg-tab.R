@@ -17,7 +17,7 @@
 #
 # A tibble containing the estimate with lower and upper confidence intervals
 
-regTab <- function(model, type){
+cs.regTab <- function(model, type){
   
   if(type == "slma"){
     
