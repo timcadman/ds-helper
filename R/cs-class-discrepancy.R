@@ -19,8 +19,6 @@
 #' @export   
 cs.classDescrepancy <- function(df, vars = NULL){
 
-varcheck <- cs.doVarsExist(df, vars)
-
   if(is.null(vars)){
     
     fun_vars <- allvars

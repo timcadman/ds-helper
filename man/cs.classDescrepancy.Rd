@@ -7,7 +7,7 @@
 cs.classDescrepancy(df, vars = NULL)
 }
 \arguments{
-\item{df}{dataframe}
+\item{df}{opal dataframe}
 
 \item{vars}{vector of variable names in dataframe (optional). If vars is not 
 provided all variables will be included.}
