@@ -18,22 +18,31 @@
 #' 
 #' @export   
 cs.classDescrepancy <- function(df, vars = NULL){
-  
+
+varcheck <- cs.doVarsExist(df, vars)
+
   if(is.null(vars)){
     
-    vars <- ds.colnames(df)[[1]]
+    fun_vars <- allvars
+    
+  } else if(varcheck[[1]] == FALSE){
+    
+    stop(paste0(
+      "The following variable(s) are not present in the data frame: ", 
+      paste0(varcheck[[2]], collapse = ", ")), call. = FALSE
+      )
     
   } else{
     
-    vars <- vars
+    fun_vars <- vars
     
   }
   
-  out <- paste0(df, "$", vars) %>%
+  out <- paste0(df, "$", fun_vars) %>%
     map_df(ds.class) %>%
     mutate(discrepancy = apply(., 1, function(x){
       ifelse(length(unique(x)) == 1, "no", "yes")}),
-      variable = vars) %>%
+      variable = fun_vars) %>%
     select(variable, discrepancy, everything())
   
   return(out)
