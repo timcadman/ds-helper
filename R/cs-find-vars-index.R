@@ -29,16 +29,25 @@ cs.findVarsIndex <- function(df, vars, cohorts){
     
   } else{
 
-   map_dbl(vars,
-      
-      ~which(
-        str_detect(
-          ds.colnames(df, datasources = opals[cohorts])[[1]], 
-          paste0("\\b", 
-                 .x,
-                 "\\b")) == TRUE)
-    )  
-  
+ref_tab <- tibble(
+  var = rep(vars, length(names(opals))),
+  cohort = rep(names(opals), each = length(vars))
+  )    
+   
+tmp <- ref_tab %>%
+  pmap(
+    function(var, cohort){
+    
+    which(
+      str_detect(
+        ds.colnames(df, datasources = opals[cohort])[[1]], 
+        paste0("\\b", var, "\\b")) == TRUE)
+  })
+
+out <- split(unlist(tmp), ceiling(seq_along(test2) / length(vars)))
+names(out) <- names(opals)
+
+return(out)
+
   }
-  
 }
