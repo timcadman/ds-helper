@@ -1,52 +1,40 @@
-################################################################################
-## Project: ds-cs-functions
-## Script purpose: Automate the process of renaming variables
-## Date: 5th June 2020
-## Author: Tim Cadman
-## Email: t.cadman@bristol.ac.uk
-################################################################################      
-
-# At some point you're likely to want to rename variables. This function 
-# automates the process within DataSHIELD. 
-#
-# Arguments:
-#
-# df = a dataframe containing the variables to be renamed
-# names = a dateframe with two columns: "old_name" and "new_name" which contain
-#         the current name of the variable and the new name you want it to have
-# new_df_name = Name of new opal object holding these variables (optional). If
-#               left blank the a new object is created overwriting the original
-#               dataframe
-
-require(dsBaseClient)
-require(purrr)
-
-cs.renameVars <- function(df, names, new_df_name = NULL){
+#' Rename multiple variables at once
+#' 
+#' This function allows you to rename multiple variable from a dataframe. At the
+#' moment it doesn't "rename" as such, it creates duplicate variables with the
+#' new names. I've left it like this to keep in the spirit of ds/opal set up
+#' by not automating the deletion of variables.
+#' 
+#' @param df dataframe
+#' @param names a dataframe or tibble containing two columns: "oldvar" (existing
+#'              variable name), "newvar" (new variable name). Each row 
+#'              corresponds to one variable you want to rename
+         #'              
+#' @return None. The new variables are added to the df specified
+#' 
+#' @importFrom dsBaseClient ds.assign ds.dataFrame
+#' @importFrom purrr map pmap
+#' 
+#' @export                                                       
+cs.renameVars <- function(df, names){
   
   names %>%
-    pmap(function(oldvar, newvar){
+    pmap(function(oldvar, newvar, ...){
       
       ds.assign(
-        toAssign = paste0(df, "$", names$oldvar),
+        toAssign = paste0(df, "$", oldvar),
         newobj = newvar
       )  
     })
-  
-  if(is.null(new_df_name)){
-    
-    out_df <- df
-    
-  } else{
-    
-    out_df <- new_df_name
-  }
-  
-  names(opals) %>%
-    map(
-      ~ds.dataFrame(
-        x = names$newvar,
-        newobj = out_df,
-        datasources = opals[.]
-      )
+
+names(opals) %>%
+  map(
+    ~ds.dataFrame(
+      x = c(df, names$newvar),
+      newobj = df,
+      datasources = opals[.])
     )
+
+old_new %>% pull(newvar) %>% cs.rmLots %>% invisible
+
 }
