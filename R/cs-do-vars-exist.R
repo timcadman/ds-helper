@@ -4,47 +4,36 @@
 #' of functions where users provide both vars and a dataframe to check that 
 #' the vars exist in the dataframe provided
 #'
-#' @param df dataframe
+#' @param df opal dataframe
 #' @param vars vector of variable names expected to be contained in dataframe
 #'  
-#' @return a list with two elements: (i) TRUE/FALSE depending on whether all 
-#'         provided variables are in the data frame, (ii) vector of variables
-#'         not present in dataframe (NULL if first list element == TRUE)
+#' @return None. Stops function if var(s) don't exist in one of more cohorts.
 #'        
 #' @importFrom purrr map
-#' @importFrom dsBaseClient ds.class ds.colnames
-#' @importFrom stringr str_detect
+#' @importFrom dsBaseClient ds.colnames
 #' 
 #' @export 
 cs.doVarsExist <- function(df, vars){
   
-  if(length(vars) == 0){
+  allvars <- ds.colnames(df)
+  
+  var_check <- allvars %>% map(~(vars %in% .))
+  
+  any_missing <- var_check %>% map(~any(. == FALSE)) 
+
+    if(any(unlist(any_missing) == TRUE)){
     
-    stop("Error: no variables provided", call. = FALSE)
-    
-  }
-  
-  allvars <- ds.colnames(df)[[1]]
-  
-  what_exists <- map(vars, 
-                     ~any(str_detect(allvars, paste0("\\b", .x, "\\b")) == TRUE)
-  )
-  
-  names(what_exists) <- vars
-  
-  out <- list(allvars = NULL, whichvars = NULL)
-  
-  out[[1]] <- all(what_exists == TRUE)  
-  
-  if(out[[1]] == TRUE){
-    
-    out[[2]] <- NULL
-    
-  } else if(out[[1]] == FALSE){
-    
-    out[[2]] <- names(what_exists)[which(what_exists == FALSE)]
-    
-  }
-  
-  return(out)
+      missing <- var_check %>%
+        map(
+          ~paste0(
+            vars[which(. == FALSE)], 
+            collapse = ", ")) %>%
+        unlist()
+      
+    stop(paste0(
+      "Variable(s) not present in the data frame: ", 
+      paste0(missing, " (", names(missing), ")", collapse = ", ")), 
+      call. = FALSE
+    )
+    }
 }

@@ -12,9 +12,7 @@ cs.doVarsExist(df, vars)
 \item{vars}{vector of variable names expected to be contained in dataframe}
 }
 \value{
-a list with two elements: (i) TRUE/FALSE depending on whether all 
-        provided variables are in the data frame, (ii) vector of variables
-        not present in dataframe (NULL if first list element == TRUE)
+None. Stops function if var(s) don't exist in one of more cohorts.
 }
 \description{
 Probably mostly for internal use, this function can be used at the start
