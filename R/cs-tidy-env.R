@@ -9,7 +9,7 @@
 #' 
 #' @return None. Objects removed from ds environment
 #' 
-#' @importFrom purrr map
+#' @importFrom purrr map imap
 #' @importFrom dsBaseClient ds.rm
 #' @importFrom dplyr %>%
 #' 

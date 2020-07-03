@@ -13,7 +13,7 @@
 #'        columns for each cohort indicating the class of the variable
 #'        
 #' @importFrom purrr map_df
-#' @importFrom dplyr %>% mutate select        
+#' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.class ds.colnames
 #' 
 #' @export   

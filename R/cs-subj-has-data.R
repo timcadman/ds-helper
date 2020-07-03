@@ -14,7 +14,7 @@
 #'         subject has a non-missing value on. The second indicates whether 
 #'         subjects have non-missing values on at least one of these variables.  
 #'         
-#' @importFrom dsBaseClient ds.Boole ds.make
+#' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
 #' 
 #' @export                     
 cs.subjHasData <- function(df, vars, new_label){

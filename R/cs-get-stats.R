@@ -42,15 +42,15 @@
 #'  missing_n = as above
 #'  missing_perc = as above
 #'  
-#'  @importFrom tidyr as_tibble
-#'  @importFrom dplyr %>% "arrange"   "group_by"  "group_map" "summarise" 
-#'  "summarize" "ungroup" 
-#'  @importFrom purrr map group_map Reduce flatten_dbl
-#'  @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
-#'  @importFrom stringr str_detect
-#'  @importFrom meta metamean
+#' @importFrom tidyr as_tibble tibble
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
+#' @importFrom purrr map flatten_dbl
+#' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
+#' @importFrom stringr str_detect
+#' @importFrom meta metamean
+#' @importFrom stats setNames
 #'  
-#'  @export
+#' @export
 cs.getStats <- function(df, vars){
   
   varcheck <- cs.doVarsExist(df, vars)

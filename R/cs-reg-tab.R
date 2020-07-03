@@ -1,22 +1,11 @@
-################################################################################
-## Project: ds-cs-functions
-## Script purpose: Extract coefficients from regression models into table
-## Date: 11th June 2020
-## Author: Tim Cadman
-## Email: t.cadman@bristol.ac.uk
-################################################################################
-
-# Simple function to extract key coefficients from regression models. 
-#
-# Arguments:
-#
-# model = saved output from either ds.glm or ds.glmSLMA
-# type = either "ipd" or "slma" depending on the type of analysis done
-#
-# Value:
-#
-# A tibble containing the estimate with lower and upper confidence intervals
-
+#' Simple function to extract key coefficients from regression models. 
+#'
+#' @param model saved output from either ds.glm or ds.glmSLMA
+#' @param type either "ipd" or "slma" depending on the type of analysis done
+#' 
+#' @importFrom tidyr tibble
+#'
+#' @return A tibble containing the estimate with lower and upper confidence intervals
 cs.regTab <- function(model, type){
   
   if(type == "slma"){

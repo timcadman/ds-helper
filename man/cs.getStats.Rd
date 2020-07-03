@@ -40,16 +40,6 @@ Continuous:
  cohort_n = as above
  missing_n = as above
  missing_perc = as above
- 
- @importFrom tidyr as_tibble
- @importFrom dplyr %>% "arrange"   "group_by"  "group_map" "summarise" 
- "summarize" "ungroup" 
- @importFrom purrr map group_map Reduce flatten_dbl
- @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
- @importFrom stringr str_detect
- @importFrom meta metamean
- 
- @export
 }
 \description{
 This function extracts descriptive statistics from variables held in opal 
