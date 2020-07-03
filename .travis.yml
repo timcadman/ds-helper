@@ -3,13 +3,10 @@ language: r
 repos:
   CRAN: https://cloud.r-project.org
   molgenis: https://registry.molgenis.org/repository/R/
-  datashield: http://cran.datashied.org/
+  datashield: http://cran.datashield.org/
 
 cache:
   packages: yes
-
-before_install:
-- R -e "install.packages('dsBaseClient', repos = 'http://cran.datashield.org')"
 
 matrix:
   include:
