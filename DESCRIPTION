@@ -16,7 +16,8 @@ Imports:
   tidyr
 Suggests: 
     rmarkdown,
-    testthat
+    testthat,
+    mockery
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
