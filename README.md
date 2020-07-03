@@ -10,11 +10,20 @@ email and we can incorporate them in the package.
 ## Install
 You can install the package by running the following command in R Studio:
 
-    install.packages("remotes")
-    library(remotes)
-    install_github("lifecycle-project/ds-cs-functions", ref="makepackage")
-    library(dsHelper)
-    
+First you need some prerequisites:
+
+```R
+install.packages("remotes")
+library(remotes)
+```
+
+Now to install the package and use the package.=:
+
+```R
+install_github("lifecycle-project/ds-cs-functions", ref="makepackage")
+library(dsHelper)
+```
+
 ## Notes
 Currently these functions require your opal object is labelled "opals". If 
 required I can add functionality for users to specify a different name.
