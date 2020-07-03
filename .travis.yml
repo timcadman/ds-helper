@@ -8,6 +8,9 @@ repos:
 cache:
   packages: yes
 
+before_install:
+- R CMD -e "install.package('dsBaseClient, repos = 'http://cran.datashield.org'"
+
 matrix:
   include:
   - os: linux
