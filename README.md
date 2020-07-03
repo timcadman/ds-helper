@@ -1,5 +1,7 @@
 # DataSHIELD helper functions
 
+[Build status](https://travis-ci.org/lifecycle-project/ds-cs-functions.svg?branch=master)
+
 This is a set of functions to automate processes in DataSHIELD to make data
 manipulation and analysis easier. They are very much a work in progress! If you 
 have written functions that would also be useful to other DS users drop me an 
