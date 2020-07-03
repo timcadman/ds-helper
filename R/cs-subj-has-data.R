@@ -18,7 +18,9 @@
 #' 
 #' @export                     
 cs.subjHasData <- function(df, vars, new_label){
-  
+
+cs.doesDfExist(df)  
+    
 ## ---- Convert to numeric -----------------------------------------------------
   
 # We do this because we will need to use ds.Boole to compare them to 0. These 

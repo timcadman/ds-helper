@@ -19,9 +19,11 @@
 #' @export   
 cs.classDescrepancy <- function(df, vars = NULL){
 
-  if(is.null(vars)){
+  cs.doesDfExist(df)
+  
+    if(is.null(vars)){
     
-    fun_vars <- allvars
+    fun_vars <- ds.colnames(df)[[1]]
     
   } else{
     

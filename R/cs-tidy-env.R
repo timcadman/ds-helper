@@ -18,8 +18,8 @@ cs.tidyEnv <- function(obj, type = "remove"){
   
   if(type == "remove"){
   
-vars <- obj
-    
+obj %>% map(ds.rm)    
+
     } else if(type == "keep"){
     
 objects <- names(opals) %>%
@@ -33,7 +33,6 @@ vars <- seq(1 : length(names(opals))) %>%
   )
 
 names(vars) <- names(opals)
-}
 
 ## Check no objects to removed have character length >20
 obj_lengths <- vars %>% 
@@ -51,5 +50,7 @@ characters. DS does not permit this due to risk of malicious code. Amend your
 vars %>% imap(
   ~ds.rm(x.name = .x, datasources = opals[.y])
 )
+
+    }
 
 }

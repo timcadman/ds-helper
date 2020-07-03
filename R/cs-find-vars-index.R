@@ -12,22 +12,13 @@
 #' @return list of indices where length of list is number of cohorts provided
 #' 
 #' @importFrom dsBaseClient ds.colnames
-#' @importFrom stringr str_detect
-#' @importFrom purrr map_dbl
+#' @importFrom purrr pmap
 #' 
 #' @export
 cs.findVarsIndex <- function(df, vars, cohorts){
   
-  varcheck <- cs.doVarsExist(df, vars)
-  
-  if(varcheck[[1]] == FALSE){
-    
-    stop(paste0(
-      "The following variable(s) are not present in the data frame: ", 
-      paste0(varcheck[[2]], collapse = ", ")), call. = FALSE
-    )
-    
-  } else{
+  cs.doVarsExist(df, vars)
+  cs.doesDfExist(df)
 
 ref_tab <- tibble(
   var = rep(vars, length(names(opals))),
@@ -39,15 +30,11 @@ tmp <- ref_tab %>%
     function(var, cohort){
     
     which(
-      str_detect(
-        ds.colnames(df, datasources = opals[cohort])[[1]], 
-        paste0("\\b", var, "\\b")) == TRUE)
+      ds.colnames(df, datasources = opals[cohort])[[1]] %in% var == TRUE)
   })
 
-out <- split(unlist(tmp), ceiling(seq_along(test2) / length(vars)))
+out <- split(unlist(tmp), ceiling(seq_along(unlist(tmp)) / length(vars)))
 names(out) <- names(opals)
 
 return(out)
-
-  }
 }

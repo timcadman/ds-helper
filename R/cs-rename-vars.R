@@ -18,6 +18,9 @@
 #' @export                                                       
 cs.renameVars <- function(df, names){
   
+  cs.doesDfExist(df)
+  cs.doVarsExist(df, names$oldvar)
+  
   names %>%
     pmap(function(oldvar, newvar, ...){
       
@@ -35,6 +38,6 @@ names(opals) %>%
       datasources = opals[.])
     )
 
-old_new %>% pull(newvar) %>% cs.rmLots %>% invisible
+old_new %>% pull(newvar) %>% cs.tidyEnv %>% invisible
 
 }
