@@ -17,15 +17,14 @@ install.packages("remotes")
 library(remotes)
 ```
 
-Now to install the package and use the package.=:
+Now to install the package and use the package:
 
 ```R
 install_github("lifecycle-project/ds-cs-functions")
 library(dsHelper)
 ```
 
-## Notes
-Currently these functions require your opal object is labelled "opals". If 
+> Currently these functions require your opal object is labelled "opals". If 
 required I can add functionality for users to specify a different name.
 
 ## Development
