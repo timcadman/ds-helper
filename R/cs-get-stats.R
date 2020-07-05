@@ -1,68 +1,68 @@
-################################################################################
-## Project: ds-cs-functions
-## Script purpose: Function to extract descriptives from DS
-## Date: 29th April 2020
-## Author: Sido Haakma
-## Email: t.cadman@bristol.ac.uk
-################################################################################
-
-require(tidyr)
-require(dplyr)
-require(dsBaseClient)
-require(meta)
-require(purrr)
-require(stringr)
-require(magrittr)  
-
-# This function extracts descriptive statistics from variables held in opal 
-# tables via DS. It mainly uses "ds.summary", but it also extracts extra 
-# info not given by default. It also avoids a problem encountered with 
-# ds.summary where it gets upset if the variable you request isn't present 
-# within a cohort. Instead this function just returns NA for that variable and 
-# for that cohort. This is more useful, e.g. if you want to make descriptive
-# tables for papers and show that a certain cohort is lacking some information.
-# Although, this may be less important if using ds.dataFrameFill throughout
-# your scripts.
-#
-# Arguments:
-#
-# df: an assigned dataframe 
-# vars: a vector of variable names contained within the above dataframe
-#
-# Value:
-#
-# The function returns a list with two elements containing dataframes with 
-# summary statistics for (i) categorical and (ii) continuous variables. 
-# These data frames are in longform and contain the following variables.
-#
-# Categorical:
-# 
-#  variable = variable
-#  category = level of variable
-#  value = number of observations
-#  cohort = name of cohort, including combined values for all cohorts
-#  cohort_n = total number of observations for cohort in dataset 
-#  valid_n = number of valid observations for variable (sum of ns for each 
-#            categories)
-#  missing_n = number of observations missing for variable (cohort_n - valid_n)
-#  valid_perc = observations within a category as percentage of valid_n 
-#  missing_perc = percentage of observations missing for a variable (valid_n / 
-#                 cohort_n)*100
-#
-# Continuous: 
-#
-#  cohort = cohort, including combined values for all cohorts
-#  variable = variable
-#  mean = mean (for combined value for all cohorts this is calculated by meta-
-#        analysis using fixed-effects)
-#  std.dev = standard deviation (again calculated by MA for cohorts combined)
-#  valid_n = as above
-#  cohort_n = as above
-#  missing_n = as above
-#  missing_perc = as above
-
-
+#' Produces descriptive statistics in useful format
+#' 
+#' This function extracts descriptive statistics from variables held in opal 
+#' tables via DS. It mainly uses "ds.summary", but it also extracts extra 
+#' info not given by default. It also avoids a problem encountered with 
+#' ds.summary where it gets upset if the variable you request isn't present 
+#' within a cohort. Instead this function just returns NA for that variable and 
+#' for that cohort. This is more useful, e.g. if you want to make descriptive
+#' tables for papers and show that a certain cohort is lacking some information.
+#' Although, this may be less important if using ds.dataFrameFill throughout
+#' your scripts.
+#' 
+#' @param df opal dataframe
+#' @param vars vector of variable names in dataframe
+#' 
+#' @return The function returns a list with two elements containing dataframes 
+#' with summary statistics for (i) categorical and (ii) continuous variables. 
+#' These data frames are in longform and contain the following variables.
+#' 
+#' Categorical:
+#' variable = variable
+#'  category = level of variable
+#'  value = number of observations
+#'  cohort = name of cohort, including combined values for all cohorts
+#'  cohort_n = total number of observations for cohort in dataset 
+#'  valid_n = number of valid observations for variable (sum of ns for each 
+#'            categories)
+#'  missing_n = number of observations missing for variable (cohort_n - valid_n)
+#'  valid_perc = observations within a category as percentage of valid_n 
+#'  missing_perc = percentage of observations missing for a variable (valid_n / 
+#'                 cohort_n)*100
+#'
+#' Continuous: 
+#'
+#'  cohort = cohort, including combined values for all cohorts
+#'  variable = variable
+#'  mean = mean (for combined value for all cohorts this is calculated by meta-
+#'        analysis using fixed-effects)
+#'  std.dev = standard deviation (again calculated by MA for cohorts combined)
+#'  valid_n = as above
+#'  cohort_n = as above
+#'  missing_n = as above
+#'  missing_perc = as above
+#'  
+#' @importFrom tidyr as_tibble tibble
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
+#' @importFrom purrr map flatten_dbl
+#' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
+#' @importFrom stringr str_detect
+#' @importFrom meta metamean
+#' @importFrom stats setNames
+#'  
+#' @export
 cs.getStats <- function(df, vars){
+  
+  varcheck <- cs.doVarsExist(df, vars)
+  
+  if(varcheck[[1]] == FALSE){
+    
+    stop(paste0(
+      "The following variable(s) are not present in the data frame: ", 
+      paste0(varcheck[[2]], collapse = ", ")), call. = FALSE
+    )
+    
+  }
 
 ################################################################################
 # 1. Identify variable type  
@@ -203,6 +203,8 @@ out_cont <- list()
 ## corresponding to the number of categories each variable has. This code isn't
 ## great but it works.
 
+if(length(stats_cat) >0){
+
 tmp <- map(stats_cat[[1]], function(x){
   map(cohorts, function(y){
     
@@ -222,8 +224,6 @@ cat_len <- map(tmp, function(x){
 })
 
 var_vec <- rep(names(cat_len), times = cat_len)
-
-if(length(stats_cat[[1]]) >0){
 
 out_cat <- data.frame(
   variable = var_vec,

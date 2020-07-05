@@ -1,28 +1,26 @@
-################################################################################
-## Project: ds-cs-functions
-## Script purpose: Shorten the process of subsetting a dataframe
-## Date: 27th May 2020
-## Author: Tim Cadman
-## Email: t.cadman@bristol.ac.uk
-################################################################################
+#' Indicate whether subject has any non-missing values in a set of variables
+#' 
+#' At some point in the analysis you will want to subset your dataset to contain
+#' only subjects meeting some criteria, e.g. data on at least one exposure and
+#' one outcome. This function speeds things up by indicating whether a subject
+#' has any non-missing values for a given set of variables.
+#'
+#' @param df opal dataframe
+#' @param vars = vector of variable names in dataframe
+#' @param new_label = label which forms the suffix for the two created variables
+#' 
+#' @return None. Two new variables are variables created within the opal 
+#'         environment. The first indicates how many of the variables each 
+#'         subject has a non-missing value on. The second indicates whether 
+#'         subjects have non-missing values on at least one of these variables.  
+#'         
+#' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
+#' 
+#' @export                     
+cs.subjHasData <- function(df, vars, new_label){
 
-# At some point in the analysis you will want to subset your dataset to contain
-# only subjects meeting some criteria, e.g. data on at least one exposure and
-# one outcome. This function speeds things up by indicating whether a subject
-# has any non-missing values for a given set of variables.
-#
-# Arguments:
-#
-# df = Name of the dataframe containing the variables
-# vars = Vector of variable names
-# new_label = label which forms the suffix for the two created variables
-#
-# value = none. New variables created within the opal environment.
-
-require(dsBaseClient)
-
-cs.anyVarExists <- function(df, vars, new_label){
-  
+cs.doesDfExist(df)  
+    
 ## ---- Convert to numeric -----------------------------------------------------
   
 # We do this because we will need to use ds.Boole to compare them to 0. These 
