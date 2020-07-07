@@ -20,7 +20,7 @@ library(remotes)
 Now to install the package and use the package:
 
 ```R
-install_github("lifecycle-project/ds-cs-functions")
+install_github("lifecycle-project/ds-helper")
 library(dsHelper)
 ```
 
