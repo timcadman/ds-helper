@@ -14,7 +14,7 @@
 #' @importFrom dplyr %>%
 #' 
 #' @export
-cs.tidyEnv <- function(obj, type = "remove"){
+dh.tidyEnv <- function(obj, type = "remove"){
   
   if(type == "remove"){
   

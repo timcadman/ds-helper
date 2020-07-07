@@ -17,9 +17,9 @@
 #' @importFrom dsBaseClient ds.class ds.colnames
 #' 
 #' @export   
-cs.classDescrepancy <- function(df, vars = NULL){
+dh.classDescrepancy <- function(df, vars = NULL){
 
-  cs.doesDfExist(df)
+  dh.doesDfExist(df)
   
     if(is.null(vars)){
     

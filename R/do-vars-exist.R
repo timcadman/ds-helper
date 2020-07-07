@@ -13,7 +13,7 @@
 #' @importFrom dsBaseClient ds.colnames
 #' 
 #' @export 
-cs.doVarsExist <- function(df, vars){
+dh.doVarsExist <- function(df, vars){
   
   allvars <- ds.colnames(df)
   

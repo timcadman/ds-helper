@@ -51,9 +51,9 @@
 #' @importFrom stats setNames
 #'  
 #' @export
-cs.getStats <- function(df, vars){
+dh.getStats <- function(df, vars){
   
-  varcheck <- cs.doVarsExist(df, vars)
+  varcheck <- dh.doVarsExist(df, vars)
   
   if(varcheck[[1]] == FALSE){
     

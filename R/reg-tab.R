@@ -6,7 +6,7 @@
 #' @importFrom tidyr tibble
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
-cs.regTab <- function(model, type){
+dh.regTab <- function(model, type){
   
   if(type == "slma"){
     
