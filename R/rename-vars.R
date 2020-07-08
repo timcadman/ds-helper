@@ -15,6 +15,8 @@
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' 
+#' @author Tim Cadman
+#' 
 #' @export                                                       
 dh.renameVars <- function(df, names){
   

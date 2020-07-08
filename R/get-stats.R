@@ -50,6 +50,8 @@
 #' @importFrom meta metamean
 #' @importFrom stats setNames
 #'  
+#' @author Tim Cadman
+#'  
 #' @export
 dh.getStats <- function(df, vars){
   

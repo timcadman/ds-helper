@@ -16,6 +16,8 @@
 #'         
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
 #' 
+#' @author Tim Cadman
+#' 
 #' @export                     
 dh.subjHasData <- function(df, vars, new_label){
 

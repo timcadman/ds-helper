@@ -6,6 +6,10 @@
 #' @importFrom tidyr tibble
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
+#' 
+#' @author Tim Cadman
+#' 
+#' @export
 dh.regTab <- function(model, type){
   
   if(type == "slma"){

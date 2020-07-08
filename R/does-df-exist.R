@@ -11,6 +11,7 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.ls
 #' 
+#' @author Tim Cadman
 #' @export 
 dh.doesDfExist <- function(df){
 

@@ -14,6 +14,8 @@
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
 #' 
+#' @author Tim Cadman
+#' 
 #' @export
 dh.findVarsIndex <- function(df, vars, cohorts){
   

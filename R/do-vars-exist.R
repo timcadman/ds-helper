@@ -12,6 +12,7 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
 #' 
+#' @author Tim Cadman
 #' @export 
 dh.doVarsExist <- function(df, vars){
   

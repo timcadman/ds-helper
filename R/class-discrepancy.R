@@ -16,6 +16,7 @@
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.class ds.colnames
 #' 
+#' @author Tim Cadman
 #' @export   
 dh.classDescrepancy <- function(df, vars = NULL){
 
