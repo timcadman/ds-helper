@@ -6,7 +6,7 @@ test_that("Test if vars exists", {
   dsColnames <- mock(ds.colnames = data.frame(c("weight", "height")) )
   with_mock(
     "dsBaseClient::ds.colnames" = dsColnames,
-    result <- cs.doVarsExist(opalDf, vars)    
+    result <- dh.doVarsExist(opalDf, vars)    
   )
   expect_equal(result, NULL)
 })

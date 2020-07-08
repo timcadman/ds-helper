@@ -12,8 +12,9 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
 #' 
+#' @author Tim Cadman
 #' @export 
-cs.doVarsExist <- function(df, vars){
+dh.doVarsExist <- function(df, vars){
   
   allvars <- ds.colnames(df)
   

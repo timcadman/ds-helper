@@ -11,8 +11,9 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.ls
 #' 
+#' @author Tim Cadman
 #' @export 
-cs.doesDfExist <- function(df){
+dh.doesDfExist <- function(df){
 
 df_check <-  names(opals) %>%
   map(~(df %in% ds.ls(datasources = opals[.][[1]])))

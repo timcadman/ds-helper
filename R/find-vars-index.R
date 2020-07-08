@@ -14,11 +14,13 @@
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
 #' 
+#' @author Tim Cadman
+#' 
 #' @export
-cs.findVarsIndex <- function(df, vars, cohorts){
+dh.findVarsIndex <- function(df, vars, cohorts){
   
-  cs.doVarsExist(df, vars)
-  cs.doesDfExist(df)
+  dh.doVarsExist(df, vars)
+  dh.doesDfExist(df)
 
 ref_tab <- tibble(
   var = rep(vars, length(names(opals))),

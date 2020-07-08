@@ -15,11 +15,13 @@
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' 
+#' @author Tim Cadman
+#' 
 #' @export                                                       
-cs.renameVars <- function(df, names){
+dh.renameVars <- function(df, names){
   
-  cs.doesDfExist(df)
-  cs.doVarsExist(df, names$oldvar)
+  dh.doesDfExist(df)
+  dh.doVarsExist(df, names$oldvar)
   
   names %>%
     pmap(function(oldvar, newvar, ...){
@@ -38,6 +40,6 @@ names(opals) %>%
       datasources = opals[.])
     )
 
-old_new %>% pull(newvar) %>% cs.tidyEnv %>% invisible
+old_new %>% pull(newvar) %>% dh.tidyEnv %>% invisible
 
 }

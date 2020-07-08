@@ -13,8 +13,10 @@
 #' @importFrom dsBaseClient ds.rm
 #' @importFrom dplyr %>%
 #' 
+#' @author Tim Cadman
+#' 
 #' @export
-cs.tidyEnv <- function(obj, type = "remove"){
+dh.tidyEnv <- function(obj, type = "remove"){
   
   if(type == "remove"){
   

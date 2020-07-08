@@ -16,10 +16,12 @@
 #'         
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
 #' 
+#' @author Tim Cadman
+#' 
 #' @export                     
-cs.subjHasData <- function(df, vars, new_label){
+dh.subjHasData <- function(df, vars, new_label){
 
-cs.doesDfExist(df)  
+dh.doesDfExist(df)  
     
 ## ---- Convert to numeric -----------------------------------------------------
   

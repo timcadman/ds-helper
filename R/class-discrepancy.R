@@ -16,10 +16,11 @@
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.class ds.colnames
 #' 
+#' @author Tim Cadman
 #' @export   
-cs.classDescrepancy <- function(df, vars = NULL){
+dh.classDescrepancy <- function(df, vars = NULL){
 
-  cs.doesDfExist(df)
+  dh.doesDfExist(df)
   
     if(is.null(vars)){
     
