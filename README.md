@@ -31,3 +31,6 @@ required I can add functionality for users to specify a different name.
 If you find any bugs, would like to request additional functionality or have
 written functions you would like to be included in the package please contact me 
 at t.cadman@bristol.ac.uk. 
+
+## Troubleshooting
+Please check: [troubleshooting](https://github.com/lifecycle-project/ds-helper/blob/master/TROUBLESHOOTING.md)
