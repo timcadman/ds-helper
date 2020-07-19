@@ -62,4 +62,6 @@ vars_tibble %>% pmap(function(cohort, object){
   
     })
 
+    }
+  
 }
