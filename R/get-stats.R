@@ -55,17 +55,8 @@
 #' @export
 dh.getStats <- function(df, vars){
   
-  varcheck <- dh.doVarsExist(df, vars)
+dh.doVarsExist(df, vars)
   
-  if(varcheck[[1]] == FALSE){
-    
-    stop(paste0(
-      "The following variable(s) are not present in the data frame: ", 
-      paste0(varcheck[[2]], collapse = ", ")), call. = FALSE
-    )
-    
-  }
-
 ################################################################################
 # 1. Identify variable type  
 ################################################################################  
