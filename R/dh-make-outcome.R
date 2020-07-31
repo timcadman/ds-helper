@@ -7,11 +7,17 @@
 #' 
 #' @param df opal dataframe
 #' @param outcome name of repeated measures outcome variable
-#' @param ages Vector of values indicating pairs of low and high values
+#' @param age_var Vector of values indicating pairs of low and high values
 #'             for which to derive outcome variables for. Must be even length
-#' @param mult_action If a subject has more than one value within the time 
+#' @param bands vector of alternating lower and upper age bands for variable(s)
+#'              you want to create           
+#' @param mult_action if a subject has more than one value within the time 
 #'                    period do we keep the earliest or latest? Default = 
 #'                    "earliest"
+#' @param mult_vals if "mult_action = nearest", this argument specifies which 
+#'                  which value in each age band to chose values closest to
+#'                  in case of multiple values
+#'                  
 #' @return a dataset containing the newly derived variables
 #' 
 #' @importFrom dsBaseClient ds.colnames
@@ -365,29 +371,3 @@ cat("\nDataframe", "'", out_name, "'",
 data_available
 
 }
-
-dh.makeOutcome(
-  df = "monthrep", 
-  outcome = "age_n.1.1.1.1.1", 
-  age_var = "age_months", 
-  bands = c(0, 24, 25, 48, 49, 96, 97, 168, 169, 215), 
-  mult_action = "earliest", 
-  mult_vals = NULL)
-
-dh.makeOutcome(
-  df = "monthrep", 
-  outcome = "bmi", 
-  age_var = "age_months", 
-  bands = c(0, 24, 25, 48, 49, 96, 97, 168, 169, 215), 
-  mult_action = "latest", 
-  mult_vals = NULL)
-
-dh.makeOutcome(
-  df = "monthrep", 
-  outcome = "bmi", 
-  age_var = "age_months", 
-  bands = c(0, 24, 25, 48, 49, 96, 97, 168, 169, 215), 
-  mult_action = "asdasd", 
-  mult_vals = c(12, 30, 52, 100, 180))
-
-ds.summary("bmi_derived")
