@@ -54,6 +54,7 @@
 #'  
 #' @export
 dh.getStats <- function(df, vars){
+  . <- opals <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- se <- perc_25 <- perc_75 <- NULL
   
 dh.doVarsExist(df, vars)
   

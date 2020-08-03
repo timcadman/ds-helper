@@ -18,6 +18,7 @@
 #' 
 #' @export
 dh.findVarsIndex <- function(df, vars, cohorts){
+  opals <- NULL
   
   dh.doVarsExist(df, vars)
   dh.doesDfExist(df)

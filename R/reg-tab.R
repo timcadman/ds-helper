@@ -4,7 +4,7 @@
 #' @param type either "ipd" or "slma" depending on the type of analysis done
 #' 
 #' @importFrom tidyr tibble
-#'
+#' 
 #' @return A tibble containing the estimate with lower and upper confidence intervals
 #' 
 #' @author Tim Cadman

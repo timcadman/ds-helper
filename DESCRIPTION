@@ -15,9 +15,9 @@ Imports:
   stringr,
   tidyr
 Suggests: 
-    rmarkdown,
-    testthat,
-    mockery
+  rmarkdown,
+  testthat,
+  mockery
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

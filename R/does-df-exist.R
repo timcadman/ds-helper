@@ -14,6 +14,7 @@
 #' @author Tim Cadman
 #' @export 
 dh.doesDfExist <- function(df){
+  opals <- NULL
 
 df_check <-  names(opals) %>%
   map(~(df %in% ds.ls(datasources = opals[.][[1]])))

@@ -19,6 +19,7 @@
 #' @author Tim Cadman
 #' @export   
 dh.classDescrepancy <- function(df, vars = NULL){
+  . <- variable <- discrepancy <- NULL
 
   dh.doesDfExist(df)
   
