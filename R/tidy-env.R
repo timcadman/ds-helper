@@ -49,19 +49,17 @@ characters. DS does not permit this due to risk of malicious code. Amend your
        script so that your objects have shorter names", call. = FALSE)
 }
 
-vars_tibble <- as_tibble(vars) %>%
-pivot_longer(
-  data = test, 
-  cols = c("genr", "gecko"), 
-  names_to = "cohort", 
-  values_to = "object")
+vars_tibble <- vars %>%
+  map(~as_tibble(.)) %>%
+  imap(~mutate(., cohort = .y)) %>%
+  bind_rows()
 
-vars_tibble %>% pmap(function(cohort, object){
+vars_tibble %>% pmap(function(cohort, value){
   
-  ds.rm(x.name = object, datasources = opals[cohort])
+  ds.rm(x.name = value, datasources = opals[cohort])
   
-    })
+})
 
-    }
+}
   
 }
