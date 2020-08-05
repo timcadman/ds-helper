@@ -49,6 +49,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom meta metamean
 #' @importFrom stats setNames
+#' @importFrom magrittr %<>%
 #'  
 #' @author Tim Cadman
 #'  

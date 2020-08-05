@@ -17,11 +17,17 @@
 #' @param mult_vals if "mult_action = nearest", this argument specifies which 
 #'                  which value in each age band to chose values closest to
 #'                  in case of multiple values
-#'                  
+#'            
 #' @return a dataset containing the newly derived variables
 #' 
-#' @importFrom dsBaseClient ds.colnames
-#' @importFrom purrr pmap
+#' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole 
+#'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
+#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape
+#' @importFrom purrr pmap map_dfr
+#' @importFrom tidyr pivot_longer
+#' @importFrom dplyr pull
+#' @importFrom stringr str_extract
+#' @importFrom magrittr %<>%
 #' 
 #' @author Tim Cadman
 #' 
