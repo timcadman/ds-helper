@@ -13,7 +13,9 @@ Imports:
   meta,
   purrr,
   stringr,
-  tidyr
+  tidyr,
+  magrittr,
+  tibble
 Suggests: 
     rmarkdown,
     testthat,
