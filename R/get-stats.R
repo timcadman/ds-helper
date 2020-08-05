@@ -42,7 +42,7 @@
 #'  missing_n = as above
 #'  missing_perc = as above
 #'  
-#' @importFrom tidyr as_tibble tibble
+#' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' @importFrom purrr map flatten_dbl
 #' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
