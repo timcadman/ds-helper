@@ -3,7 +3,7 @@
 #' @param model saved output from either ds.glm or ds.glmSLMA
 #' @param type either "ipd" or "slma" depending on the type of analysis done
 #' 
-#' @importFrom tidyr tibble
+#' @importFrom tibble tibble
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
 #' 

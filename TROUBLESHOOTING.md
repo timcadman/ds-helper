@@ -23,3 +23,14 @@ For Mac
 ```bash
 brew install nlopt
 ```
+
+### Tidyr/CPP 11 install error
+
+If you get an error when trying to install tidyr, run the following lines of code:
+
+```R
+remove.packages("cpp11")
+library(remotes)
+install_github('r-lib/cpp11', ref = 'v0.1.0')
+install_github('tidyverse/tidyr', ref = 'v1.1.0')
+```

@@ -13,6 +13,8 @@ Imports:
   meta,
   purrr,
   stringr,
+  magrittr,
+  tibble,
   tidyr
 Suggests: 
     rmarkdown,
