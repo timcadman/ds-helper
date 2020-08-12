@@ -50,6 +50,13 @@ message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
   dh.doVarsExist(df, outcome)
   dh.doesDfExist(df)
   
+## ---- Check bands is an even number ------------------------------------------  
+  if((length(bands) %% 2 == 0) == FALSE){
+    
+    stop("The length of the vector provided to the 'bands' argument is not an even number", 
+         call. = FALSE)
+  }
+  
 ## ---- Create numeric version of age_var --------------------------------------  
   ds.asNumeric(
     x.name = paste0(df, "$", age_var), 
@@ -92,12 +99,13 @@ message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
     use.names = FALSE
   )
   
-  ## ---- Create table with age bands ------------------------------------------
+      ## ---- Create table with age bands ------------------------------------------
   cats <- tibble(
     varname = rep(subnames, each = 2),
     value = bands,
     op = rep(c(">", "<="), times = (length(bands)/2)),
-    new_df_name = paste0(outcome, value)
+    tmp = ifelse(op == ">", "gt", "lte"),
+    new_df_name = paste0(outcome, tmp, value)
   )
   
   ## ---- Check there are non missing values for age and outcome ---------------
@@ -209,6 +217,13 @@ cats_to_subset <- data_available %>%
   select(-available) %>%
   mutate(new_subset_name = paste0(varname, "_a"))
 
+if(nrow(cats_to_subset) <1){
+  
+  stop("There is no data available within the specified bands", 
+       call. = FALSE)
+  
+}
+
 message("DONE", appendLF = TRUE)
 
 ## ---- Create subsets ---------------------------------------------------------
@@ -222,7 +237,7 @@ cats_to_subset %>%
         V1.name = varname, 
         V2.name = "1", 
         Boolean.operator = "==", 
-        keep.NAs = FALSE, 
+        keep.NAs = TRUE, 
         newobj = new_subset_name, 
         datasources = opals[cohort])
     })
@@ -305,7 +320,7 @@ message("DONE", appendLF = TRUE)
 message("** Step 5 of 7: Reshaping to wide format ... ", appendLF = FALSE)
 ## Now we create variables indicating the age of subset
 cats_to_subset %<>%
-  mutate(value = str_extract(varname, '[^_]+$'), 
+  mutate(value = stringr::str_extract(varname, '[^_]+$'), 
          age_cat_name = paste0(varname, "_age"))
 
 cats_to_subset %>%
@@ -354,13 +369,12 @@ made_vars <- cats_to_subset %>%
   arrange(cohort) %>%
   group_by(cohort) %>%
   summarise(subs = paste(varname, collapse = ",")) %>%
-  select(subs) %>%
   map(~strsplit(., ","))
 )
 
 finalvars <- made_vars$sub %>% map(~paste0(., "_wide"))
 
-names(finalvars) <- sort(names(opals))
+names(finalvars) <- unlist(made_vars$cohort)
 
 out_name <- paste0(outcome, "_", "derived")
 
@@ -441,7 +455,7 @@ message("DONE", appendLF = TRUE)
 cat("\nDataframe", "'", out_name, "'", 
     "created containing the following variables:\n\n")
 
-data_available
+print(data_available)
 
 cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 
 that the 5th and 95th percentiles fall within the specified upper and lower 
