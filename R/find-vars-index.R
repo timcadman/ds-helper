@@ -19,12 +19,12 @@
 #' @export
 dh.findVarsIndex <- function(df, vars, cohorts){
   
-  dh.doVarsExist(df, vars)
-  dh.doesDfExist(df)
+  dh.doVarsExist(df, vars, cohorts)
+  dh.doesDfExist(df, cohorts)
 
 ref_tab <- tibble(
-  var = rep(vars, length(names(opals))),
-  cohort = rep(names(opals), each = length(vars))
+  var = rep(vars, length(cohorts)),
+  cohort = rep(cohorts, each = length(vars))
   )    
    
 tmp <- ref_tab %>%
@@ -36,7 +36,7 @@ tmp <- ref_tab %>%
   })
 
 out <- split(unlist(tmp), ceiling(seq_along(unlist(tmp)) / length(vars)))
-names(out) <- names(opals)
+names(out) <- cohorts
 
 return(out)
 }

@@ -16,25 +16,25 @@
 #' @author Tim Cadman
 #' 
 #' @export
-dh.tidyEnv <- function(obj, type = "remove"){
+dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)){
   
   if(type == "remove"){
   
-obj %>% map(ds.rm)    
+obj %>% map(ds.rm, datasources = opals[cohorts])    
 
     } else if(type == "keep"){
     
-objects <- names(opals) %>%
+objects <- cohorts %>%
   map(
     ~ds.ls(datasources = opals[.])[[1]]
     )
 
-vars <- seq(1 : length(names(opals))) %>%
+vars <- seq(1 : length(cohorts)) %>%
   map(
     ~objects[[.]][objects[[.]] %in% obj == FALSE]
   )
 
-names(vars) <- names(opals)
+names(vars) <- cohorts
 
 ## Check no objects to removed have character length >20
 obj_lengths <- vars %>% 
