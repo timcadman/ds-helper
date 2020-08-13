@@ -6,6 +6,7 @@
 #'
 #' @param df opal dataframe
 #' @param vars vector of variable names expected to be contained in dataframe
+#' @param cohorts optional argument specifying which cohorts to use  
 #'  
 #' @return None. Stops function if var(s) don't exist in one of more cohorts.
 #'        

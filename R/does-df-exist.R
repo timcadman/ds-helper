@@ -5,6 +5,7 @@
 #' When I've got more time combine this with "cs.doVarsExist"
 #'
 #' @param df opal dataframe
+#' @param cohorts optional argument specifying which cohorts to use
 #'  
 #' @return None. Stops function if df doesn't exist in one of more cohorts.
 #'        

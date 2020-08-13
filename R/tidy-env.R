@@ -6,6 +6,7 @@
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.
+#' @param cohorts optional argument specifying which cohorts to use
 #' 
 #' @return None. Objects removed from ds environment
 #' 

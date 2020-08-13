@@ -10,6 +10,7 @@
 #' @param comp_var name of a variable with df which is complete for all subjects
 #'                 (e.g. an id variable)
 #' @param type whether to remove or keep specified variables
+#' @param cohorts optional argument specifying which cohorts to use
 #' 
 #' @return a new dataframe is created containing the specified subset of columns
 #' 

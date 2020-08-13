@@ -24,6 +24,8 @@ dh.dropCols(
 (e.g. an id variable)}
 
 \item{type}{whether to remove or keep specified variables}
+
+\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 a new dataframe is created containing the specified subset of columns

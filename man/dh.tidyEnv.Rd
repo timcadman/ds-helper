@@ -11,6 +11,8 @@ dh.tidyEnv(obj, type = "remove", cohorts = names(opals))
 
 \item{type}{either "remove" to remove the listed objects of "keep" to keep
 the listed objects and remove everything else.}
+
+\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 None. Objects removed from ds environment
