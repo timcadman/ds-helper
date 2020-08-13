@@ -4,7 +4,7 @@
 \alias{dh.tidyEnv}
 \title{Tidy up the server environment}
 \usage{
-dh.tidyEnv(obj, type = "remove")
+dh.tidyEnv(obj, type = "remove", cohorts = names(opals))
 }
 \arguments{
 \item{obj}{objects that you want to either keep or remove}

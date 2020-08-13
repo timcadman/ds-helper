@@ -3,6 +3,7 @@
 export(dh.classDescrepancy)
 export(dh.doVarsExist)
 export(dh.doesDfExist)
+export(dh.dropCols)
 export(dh.findVarsIndex)
 export(dh.getStats)
 export(dh.makeOutcome)

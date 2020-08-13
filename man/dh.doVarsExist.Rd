@@ -4,7 +4,7 @@
 \alias{dh.doVarsExist}
 \title{Check whether variables exist in dataframe}
 \usage{
-dh.doVarsExist(df, vars)
+dh.doVarsExist(df, vars, cohorts = names(opals))
 }
 \arguments{
 \item{df}{opal dataframe}
