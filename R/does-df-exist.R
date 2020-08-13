@@ -13,12 +13,12 @@
 #' 
 #' @author Tim Cadman
 #' @export 
-dh.doesDfExist <- function(df){
+dh.doesDfExist <- function(df, cohorts = names(opals)){
 
-df_check <-  names(opals) %>%
+df_check <-  cohorts %>%
   map(~(df %in% ds.ls(datasources = opals[.][[1]])))
 
-names(df_check) <- names(opals)
+names(df_check) <- names(cohorts)
 
 df_missing <- df_check %>% map(~any(. == FALSE)) 
 

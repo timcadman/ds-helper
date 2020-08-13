@@ -14,9 +14,9 @@
 #' 
 #' @author Tim Cadman
 #' @export 
-dh.doVarsExist <- function(df, vars){
+dh.doVarsExist <- function(df, vars, cohorts = names(opals)){
   
-  allvars <- ds.colnames(df)
+  allvars <- ds.colnames(df, datasources = opals[cohorts])
   
   var_check <- allvars %>% map(~(vars %in% .))
   
