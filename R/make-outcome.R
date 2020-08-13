@@ -478,7 +478,7 @@ message("DONE", appendLF = TRUE)
 cat("\nDataframe", "'", out_name, "'", 
     "created containing the following variables:\n\n")
 
-print(data_available)
+message(data_available)
 
 cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 
 that the 5th and 95th percentiles fall within the specified upper and lower 
