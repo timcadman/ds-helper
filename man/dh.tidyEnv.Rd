@@ -4,13 +4,15 @@
 \alias{dh.tidyEnv}
 \title{Tidy up the server environment}
 \usage{
-dh.tidyEnv(obj, type = "remove")
+dh.tidyEnv(obj, type = "remove", cohorts = names(opals))
 }
 \arguments{
 \item{obj}{objects that you want to either keep or remove}
 
 \item{type}{either "remove" to remove the listed objects of "keep" to keep
 the listed objects and remove everything else.}
+
+\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 None. Objects removed from ds environment

@@ -5,6 +5,7 @@
 #' When I've got more time combine this with "cs.doVarsExist"
 #'
 #' @param df opal dataframe
+#' @param cohorts optional argument specifying which cohorts to use
 #'  
 #' @return None. Stops function if df doesn't exist in one of more cohorts.
 #'        
@@ -13,12 +14,12 @@
 #' 
 #' @author Tim Cadman
 #' @export 
-dh.doesDfExist <- function(df){
+dh.doesDfExist <- function(df, cohorts = names(opals)){
 
-df_check <-  names(opals) %>%
+df_check <-  cohorts %>%
   map(~(df %in% ds.ls(datasources = opals[.][[1]])))
 
-names(df_check) <- names(opals)
+names(df_check) <- names(cohorts)
 
 df_missing <- df_check %>% map(~any(. == FALSE)) 
 

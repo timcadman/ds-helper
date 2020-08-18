@@ -4,10 +4,12 @@
 \alias{dh.doesDfExist}
 \title{Check whether dataframe exists in environment}
 \usage{
-dh.doesDfExist(df)
+dh.doesDfExist(df, cohorts = names(opals))
 }
 \arguments{
 \item{df}{opal dataframe}
+
+\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 None. Stops function if df doesn't exist in one of more cohorts.

@@ -4,12 +4,14 @@
 \alias{dh.doVarsExist}
 \title{Check whether variables exist in dataframe}
 \usage{
-dh.doVarsExist(df, vars)
+dh.doVarsExist(df, vars, cohorts = names(opals))
 }
 \arguments{
 \item{df}{opal dataframe}
 
 \item{vars}{vector of variable names expected to be contained in dataframe}
+
+\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 None. Stops function if var(s) don't exist in one of more cohorts.

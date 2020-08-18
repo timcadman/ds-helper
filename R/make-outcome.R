@@ -50,6 +50,13 @@ message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
   dh.doVarsExist(df, outcome)
   dh.doesDfExist(df)
   
+## ---- Check bands is an even number ------------------------------------------  
+  if((length(bands) %% 2 == 0) == FALSE){
+    
+    stop("The length of the vector provided to the 'bands' argument is not an even number", 
+         call. = FALSE)
+  }
+  
 ## ---- Create numeric version of age_var --------------------------------------  
   ds.asNumeric(
     x.name = paste0(df, "$", age_var), 
@@ -67,22 +74,12 @@ message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
     )
   
 ## ---- Select only variables needed -------------------------------------------  
-  var_index <- dh.findVarsIndex(new_df, c("child_id", outcome, "age"))
-  
-  ds.make(
-      paste0(new_df, "$age", "-", new_df, "$age",  "+1"), "ones")
-  
-  var_index %>%
-    imap(
-      ~ds.dataFrameSubset(
-        df.name = new_df, 
-        V1.name = "ones", 
-        V2.name = "1", 
-        Boolean.operator = "==", 
-        keep.cols = .x,
-        keep.NAs = TRUE, 
-        newobj = new_df, 
-        datasources = opals[.y]))
+  dh.dropCols(
+    df = new_df,
+    vars = c("child_id", outcome, "age"), 
+    new_df_name = new_df,
+    comp_var = "child_id", 
+    type = "keep")
   
   ## ---- Make paired list for each band ---------------------------------------
   pairs <- split(bands, ceiling(seq_along(bands)/2))
@@ -92,12 +89,13 @@ message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
     use.names = FALSE
   )
   
-  ## ---- Create table with age bands ------------------------------------------
+      ## ---- Create table with age bands ------------------------------------------
   cats <- tibble(
     varname = rep(subnames, each = 2),
     value = bands,
     op = rep(c(">", "<="), times = (length(bands)/2)),
-    new_df_name = paste0(outcome, value)
+    tmp = ifelse(op == ">", "gt", "lte"),
+    new_df_name = paste0(outcome, tmp, value)
   )
   
   ## ---- Check there are non missing values for age and outcome ---------------
@@ -209,6 +207,13 @@ cats_to_subset <- data_available %>%
   select(-available) %>%
   mutate(new_subset_name = paste0(varname, "_a"))
 
+if(nrow(cats_to_subset) <1){
+  
+  stop("There is no data available within the specified bands", 
+       call. = FALSE)
+  
+}
+
 message("DONE", appendLF = TRUE)
 
 ## ---- Create subsets ---------------------------------------------------------
@@ -222,7 +227,7 @@ cats_to_subset %>%
         V1.name = varname, 
         V2.name = "1", 
         Boolean.operator = "==", 
-        keep.NAs = FALSE, 
+        keep.NAs = TRUE, 
         newobj = new_subset_name, 
         datasources = opals[cohort])
     })
@@ -233,7 +238,7 @@ message("DONE", appendLF = TRUE)
 message("** Step 4 of 7: Dealing with subjects with multiple observations within age bands ... ", 
         appendLF = FALSE)
 
-if(mult_action == "nearest"){
+  if(mult_action == "nearest"){
 
   ## Make a variable specifying distance between age of measurement and prefered
   ## value (provided by "mult_vals")
@@ -277,12 +282,12 @@ if(mult_action == "nearest"){
       ds.dataFrameSort(
         df.name = paste0(varname, "_y"), 
         sort.key.name = paste0(varname, "_y", "$", dif_val), 
-        newobj = paste0(varname, "_b"), 
+        newobj = paste0(varname, "_a"), 
         sort.descending = FALSE)
       
     })
 
-} else if(mult_action == "earliest" | mult_action == "latest"){
+  } else if(mult_action == "earliest" | mult_action == "latest"){
 
 sort_action <- ifelse(mult_action == "earliest", FALSE, TRUE)
 
@@ -292,7 +297,7 @@ cats_to_subset %>%
     ds.dataFrameSort(
       df.name = new_subset_name, 
       sort.key.name = paste0(new_subset_name, "$age"), 
-      newobj = paste0(varname, "_b"), 
+      newobj = paste0(varname, "_a"), 
       sort.descending = sort_action, 
       datasources = opals[cohort])
     
@@ -305,30 +310,28 @@ message("DONE", appendLF = TRUE)
 message("** Step 5 of 7: Reshaping to wide format ... ", appendLF = FALSE)
 ## Now we create variables indicating the age of subset
 cats_to_subset %<>%
-  mutate(value = str_extract(varname, '[^_]+$'), 
+  mutate(value = stringr::str_extract(varname, '[^_]+$'), 
          age_cat_name = paste0(varname, "_age"))
 
 cats_to_subset %>%
   pmap(
     function(cohort, new_subset_name, value, age_cat_name, varname, ...){
       ds.assign(
-        toAssign = paste0("(", paste0(varname, "_b"), "$age*0)+", value), 
+        toAssign = paste0("(", paste0(varname, "_a"), "$age*0)+", value), 
         newobj = age_cat_name, 
         datasources = opals[cohort])
     })
-
 
 ## ---- Join age variables with subsets ----------------------------------------
 cats_to_subset %>%
   pmap(function(varname, cohort, age_cat_name, ...){
     
     ds.dataFrame(
-      x = c(paste0(varname, "_b"), age_cat_name), 
+      x = c(paste0(varname, "_a"), age_cat_name), 
       newobj = paste0(varname, "_c"),
       datasources = opals[cohort]
     )}
   )
-
 
 ## ---- Convert subsets to wide form -------------------------------------------
 cats_to_subset %>%
@@ -344,7 +347,42 @@ cats_to_subset %>%
         datasources = opals[cohort])
     })
 
+
+## ---- Remove NA variables from dataframes ------------------------------------
+
+## First we identify the variables we want to keep
+all_vars <- cats_to_subset %>%
+  pmap(function(varname, cohort, ...){
+    
+    ds.colnames(paste0(varname, "_wide"), datasources = opals[cohort])[[1]]
+    
+  })
+
+names(all_vars) <- cats_to_subset$cohort
+
+keep_vars <- all_vars %>%
+  map(~.[str_detect(., ".NA") == FALSE])
+
+var_list <- split(cats_to_subset$varname, seq(nrow(cats_to_subset)))
+coh_list <- split(cats_to_subset$cohort, seq(nrow(cats_to_subset)))
+
+combined <- list(var_list, coh_list, keep_vars)
+names(combined) <- c("varname", "cohort", "keep_vars")
+
+combined %>%
+  pmap(function(varname, cohort, keep_vars){
+    
+    dh.dropCols(
+      df = paste0(varname, "_wide"),
+      vars = keep_vars, 
+      new_df_name = paste0(varname, "_wide"),
+      comp_var = "child_id", 
+      type = "keep", 
+      cohorts = cohort)
+  })
+
 message("DONE", appendLF = TRUE)
+
 
 ## ---- Merge back with non-repeated dataset -----------------------------------
 message("** Step 6 of 7: Creating final dataset ... ", appendLF = FALSE)
@@ -354,13 +392,12 @@ made_vars <- cats_to_subset %>%
   arrange(cohort) %>%
   group_by(cohort) %>%
   summarise(subs = paste(varname, collapse = ",")) %>%
-  select(subs) %>%
   map(~strsplit(., ","))
 )
 
 finalvars <- made_vars$sub %>% map(~paste0(., "_wide"))
 
-names(finalvars) <- sort(names(opals))
+names(finalvars) <- unlist(made_vars$cohort)
 
 out_name <- paste0(outcome, "_", "derived")
 
@@ -441,7 +478,7 @@ message("DONE", appendLF = TRUE)
 cat("\nDataframe", "'", out_name, "'", 
     "created containing the following variables:\n\n")
 
-data_available
+message(data_available)
 
 cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 
 that the 5th and 95th percentiles fall within the specified upper and lower 
