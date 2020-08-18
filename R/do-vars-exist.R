@@ -1,41 +1,42 @@
 #' Check whether variables exist in dataframe
-#' 
+#'
 #' Probably mostly for internal use, this function can be used at the start
-#' of functions where users provide both vars and a dataframe to check that 
+#' of functions where users provide both vars and a dataframe to check that
 #' the vars exist in the dataframe provided
 #'
 #' @param df opal dataframe
 #' @param vars vector of variable names expected to be contained in dataframe
-#' @param cohorts optional argument specifying which cohorts to use  
-#'  
+#' @param cohorts optional argument specifying which cohorts to use
+#'
 #' @return None. Stops function if var(s) don't exist in one of more cohorts.
-#'        
+#'
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
-#' 
+#'
 #' @author Tim Cadman
-#' @export 
-dh.doVarsExist <- function(df, vars, cohorts = names(opals)){
-  
+#' @export
+dh.doVarsExist <- function(df, vars, cohorts = names(opals)) {
   allvars <- ds.colnames(df, datasources = opals[cohorts])
-  
-  var_check <- allvars %>% map(~(vars %in% .))
-  
-  any_missing <- var_check %>% map(~any(. == FALSE)) 
 
-    if(any(unlist(any_missing) == TRUE)){
-    
-      missing <- var_check %>%
-        map(
-          ~paste0(
-            vars[which(. == FALSE)], 
-            collapse = ", ")) %>%
-        unlist()
-      
+  var_check <- allvars %>% map(~ (vars %in% .))
+
+  any_missing <- var_check %>% map(~ any(. == FALSE))
+
+  if (any(unlist(any_missing) == TRUE)) {
+    missing <- var_check %>%
+      map(
+        ~ paste0(
+          vars[which(. == FALSE)],
+          collapse = ", "
+        )
+      ) %>%
+      unlist()
+
     stop(paste0(
-      "Variable(s) not present in the data frame: ", 
-      paste0(missing, " (", names(missing), ")", collapse = ", ")), 
-      call. = FALSE
+      "Variable(s) not present in the data frame: ",
+      paste0(missing, " (", names(missing), ")", collapse = ", ")
+    ),
+    call. = FALSE
     )
-    }
+  }
 }
