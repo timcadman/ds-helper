@@ -1,66 +1,58 @@
 #' Tidy up the server environment
-#' 
-#' This is a very simple wrapper around ds.rm to allow you to remove more than 
+#'
+#' This is a very simple wrapper around ds.rm to allow you to remove more than
 #' one object at a time.
-#' 
+#'
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.
 #' @param cohorts optional argument specifying which cohorts to use
-#' 
+#'
 #' @return None. Objects removed from ds environment
-#' 
+#'
 #' @importFrom purrr map imap
 #' @importFrom dsBaseClient ds.rm
 #' @importFrom dplyr %>%
-#' 
+#'
 #' @author Tim Cadman
-#' 
+#'
 #' @export
-dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)){
-  
-  if(type == "remove"){
-  
-obj %>% map(ds.rm, datasources = opals[cohorts])    
+dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)) {
+  if (type == "remove") {
+    obj %>% map(ds.rm, datasources = opals[cohorts])
+  } else if (type == "keep") {
+    objects <- cohorts %>%
+      map(
+        ~ ds.ls(datasources = opals[.])[[1]]
+      )
 
-    } else if(type == "keep"){
-    
-objects <- cohorts %>%
-  map(
-    ~ds.ls(datasources = opals[.])[[1]]
-    )
+    vars <- seq(1:length(cohorts)) %>%
+      map(
+        ~ objects[[.]][objects[[.]] %in% obj == FALSE]
+      )
 
-vars <- seq(1 : length(cohorts)) %>%
-  map(
-    ~objects[[.]][objects[[.]] %in% obj == FALSE]
-  )
+    names(vars) <- cohorts
 
-names(vars) <- cohorts
+    ## Check no objects to removed have character length >20
+    obj_lengths <- vars %>%
+      map(~ nchar(.)) %>%
+      map(~ any(. > 20)) %>%
+      unlist() %>%
+      any(. > 20)
 
-## Check no objects to removed have character length >20
-obj_lengths <- vars %>% 
-  map(~nchar(.)) %>%
-  map(~any(. > 20)) %>%
-  unlist() %>%
-  any(. > 20)
-
-if(obj_lengths == TRUE){
-  stop("You are attempting to remove objects with name(s) longer than 20 
+    if (obj_lengths == TRUE) {
+      stop("You are attempting to remove objects with name(s) longer than 20 
 characters. DS does not permit this due to risk of malicious code. Amend your 
        script so that your objects have shorter names", call. = FALSE)
-}
+    }
 
-vars_tibble <- vars %>%
-  map(~as_tibble(.)) %>%
-  imap(~mutate(., cohort = .y)) %>%
-  bind_rows()
+    vars_tibble <- vars %>%
+      map(~ as_tibble(.)) %>%
+      imap(~ mutate(., cohort = .y)) %>%
+      bind_rows()
 
-vars_tibble %>% pmap(function(cohort, value){
-  
-  ds.rm(x.name = value, datasources = opals[cohort])
-  
-})
-
-}
-  
+    vars_tibble %>% pmap(function(cohort, value) {
+      ds.rm(x.name = value, datasources = opals[cohort])
+    })
+  }
 }

@@ -1,5 +1,5 @@
 #' Indicate whether subject has any non-missing values in a set of variables
-#' 
+#'
 #' At some point in the analysis you will want to subset your dataset to contain
 #' only subjects meeting some criteria, e.g. data on at least one exposure and
 #' one outcome. This function speeds things up by indicating whether a subject
@@ -8,64 +8,61 @@
 #' @param df opal dataframe
 #' @param vars = vector of variable names in dataframe
 #' @param new_label = label which forms the suffix for the two created variables
-#' 
-#' @return None. Two new variables are variables created within the opal 
-#'         environment. The first indicates how many of the variables each 
-#'         subject has a non-missing value on. The second indicates whether 
-#'         subjects have non-missing values on at least one of these variables.  
-#'         
+#'
+#' @return None. Two new variables are variables created within the opal
+#'         environment. The first indicates how many of the variables each
+#'         subject has a non-missing value on. The second indicates whether
+#'         subjects have non-missing values on at least one of these variables.
+#'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
-#' 
+#'
 #' @author Tim Cadman
-#' 
-#' @export                     
-dh.subjHasData <- function(df, vars, new_label){
+#'
+#' @export
+dh.subjHasData <- function(df, vars, new_label) {
+  dh.doesDfExist(df)
 
-dh.doesDfExist(df)  
-    
-## ---- Convert to numeric -----------------------------------------------------
-  
-# We do this because we will need to use ds.Boole to compare them to 0. These 
-# are just numeric copies of the variables we will end up keeping.
+  ## ---- Convert to numeric -----------------------------------------------------
 
-sapply(vars, function(x){
-  
-  ds.asNumeric(paste0(df, "$", x), newobj = paste0(x, "_num"))  
-  
-})
-  
+  # We do this because we will need to use ds.Boole to compare them to 0. These
+  # are just numeric copies of the variables we will end up keeping.
 
-## ---- Create a vector of these numeric variable names ------------------------
-vars_num <- paste0(vars, "_num")  
+  sapply(vars, function(x) {
+    ds.asNumeric(paste0(df, "$", x), newobj = paste0(x, "_num"))
+  })
 
 
-## ---- Now evaluate whether there are values >= 0 -----------------------------
-  
-# If a value is NA it will return NA. 
-sapply(vars_num, function(x){
-  
-  ds.Boole(V1 = x, 
-           V2 = "0",
-           Boolean.operator = ">=", 
-           na.assign = 0, 
-           newobj = paste0(x, "_yn"))
-  
-})
+  ## ---- Create a vector of these numeric variable names ------------------------
+  vars_num <- paste0(vars, "_num")
 
 
-## ---- Count number of non-missing variables for each subject -----------------
-ds.make(
-  toAssign = paste0(paste0(vars_num, "_yn"), collapse = "+"), 
-  newobj = paste0("n_", new_label)
+  ## ---- Now evaluate whether there are values >= 0 -----------------------------
+
+  # If a value is NA it will return NA.
+  sapply(vars_num, function(x) {
+    ds.Boole(
+      V1 = x,
+      V2 = "0",
+      Boolean.operator = ">=",
+      na.assign = 0,
+      newobj = paste0(x, "_yn")
+    )
+  })
+
+
+  ## ---- Count number of non-missing variables for each subject -----------------
+  ds.make(
+    toAssign = paste0(paste0(vars_num, "_yn"), collapse = "+"),
+    newobj = paste0("n_", new_label)
   )
 
 
-## ---- Create final variable indicating if there are any non-missing values ---
-ds.Boole(
-  V1 = paste0("n_", new_label), 
-  V2 = "0", 
-  Boolean.operator = ">", 
-  na.assign = 0, 
-  newobj = paste0("any_", new_label))
-  
+  ## ---- Create final variable indicating if there are any non-missing values ---
+  ds.Boole(
+    V1 = paste0("n_", new_label),
+    V2 = "0",
+    Boolean.operator = ">",
+    na.assign = 0,
+    newobj = paste0("any_", new_label)
+  )
 }
