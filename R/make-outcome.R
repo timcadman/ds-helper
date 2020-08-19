@@ -492,7 +492,7 @@ to have a shorter name.",
     "created containing the following variables:\n\n"
   )
 
-  message(data_available)
+  print(data_available)
 
   cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 
 that the 5th and 95th percentiles fall within the specified upper and lower 
