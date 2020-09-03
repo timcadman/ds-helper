@@ -17,7 +17,7 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.findVarsIndex <- function(df, vars, cohorts) {
+dh.findVarsIndex <- function(df, vars, cohorts = names(opals)) {
   dh.doVarsExist(df, vars, cohorts)
   dh.doesDfExist(df, cohorts)
 
