@@ -23,7 +23,7 @@ dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)) {
   } else if (type == "keep") {
     objects <- cohorts %>%
       map(
-        ~ ds.ls(datasources = opals[.])[[1]]
+        ~ ds.ls(datasources = opals[.])[[1]][[2]]
       )
 
     vars <- seq(1:length(cohorts)) %>%
