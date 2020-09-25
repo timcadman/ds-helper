@@ -16,27 +16,14 @@
 #' @export
 dh.doesDfExist <- function(df, cohorts = names(opals)) {
   df_check <- cohorts %>%
-    map(~ (df %in% ds.ls(datasources = opals[.][[1]])))
+    map(~ (df %in% ds.ls(datasources = opals[.])[[1]][["objects.found"]]))
 
-  names(df_check) <- names(cohorts)
+  names(df_check) <- cohorts
 
   df_missing <- df_check %>% map(~ any(. == FALSE))
 
   if (any(unlist(df_missing) == TRUE)) {
-    missing <- df_check %>%
-      map(
-        ~ paste0(
-          vars[which(. == FALSE)],
-          collapse = ", "
-        )
-      ) %>%
-      unlist()
-
-    stop(paste0(
-      "Dataframe(s) not present in environment: ",
-      paste0(missing, " (", names(missing), ")", collapse = ", ")
-    ),
-    call. = FALSE
-    )
+    
+    stop("Dataframe not present in one or more cohorts", call. = FALSE)
   }
 }
