@@ -63,15 +63,11 @@ dh.makeOutcome <- function(
   )
 
   new_df <- paste0(df, "_tmp")
-
-  names(opals) %>%
-    map(
-      ~ ds.dataFrame(
-        x = c(df, "age"),
-        newobj = new_df,
-        datasources = opals[.]
-      )
+  ds.dataFrame(
+    x = c(df, "age"),
+    newobj = new_df
     )
+    
 
   ## ---- Select only variables needed -------------------------------------------
   dh.dropCols(
@@ -189,9 +185,9 @@ to have a shorter name.",
   ## ---- Handle disclosure issues -----------------------------------------------
 
   # Need to only show data as being available if >= minimum value for subsetting
-  sub_min <- ds.listDisclosureSettings()$Opal.disclosure.settings %>%
+  sub_min <- ds.listDisclosureSettings()$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset)
-
+  
   min_perc_vec <- sub_min / data_sum[[1]]$Mean.by.Study[, "Ntotal"]
 
   min_perc <- min_perc_vec %>%
