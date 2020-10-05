@@ -47,7 +47,6 @@
 #' @importFrom purrr map flatten_dbl
 #' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
 #' @importFrom stringr str_detect
-#' @importFrom meta metamean
 #' @importFrom stats setNames
 #' @importFrom magrittr %<>%
 #'
@@ -313,6 +312,17 @@ dh.getStats <- function(df, vars) {
           })
         })
       ),
+      perc_50 = unlist(
+        sapply(stats_cont[[1]], function(x) {
+          sapply(cohorts, simplify = FALSE, function(y) {
+            if (is.null(x[[y]])) {
+              NA
+            } else {
+              round(x[[y]]$"quantiles & mean"["50%"], 2)
+            }
+          })
+        })
+      ),
       perc_75 = unlist(
         sapply(stats_cont[[1]], function(x) {
           sapply(cohorts, simplify = FALSE, function(y) {
@@ -361,40 +371,60 @@ dh.getStats <- function(df, vars) {
 
     out_cont %<>% mutate(missing_n = cohort_n - valid_n)
 
-    ## ---- Group output and pool means --------------------------------------------
-
-    ## Need to sort df as group_by ends up sorting it and causing later trouble
+    ## ---- Get pooled values --------------------------------------------------
     out_cont %<>% arrange(variable)
-
-    pooled <- out_cont %>%
+    
+    valid_n_cont <- out_cont %>% 
       group_by(variable) %>%
-      group_map(~ suppressWarnings(metamean(.x, n = .x$valid_n, mean = .x$mean, sd = .x$std.dev, studlab = cohorts)))
-
-    coh_comb <- data.frame(
+      dplyr::summarize(valid_n = sum(valid_n, na.rm = TRUE)) 
+    
+    valid_n_cont$variable %<>% as.character
+    
+    coh_comb <- tibble(
       cohort = "Combined",
-      variable = sort(names(stats_cont[[1]])),
-      mean = round(unlist(sapply(pooled, function(x) {
-        x["TE.fixed"]
-      })), 2),
-      se = unlist(sapply(pooled, function(x) {
-        x["seTE.fixed"]
-      })),
-      valid_n = out_cont %>% group_by(variable) %>%
-        dplyr::summarize(valid_n = sum(valid_n, na.rm = TRUE)) %>% .[, 2],
-      cohort_n = Reduce(`+`, stats_cont[["Max_N"]])
-    )
-
+      variable = sort(names(stats_cont[[1]])), 
+      cohort_n = Reduce(`+`, stats_cont[["Max_N"]]))
+    
+    coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
+      
+    
+    ## pooled median 
+    medians <- paste0(df, "$", names(stats_cont[[1]])) %>% map(ds.quantileMean)
+    names(medians) <- names(stats_cont[[1]])
+    
+    medians %<>% 
+      bind_rows(.id = "variable") %>%
+      rename(
+        perc_25 = "25%", 
+        perc_50 = "50%", 
+        perc_75 = "75%", 
+        mean = Mean) %>%
+      select(variable, perc_25, perc_50, perc_75, mean)
+    
+    coh_comb <- left_join(coh_comb, medians, by = "variable")
+    
+    
+    ## pooled variance
+    sds <- paste0(df, "$", names(stats_cont[[1]])) %>% 
+      map(function(x){ds.var(x, type = "combine")[[1]][[1]]})
+    
+    names(sds) <- names(stats_cont[[1]])
+   
+    sds %<>% 
+      map(as_tibble) %>% 
+      bind_rows(.id = "variable") %>% 
+      rename(variance = value) 
+    
+    coh_comb <- left_join(coh_comb, sds, by = "variable")
+    
+    ## missing n and std.dev
     coh_comb %<>%
       mutate(
         missing_n = cohort_n - valid_n,
-        std.dev = round(se * sqrt(valid_n), 2)
-      ) %>%
-      select(-se)
-
-
-    ## ---- Combine with main table ------------------------------------------------
-
-    out_cont %<>% select(-perc_25, -perc_75)
+        std.dev = variance * sqrt(valid_n)) %>%
+     select(-variance)
+        
+## ---- Combine with main table ------------------------------------------------
     out_cont <- rbind(out_cont, coh_comb)
 
     out_cont %<>%
