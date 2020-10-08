@@ -1,6 +1,6 @@
 Package: dsHelper
 Title: Helper functions for use with DataSHIELD
-Version: 0.0.0.9001
+Version: 0.0.0.9002
 Authors@R: person("Tim", "Cadman", email = "t.cadman@bristol.ac.uk",
                   role = c("aut", "cre"))
 Description: Sometimes we need to automate things with DS. These functions help
