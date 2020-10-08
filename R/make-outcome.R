@@ -34,7 +34,7 @@
 #' @export
 dh.makeOutcome <- function(
                            df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL) {
+                           mult_vals = NULL, remove_temp = TRUE) {
   mult_action <- match.arg(mult_action)
 
 
@@ -75,7 +75,8 @@ dh.makeOutcome <- function(
     vars = c("child_id", outcome, "age"),
     new_df_name = new_df,
     comp_var = "child_id",
-    type = "keep"
+    type = "keep", 
+    remove_temp = FALSE
   )
 
   ## ---- Make paired list for each band ---------------------------------------
@@ -470,6 +471,8 @@ to have a shorter name.",
 
 
   ## ---- Tidy environment -------------------------------------------------------
+  
+  if(remove_temp == TRUE){
   message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
 
   end_objs <- ds.ls()
@@ -481,7 +484,7 @@ to have a shorter name.",
 
   dh.tidyEnv(obj = to_remove, type = "remove")
 
-  message("DONE", appendLF = TRUE)
+  message("DONE", appendLF = TRUE)}
 
   cat(
     "\nDataframe", "'", out_name, "'",
