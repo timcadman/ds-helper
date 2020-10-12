@@ -10,7 +10,8 @@ dh.makeOutcome(
   age_var,
   bands,
   mult_action = c("earliest", "latest", "nearest"),
-  mult_vals = NULL
+  mult_vals = NULL,
+  remove_temp = TRUE
 )
 }
 \arguments{
@@ -24,11 +25,11 @@ for which to derive outcome variables for. Must be even length}
 \item{bands}{vector of alternating lower and upper age bands for variable(s)
 you want to create}
 
-\item{mult_action}{if a subject has more than one value within the time 
-period do we keep the earliest or latest? Default = 
+\item{mult_action}{if a subject has more than one value within the time
+period do we keep the earliest or latest? Default =
 "earliest"}
 
-\item{mult_vals}{if "mult_action = nearest", this argument specifies which 
+\item{mult_vals}{if "mult_action = nearest", this argument specifies which
 which value in each age band to chose values closest to
 in case of multiple values}
 }

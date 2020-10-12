@@ -388,8 +388,33 @@ dh.getStats <- function(df, vars) {
     coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
       
     
+    ## ---- Identify cohorts with non-missing data -----------------------------
+    
+    ## Need this step at the moment as the DS functions returned missing pooled
+    ## values if any cohorts don't have them.
+    
+     pool_avail <- names(stats_cont[[1]]) %>%
+      map(function(x){
+        
+        tmp <- out_cont %>% 
+          filter(variable == x) %>%
+          filter(!is.na(mean)) %>%
+          select(cohort) %>%
+          pull %>%
+          as.character
+        
+          })
+    
+    names(pool_avail) <- paste0(df, "$", names(stats_cont[[1]]))
+    
     ## pooled median 
-    medians <- paste0(df, "$", names(stats_cont[[1]])) %>% map(ds.quantileMean, type = "combine")
+    medians <- pool_avail %>% imap(
+      ~ds.quantileMean(
+        x = .y,
+        type = "combine", 
+        datasources = opals[.x])
+      )
+    
     names(medians) <- names(stats_cont[[1]])
     
     medians %<>% 
@@ -405,9 +430,15 @@ dh.getStats <- function(df, vars) {
     
     
     ## pooled variance
-    sds <- paste0(df, "$", names(stats_cont[[1]])) %>% 
-      map(function(x){ds.var(x, type = "combine")[[1]][[1]]})
-    
+    sds <- pool_avail %>% imap(function(.x, .y){
+      
+       ds.var(
+        x = .y,
+        type = "combine", 
+        datasources = opals[.x])[[1]][[1]]
+    }
+    )
+      
     names(sds) <- names(stats_cont[[1]])
    
     sds %<>% 

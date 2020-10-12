@@ -18,7 +18,7 @@ None. Stops function if var(s) don't exist in one of more cohorts.
 }
 \description{
 Probably mostly for internal use, this function can be used at the start
-of functions where users provide both vars and a dataframe to check that 
+of functions where users provide both vars and a dataframe to check that
 the vars exist in the dataframe provided
 }
 \author{

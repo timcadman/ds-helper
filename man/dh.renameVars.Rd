@@ -10,7 +10,7 @@ dh.renameVars(df, names)
 \item{df}{dataframe}
 
 \item{names}{a dataframe or tibble containing two columns: "oldvar" (existing
-variable name), "newvar" (new variable name). Each row 
+variable name), "newvar" (new variable name). Each row
 corresponds to one variable you want to rename}
 }
 \value{
