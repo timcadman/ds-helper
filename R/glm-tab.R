@@ -6,6 +6,7 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select
+#' @importFrom rlang arg_match
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
 #'
@@ -14,7 +15,7 @@
 #' @export
 dh.glmTab <- function(x, type){
   
-  type <- arg_match(type, c("ipd", "slma"))
+  type <- rlang::arg_match(type, c("ipd", "slma"))
   
   if(type == "ipd"){
     
