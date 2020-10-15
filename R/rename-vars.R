@@ -39,7 +39,7 @@ dh.renameVars <- function(df, names) {
       )
     )
 
-  old_new %>%
+  names %>%
     pull(newvar) %>%
     dh.tidyEnv() %>%
     invisible()
