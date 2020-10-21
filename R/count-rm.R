@@ -16,6 +16,7 @@
 #' 
 #' @importFrom dsBaseClient ds.asFactor ds.asInteger ds.dataFrame ds.table
 #'             ds.rep ds.dataFrameSort
+#' @importFrom tidyr tibble
 #'
 #' @author Tim Cadman
 #'
@@ -85,15 +86,15 @@ dh.countRM <- function(df, idvar){
   )
   
   ds.dataFrameSort(
-    df.name = "cbcl_sub",
-    sort.key.name = "cbcl_sub$id_int", 
+    df.name = df,
+    sort.key.name = paste0(df, "$id_int"), 
     sort.method = "numeric",
     newobj = "cbcl_sort"
   )
   
   ## Join back with the original dataframe
   ds.cbind(
-    x = c("cbcl_sub", "counts_sort"), 
+    x = c(df, "counts_sort"), 
     newobj = df)
   
   ## Tidy up
