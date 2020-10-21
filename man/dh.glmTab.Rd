@@ -5,7 +5,7 @@
 \title{Extracts the coefficients and confidence intervals from a ds.glm or 
 ds.glmSLMA model.}
 \usage{
-dh.glmTab(x, type)
+dh.glmTab(x, type, format = "paste")
 }
 \arguments{
 \item{type}{either "ipd" or "slma" depending on the type of analysis done}

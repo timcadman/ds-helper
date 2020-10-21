@@ -6,16 +6,16 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select
-#' @importFrom rlang arg_match
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
 #'
 #' @author Tim Cadman
 #'
 #' @export
-dh.glmTab <- function(x, type){
+dh.glmTab <- function(x, type, format = "paste"){
   
   type <- rlang::arg_match(type, c("ipd", "slma"))
+  format <- rlang::arg_match(format, c("paste", "separate"))
   
   if(type == "ipd"){
     
@@ -23,14 +23,9 @@ dh.glmTab <- function(x, type){
       variable = dimnames(x$coefficients)[[1]],
       est = round(x$coefficients[, "Estimate"], 2),
       lower = round(x$coefficients[, "low0.95CI"], 2),
-      upper = round(x$coefficients[, "high0.95CI"], 2)) %>%
-      mutate(
-        estimate = paste0(est, " (", lower, ", ", upper, ")")) %>%
-      select(variable, estimate)
+      upper = round(x$coefficients[, "high0.95CI"], 2))
     
-  }
-  
-  else if(type == "slma"){
+  } else if(type == "slma"){
     
     out <- tibble(
       variable = dimnames(x$SLMA.pooled.ests.matrix)[[1]],
@@ -39,12 +34,22 @@ dh.glmTab <- function(x, type){
         x$SLMA.pooled.ests.matrix[, "pooled.ML"] - 1.96 * 
           x$SLMA.pooled.ests.matrix[, "se.ML"], 2),
       upper = round(x$SLMA.pooled.ests.matrix[, "pooled.ML"] + 1.96 * 
-                      x$SLMA.pooled.ests.matrix[, "se.ML"], 2)) %>%
+                      x$SLMA.pooled.ests.matrix[, "se.ML"], 2))
+  
+  }
+
+  if(format == "paste"){
+    
+    out <- out %>%
       mutate(
-        estimate = paste0(est, " (", lower, ", ", upper, ")")) %>%
+      estimate = paste0(est, " (", lower, ", ", upper, ")")) %>%
       select(variable, estimate)
     
-  }
+  } else if(format == "separate"){
+    
+    out <- out
+    
+    }
   
   return(out)
   
