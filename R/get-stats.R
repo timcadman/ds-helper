@@ -64,7 +64,6 @@ dh.getStats <- function(conns = opals, df, vars) {
   ## Create vector of full names for datashield
   full_var_names <- paste0(df, "$", vars)
 
-  print(full_var_names)
   class_list <- full_var_names %>% map(ds.class, conns)
 
   f <- class_list %>% map(function(x) {
@@ -91,8 +90,6 @@ dh.getStats <- function(conns = opals, df, vars) {
   if (length(factors > 0)) {
     stats_cat[[1]] <- lapply(factors, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
-        print(conns[y])
-        print(paste0(df, "$", x))
         if (ds.length(paste0(df, "$", x),
           datasources = conns[y],
           type = "combine"
@@ -271,7 +268,6 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     out_cat <- rbind(out_cat, all_sum)
 
-
     ## Calculate additional stats
     out_cat %<>%
       group_by(cohort, variable) %>%
@@ -380,7 +376,7 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     valid_n_cont <- out_cont %>%
       group_by(variable) %>%
-      dplyr::summarize(valid_n = sum(valid_n, na.rm = TRUE))
+      summarize(valid_n = sum(valid_n, na.rm = TRUE))
 
     valid_n_cont$variable %<>% as.character
 
@@ -392,11 +388,13 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
 
-
     ## pooled median
-    medians <- paste0(df, "$", names(stats_cont[[1]])) %>% map(ds.quantileMean)
+    medians <- paste0(df, "$", names(stats_cont[[1]])) %>% 
+      map(function(x) {
+        ds.quantileMean(x, datasources = conns) 
+      })
     names(medians) <- names(stats_cont[[1]])
-
+    
     medians %<>%
       bind_rows(.id = "variable") %>%
       rename(
@@ -409,11 +407,10 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     coh_comb <- left_join(coh_comb, medians, by = "variable")
 
-
     ## pooled variance
     sds <- paste0(df, "$", names(stats_cont[[1]])) %>%
       map(function(x) {
-        ds.var(x, type = "combine")[[1]][[1]]
+        ds.var(x, type = "combine", datasources = conns)[[1]][[1]]
       })
 
     names(sds) <- names(stats_cont[[1]])

@@ -4,10 +4,12 @@
 \alias{dh.findVarsIndex}
 \title{Return return indices of columns in opal dataframe}
 \usage{
-dh.findVarsIndex(df, vars, cohorts = names(opals))
+dh.findVarsIndex(conns = opals, df, vars, cohorts)
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{conns}{connections object for DataSHIELD backends}
+
+\item{df}{datashield dataframe}
 
 \item{vars}{vector of variable names in dataframe}
 
@@ -21,7 +23,4 @@ Some ds functions ask you to provide the index of variables as arguments.
 This is highly susceptable to breaking! This is a simple function that will
 return the index of variables for a given cohort. It is usefully used in
 combination the "keep.cols" argument of ds.dataFrameSubset.
-}
-\author{
-Tim Cadman
 }

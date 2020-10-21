@@ -6,7 +6,7 @@
 #' combination the "keep.cols" argument of ds.dataFrameSubset.
 #'
 #' @param conns connections object for DataSHIELD backends
-#' @param df opal dataframe
+#' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
 #' @param cohorts cohort that you want to find indices for
 #'
@@ -15,10 +15,12 @@
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
 #'
-#' @author Tim Cadman
-#'
 #' @export
 dh.findVarsIndex <- function(conns = opals, df, vars, cohorts) {
+  if (missing(cohorts)) {
+    cohorts <- names(conns)
+  }
+  
   dh.doVarsExist(conns, df, vars, cohorts)
   dh.doesDfExist(conns, df, cohorts)
 

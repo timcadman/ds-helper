@@ -1,13 +1,14 @@
 library(mockery)
 
 test_that("Test if vars exists", {
-  vars <- c("height", "weight")
+  vars <- c("weight", "height")
   df <- data.frame(c("weight", "height"))
-  dsColnames <- mock(ds.colnames = data.frame(c("weight", "height")))
-  conns <- mock(name = "validate")
+  conns <- data.frame(validate = "OpalDriver")
   with_mock(
-    "dsBaseClient::ds.colnames" = dsColnames,
-    result <- dh.doVarsExist(conns, df, vars, cohorts)
+    "dsBaseClient::ds.colnames" = mock(data.frame(c("weight", "height"))),
+    {
+      result <- dh.doVarsExist(conns, df, vars)
+      expect_equal(result, NULL)
+    }
   )
-  expect_equal(result, NULL)
 })

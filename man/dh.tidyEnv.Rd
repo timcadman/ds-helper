@@ -23,6 +23,3 @@ None. Objects removed from ds environment
 This is a very simple wrapper around ds.rm to allow you to remove more than
 one object at a time.
 }
-\author{
-Tim Cadman
-}

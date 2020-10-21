@@ -4,10 +4,12 @@
 \alias{dh.subjHasData}
 \title{Indicate whether subject has any non-missing values in a set of variables}
 \usage{
-dh.subjHasData(df, vars, new_label)
+dh.subjHasData(conns = opals, df, vars, new_label)
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{conns}{connection object for DataSHIELD backends}
+
+\item{df}{datashield dataframe}
 
 \item{vars}{= vector of variable names in dataframe}
 
@@ -24,7 +26,4 @@ At some point in the analysis you will want to subset your dataset to contain
 only subjects meeting some criteria, e.g. data on at least one exposure and
 one outcome. This function speeds things up by indicating whether a subject
 has any non-missing values for a given set of variables.
-}
-\author{
-Tim Cadman
 }

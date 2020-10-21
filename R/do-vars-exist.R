@@ -3,9 +3,9 @@
 #' Probably mostly for internal use, this function can be used at the start
 #' of functions where users provide both vars and a dataframe to check that
 #' the vars exist in the dataframe provided
-#' 
+#'
 #' @param conns connections object to DataSHIELD backends
-#' @param df opal dataframe
+#' @param df datashield dataframe
 #' @param vars vector of variable names expected to be contained in dataframe
 #' @param cohorts optional argument specifying which cohorts to use
 #'
@@ -19,17 +19,15 @@ dh.doVarsExist <- function(conns = opals, df, vars, cohorts) {
   if (missing(cohorts)) {
     cohorts <- names(conns)
   }
-  
+
   allvars <- ds.colnames(x = df, datasources = conns[cohorts])
-
-  var_check <- allvars %>% map(~ (vars %in% .))
   
-  if(var_check == FALSE) {
-    any_missing <- NULL
-  } else {
-    any_missing <- var_check %>% map(~ any(. == FALSE))
-  }
+  var_check <- allvars %>% map(~ (vars %in% .))
 
+  any_missing <- var_check %>% map(~ any(. == FALSE))
+  
+  #print(any_missing)
+  
   if (any(unlist(any_missing) == TRUE)) {
     missing <- var_check %>%
       map(
