@@ -3,6 +3,7 @@
 #' This is a very simple wrapper around ds.rm to allow you to remove more than
 #' one object at a time.
 #'
+#' @param conns connections object to DataSHIELD backends
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.
@@ -17,7 +18,11 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)) {
+dh.tidyEnv <- function(conns = opals, obj, type = "remove", cohorts) {
+  if (missing(cohorts)) {
+    cohorts <- names(conns)
+  }
+  
   if (type == "remove") {
     obj %>% map(ds.rm, datasources = opals[cohorts])
   } else if (type == "keep") {

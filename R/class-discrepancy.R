@@ -4,7 +4,8 @@
 #' data, some cohorts may have variables uploaded as a different class to other
 #' cohorts. This can create problems, e.g. when using ds.summary. This function
 #' produces a table comparing the class of multiple variables.
-#'
+#' 
+#' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe (optional). If vars is not
 #'      provided all variables will be included.
@@ -18,8 +19,10 @@
 #'
 #' @author Tim Cadman
 #' @export
-dh.classDescrepancy <- function(df, vars = NULL) {
-  dh.doesDfExist(df)
+dh.classDescrepancy <- function(conns = opals, df, vars = NULL) {
+  . <- variable <- discrepancy <- NULL
+  
+  dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {
     fun_vars <- ds.colnames(df)[[1]]

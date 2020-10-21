@@ -14,9 +14,9 @@ dh.subjHasData(df, vars, new_label)
 \item{new_label}{= label which forms the suffix for the two created variables}
 }
 \value{
-None. Two new variables are variables created within the opal 
-        environment. The first indicates how many of the variables each 
-        subject has a non-missing value on. The second indicates whether 
+None. Two new variables are variables created within the opal
+        environment. The first indicates how many of the variables each
+        subject has a non-missing value on. The second indicates whether
         subjects have non-missing values on at least one of these variables.
 }
 \description{

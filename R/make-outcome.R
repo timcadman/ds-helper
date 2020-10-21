@@ -5,6 +5,7 @@
 #' which is quite complex in DataSHIELD. Note that for big datasets this takes
 #' a long time to run.
 #'
+#' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
 #' @param outcome name of repeated measures outcome variable
 #' @param age_var Vector of values indicating pairs of low and high values
@@ -25,17 +26,17 @@
 #'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape
 #' @importFrom purrr pmap map_dfr
 #' @importFrom tidyr pivot_longer
-#' @importFrom dplyr pull
+#' @importFrom dplyr pull filter
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
 #'
-#' @author Tim Cadman
-#'
 #' @export
 dh.makeOutcome <- function(
-                           df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
+                           conns = opals, df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
                            mult_vals = NULL) {
   mult_action <- match.arg(mult_action)
+  op <- tmp <- dfs <- new_subset_name <- value <- cohort <- age <- varname <- new_df_name <- available <- bmi_to_subset <- ref_val <- NULL
+
 
 
   cat("This may take some time depending on the number and size of datasets\n\n")
@@ -46,8 +47,8 @@ dh.makeOutcome <- function(
   start_objs <- ds.ls()
 
   ## ---- Argument checks --------------------------------------------------------
-  dh.doVarsExist(df, outcome)
-  dh.doesDfExist(df)
+  dh.doVarsExist(conns, df, outcome)
+  dh.doesDfExist(conns, df)
 
   ## ---- Check bands is an even number ------------------------------------------
   if ((length(bands) %% 2 == 0) == FALSE) {
@@ -66,8 +67,8 @@ dh.makeOutcome <- function(
   ds.dataFrame(
     x = c(df, "age"),
     newobj = new_df
-    )
-    
+  )
+
 
   ## ---- Select only variables needed -------------------------------------------
   dh.dropCols(
@@ -97,7 +98,7 @@ dh.makeOutcome <- function(
 
   ## ---- Check there are non missing values for age and outcome ---------------
   check_data_present <- tibble(
-    cohort = names(opals),
+    cohort = names(conns),
     outcome = ds.mean(paste0(df, "$", outcome))$Mean.by.Study[, "EstimatedMean"],
     age = ds.mean(paste0(df, "$", age_var))$Mean.by.Study[, "EstimatedMean"]
   )
@@ -187,7 +188,7 @@ to have a shorter name.",
   # Need to only show data as being available if >= minimum value for subsetting
   sub_min <- ds.listDisclosureSettings()$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset)
-  
+
   min_perc_vec <- sub_min / data_sum[[1]]$Mean.by.Study[, "Ntotal"]
 
   min_perc <- min_perc_vec %>%
@@ -233,7 +234,7 @@ to have a shorter name.",
           Boolean.operator = "==",
           keep.NAs = TRUE,
           newobj = new_subset_name,
-          datasources = opals[cohort]
+          datasources = conns[cohort]
         )
       }
     )
@@ -275,7 +276,7 @@ to have a shorter name.",
         ds.make(
           toAssign = condition,
           newobj = dif_val,
-          datasources = opals[cohort]
+          datasources = conns[cohort]
         )
       })
 
@@ -285,7 +286,7 @@ to have a shorter name.",
         ds.dataFrame(
           x = c(new_subset_name, dif_val),
           newobj = paste0(varname, "_y"),
-          datasources = opals[cohort]
+          datasources = conns[cohort]
         )
       })
 
@@ -309,7 +310,7 @@ to have a shorter name.",
           sort.key.name = paste0(new_subset_name, "$age"),
           newobj = paste0(varname, "_a"),
           sort.descending = sort_action,
-          datasources = opals[cohort]
+          datasources = conns[cohort]
         )
       })
   }
@@ -330,7 +331,7 @@ to have a shorter name.",
         ds.assign(
           toAssign = paste0("(", paste0(varname, "_a"), "$age*0)+", value),
           newobj = age_cat_name,
-          datasources = opals[cohort]
+          datasources = conns[cohort]
         )
       }
     )
@@ -341,7 +342,7 @@ to have a shorter name.",
       ds.dataFrame(
         x = c(paste0(varname, "_a"), age_cat_name),
         newobj = paste0(varname, "_c"),
-        datasources = opals[cohort]
+        datasources = conns[cohort]
       )
     })
 
@@ -356,7 +357,7 @@ to have a shorter name.",
           v.names = c(outcome, "age"),
           direction = "wide",
           newobj = paste0(varname, "_wide"),
-          datasources = opals[cohort]
+          datasources = conns[cohort]
         )
       }
     )
@@ -367,7 +368,7 @@ to have a shorter name.",
   ## First we identify the variables we want to keep
   all_vars <- cats_to_subset %>%
     pmap(function(varname, cohort, ...) {
-      ds.colnames(paste0(varname, "_wide"), datasources = opals[cohort])[[1]]
+      ds.colnames(paste0(varname, "_wide"), datasources = conns[cohort])[[1]]
     })
 
   names(all_vars) <- cats_to_subset$cohort
@@ -419,7 +420,7 @@ to have a shorter name.",
         ds.dataFrame(
           x = .x,
           newobj = out_name,
-          datasources = opals[.y]
+          datasources = conns[.y]
         )
       }
 
@@ -431,7 +432,7 @@ to have a shorter name.",
           by.y.names = "child_id",
           all.x = TRUE,
           newobj = out_name,
-          datasources = opals[.y]
+          datasources = conns[.y]
         )
       }
 
@@ -443,7 +444,7 @@ to have a shorter name.",
           by.y.names = "child_id",
           all.x = TRUE,
           newobj = out_name,
-          datasources = opals[.y]
+          datasources = conns[.y]
         )
 
         remaining <- tibble(
@@ -460,7 +461,7 @@ to have a shorter name.",
               by.y.names = "child_id",
               all.x = TRUE,
               newobj = out_name,
-              datasources = opals[cohort]
+              datasources = conns[cohort]
             )
           })
       }
@@ -479,7 +480,7 @@ to have a shorter name.",
   ## but we keep the final dataset
   to_remove <- to_remove[!(to_remove %in% out_name)]
 
-  dh.tidyEnv(obj = to_remove, type = "remove")
+  dh.tidyEnv(conns, obj = to_remove, type = "remove")
 
   message("DONE", appendLF = TRUE)
 

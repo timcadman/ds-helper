@@ -10,6 +10,7 @@
 #' Although, this may be less important if using ds.dataFrameFill throughout
 #' your scripts.
 #'
+#' @param conns connection object for DataSHIELD backends
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe
 #'
@@ -43,17 +44,17 @@
 #'  missing_perc = as above
 #'
 #' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup left_join bind_rows rename
 #' @importFrom purrr map flatten_dbl
-#' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var
+#' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var ds.quantileMean
 #' @importFrom stringr str_detect
 #' @importFrom stats setNames
 #' @importFrom magrittr %<>%
 #'
-#' @author Tim Cadman
-#'
 #' @export
-dh.getStats <- function(conns, df, vars) {
+dh.getStats <- function(conns = opals, df, vars) {
+  Mean <- perc_25 <- perc_50 <- perc_75 <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
+  
   dh.doVarsExist(conns, df, vars)
 
   ################################################################################
@@ -63,6 +64,7 @@ dh.getStats <- function(conns, df, vars) {
   ## Create vector of full names for datashield
   full_var_names <- paste0(df, "$", vars)
 
+  print(full_var_names)
   class_list <- full_var_names %>% map(ds.class, conns)
 
   f <- class_list %>% map(function(x) {
@@ -89,6 +91,8 @@ dh.getStats <- function(conns, df, vars) {
   if (length(factors > 0)) {
     stats_cat[[1]] <- lapply(factors, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
+        print(conns[y])
+        print(paste0(df, "$", x))
         if (ds.length(paste0(df, "$", x),
           datasources = conns[y],
           type = "combine"
@@ -373,58 +377,63 @@ dh.getStats <- function(conns, df, vars) {
 
     ## ---- Get pooled values --------------------------------------------------
     out_cont %<>% arrange(variable)
-    
-    valid_n_cont <- out_cont %>% 
+
+    valid_n_cont <- out_cont %>%
       group_by(variable) %>%
-      dplyr::summarize(valid_n = sum(valid_n, na.rm = TRUE)) 
-    
+      dplyr::summarize(valid_n = sum(valid_n, na.rm = TRUE))
+
     valid_n_cont$variable %<>% as.character
-    
+
     coh_comb <- tibble(
       cohort = "Combined",
-      variable = sort(names(stats_cont[[1]])), 
-      cohort_n = Reduce(`+`, stats_cont[["Max_N"]]))
-    
+      variable = sort(names(stats_cont[[1]])),
+      cohort_n = Reduce(`+`, stats_cont[["Max_N"]])
+    )
+
     coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
-      
-    
-    ## pooled median 
+
+
+    ## pooled median
     medians <- paste0(df, "$", names(stats_cont[[1]])) %>% map(ds.quantileMean)
     names(medians) <- names(stats_cont[[1]])
-    
-    medians %<>% 
+
+    medians %<>%
       bind_rows(.id = "variable") %>%
       rename(
-        perc_25 = "25%", 
-        perc_50 = "50%", 
-        perc_75 = "75%", 
-        mean = Mean) %>%
+        perc_25 = "25%",
+        perc_50 = "50%",
+        perc_75 = "75%",
+        mean = Mean
+      ) %>%
       select(variable, perc_25, perc_50, perc_75, mean)
-    
+
     coh_comb <- left_join(coh_comb, medians, by = "variable")
-    
-    
+
+
     ## pooled variance
-    sds <- paste0(df, "$", names(stats_cont[[1]])) %>% 
-      map(function(x){ds.var(x, type = "combine")[[1]][[1]]})
-    
+    sds <- paste0(df, "$", names(stats_cont[[1]])) %>%
+      map(function(x) {
+        ds.var(x, type = "combine")[[1]][[1]]
+      })
+
     names(sds) <- names(stats_cont[[1]])
-   
-    sds %<>% 
-      map(as_tibble) %>% 
-      bind_rows(.id = "variable") %>% 
-      rename(variance = value) 
-    
+
+    sds %<>%
+      map(as_tibble) %>%
+      bind_rows(.id = "variable") %>%
+      rename(variance = value)
+
     coh_comb <- left_join(coh_comb, sds, by = "variable")
-    
+
     ## missing n and std.dev
     coh_comb %<>%
       mutate(
         missing_n = cohort_n - valid_n,
-        std.dev = variance * sqrt(valid_n)) %>%
-     select(-variance)
-        
-## ---- Combine with main table ------------------------------------------------
+        std.dev = variance * sqrt(valid_n)
+      ) %>%
+      select(-variance)
+
+    ## ---- Combine with main table ------------------------------------------------
     out_cont <- rbind(out_cont, coh_comb)
 
     out_cont %<>%
