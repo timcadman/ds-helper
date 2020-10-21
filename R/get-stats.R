@@ -53,7 +53,7 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.getStats <- function(df, vars) {
+dh.getStats <- function(conns, df, vars) {
   dh.doVarsExist(df, vars)
 
   ################################################################################
@@ -63,7 +63,7 @@ dh.getStats <- function(df, vars) {
   ## Create vector of full names for datashield
   full_var_names <- paste0(df, "$", vars)
 
-  class_list <- full_var_names %>% map(ds.class, opals)
+  class_list <- full_var_names %>% map(ds.class, conns)
 
   f <- class_list %>% map(function(x) {
     any(str_detect(x, "factor") == TRUE)
@@ -77,7 +77,7 @@ dh.getStats <- function(df, vars) {
   integers <- vars[(which(i == TRUE))]
 
   ## Create vector of opal names
-  cohorts <- names(opals)
+  cohorts <- names(conns)
 
   ################################################################################
   # 2. Extract information using ds.summary
@@ -90,19 +90,19 @@ dh.getStats <- function(df, vars) {
     stats_cat[[1]] <- lapply(factors, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
+          datasources = conns[y],
           type = "combine"
         ) == 0) {
           list(NULL)
         } else {
-          ds.summary(paste0(df, "$", x), datasources = opals[y])
+          ds.summary(paste0(df, "$", x), datasources = conns[y])
         }
       })
     })
 
     stats_cat[[2]] <- ds.length(paste0(df, "$", factors[1]),
       type = "split",
-      datasources = opals
+      datasources = conns
     )
 
     names(stats_cat) <- c("Descriptives", "Max_N")
@@ -118,12 +118,12 @@ dh.getStats <- function(df, vars) {
     stats_cont[[1]] <- lapply(integers, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
+          datasources = conns[y],
           type = "combine"
         ) == 0) {
           list(NULL)
         } else {
-          ds.summary(paste0(df, "$", x), datasources = opals[y])
+          ds.summary(paste0(df, "$", x), datasources = conns[y])
         }
       })
     })
@@ -134,12 +134,12 @@ dh.getStats <- function(df, vars) {
     stats_cont[[2]] <- lapply(integers, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
+          datasources = conns[y],
           type = "combine"
         ) == 0) {
           list(NULL)
         } else {
-          ds.var(paste0(df, "$", x), datasources = opals[y])[1]
+          ds.var(paste0(df, "$", x), datasources = conns[y])[1]
         }
       })
     })
@@ -151,7 +151,7 @@ dh.getStats <- function(df, vars) {
 
     stats_cont[[3]] <- ds.length(paste0(df, "$", integers[1]),
       type = "split",
-      datasources = opals
+      datasources = conns
     )
 
     names(stats_cont) <- c("Mean", "Variance", "Max_N")
