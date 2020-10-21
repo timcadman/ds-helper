@@ -54,7 +54,7 @@
 #'
 #' @export
 dh.getStats <- function(conns, df, vars) {
-  dh.doVarsExist(df, vars)
+  dh.doVarsExist(conns, df, vars)
 
   ################################################################################
   # 1. Identify variable type
