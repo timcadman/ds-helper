@@ -29,7 +29,6 @@ brew install nlopt
 If you get an error when trying to install tidyr, run the following lines of code:
 
 ```R
-remove.packages("tidyr")
 remove.packages("cpp11")
 library(remotes)
 install_github('r-lib/cpp11', ref = 'v0.1.0')

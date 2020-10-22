@@ -5,19 +5,16 @@
 \title{Subsets a dataframe using column names.}
 \usage{
 dh.dropCols(
-  conns = opals,
   df,
   vars,
   new_df_name,
   comp_var,
   type = c("keep", "remove"),
-  cohorts
+  cohorts = names(opals)
 )
 }
 \arguments{
-\item{conns}{connections object to DataSHIELD backends}
-
-\item{df}{datashield dataframe}
+\item{df}{opal dataframe}
 
 \item{vars}{variables to keep or remove}
 
@@ -37,4 +34,7 @@ a new dataframe is created containing the specified subset of columns
 Often we may have created variables within a dataframe that we no longer
 need. This function allows you to specify either the variables you want to
 keep or drop and create a new dataframe with only the variables you need.
+}
+\author{
+Tim Cadman
 }

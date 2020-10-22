@@ -17,3 +17,6 @@ A tibble containing the estimate with lower and upper confidence intervals
 \description{
 Simple function to extract key coefficients from regression models.
 }
+\author{
+Tim Cadman
+}

@@ -4,18 +4,16 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(conns = opals, df, vars)
+dh.getStats(df, vars)
 }
 \arguments{
-\item{conns}{connection object for DataSHIELD backends}
-
 \item{df}{opal dataframe}
 
 \item{vars}{vector of variable names in dataframe}
 }
 \value{
-The function returns a list with two elements containing dataframes
-with summary statistics for (i) categorical and (ii) continuous variables.
+The function returns a list with two elements containing dataframes 
+with summary statistics for (i) categorical and (ii) continuous variables. 
 These data frames are in longform and contain the following variables.
 
 Categorical:
@@ -23,15 +21,15 @@ variable = variable
  category = level of variable
  value = number of observations
  cohort = name of cohort, including combined values for all cohorts
- cohort_n = total number of observations for cohort in dataset
- valid_n = number of valid observations for variable (sum of ns for each
+ cohort_n = total number of observations for cohort in dataset 
+ valid_n = number of valid observations for variable (sum of ns for each 
            categories)
  missing_n = number of observations missing for variable (cohort_n - valid_n)
- valid_perc = observations within a category as percentage of valid_n
- missing_perc = percentage of observations missing for a variable (valid_n /
+ valid_perc = observations within a category as percentage of valid_n 
+ missing_perc = percentage of observations missing for a variable (valid_n / 
                 cohort_n)*100
 
-Continuous:
+Continuous: 
 
  cohort = cohort, including combined values for all cohorts
  variable = variable
@@ -44,13 +42,16 @@ Continuous:
  missing_perc = as above
 }
 \description{
-This function extracts descriptive statistics from variables held in opal
-tables via DS. It mainly uses "ds.summary", but it also extracts extra
-info not given by default. It also avoids a problem encountered with
-ds.summary where it gets upset if the variable you request isn't present
-within a cohort. Instead this function just returns NA for that variable and
+This function extracts descriptive statistics from variables held in opal 
+tables via DS. It mainly uses "ds.summary", but it also extracts extra 
+info not given by default. It also avoids a problem encountered with 
+ds.summary where it gets upset if the variable you request isn't present 
+within a cohort. Instead this function just returns NA for that variable and 
 for that cohort. This is more useful, e.g. if you want to make descriptive
 tables for papers and show that a certain cohort is lacking some information.
 Although, this may be less important if using ds.dataFrameFill throughout
 your scripts.
+}
+\author{
+Tim Cadman
 }
