@@ -5,8 +5,7 @@
 #' return the index of variables for a given cohort. It is usefully used in
 #' combination the "keep.cols" argument of ds.dataFrameSubset.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df datashield dataframe
+#' @param df opal dataframe
 #' @param vars vector of variable names in dataframe
 #' @param cohorts cohort that you want to find indices for
 #'
@@ -15,14 +14,12 @@
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
 #'
+#' @author Tim Cadman
+#'
 #' @export
-dh.findVarsIndex <- function(conns = opals, df, vars, cohorts) {
-  if (missing(cohorts)) {
-    cohorts <- names(conns)
-  }
-  
-  dh.doVarsExist(conns, df, vars, cohorts)
-  dh.doesDfExist(conns, df, cohorts)
+dh.findVarsIndex <- function(df, vars, cohorts = names(opals)) {
+  dh.doVarsExist(df, vars, cohorts)
+  dh.doesDfExist(df, cohorts)
 
   ref_tab <- tibble(
     var = rep(vars, length(cohorts)),
@@ -33,7 +30,7 @@ dh.findVarsIndex <- function(conns = opals, df, vars, cohorts) {
     pmap(
       function(var, cohort) {
         which(
-          ds.colnames(df, datasources = conns[cohort])[[1]] %in% var == TRUE
+          ds.colnames(df, datasources = opals[cohort])[[1]] %in% var == TRUE
         )
       }
     )

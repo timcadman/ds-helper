@@ -4,14 +4,12 @@
 \alias{dh.classDescrepancy}
 \title{Class descrepancy}
 \usage{
-dh.classDescrepancy(conns = opals, df, vars = NULL)
+dh.classDescrepancy(df, vars = NULL)
 }
 \arguments{
-\item{conns}{connections object for DataSHIELD backends}
-
 \item{df}{opal dataframe}
 
-\item{vars}{vector of variable names in dataframe (optional). If vars is not
+\item{vars}{vector of variable names in dataframe (optional). If vars is not 
 provided all variables will be included.}
 }
 \value{
@@ -19,7 +17,7 @@ a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
        columns for each cohort indicating the class of the variable
 }
 \description{
-Either due to using ds.dataFrameFill, or because of mistakes in uploading
+Either due to using ds.dataFrameFill, or because of mistakes in uploading 
 data, some cohorts may have variables uploaded as a different class to other
 cohorts. This can create problems, e.g. when using ds.summary. This function
 produces a table comparing the class of multiple variables.

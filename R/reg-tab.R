@@ -7,10 +7,10 @@
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
 #'
+#' @author Tim Cadman
+#'
 #' @export
 dh.regTab <- function(model, type) {
-  lower <- upper <- NULL
-
   if (type == "slma") {
     out <- tibble(
       var = dimnames(model$SLMA.pooled.ests.matrix)[[1]],

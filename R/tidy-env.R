@@ -2,8 +2,7 @@
 #'
 #' This is a very simple wrapper around ds.rm to allow you to remove more than
 #' one object at a time.
-#' 
-#' @param conns connections object to DataSHIELD backends
+#'
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.
@@ -15,19 +14,16 @@
 #' @importFrom dsBaseClient ds.rm
 #' @importFrom dplyr %>%
 #'
+#' @author Tim Cadman
+#'
 #' @export
-dh.tidyEnv <- function(conns = opals, obj, type = "remove", cohorts) {
-  . <- NULL
-  if (missing(cohorts)) {
-    cohorts <- names(conns)
-  }
-  
+dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)) {
   if (type == "remove") {
-    obj %>% map(ds.rm, datasources = conns[cohorts])
+    obj %>% map(ds.rm, datasources = opals[cohorts])
   } else if (type == "keep") {
     objects <- cohorts %>%
       map(
-        ~ ds.ls(datasources = conns[.])[[1]][[2]]
+        ~ ds.ls(datasources = opals[.])[[1]][[2]]
       )
 
     vars <- seq(1:length(cohorts)) %>%
@@ -56,7 +52,7 @@ characters. DS does not permit this due to risk of malicious code. Amend your
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.name = value, datasources = conns[cohort])
+      ds.rm(x.name = value, datasources = opals[cohort])
     })
   }
 }

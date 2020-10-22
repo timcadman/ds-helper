@@ -1,9 +1,10 @@
 Package: dsHelper
 Title: Helper functions for use with DataSHIELD
-Version: 0.0.0.9004
+Version: 0.0.0.9001
 Authors@R: person("Tim", "Cadman", email = "t.cadman@bristol.ac.uk",
                   role = c("aut", "cre"))
-Description: Sometimes we need to automate things with DS. These functions help to do that.
+Description: Sometimes we need to automate things with DS. These functions help
+  to do that.
 Depends: 
   R (>= 3.5.0),
   dsBaseClient (>= 5.1.0)
@@ -16,13 +17,10 @@ Imports:
   tibble,
   tidyr
 Suggests: 
-  knitr, 
-  rmarkdown,
-  testthat,
-  mockery
-VignetteBuilder: knitr
+    rmarkdown,
+    testthat,
+    mockery
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
-
