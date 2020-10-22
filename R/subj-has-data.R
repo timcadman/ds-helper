@@ -5,7 +5,8 @@
 #' one outcome. This function speeds things up by indicating whether a subject
 #' has any non-missing values for a given set of variables.
 #'
-#' @param df opal dataframe
+#' @param conns connection object for DataSHIELD backends
+#' @param df datashield dataframe
 #' @param vars = vector of variable names in dataframe
 #' @param new_label = label which forms the suffix for the two created variables
 #'
@@ -16,11 +17,13 @@
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
 #'
-#' @author Tim Cadman
-#'
 #' @export
-dh.subjHasData <- function(df, vars, new_label) {
-  dh.doesDfExist(df)
+dh.subjHasData <- function(conns = opals, df, vars, new_label) {
+  if (missing(cohorts)) {
+    cohorts <- names(conns)
+  }
+  
+  dh.doesDfExist(conns, df)
 
   ## ---- Convert to numeric -----------------------------------------------------
 
@@ -28,7 +31,7 @@ dh.subjHasData <- function(df, vars, new_label) {
   # are just numeric copies of the variables we will end up keeping.
 
   sapply(vars, function(x) {
-    ds.asNumeric(paste0(df, "$", x), newobj = paste0(x, "_num"))
+    ds.asNumeric(paste0(df, "$", x), newobj = paste0(x, "_num"), datasources = conns)
   })
 
 
@@ -45,7 +48,8 @@ dh.subjHasData <- function(df, vars, new_label) {
       V2 = "0",
       Boolean.operator = ">=",
       na.assign = 0,
-      newobj = paste0(x, "_yn")
+      newobj = paste0(x, "_yn"),
+      datasources = conns
     )
   })
 
@@ -53,7 +57,8 @@ dh.subjHasData <- function(df, vars, new_label) {
   ## ---- Count number of non-missing variables for each subject -----------------
   ds.make(
     toAssign = paste0(paste0(vars_num, "_yn"), collapse = "+"),
-    newobj = paste0("n_", new_label)
+    newobj = paste0("n_", new_label),
+    datasources = conns
   )
 
 
@@ -63,6 +68,7 @@ dh.subjHasData <- function(df, vars, new_label) {
     V2 = "0",
     Boolean.operator = ">",
     na.assign = 0,
-    newobj = paste0("any_", new_label)
+    newobj = paste0("any_", new_label),
+    datasources = conns
   )
 }

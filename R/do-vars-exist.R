@@ -4,7 +4,8 @@
 #' of functions where users provide both vars and a dataframe to check that
 #' the vars exist in the dataframe provided
 #'
-#' @param df opal dataframe
+#' @param conns connections object to DataSHIELD backends
+#' @param df datashield dataframe
 #' @param vars vector of variable names expected to be contained in dataframe
 #' @param cohorts optional argument specifying which cohorts to use
 #'
@@ -13,15 +14,20 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
 #'
-#' @author Tim Cadman
 #' @export
-dh.doVarsExist <- function(df, vars, cohorts = names(opals)) {
-  allvars <- ds.colnames(df, datasources = opals[cohorts])
+dh.doVarsExist <- function(conns = opals, df, vars, cohorts) {
+  if (missing(cohorts)) {
+    cohorts <- names(conns)
+  }
 
+  allvars <- ds.colnames(x = df, datasources = conns[cohorts])
+  
   var_check <- allvars %>% map(~ (vars %in% .))
 
   any_missing <- var_check %>% map(~ any(. == FALSE))
-
+  
+  #print(any_missing)
+  
   if (any(unlist(any_missing) == TRUE)) {
     missing <- var_check %>%
       map(

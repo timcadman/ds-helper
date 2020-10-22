@@ -4,9 +4,11 @@
 \alias{dh.tidyEnv}
 \title{Tidy up the server environment}
 \usage{
-dh.tidyEnv(obj, type = "remove", cohorts = names(opals))
+dh.tidyEnv(conns = opals, obj, type = "remove", cohorts)
 }
 \arguments{
+\item{conns}{connections object to DataSHIELD backends}
+
 \item{obj}{objects that you want to either keep or remove}
 
 \item{type}{either "remove" to remove the listed objects of "keep" to keep
@@ -18,9 +20,6 @@ the listed objects and remove everything else.}
 None. Objects removed from ds environment
 }
 \description{
-This is a very simple wrapper around ds.rm to allow you to remove more than 
+This is a very simple wrapper around ds.rm to allow you to remove more than
 one object at a time.
-}
-\author{
-Tim Cadman
 }

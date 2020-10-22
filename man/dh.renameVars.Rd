@@ -4,13 +4,15 @@
 \alias{dh.renameVars}
 \title{Rename multiple variables at once}
 \usage{
-dh.renameVars(df, names)
+dh.renameVars(conns = opals, df, names)
 }
 \arguments{
+\item{conns}{connections object for DataSHIELD backends}
+
 \item{df}{dataframe}
 
 \item{names}{a dataframe or tibble containing two columns: "oldvar" (existing
-variable name), "newvar" (new variable name). Each row 
+variable name), "newvar" (new variable name). Each row
 corresponds to one variable you want to rename}
 }
 \value{
@@ -21,7 +23,4 @@ This function allows you to rename multiple variable from a dataframe. At the
 moment it doesn't "rename" as such, it creates duplicate variables with the
 new names. I've left it like this to keep in the spirit of ds/opal set up
 by not automating the deletion of variables.
-}
-\author{
-Tim Cadman
 }
