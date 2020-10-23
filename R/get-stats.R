@@ -301,13 +301,13 @@ dh.getStats <- function(df, vars) {
           })
         })
       ),
-      perc_25 = unlist(
+      perc_5 = unlist(
         sapply(stats_cont[[1]], function(x) {
           sapply(cohorts, simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
-              round(x[[y]]$"quantiles & mean"["25%"], 2)
+              round(x[[y]]$"quantiles & mean"["5%"], 2)
             }
           })
         })
@@ -323,13 +323,13 @@ dh.getStats <- function(df, vars) {
           })
         })
       ),
-      perc_75 = unlist(
+      perc_95 = unlist(
         sapply(stats_cont[[1]], function(x) {
           sapply(cohorts, simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
-              round(x[[y]]$"quantiles & mean"["75%"], 2)
+              round(x[[y]]$"quantiles & mean"["95%"], 2)
             }
           })
         })
@@ -388,26 +388,57 @@ dh.getStats <- function(df, vars) {
     coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
       
     
+    ## ---- Identify cohorts with non-missing data -----------------------------
+    
+    ## Need this step at the moment as the DS functions returned missing pooled
+    ## values if any cohorts don't have them.
+    
+     pool_avail <- names(stats_cont[[1]]) %>%
+      map(function(x){
+        
+        tmp <- out_cont %>% 
+          filter(variable == x) %>%
+          filter(!is.na(mean)) %>%
+          select(cohort) %>%
+          pull %>%
+          as.character
+        
+          })
+    
+    names(pool_avail) <- paste0(df, "$", names(stats_cont[[1]]))
+    
     ## pooled median 
-    medians <- paste0(df, "$", names(stats_cont[[1]])) %>% map(ds.quantileMean)
+    medians <- pool_avail %>% imap(
+      ~ds.quantileMean(
+        x = .y,
+        type = "combine", 
+        datasources = opals[.x])
+      )
+    
     names(medians) <- names(stats_cont[[1]])
     
     medians %<>% 
       bind_rows(.id = "variable") %>%
       rename(
-        perc_25 = "25%", 
+        perc_5 = "5%", 
         perc_50 = "50%", 
-        perc_75 = "75%", 
+        perc_95 = "95%", 
         mean = Mean) %>%
-      select(variable, perc_25, perc_50, perc_75, mean)
+      select(variable, perc_5, perc_50, perc_95, mean)
     
     coh_comb <- left_join(coh_comb, medians, by = "variable")
     
     
     ## pooled variance
-    sds <- paste0(df, "$", names(stats_cont[[1]])) %>% 
-      map(function(x){ds.var(x, type = "combine")[[1]][[1]]})
-    
+    sds <- pool_avail %>% imap(function(.x, .y){
+      
+       ds.var(
+        x = .y,
+        type = "combine", 
+        datasources = opals[.x])[[1]][[1]]
+    }
+    )
+      
     names(sds) <- names(stats_cont[[1]])
    
     sds %<>% 
@@ -430,6 +461,10 @@ dh.getStats <- function(df, vars) {
     out_cont %<>%
       mutate(missing_perc = round((missing_n / cohort_n) * 100, 2)) %>%
       as_tibble()
+    
+## ---- Round combined values --------------------------------------------------    
+    out_cont %<>%
+      mutate_at(vars(mean:missing_perc), ~round(., 2))
   }
   out <- list(out_cat, out_cont)
   names(out) <- c("categorical", "continuous")

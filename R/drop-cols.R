@@ -22,7 +22,7 @@
 #'
 #' @export
 dh.dropCols <- function(df, vars, new_df_name, comp_var, type = c("keep", "remove"),
-                        cohorts = names(opals)) {
+                        cohorts = names(opals), remove_temp = FALSE) {
   type <- match.arg(type)
 
   vars_index <- dh.findVarsIndex(df, vars, cohorts)
@@ -63,5 +63,8 @@ dh.dropCols <- function(df, vars, new_df_name, comp_var, type = c("keep", "remov
       )
     )
 
+  if(remove_temp == TRUE){
+  
   dh.tidyEnv(obj = c("comp_var_num", "tmp_sub_var"), type = "remove", cohorts = cohorts)
+  }
 }

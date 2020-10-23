@@ -18,7 +18,7 @@ the listed objects and remove everything else.}
 None. Objects removed from ds environment
 }
 \description{
-This is a very simple wrapper around ds.rm to allow you to remove more than 
+This is a very simple wrapper around ds.rm to allow you to remove more than
 one object at a time.
 }
 \author{

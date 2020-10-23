@@ -15,7 +15,7 @@ dh.doesDfExist(df, cohorts = names(opals))
 None. Stops function if df doesn't exist in one of more cohorts.
 }
 \description{
-Again for internal use, this function can be used at the start of 
+Again for internal use, this function can be used at the start of
 functions where users provide a dataframe to check that the df exists
 When I've got more time combine this with "cs.doVarsExist"
 }

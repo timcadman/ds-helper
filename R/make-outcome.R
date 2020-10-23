@@ -24,8 +24,8 @@
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
 #'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape
 #' @importFrom purrr pmap map_dfr
-#' @importFrom tidyr pivot_longer
-#' @importFrom dplyr pull
+#' @importFrom tidyr pivot_longer tibble
+#' @importFrom dplyr pull %>%
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
 #'
@@ -34,7 +34,7 @@
 #' @export
 dh.makeOutcome <- function(
                            df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL) {
+                           mult_vals = NULL, remove_temp = TRUE) {
   mult_action <- match.arg(mult_action)
 
 
@@ -56,28 +56,95 @@ dh.makeOutcome <- function(
     )
   }
 
+  ## ---- Check class of outcome -----------------------------------------------
+  var_class <- ds.class(paste0(df, "$", outcome))
+  
+  if(length(unique(var_class)) > 1){
+    
+    stop("The outcome variable does not have the same class in all studies. 
+         Please fix this and run again.")
+  } else if(var_class[[1]] == "character"){
+    
+    stop("The outcome variable is class 'character'. Please provide either a 
+         numeric, integer or factor variable.")
+    
+  }
+  
+
+## ---- Subset to only include cohorts with some data --------------------------
+  ds.asNumeric(paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
+  
+  ds.Boole(
+    V1 = paste0(outcome, "_n"),
+    V2 = "0",
+    Boolean.operator = ">=",
+    na.assign = 0,
+    newobj = "outcome_comp"
+    )
+  
+  nonmissing <- ds.mean("outcome_comp")$Mean.by.Study[, "EstimatedMean"] > 0
+  
+  if (all(nonmissing == FALSE)){
+    
+    stop("None of the cohorts have available outcome data")
+  }
+  
+  if (any(nonmissing == FALSE)){
+   
+    warning(paste0(
+      paste0("No valid data on ", "'", outcome, "'", 
+             " available for the following cohort(s): "), 
+      paste0(names(which(nonmissing == FALSE)), collapse = ", ")), call. = FALSE)
+  }
+   
+    ## ---- Check there are non missing values for age and outcome ---------------
+  age_missing <- unlist(ds.isNA(paste0(df, "$", age_var)))
+  
+  if (any(age_missing) == TRUE) {
+    
+    stop(paste0(
+      paste0(
+        "No valid data on age of measurement available for the following cohort(s): "), 
+      paste0(names(which(age_missing == TRUE)), collapse = ", ")), call. = FALSE)
+  }
+  
+  valid_coh <- names(which(nonmissing == TRUE))
+  
+  
   ## ---- Create numeric version of age_var --------------------------------------
   ds.asNumeric(
     x.name = paste0(df, "$", age_var),
-    newobj = "age"
+    newobj = "age", 
+    datasources = opals[valid_coh]
   )
-
+  
   new_df <- paste0(df, "_tmp")
   ds.dataFrame(
-    x = c(df, "age"),
-    newobj = new_df
-    )
-    
-
-  ## ---- Select only variables needed -------------------------------------------
-  dh.dropCols(
-    df = new_df,
-    vars = c("child_id", outcome, "age"),
-    new_df_name = new_df,
-    comp_var = "child_id",
-    type = "keep"
+    x = c(df, "age", "outcome_comp"),
+    newobj = new_df, 
+    datasources = opals[valid_coh]
   )
-
+  
+  ## ---- Drop variables we don't need -------------------------------------------
+  v_ind <- dh.findVarsIndex(
+    df = new_df, 
+    vars = c("child_id", outcome, "age", "outcome_comp"),
+    cohorts = valid_coh)
+  
+  ## Now finally we subset based on valid cases and required variables
+  v_ind %>%
+    imap(
+      ~ds.dataFrameSubset(
+        df.name = new_df, 
+        V1.name = "outcome_comp", 
+        V2.name = "1", 
+        Boolean.operator = "==", 
+        keep.cols = .x,
+        keep.NAs = FALSE, 
+        newobj = new_df, 
+        datasources = opals[.y]))
+  
+  
   ## ---- Make paired list for each band ---------------------------------------
   pairs <- split(bands, ceiling(seq_along(bands) / 2))
 
@@ -94,49 +161,21 @@ dh.makeOutcome <- function(
     tmp = ifelse(op == ">", "gt", "lte"),
     new_df_name = paste0(outcome, tmp, value)
   )
-
-  ## ---- Check there are non missing values for age and outcome ---------------
-  check_data_present <- tibble(
-    cohort = names(opals),
-    outcome = ds.mean(paste0(df, "$", outcome))$Mean.by.Study[, "EstimatedMean"],
-    age = ds.mean(paste0(df, "$", age_var))$Mean.by.Study[, "EstimatedMean"]
-  )
-
-  if (any(is.na(check_data_present$outcome)) == TRUE) {
-    miss_cohort <- check_data_present %>%
-      filter(is.na(outcome)) %>%
-      select(cohort) %>%
-      pull()
-
-    stop(paste0(
-      "No valid data on ", outcome, " available for cohort(s) ",
-      "'", miss_cohort, "'"
-    ), call. = FALSE)
-  }
-
-  if (any(is.na(check_data_present$age)) == TRUE) {
-    miss_age <- check_data_present %>%
-      filter(is.na(age)) %>%
-      select(cohort) %>%
-      pull()
-
-    stop(paste0(
-      "No valid data on age of measurement available for cohort(s) ",
-      "'", miss_age, "'"
-    ), call. = FALSE)
-  }
-
+  
+ 
+  
   ## ---- Check max character length -------------------------------------------
   if (max(nchar(cats$varname)) + 6 > 20) {
     stop(
       "Due to disclosure settings, the total string length of [outcome] + 
-[max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must no more 
+[max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more 
 than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10, 
 max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
 is 9. However if your outcome was named 'adiposity' this would give 
 a string length of 'adiposity104035 = 15' which is too long. I realise
 this is quite annoying. To get round it rename your outcome variable
-to have a shorter name.",
+to have a shorter name. As a rule of thumb I would rename your outcome to be
+no more than three characters",
       call. = FALSE
     )
   }
@@ -146,7 +185,7 @@ to have a shorter name.",
 
   message("** Step 2 of 7: Defining subsets ... ", appendLF = FALSE)
 
-  # Use each row from this table in a call to ds.Boole. Here we make ten vectors
+  # Use each row from this table in a call to ds.Boole. Here we make vectors
   # indicating whether or not the value meets the evaluation criteria
 
   cats %>%
@@ -155,7 +194,8 @@ to have a shorter name.",
         V1 = paste0(new_df, "$", "age"),
         V2 = value,
         Boolean.operator = op,
-        newobj = new_df_name
+        newobj = new_df_name, 
+        datasources = opals[valid_coh]
       )
     })
 
@@ -171,21 +211,21 @@ to have a shorter name.",
     pmap(function(condition, varname) {
       ds.assign(
         toAssign = condition,
-        newobj = varname
+        newobj = varname, 
+        datasources = opals[valid_coh]
       )
     })
 
   ## ---- Now we want to find out which cohorts have data ------------------------
   data_sum <- assign_conditions %>%
     pmap(function(varname, ...) {
-      ds.mean(varname)
+      ds.mean(varname, datasources = opals[valid_coh])
     })
-
 
   ## ---- Handle disclosure issues -----------------------------------------------
 
   # Need to only show data as being available if >= minimum value for subsetting
-  sub_min <- ds.listDisclosureSettings()$ds.disclosure.settings %>%
+  sub_min <- ds.listDisclosureSettings(datasources = opals[valid_coh])$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset)
   
   min_perc_vec <- sub_min / data_sum[[1]]$Mean.by.Study[, "Ntotal"]
@@ -196,7 +236,7 @@ to have a shorter name.",
   data_available <- map_dfr(
     data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
   )
-
+  
   data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%
     mutate(varname = assign_conditions$varname) %>%
     select(varname, everything())
@@ -315,7 +355,7 @@ to have a shorter name.",
   }
 
   message("DONE", appendLF = TRUE)
-
+  
   message("** Step 5 of 7: Reshaping to wide format ... ", appendLF = FALSE)
   ## Now we create variables indicating the age of subset
   cats_to_subset %<>%
@@ -470,6 +510,8 @@ to have a shorter name.",
 
 
   ## ---- Tidy environment -------------------------------------------------------
+  
+  if(remove_temp == TRUE){
   message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
 
   end_objs <- ds.ls()
@@ -481,17 +523,16 @@ to have a shorter name.",
 
   dh.tidyEnv(obj = to_remove, type = "remove")
 
-  message("DONE", appendLF = TRUE)
+  message("DONE", appendLF = TRUE)}
 
   cat(
     "\nDataframe", "'", out_name, "'",
-    "created containing the following variables:\n\n"
-  )
+    "created containing the following variables:\n\n")
 
   print(data_available)
-
+  
   cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 
 that the 5th and 95th percentiles fall within the specified upper and lower 
 bands. Unfortunately you can't check min and max values due to disclosure
-restrictions.")
+restrictions.\n\n")
 }
