@@ -21,6 +21,11 @@
 #' @author Tim Cadman
 #'
 #' @export
+
+
+df <- "cbcl_comp"
+idvar <- "child_id"
+
 dh.countRM <- function(df, idvar){
   
   dh.doesDfExist(df)
@@ -31,12 +36,25 @@ dh.countRM <- function(df, idvar){
   ## First we need to make factor and integer versions of the id variable
   ds.asFactor(id_full, "id_fac")
   ds.asInteger(id_full, "id_int")
+  ds.asCharacter(id_full, "id_chr")
   
   ds.dataFrame(
     x = c(df, "id_fac", "id_int"), 
     newobj = df, 
     stringsAsFactors = FALSE
   )
+  
+  
+  ds.tapply.assign(
+    X.name = "cbcl_sub$ext_raw_", 
+    INDEX.names = "id_chr",
+    FUN.name = "sum", 
+    newobj = "test"
+  )
+  
+  ds.summary("cbcl_sub")
+  
+  ds.dim("test[[1]]")
   
   ## Now make a table counting number of obs per id
   ds.table(
