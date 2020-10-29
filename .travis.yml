@@ -5,6 +5,12 @@ repos:
   molgenis: https://registry.molgenis.org/repository/R/
   datashield: http://cran.datashield.org/
 
+addons:
+ apt:
+   packages:
+   - libharfbuzz-dev 
+   - libfribidi-dev
+
 cache: 
   apt: true
   packages: true
