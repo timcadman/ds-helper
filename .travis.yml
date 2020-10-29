@@ -9,8 +9,6 @@ cache:
   apt: true
   packages: true
 
-before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
-
 matrix:
   include:
   - os: linux
@@ -19,6 +17,8 @@ matrix:
       - R CMD build . --compact-vignettes=gs+qpdf
       - R CMD check *tar.gz --as-cran
 
+
+before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
 deploy:
   provider: script
   script: Rscript -e 'pkgdown::deploy_site_github(ssh_id = Sys.getenv("TRAVIS_DEPLOY_KEY", ""))'
