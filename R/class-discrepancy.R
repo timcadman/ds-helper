@@ -5,6 +5,7 @@
 #' cohorts. This can create problems, e.g. when using ds.summary. This function
 #' produces a table comparing the class of multiple variables.
 #'
+#' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe (optional). If vars is not
 #'      provided all variables will be included.
@@ -16,19 +17,22 @@
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.class ds.colnames
 #'
-#' @author Tim Cadman
 #' @export
-dh.classDescrepancy <- function(df, vars = NULL) {
-  dh.doesDfExist(df)
+dh.classDescrepancy <- function(conns = opals, df, vars = NULL) {
+  . <- variable <- discrepancy <- NULL
+
+  dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {
-    fun_vars <- ds.colnames(df)[[1]]
+    fun_vars <- ds.colnames(df, datasources = conns)[[1]]
   } else {
     fun_vars <- vars
   }
 
   out <- paste0(df, "$", fun_vars) %>%
-    map_df(ds.class) %>%
+    map_df(function(x) {
+      ds.class(x, datasources = conns)
+    }) %>%
     mutate(
       discrepancy = apply(., 1, function(x) {
         ifelse(length(unique(x)) == 1, "no", "yes")

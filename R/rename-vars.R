@@ -5,6 +5,7 @@
 #' new names. I've left it like this to keep in the spirit of ds/opal set up
 #' by not automating the deletion of variables.
 #'
+#' @param conns connections object for DataSHIELD backends
 #' @param df dataframe
 #' @param names a dataframe or tibble containing two columns: "oldvar" (existing
 #'              variable name), "newvar" (new variable name). Each row
@@ -15,32 +16,35 @@
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #'
-#' @author Tim Cadman
-#'
 #' @export
-dh.renameVars <- function(df, names) {
-  dh.doesDfExist(df)
-  dh.doVarsExist(df, names$oldvar)
+dh.renameVars <- function(conns = opals, df, names) {
+  old_new <- newvar <- NULL
+
+  dh.doesDfExist(conns, df)
+  dh.doVarsExist(conns, df, names$oldvar)
 
   names %>%
     pmap(function(oldvar, newvar, ...) {
       ds.assign(
         toAssign = paste0(df, "$", oldvar),
-        newobj = newvar
+        newobj = newvar,
+        datasources = conns
       )
     })
 
-  names(opals) %>%
+  names(conns) %>%
     map(
       ~ ds.dataFrame(
         x = c(df, names$newvar),
         newobj = df,
-        datasources = opals[.]
+        datasources = conns[.]
       )
     )
 
   names %>%
     pull(newvar) %>%
-    dh.tidyEnv() %>%
+    pmap(function(x) {
+      dh.tidyEnv(conns = conns, obj = x)
+    }) %>%
     invisible()
 }

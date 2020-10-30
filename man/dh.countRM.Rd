@@ -5,9 +5,11 @@
 \title{Creates a variable summarising how many observations each subject has in a
 dataframe}
 \usage{
-dh.countRM(df, idvar)
+dh.countRM(conns = opals, df = "cbcl_comp", idvar = "child_id")
 }
 \arguments{
+\item{conns}{connection objects to DataSHIELD backends}
+
 \item{df}{opal dataframe}
 
 \item{idvar}{ID variable in that dataset that you want to count}
@@ -16,14 +18,11 @@ dh.countRM(df, idvar)
 The original dataframe with an additional variable "n_repeated_obs"
 }
 \description{
-When conducting multilevel modelling we want to subset the data to only 
+When conducting multilevel modelling we want to subset the data to only
 include subjects with at least two observations. This function creates a
 variable summarising this. Note that this is calculated based on the entire
-dataframe, so the number provided may be greater than for the specific 
-variable you want to model. It is recommended therefore that you first 
+dataframe, so the number provided may be greater than for the specific
+variable you want to model. It is recommended therefore that you first
 subset your dataframe to contain only the repeated measures variable that
 you plan to model.
-}
-\author{
-Tim Cadman
 }

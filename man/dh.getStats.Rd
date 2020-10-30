@@ -4,9 +4,11 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(df, vars)
+dh.getStats(conns = opals, df, vars)
 }
 \arguments{
+\item{conns}{connection object for DataSHIELD backends}
+
 \item{df}{opal dataframe}
 
 \item{vars}{vector of variable names in dataframe}
@@ -51,7 +53,4 @@ for that cohort. This is more useful, e.g. if you want to make descriptive
 tables for papers and show that a certain cohort is lacking some information.
 Although, this may be less important if using ds.dataFrameFill throughout
 your scripts.
-}
-\author{
-Tim Cadman
 }
