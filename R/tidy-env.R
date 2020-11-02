@@ -7,7 +7,6 @@
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.
-#' @param cohorts optional argument specifying which cohorts to use
 #'
 #' @return None. Objects removed from ds environment
 #'
@@ -16,26 +15,23 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.tidyEnv <- function(conns = opals, obj, type = "remove", cohorts) {
+dh.tidyEnv <- function(conns = opals, obj, type = "remove") {
   . <- NULL
-  if (missing(cohorts)) {
-    cohorts <- names(conns)
-  }
-
+  
   if (type == "remove") {
-    obj %>% map(ds.rm, datasources = conns[cohorts])
+    obj %>% map(ds.rm, datasources = conns)
   } else if (type == "keep") {
-    objects <- cohorts %>%
+    objects <- names(conns) %>%
       map(
         ~ ds.ls(datasources = conns[.])[[1]][[2]]
       )
 
-    vars <- seq(1:length(cohorts)) %>%
+    vars <- seq(1:length(names(conns))) %>%
       map(
         ~ objects[[.]][objects[[.]] %in% obj == FALSE]
       )
 
-    names(vars) <- cohorts
+    names(vars) <- names(conns)
 
     ## Check no objects to removed have character length >20
     obj_lengths <- vars %>%

@@ -4,7 +4,7 @@
 \alias{dh.doVarsExist}
 \title{Check whether variables exist in dataframe}
 \usage{
-dh.doVarsExist(conns = opals, df, vars, cohorts)
+dh.doVarsExist(conns = opals, df, vars)
 }
 \arguments{
 \item{conns}{connections object to DataSHIELD backends}
@@ -12,8 +12,6 @@ dh.doVarsExist(conns = opals, df, vars, cohorts)
 \item{df}{datashield dataframe}
 
 \item{vars}{vector of variable names expected to be contained in dataframe}
-
-\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 None. Stops function if var(s) don't exist in one of more cohorts.

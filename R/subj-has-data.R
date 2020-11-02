@@ -19,9 +19,6 @@
 #'
 #' @export
 dh.subjHasData <- function(conns = opals, df, vars, new_label) {
-  if (missing(cohorts)) {
-    cohorts <- names(conns)
-  }
 
   dh.doesDfExist(conns = conns, df = df)
 

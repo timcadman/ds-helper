@@ -11,7 +11,6 @@ dh.dropCols(
   new_df_name,
   comp_var,
   type = c("keep", "remove"),
-  cohorts,
   remove_temp = FALSE
 )
 }
@@ -28,8 +27,6 @@ dh.dropCols(
 (e.g. an id variable)}
 
 \item{type}{whether to remove or keep specified variables}
-
-\item{cohorts}{optional argument specifying which cohorts to use}
 
 \item{remove_temp}{remove temporary objects from the DataSHIELD backends}
 }

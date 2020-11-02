@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #' Function to perform every combination of MLM fractional polynomials
 #'
 #' @param conns connection objects for DataSHIELD backends

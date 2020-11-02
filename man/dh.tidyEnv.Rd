@@ -4,7 +4,7 @@
 \alias{dh.tidyEnv}
 \title{Tidy up the server environment}
 \usage{
-dh.tidyEnv(conns = opals, obj, type = "remove", cohorts)
+dh.tidyEnv(conns = opals, obj, type = "remove")
 }
 \arguments{
 \item{conns}{connections object to DataSHIELD backends}
@@ -13,8 +13,6 @@ dh.tidyEnv(conns = opals, obj, type = "remove", cohorts)
 
 \item{type}{either "remove" to remove the listed objects of "keep" to keep
 the listed objects and remove everything else.}
-
-\item{cohorts}{optional argument specifying which cohorts to use}
 }
 \value{
 None. Objects removed from ds environment

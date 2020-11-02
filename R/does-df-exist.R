@@ -6,7 +6,6 @@
 #'
 #' @param conns connections to DataSHIELD backends
 #' @param df opal dataframe
-#' @param cohorts optional argument specifying which cohorts to use
 #'
 #' @return None. Stops function if df doesn't exist in one of more cohorts.
 #'
@@ -15,15 +14,12 @@
 #'
 #' @author Tim Cadman
 #' @export
-dh.doesDfExist <- function(conns = opals, df, cohorts) {
-  if (missing(cohorts)) {
-    cohorts <- names(conns)
-  }
+dh.doesDfExist <- function(conns = opals, df) {
 
-  df_check <- cohorts %>%
+  df_check <- names(conns) %>%
     map(~ (df %in% ds.ls(datasources = conns[.])[[1]][["objects.found"]]))
 
-  names(df_check) <- cohorts
+  names(df_check) <- names(conns)
 
   df_missing <- df_check %>% map(~ any(. == FALSE))
 

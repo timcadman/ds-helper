@@ -4,7 +4,7 @@
 \alias{dh.findVarsIndex}
 \title{Return return indices of columns in opal dataframe}
 \usage{
-dh.findVarsIndex(conns = opals, df, vars, cohorts)
+dh.findVarsIndex(conns = opals, df, vars)
 }
 \arguments{
 \item{conns}{connections object for DataSHIELD backends}
@@ -12,8 +12,6 @@ dh.findVarsIndex(conns = opals, df, vars, cohorts)
 \item{df}{datashield dataframe}
 
 \item{vars}{vector of variable names in dataframe}
-
-\item{cohorts}{cohort that you want to find indices for}
 }
 \value{
 list of indices where length of list is number of cohorts provided

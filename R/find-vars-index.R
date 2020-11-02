@@ -8,7 +8,6 @@
 #' @param conns connections object for DataSHIELD backends
 #' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
-#' @param cohorts cohort that you want to find indices for
 #'
 #' @return list of indices where length of list is number of cohorts provided
 #'
@@ -16,17 +15,13 @@
 #' @importFrom purrr pmap
 #'
 #' @export
-dh.findVarsIndex <- function(conns = opals, df, vars, cohorts) {
-  if (missing(cohorts)) {
-    cohorts <- names(conns)
-  }
-
-  dh.doVarsExist(conns, df, vars, cohorts)
-  dh.doesDfExist(conns, df, cohorts)
+dh.findVarsIndex <- function(conns = opals, df, vars) {
+  dh.doVarsExist(conns, df, vars)
+  dh.doesDfExist(conns, df)
 
   ref_tab <- tibble(
-    var = rep(vars, length(cohorts)),
-    cohort = rep(cohorts, each = length(vars))
+    var = rep(vars, length(names(conns))),
+    cohort = rep(names(conns), each = length(vars))
   )
 
   tmp <- ref_tab %>%
@@ -39,7 +34,7 @@ dh.findVarsIndex <- function(conns = opals, df, vars, cohorts) {
     )
 
   out <- split(unlist(tmp), ceiling(seq_along(unlist(tmp)) / length(vars)))
-  names(out) <- cohorts
+  names(out) <- names(conns)
 
   return(out)
 }

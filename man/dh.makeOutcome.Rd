@@ -12,7 +12,9 @@ dh.makeOutcome(
   bands,
   mult_action = c("earliest", "latest", "nearest"),
   mult_vals = NULL,
-  remove_temp = TRUE
+  remove_temp = TRUE,
+  keep_original = FALSE,
+  df_name = NULL
 )
 }
 \arguments{
@@ -36,7 +38,11 @@ period do we keep the earliest or latest? Default =
 which value in each age band to chose values closest to
 in case of multiple values}
 
-\item{remove_temp}{remove temporary objects from the DataSHIELD backends}
+\item{remove_temp}{remove temporary objects from the DataSHIELD backend}
+
+\item{keep_original}{keep original data frame in the DataSHIELD backend}
+
+\item{df_name}{specificy data frame name}
 }
 \value{
 a dataset containing the newly derived variables

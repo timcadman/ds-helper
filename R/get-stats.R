@@ -88,7 +88,7 @@ dh.getStats <- function(conns = opals, df, vars) {
 
   if (length(factors > 0)) {
     stats_cat[[1]] <- lapply(factors, function(x) {
-      sapply(cohorts, USE.NAMES = FALSE, function(y) {
+      sapply(names(conns), USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
           datasources = conns[y],
           type = "combine"
@@ -107,8 +107,8 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     names(stats_cat) <- c("Descriptives", "Max_N")
     names(stats_cat[[1]]) <- factors
-    stats_cat[[1]] <- lapply(stats_cat[[1]], setNames, cohorts)
-    names(stats_cat[[2]]) <- cohorts
+    stats_cat[[1]] <- lapply(stats_cat[[1]], setNames, names(conns))
+    names(stats_cat[[2]]) <- names(conns)
   }
 
   ## ---- Continuous -------------------------------------------------------------
@@ -116,7 +116,7 @@ dh.getStats <- function(conns = opals, df, vars) {
 
   if (length(integers > 0)) {
     stats_cont[[1]] <- lapply(integers, function(x) {
-      sapply(cohorts, USE.NAMES = FALSE, function(y) {
+      sapply(names(conns), USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
           datasources = conns[y],
           type = "combine"
@@ -129,10 +129,10 @@ dh.getStats <- function(conns = opals, df, vars) {
     })
 
     names(stats_cont[[1]]) <- integers
-    stats_cont[[1]] <- lapply(stats_cont[[1]], setNames, cohorts)
+    stats_cont[[1]] <- lapply(stats_cont[[1]], setNames, names(conns))
 
     stats_cont[[2]] <- lapply(integers, function(x) {
-      sapply(cohorts, USE.NAMES = FALSE, function(y) {
+      sapply(names(conns), USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
           datasources = conns[y],
           type = "combine"
@@ -145,7 +145,7 @@ dh.getStats <- function(conns = opals, df, vars) {
     })
 
     names(stats_cont[[2]]) <- integers
-    stats_cont[[2]] <- lapply(stats_cont[[2]], setNames, cohorts)
+    stats_cont[[2]] <- lapply(stats_cont[[2]], setNames, names(conns))
 
     lapply(stats_cont[[1]], names)
 
@@ -155,7 +155,7 @@ dh.getStats <- function(conns = opals, df, vars) {
     )
 
     names(stats_cont) <- c("Mean", "Variance", "Max_N")
-    names(stats_cont[[3]]) <- cohorts
+    names(stats_cont[[3]]) <- names(conns)
   }
 
 
@@ -184,7 +184,7 @@ dh.getStats <- function(conns = opals, df, vars) {
 
   if (length(stats_cat) > 0) {
     tmp <- map(stats_cat[[1]], function(x) {
-      map(cohorts, function(y) {
+      map(names(conns), function(y) {
         if (is.null(x[[y]])) {
           NA
         } else {
@@ -203,7 +203,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       variable = var_vec,
       category = unlist(
         map(stats_cat[[1]], function(x) {
-          map(cohorts, function(y) {
+          map(names(conns), function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -215,7 +215,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       value = unlist(
         map(stats_cat[[1]], function(x) {
-          map(cohorts, function(y) {
+          map(names(conns), function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -227,7 +227,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       cohort = unlist(
         map(stats_cat[[1]], function(x) {
-          map(cohorts, function(y) {
+          map(names(conns), function(y) {
             if (is.null(x[[y]])) {
               y
             } else {
@@ -287,11 +287,11 @@ dh.getStats <- function(conns = opals, df, vars) {
 
   if (length(stats_cont) > 0) {
     out_cont <- data.frame(
-      cohort = rep(cohorts, times = length(names(stats_cont[[1]]))),
-      variable = rep(names(stats_cont[[1]]), times = 1, each = length(cohorts)),
+      cohort = rep(names(conns), times = length(names(stats_cont[[1]]))),
+      variable = rep(names(stats_cont[[1]]), times = 1, each = length(names(conns))),
       mean = unlist(
         sapply(stats_cont[[1]], function(x) {
-          sapply(cohorts, simplify = FALSE, function(y) {
+          sapply(names(conns), simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -302,7 +302,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       perc_5 = unlist(
         sapply(stats_cont[[1]], function(x) {
-          sapply(cohorts, simplify = FALSE, function(y) {
+          sapply(names(conns), simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -313,7 +313,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       perc_50 = unlist(
         sapply(stats_cont[[1]], function(x) {
-          sapply(cohorts, simplify = FALSE, function(y) {
+          sapply(names(conns), simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -324,7 +324,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       perc_95 = unlist(
         sapply(stats_cont[[1]], function(x) {
-          sapply(cohorts, simplify = FALSE, function(y) {
+          sapply(names(conns), simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -335,7 +335,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       std.dev = unlist(
         sapply(stats_cont[[2]], function(x) {
-          sapply(cohorts, simplify = FALSE, function(y) {
+          sapply(names(conns), simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
@@ -346,7 +346,7 @@ dh.getStats <- function(conns = opals, df, vars) {
       ),
       valid_n = unlist(
         sapply(stats_cont[[2]], function(x) {
-          sapply(cohorts, simplify = FALSE, function(y) {
+          sapply(names(conns), simplify = FALSE, function(y) {
             if (is.null(x[[y]])) {
               NA
             } else {
