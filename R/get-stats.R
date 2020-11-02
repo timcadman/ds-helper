@@ -79,9 +79,6 @@ dh.getStats <- function(conns = opals, df, vars) {
   factors <- vars[(which(f == TRUE))]
   integers <- vars[(which(i == TRUE))]
 
-  ## Create vector of opal names
-  cohorts <- names(conns)
-
   ################################################################################
   # 2. Extract information using ds.summary
   ################################################################################
@@ -394,6 +391,15 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     ## Need this step at the moment as the DS functions returned missing pooled
     ## values if any cohorts don't have them.
+    pool_avail <- names(stats_cont[[1]]) %>%
+      map(function(x) {
+        tmp <- out_cont %>%
+          filter(variable == x) %>%
+          filter(!is.na(mean)) %>%
+          select(cohort) %>%
+          pull() %>%
+          as.character()
+      })
 
     pool_avail <- names(stats_cont[[1]]) %>%
       map(function(x) {
@@ -458,10 +464,6 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     ## ---- Combine with main table ------------------------------------------------
     out_cont <- rbind(out_cont, coh_comb)
-
-    out_cont %<>%
-      mutate(missing_perc = round((missing_n / cohort_n) * 100, 2)) %>%
-      as_tibble()
 
     ## ---- Round combined values --------------------------------------------------
     out_cont %<>%

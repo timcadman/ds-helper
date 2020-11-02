@@ -34,17 +34,16 @@
 #' @export
 dh.makeOutcome <- function(
                            conns = opals, df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, remove_temp = TRUE) {
+                           mult_vals = NULL, remove_temp = TRUE, keep_original = FALSE, df_name = NULL) {
   mult_action <- match.arg(mult_action)
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- age <- varname <- new_df_name <- available <- bmi_to_subset <- ref_val <- NULL
-
-
 
   cat("This may take some time depending on the number and size of datasets\n\n")
 
   message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
 
   ## ---- Store current object names ---------------------------------------------
+
   start_objs <- ds.ls(datasources = conns)
 
   ## ---- Argument checks --------------------------------------------------------
@@ -68,7 +67,6 @@ dh.makeOutcome <- function(
     stop("The outcome variable is class 'character'. Please provide either a 
          numeric, integer or factor variable.")
   }
-
 
   ## ---- Subset to only include cohorts with some data --------------------------
   ds.asNumeric(datasources = conns, x.name = paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
@@ -99,8 +97,7 @@ dh.makeOutcome <- function(
   }
 
   ## ---- Check there are non missing values for age and outcome ---------------
-  age_missing <- unlist(ds.isNA(paste0(df, "$", age_var)))
-
+  age_missing <- unlist(ds.isNA(x = paste0(df, "$", age_var), datasources = conns))
   if (any(age_missing) == TRUE) {
     stop(paste0(
       paste0(
@@ -108,6 +105,11 @@ dh.makeOutcome <- function(
       ),
       paste0(names(which(age_missing == TRUE)), collapse = ", ")
     ), call. = FALSE)
+  }
+
+  if (length(nonmissing) == 1) {
+    nonmissing <- list(nonmissing)
+    names(nonmissing) <- names(conns)
   }
 
   valid_coh <- names(which(nonmissing == TRUE))
@@ -131,8 +133,7 @@ dh.makeOutcome <- function(
   v_ind <- dh.findVarsIndex(
     conns = conns,
     df = new_df,
-    vars = c("child_id", outcome, "age", "outcome_comp"),
-    cohorts = valid_coh
+    vars = c("child_id", outcome, "age", "outcome_comp")
   )
 
   ## Now finally we subset based on valid cases and required variables
@@ -172,14 +173,14 @@ dh.makeOutcome <- function(
   if (max(nchar(cats$varname)) + 6 > 20) {
     stop(
       "Due to disclosure settings, the total string length of [outcome] + 
-[max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more 
-than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10, 
-max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
-is 9. However if your outcome was named 'adiposity' this would give 
-a string length of 'adiposity104035 = 15' which is too long. I realise
-this is quite annoying. To get round it rename your outcome variable
-to have a shorter name. As a rule of thumb I would rename your outcome to be
-no more than three characters",
+      [max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more 
+      than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10, 
+      max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
+      is 9. However if your outcome was named 'adiposity' this would give 
+      a string length of 'adiposity104035 = 15' which is too long. I realise
+      this is quite annoying. To get round it rename your outcome variable
+      to have a shorter name. As a rule of thumb I would rename your outcome to be
+      no more than three characters",
       call. = FALSE
     )
   }
@@ -237,9 +238,13 @@ no more than three characters",
   min_perc <- min_perc_vec %>%
     map_df(~ rep(., times = length(subnames)))
 
-  data_available <- map_dfr(
-    data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
-  )
+  if (length(valid_coh) == 1) {
+    data_available <- data_sum[[1]]$Mean.by.Study[, "EstimatedMean"]
+  } else if (length(valid_coh > 1)) {
+    data_available <- map_dfr(
+      data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
+    )
+  }
 
   data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%
     mutate(varname = assign_conditions$varname) %>%
@@ -434,8 +439,7 @@ no more than three characters",
         vars = keep_vars,
         new_df_name = paste0(varname, "_wide"),
         comp_var = "child_id",
-        type = "keep",
-        cohorts = cohort
+        type = "keep"
       )
     })
 
@@ -457,7 +461,12 @@ no more than three characters",
 
   names(finalvars) <- unlist(made_vars$cohort)
 
-  out_name <- paste0(outcome, "_", "derived")
+
+  if (is.null(df_name)) {
+    out_name <- paste0(outcome, "_", "derived")
+  } else {
+    out_name <- df_name
+  }
 
   finalvars %>%
     imap(function(.x, .y) {
@@ -512,22 +521,33 @@ no more than three characters",
       }
     })
 
+  if (keep_original == TRUE) {
+    ds.merge(
+      x.name = out_name,
+      y.name = df,
+      by.x.names = "child_id",
+      by.y.names = "child_id",
+      all.x = TRUE,
+      newobj = out_name,
+      datasources = conns
+    )
+  }
+
   message("DONE", appendLF = TRUE)
 
 
   ## ---- Tidy environment -------------------------------------------------------
-
   if (remove_temp == TRUE) {
     message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
 
-    end_objs <- ds.ls()
+    end_objs <- ds.ls(datasources = conns)
 
     to_remove <- unique(end_objs[[1]][!end_objs[[1]] %in% start_objs[[1]]])
 
     ## but we keep the final dataset
     to_remove <- to_remove[!(to_remove %in% out_name)]
 
-    dh.tidyEnv(conns, obj = to_remove, type = "remove")
+    dh.tidyEnv(conns = conns, obj = to_remove, type = "remove")
 
     message("DONE", appendLF = TRUE)
   }
