@@ -1,5 +1,5 @@
 ## Function to perform every combination of MLM fractional polynomials
-dh.lmeMultPoly <- function(data, outcome, type = "Normal"){
+dh.lmeMultPoly <- function(data, outcome, cohorts, type = "Normal"){
   
   ## First arrange the data to keep it happy when fitting binomial model
   #data <- arrange(data, id)
@@ -46,7 +46,8 @@ dh.lmeMultPoly <- function(data, outcome, type = "Normal"){
     
     poly.fit[[i]] <- ds.lmerSLMA(
         dataName = data,
-       formula = form
+       formula = form, 
+       datasources = opals[cohorts]
     )
     
       

@@ -33,31 +33,32 @@
 #'
 #' @export
 dh.makeOutcome <- function(
-                           df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, remove_temp = TRUE) {
+  df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
+  mult_vals = NULL, remove_temp = TRUE, cohorts = names(opals), keep_original = FALSE, 
+  df_name = NULL) {
   mult_action <- match.arg(mult_action)
-
-
+  
+  
   cat("This may take some time depending on the number and size of datasets\n\n")
-
+  
   message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
-
+  
   ## ---- Store current object names ---------------------------------------------
-  start_objs <- ds.ls()
-
+  start_objs <- ds.ls(datasources = opals[cohorts])
+  
   ## ---- Argument checks --------------------------------------------------------
-  dh.doVarsExist(df, outcome)
-  dh.doesDfExist(df)
-
+  dh.doVarsExist(df, outcome, cohorts = cohorts)
+  dh.doesDfExist(df, cohorts = cohorts)
+  
   ## ---- Check bands is an even number ------------------------------------------
   if ((length(bands) %% 2 == 0) == FALSE) {
     stop("The length of the vector provided to the 'bands' argument is not an even number",
-      call. = FALSE
+         call. = FALSE
     )
   }
-
+  
   ## ---- Check class of outcome -----------------------------------------------
-  var_class <- ds.class(paste0(df, "$", outcome))
+  var_class <- ds.class(paste0(df, "$", outcome), datasources = opals[cohorts])
   
   if(length(unique(var_class)) > 1){
     
@@ -70,19 +71,20 @@ dh.makeOutcome <- function(
     
   }
   
-
-## ---- Subset to only include cohorts with some data --------------------------
-  ds.asNumeric(paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
+  
+  ## ---- Subset to only include cohorts with some data --------------------------
+  ds.asNumeric(paste0(df, "$", outcome), newobj = paste0(outcome, "_n"), datasources = opals[cohorts])
   
   ds.Boole(
     V1 = paste0(outcome, "_n"),
     V2 = "0",
     Boolean.operator = ">=",
     na.assign = 0,
-    newobj = "outcome_comp"
-    )
+    newobj = "outcome_comp", 
+    datasources = opals[cohorts]
+  )
   
-  nonmissing <- ds.mean("outcome_comp")$Mean.by.Study[, "EstimatedMean"] > 0
+  nonmissing <- ds.mean("outcome_comp", datasources = opals[cohorts])$Mean.by.Study[, "EstimatedMean"] > 0
   
   if (all(nonmissing == FALSE)){
     
@@ -90,15 +92,15 @@ dh.makeOutcome <- function(
   }
   
   if (any(nonmissing == FALSE)){
-   
+    
     warning(paste0(
       paste0("No valid data on ", "'", outcome, "'", 
              " available for the following cohort(s): "), 
       paste0(names(which(nonmissing == FALSE)), collapse = ", ")), call. = FALSE)
   }
-   
-    ## ---- Check there are non missing values for age and outcome ---------------
-  age_missing <- unlist(ds.isNA(paste0(df, "$", age_var)))
+  
+  ## ---- Check there are non missing values for age and outcome ---------------
+  age_missing <- unlist(ds.isNA(paste0(df, "$", age_var), datasources = opals[cohorts]))
   
   if (any(age_missing) == TRUE) {
     
@@ -106,6 +108,12 @@ dh.makeOutcome <- function(
       paste0(
         "No valid data on age of measurement available for the following cohort(s): "), 
       paste0(names(which(age_missing == TRUE)), collapse = ", ")), call. = FALSE)
+  }
+  
+  if(length(nonmissing) == 1){
+    
+    nonmissing <- list(nonmissing)
+    names(nonmissing) <- cohorts
   }
   
   valid_coh <- names(which(nonmissing == TRUE))
@@ -147,12 +155,12 @@ dh.makeOutcome <- function(
   
   ## ---- Make paired list for each band ---------------------------------------
   pairs <- split(bands, ceiling(seq_along(bands) / 2))
-
+  
   subnames <- unlist(
     pairs %>% map(~ paste0(outcome, "_", paste0(., collapse = "_"))),
     use.names = FALSE
   )
-
+  
   ## ---- Create table with age bands ------------------------------------------
   cats <- tibble(
     varname = rep(subnames, each = 2),
@@ -162,32 +170,32 @@ dh.makeOutcome <- function(
     new_df_name = paste0(outcome, tmp, value)
   )
   
- 
+  
   
   ## ---- Check max character length -------------------------------------------
   if (max(nchar(cats$varname)) + 6 > 20) {
     stop(
       "Due to disclosure settings, the total string length of [outcome] + 
-[max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more 
-than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10, 
-max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
-is 9. However if your outcome was named 'adiposity' this would give 
-a string length of 'adiposity104035 = 15' which is too long. I realise
-this is quite annoying. To get round it rename your outcome variable
-to have a shorter name. As a rule of thumb I would rename your outcome to be
-no more than three characters",
+      [max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more 
+      than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10, 
+      max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
+      is 9. However if your outcome was named 'adiposity' this would give 
+      a string length of 'adiposity104035 = 15' which is too long. I realise
+      this is quite annoying. To get round it rename your outcome variable
+      to have a shorter name. As a rule of thumb I would rename your outcome to be
+      no more than three characters",
       call. = FALSE
-    )
+      )
   }
-
+  
   message("DONE", appendLF = TRUE)
   ## ---- ds.Boole ---------------------------------------------------------------
-
+  
   message("** Step 2 of 7: Defining subsets ... ", appendLF = FALSE)
-
+  
   # Use each row from this table in a call to ds.Boole. Here we make vectors
   # indicating whether or not the value meets the evaluation criteria
-
+  
   cats %>%
     pmap(function(value, op, new_df_name, ...) {
       ds.Boole(
@@ -198,14 +206,14 @@ no more than three characters",
         datasources = opals[valid_coh]
       )
     })
-
+  
   ## ---- Create second table with assign conditions -----------------------------
   suppressMessages(
     assign_conditions <- cats %>%
       group_by(varname) %>%
       summarise(condition = paste(new_df_name, collapse = "*"))
   )
-
+  
   ## ---- Assign variables indicating membership of age band ---------------------
   assign_conditions %>%
     pmap(function(condition, varname) {
@@ -215,32 +223,39 @@ no more than three characters",
         datasources = opals[valid_coh]
       )
     })
-
+  
   ## ---- Now we want to find out which cohorts have data ------------------------
   data_sum <- assign_conditions %>%
     pmap(function(varname, ...) {
       ds.mean(varname, datasources = opals[valid_coh])
     })
-
+  
   ## ---- Handle disclosure issues -----------------------------------------------
-
+  
   # Need to only show data as being available if >= minimum value for subsetting
   sub_min <- ds.listDisclosureSettings(datasources = opals[valid_coh])$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset)
   
   min_perc_vec <- sub_min / data_sum[[1]]$Mean.by.Study[, "Ntotal"]
-
+  
   min_perc <- min_perc_vec %>%
     map_df(~ rep(., times = length(subnames)))
-
-  data_available <- map_dfr(
-    data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
-  )
+  
+  if(length(valid_coh) == 1){
+    
+    data_available <- data_sum[[1]]$Mean.by.Study[, "EstimatedMean"]
+  } else if(length(valid_coh > 1)){
+    
+    data_available <- map_dfr(
+      data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
+    )
+    
+  }
   
   data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%
     mutate(varname = assign_conditions$varname) %>%
     select(varname, everything())
-
+  
   ## ---- Create a new table listing which subsets to create ---------------------
   cats_to_subset <- data_available %>%
     pivot_longer(
@@ -251,18 +266,18 @@ no more than three characters",
     filter(available == "yes") %>%
     select(-available) %>%
     mutate(new_subset_name = paste0(varname, "_a"))
-
+  
   if (nrow(cats_to_subset) < 1) {
     stop("There is no data available within the specified bands",
-      call. = FALSE
+         call. = FALSE
     )
   }
-
+  
   message("DONE", appendLF = TRUE)
-
+  
   ## ---- Create subsets ---------------------------------------------------------
   message("** Step 3 of 7: Creating subsets ... ", appendLF = FALSE)
-
+  
   cats_to_subset %>%
     pmap(
       function(varname, cohort, new_subset_name, ...) {
@@ -277,24 +292,24 @@ no more than three characters",
         )
       }
     )
-
+  
   message("DONE", appendLF = TRUE)
-
+  
   ## ---- Sort subsets -----------------------------------------------------------
   message("** Step 4 of 7: Dealing with subjects with multiple observations within age bands ... ",
-    appendLF = FALSE
+          appendLF = FALSE
   )
-
+  
   if (mult_action == "nearest") {
-
+    
     ## Make a variable specifying distance between age of measurement and prefered
     ## value (provided by "mult_vals")
-
+    
     johan_sort <- tibble(
       subset = unique(cats$varname),
       ref_val = mult_vals
     )
-
+    
     cats_to_subset %<>%
       mutate(
         ref_val = johan_sort$ref_val[
@@ -302,14 +317,14 @@ no more than three characters",
             as.character(bmi_to_subset$varname),
             as.character(johan_sort$subset)
           )
-        ],
+          ],
         condition = paste0(
           "((", new_subset_name, "$", "age", "-", ref_val, ")", "^2",
           ")", "^0.5"
         ),
         dif_val = paste0("d_", ref_val)
       )
-
+    
     cats_to_subset %>%
       pmap(function(condition, cohort, dif_val, ...) {
         ds.make(
@@ -318,7 +333,7 @@ no more than three characters",
           datasources = opals[cohort]
         )
       })
-
+    
     ## Join this variable back with the dataset
     cats_to_subset %>%
       pmap(function(dif_val, new_subset_name, varname, cohort, ...) {
@@ -328,7 +343,7 @@ no more than three characters",
           datasources = opals[cohort]
         )
       })
-
+    
     ## Sort by it
     cats_to_subset %>%
       pmap(function(cohort, new_subset_name, varname, dif_val, ...) {
@@ -341,7 +356,7 @@ no more than three characters",
       })
   } else if (mult_action == "earliest" | mult_action == "latest") {
     sort_action <- ifelse(mult_action == "earliest", FALSE, TRUE)
-
+    
     cats_to_subset %>%
       pmap(function(cohort, new_subset_name, varname, ...) {
         ds.dataFrameSort(
@@ -353,7 +368,7 @@ no more than three characters",
         )
       })
   }
-
+  
   message("DONE", appendLF = TRUE)
   
   message("** Step 5 of 7: Reshaping to wide format ... ", appendLF = FALSE)
@@ -363,7 +378,7 @@ no more than three characters",
       value = stringr::str_extract(varname, "[^_]+$"),
       age_cat_name = paste0(varname, "_age")
     )
-
+  
   cats_to_subset %>%
     pmap(
       function(cohort, new_subset_name, value, age_cat_name, varname, ...) {
@@ -374,7 +389,7 @@ no more than three characters",
         )
       }
     )
-
+  
   ## ---- Join age variables with subsets ----------------------------------------
   cats_to_subset %>%
     pmap(function(varname, cohort, age_cat_name, ...) {
@@ -384,7 +399,7 @@ no more than three characters",
         datasources = opals[cohort]
       )
     })
-
+  
   ## ---- Convert subsets to wide form -------------------------------------------
   cats_to_subset %>%
     pmap(
@@ -400,27 +415,27 @@ no more than three characters",
         )
       }
     )
-
-
+  
+  
   ## ---- Remove NA variables from dataframes ------------------------------------
-
+  
   ## First we identify the variables we want to keep
   all_vars <- cats_to_subset %>%
     pmap(function(varname, cohort, ...) {
       ds.colnames(paste0(varname, "_wide"), datasources = opals[cohort])[[1]]
     })
-
+  
   names(all_vars) <- cats_to_subset$cohort
-
+  
   keep_vars <- all_vars %>%
     map(~ .[str_detect(., ".NA") == FALSE])
-
+  
   var_list <- split(cats_to_subset$varname, seq(nrow(cats_to_subset)))
   coh_list <- split(cats_to_subset$cohort, seq(nrow(cats_to_subset)))
-
+  
   combined <- list(var_list, coh_list, keep_vars)
   names(combined) <- c("varname", "cohort", "keep_vars")
-
+  
   combined %>%
     pmap(function(varname, cohort, keep_vars) {
       dh.dropCols(
@@ -432,13 +447,13 @@ no more than three characters",
         cohorts = cohort
       )
     })
-
+  
   message("DONE", appendLF = TRUE)
-
-
+  
+  
   ## ---- Merge back with non-repeated dataset -----------------------------------
   message("** Step 6 of 7: Creating final dataset ... ", appendLF = FALSE)
-
+  
   suppressMessages(
     made_vars <- cats_to_subset %>%
       arrange(cohort) %>%
@@ -446,13 +461,19 @@ no more than three characters",
       summarise(subs = paste(varname, collapse = ",")) %>%
       map(~ strsplit(., ","))
   )
-
+  
   finalvars <- made_vars$sub %>% map(~ paste0(., "_wide"))
-
+  
   names(finalvars) <- unlist(made_vars$cohort)
-
+  
+  
+  if(is.null(df_name)){
   out_name <- paste0(outcome, "_", "derived")
-
+  } else{
+  out_name <- df_name 
+    
+  }
+  
   finalvars %>%
     imap(function(.x, .y) {
       if (length(.x) == 1) {
@@ -462,7 +483,7 @@ no more than three characters",
           datasources = opals[.y]
         )
       }
-
+      
       if (length(.x) == 2) {
         ds.merge(
           x.name = .x[[1]],
@@ -474,7 +495,7 @@ no more than three characters",
           datasources = opals[.y]
         )
       }
-
+      
       if (length(.x) > 2) {
         ds.merge(
           x.name = .x[[1]],
@@ -485,12 +506,12 @@ no more than three characters",
           newobj = out_name,
           datasources = opals[.y]
         )
-
+        
         remaining <- tibble(
           dfs = .x[3:length(.x)],
           cohort = rep(.y, length(dfs))
         )
-
+        
         remaining %>%
           pmap(function(dfs, cohort) {
             ds.merge(
@@ -505,30 +526,45 @@ no more than three characters",
           })
       }
     })
-
+  
+  if(keep_original == TRUE){
+    
+    ds.merge(
+      x.name = out_name, 
+      y.name = df,
+      by.x.names = "child_id", 
+      by.y.names = "child_id", 
+      all.x = TRUE, 
+      newobj = out_name,
+      datasources = opals[cohorts]
+    )
+    
+    
+  }
+  
   message("DONE", appendLF = TRUE)
-
-
+  
+  
   ## ---- Tidy environment -------------------------------------------------------
   
   if(remove_temp == TRUE){
-  message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
-
-  end_objs <- ds.ls()
-
-  to_remove <- unique(end_objs[[1]][!end_objs[[1]] %in% start_objs[[1]]])
-
-  ## but we keep the final dataset
-  to_remove <- to_remove[!(to_remove %in% out_name)]
-
-  dh.tidyEnv(obj = to_remove, type = "remove")
-
-  message("DONE", appendLF = TRUE)}
-
+    message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
+    
+    end_objs <- ds.ls(datasources = opals[cohorts])
+    
+    to_remove <- unique(end_objs[[1]][!end_objs[[1]] %in% start_objs[[1]]])
+    
+    ## but we keep the final dataset
+    to_remove <- to_remove[!(to_remove %in% out_name)]
+    
+    dh.tidyEnv(obj = to_remove, type = "remove", cohorts = cohorts)
+    
+    message("DONE", appendLF = TRUE)}
+  
   cat(
     "\nDataframe", "'", out_name, "'",
     "created containing the following variables:\n\n")
-
+  
   print(data_available)
   
   cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 

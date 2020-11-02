@@ -53,45 +53,45 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.getStats <- function(df, vars) {
-  dh.doVarsExist(df, vars)
-
+dh.getStats <- function(df, vars, cohorts = names(opals)) {
+  dh.doVarsExist(df, vars, cohorts = cohorts)
+  
   ################################################################################
   # 1. Identify variable type
   ################################################################################
-
+  
   ## Create vector of full names for datashield
   full_var_names <- paste0(df, "$", vars)
-
-  class_list <- full_var_names %>% map(ds.class, opals)
-
+  
+  class_list <- full_var_names %>% map(ds.class, opals[cohorts])
+  
   f <- class_list %>% map(function(x) {
     any(str_detect(x, "factor") == TRUE)
   })
   i <- class_list %>% map(function(x) {
     any(str_detect(x, "numeric|integer") == TRUE)
   })
-
+  
   ## Create separate vectors for factors and integers
   factors <- vars[(which(f == TRUE))]
   integers <- vars[(which(i == TRUE))]
-
+  
   ## Create vector of opal names
-  cohorts <- names(opals)
-
+  cohorts <- cohorts
+  
   ################################################################################
   # 2. Extract information using ds.summary
   ################################################################################
-
+  
   ## ---- Categorical ------------------------------------------------------------
   stats_cat <- list()
-
+  
   if (length(factors > 0)) {
     stats_cat[[1]] <- lapply(factors, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
-          type = "combine"
+                      datasources = opals[y],
+                      type = "combine"
         ) == 0) {
           list(NULL)
         } else {
@@ -99,27 +99,27 @@ dh.getStats <- function(df, vars) {
         }
       })
     })
-
+    
     stats_cat[[2]] <- ds.length(paste0(df, "$", factors[1]),
-      type = "split",
-      datasources = opals
+                                type = "split",
+                                datasources = opals[cohorts]
     )
-
+    
     names(stats_cat) <- c("Descriptives", "Max_N")
     names(stats_cat[[1]]) <- factors
     stats_cat[[1]] <- lapply(stats_cat[[1]], setNames, cohorts)
     names(stats_cat[[2]]) <- cohorts
   }
-
+  
   ## ---- Continuous -------------------------------------------------------------
   stats_cont <- list()
-
+  
   if (length(integers > 0)) {
     stats_cont[[1]] <- lapply(integers, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
-          type = "combine"
+                      datasources = opals[y],
+                      type = "combine"
         ) == 0) {
           list(NULL)
         } else {
@@ -127,15 +127,15 @@ dh.getStats <- function(df, vars) {
         }
       })
     })
-
+    
     names(stats_cont[[1]]) <- integers
     stats_cont[[1]] <- lapply(stats_cont[[1]], setNames, cohorts)
-
+    
     stats_cont[[2]] <- lapply(integers, function(x) {
       sapply(cohorts, USE.NAMES = FALSE, function(y) {
         if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
-          type = "combine"
+                      datasources = opals[y],
+                      type = "combine"
         ) == 0) {
           list(NULL)
         } else {
@@ -143,45 +143,45 @@ dh.getStats <- function(df, vars) {
         }
       })
     })
-
+    
     names(stats_cont[[2]]) <- integers
     stats_cont[[2]] <- lapply(stats_cont[[2]], setNames, cohorts)
-
+    
     lapply(stats_cont[[1]], names)
-
+    
     stats_cont[[3]] <- ds.length(paste0(df, "$", integers[1]),
-      type = "split",
-      datasources = opals
+                                 type = "split",
+                                 datasources = opals[cohorts]
     )
-
+    
     names(stats_cont) <- c("Mean", "Variance", "Max_N")
     names(stats_cont[[3]]) <- cohorts
   }
-
-
+  
+  
   ################################################################################
   # 3. Transform information into more usable format
   ################################################################################
-
+  
   # Here we derive key information we will need for descriptives
-
+  
   ## Create lists. This means that if there is no variable of that type an
   ## empty list can still be returned.
-
+  
   out_cat <- list()
   out_cont <- list()
-
-
+  
+  
   ## ---- Categorical variables --------------------------------------------------
-
+  
   ## Here we extract information from the lists we made above. I guess we could
   ## do it in one stage rather than two but this is how I conceptualise the
   ## process.
-
+  
   ## First we need to create a vector with repetitions of the variable names
   ## corresponding to the number of categories each variable has. This code isn't
   ## great but it works.
-
+  
   if (length(stats_cat) > 0) {
     tmp <- map(stats_cat[[1]], function(x) {
       map(cohorts, function(y) {
@@ -192,13 +192,13 @@ dh.getStats <- function(df, vars) {
         }
       })
     })
-
+    
     cat_len <- map(tmp, function(x) {
       len <- Reduce(`+`, x)
     })
-
+    
     var_vec <- rep(names(cat_len), times = cat_len)
-
+    
     out_cat <- data.frame(
       variable = var_vec,
       category = unlist(
@@ -241,20 +241,20 @@ dh.getStats <- function(df, vars) {
         use.names = FALSE
       )
     )
-
-
+    
+    
     ## Get total ns for each cohort
     tmp <- map(out_cat$cohort, function(x) {
       stats_cat[["Max_N"]][[match(x, names(stats_cat[["Max_N"]]))]]
     })
-
-
+    
+    
     ## Combine these with df and convert to tibble
     out_cat %<>%
       mutate(cohort_n = flatten_dbl(tmp)) %>%
       as_tibble()
-
-
+    
+    
     ## Calculate stats for all cohorts combined and add to tibble
     all_sum <- out_cat %>%
       group_by(variable, category) %>%
@@ -264,28 +264,28 @@ dh.getStats <- function(df, vars) {
       ) %>%
       mutate(cohort = "combined") %>%
       ungroup()
-
+    
     out_cat <- rbind(out_cat, all_sum)
-
-
+    
+    
     ## Calculate additional stats
     out_cat %<>%
       group_by(cohort, variable) %>%
       mutate(valid_n = sum(value, na.rm = TRUE)) %>%
       ungroup()
-
+    
     out_cat %<>% mutate(
       missing_n = cohort_n - valid_n,
       valid_perc = round((value / valid_n) * 100, 2),
       missing_perc = round((missing_n / cohort_n) * 100, 2)
     )
   }
-
-
+  
+  
   ################################################################################
   # Continuous variables
   ################################################################################
-
+  
   if (length(stats_cont) > 0) {
     out_cont <- data.frame(
       cohort = rep(cohorts, times = length(names(stats_cont[[1]]))),
@@ -357,7 +357,7 @@ dh.getStats <- function(df, vars) {
         })
       )
     )
-
+    
     out_cont$cohort_n <- unlist(
       apply(
         out_cont, 1, function(x) {
@@ -365,12 +365,12 @@ dh.getStats <- function(df, vars) {
         }
       )
     )
-
+    
     ## We replace NAs in the "valid_n" column with 0
     out_cont$valid_n[is.na(out_cont$valid_n)] <- 0
-
+    
     out_cont %<>% mutate(missing_n = cohort_n - valid_n)
-
+    
     ## ---- Get pooled values --------------------------------------------------
     out_cont %<>% arrange(variable)
     
@@ -386,14 +386,14 @@ dh.getStats <- function(df, vars) {
       cohort_n = Reduce(`+`, stats_cont[["Max_N"]]))
     
     coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
-      
+    
     
     ## ---- Identify cohorts with non-missing data -----------------------------
     
     ## Need this step at the moment as the DS functions returned missing pooled
     ## values if any cohorts don't have them.
     
-     pool_avail <- names(stats_cont[[1]]) %>%
+    pool_avail <- names(stats_cont[[1]]) %>%
       map(function(x){
         
         tmp <- out_cont %>% 
@@ -403,7 +403,7 @@ dh.getStats <- function(df, vars) {
           pull %>%
           as.character
         
-          })
+      })
     
     names(pool_avail) <- paste0(df, "$", names(stats_cont[[1]]))
     
@@ -413,7 +413,7 @@ dh.getStats <- function(df, vars) {
         x = .y,
         type = "combine", 
         datasources = opals[.x])
-      )
+    )
     
     names(medians) <- names(stats_cont[[1]])
     
@@ -432,15 +432,15 @@ dh.getStats <- function(df, vars) {
     ## pooled variance
     sds <- pool_avail %>% imap(function(.x, .y){
       
-       ds.var(
+      ds.var(
         x = .y,
         type = "combine", 
         datasources = opals[.x])[[1]][[1]]
     }
     )
-      
+    
     names(sds) <- names(stats_cont[[1]])
-   
+    
     sds %<>% 
       map(as_tibble) %>% 
       bind_rows(.id = "variable") %>% 
@@ -453,21 +453,21 @@ dh.getStats <- function(df, vars) {
       mutate(
         missing_n = cohort_n - valid_n,
         std.dev = variance * sqrt(valid_n)) %>%
-     select(-variance)
-        
-## ---- Combine with main table ------------------------------------------------
+      select(-variance)
+    
+    ## ---- Combine with main table ------------------------------------------------
     out_cont <- rbind(out_cont, coh_comb)
-
+    
     out_cont %<>%
       mutate(missing_perc = round((missing_n / cohort_n) * 100, 2)) %>%
       as_tibble()
     
-## ---- Round combined values --------------------------------------------------    
+    ## ---- Round combined values --------------------------------------------------    
     out_cont %<>%
       mutate_at(vars(mean:missing_perc), ~round(., 2))
   }
   out <- list(out_cat, out_cont)
   names(out) <- c("categorical", "continuous")
-
+  
   return(out)
 }
