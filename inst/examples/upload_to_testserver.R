@@ -15,7 +15,8 @@ du.upload(
   data_version = "1_0",
   dict_version = "2_1", 
   data_input_path = "~/cohort1-data/core_1_0.csv",
-  )
+  run_mode = "test"
+)
 
 du.upload(
   cohort_id = "cohort1",
@@ -23,6 +24,7 @@ du.upload(
   data_version = "1_0",
   dict_version = "1_1", 
   data_input_path = "~/cohort1-data/outcome_1_0.csv",
+  run_mode = "test"
 )
 
 du.upload(
@@ -31,6 +33,7 @@ du.upload(
   data_version = "1_0",
   dict_version = "2_1", 
   data_input_path = "~/cohort1-data/core_1_0.csv",
+  run_mode = "test"
 )
 
 du.upload(
@@ -39,6 +42,7 @@ du.upload(
   data_version = "1_0",
   dict_version = "1_1", 
   data_input_path = "~/cohort1-data/outcome_1_0.csv",
+  run_mode = "test"
 )
 
 du.upload(
@@ -47,6 +51,7 @@ du.upload(
   data_version = "1_0",
   dict_version = "2_1", 
   data_input_path = "~/cohort3-data/core_1_0.csv",
+  run_mode = "test"
 )
 
 du.upload(
@@ -55,4 +60,5 @@ du.upload(
   data_version = "1_0",
   dict_version = "1_1", 
   data_input_path = "~/cohort3-data/outcome_1_0.csv",
+  run_mode = "test"
 )
