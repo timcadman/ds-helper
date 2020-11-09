@@ -1,5 +1,7 @@
 install.packages("remotes")
 library(remotes)
+install.packages("MolgenisArmadillo", repos = "https://registry.molgenis.org/repository/R")
+install.packages("DSMolgenisArmadillo", repos = "https://registry.molgenis.org/repository/R")
 install_github("lifecycle-project/ds-upload")
 library(dsUpload)
 
