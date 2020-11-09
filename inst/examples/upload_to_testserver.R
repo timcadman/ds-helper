@@ -5,11 +5,10 @@ install.packages("DSMolgenisArmadillo", repos = "https://registry.molgenis.org/r
 install_github("lifecycle-project/ds-upload")
 library(dsUpload)
 
-login_data <- data.frame(server = "https://armadillo.test.molgenis.org", storage = "https://armadillo-minio.test.molgenis.org")
+login_data <- data.frame(server = "https://armadillo.test.molgenis.org", storage = "https://armadillo-minio.test.molgenis.org", driver = "ArmadilloDriver")
 
 du.login(login_data = login_data)
 
-# based on dates
 du.upload(
   cohort_id = "cohort1",
   dict_kind = "core",
