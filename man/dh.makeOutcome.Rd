@@ -42,7 +42,7 @@ in case of multiple values}
 
 \item{keep_original}{keep original data frame in the DataSHIELD backend}
 
-\item{df_name}{specificy data frame name}
+\item{df_name}{specify data frame name on the DataSHIELD backend}
 }
 \value{
 a dataset containing the newly derived variables
