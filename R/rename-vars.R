@@ -25,7 +25,7 @@ dh.renameVars <- function(conns = opals, df, names) {
 
   names %>%
     pmap(function(oldvar, newvar, ...) {
-      ?ds.assign(
+      ds.assign(
         toAssign = paste0(df, "$", oldvar),
         newobj = newvar,
         datasources = conns
