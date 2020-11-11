@@ -2,23 +2,22 @@
 % Please edit documentation in R/glm-tab.R
 \name{dh.glmTab}
 \alias{dh.glmTab}
-\title{Extracts the coefficients and confidence intervals from a ds.glm or 
+\title{Extracts the coefficients and confidence intervals from a ds.glm or
 ds.glmSLMA model.}
 \usage{
 dh.glmTab(x, type, format = "paste")
 }
 \arguments{
+\item{x}{saved output from either ds.glm or ds.glmSLMA}
+
 \item{type}{either "ipd" or "slma" depending on the type of analysis done}
 
-\item{model}{saved output from either ds.glm or ds.glmSLMA}
+\item{format}{format to use when running glm}
 }
 \value{
 A tibble containing the estimate with lower and upper confidence intervals
 }
 \description{
-Extracts the coefficients and confidence intervals from a ds.glm or 
+Extracts the coefficients and confidence intervals from a ds.glm or
 ds.glmSLMA model.
-}
-\author{
-Tim Cadman
 }

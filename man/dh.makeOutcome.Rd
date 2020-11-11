@@ -5,16 +5,21 @@
 \title{Derives one or more outcome variable(s) from repeated measures data}
 \usage{
 dh.makeOutcome(
+  conns = opals,
   df,
   outcome,
   age_var,
   bands,
   mult_action = c("earliest", "latest", "nearest"),
   mult_vals = NULL,
-  remove_temp = TRUE
+  remove_temp = TRUE,
+  keep_original = FALSE,
+  df_name = NULL
 )
 }
 \arguments{
+\item{conns}{connections object for DataSHIELD backends}
+
 \item{df}{opal dataframe}
 
 \item{outcome}{name of repeated measures outcome variable}
@@ -32,6 +37,12 @@ period do we keep the earliest or latest? Default =
 \item{mult_vals}{if "mult_action = nearest", this argument specifies which
 which value in each age band to chose values closest to
 in case of multiple values}
+
+\item{remove_temp}{remove temporary objects from the DataSHIELD backend}
+
+\item{keep_original}{keep original data frame in the DataSHIELD backend}
+
+\item{df_name}{specify data frame name on the DataSHIELD backend}
 }
 \value{
 a dataset containing the newly derived variables
@@ -41,7 +52,4 @@ Many analyses will want to use outcomes derived at a single time point,
 e.g. BMI between ages 10-14. This function automates the process to do this
 which is quite complex in DataSHIELD. Note that for big datasets this takes
 a long time to run.
-}
-\author{
-Tim Cadman
 }

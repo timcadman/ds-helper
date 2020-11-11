@@ -3,10 +3,10 @@
 #' This is a very simple wrapper around ds.rm to allow you to remove more than
 #' one object at a time.
 #'
+#' @param conns connections object to DataSHIELD backends
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.
-#' @param cohorts optional argument specifying which cohorts to use
 #'
 #' @return None. Objects removed from ds environment
 #'
@@ -14,24 +14,24 @@
 #' @importFrom dsBaseClient ds.rm
 #' @importFrom dplyr %>%
 #'
-#' @author Tim Cadman
-#'
 #' @export
-dh.tidyEnv <- function(obj, type = "remove", cohorts = names(opals)) {
+dh.tidyEnv <- function(conns = opals, obj, type = "remove") {
+  . <- NULL
+  
   if (type == "remove") {
-    obj %>% map(ds.rm, datasources = opals[cohorts])
+    obj %>% map(ds.rm, datasources = conns)
   } else if (type == "keep") {
-    objects <- cohorts %>%
+    objects <- names(conns) %>%
       map(
-        ~ ds.ls(datasources = opals[.])[[1]][[2]]
+        ~ ds.ls(datasources = conns[.])[[1]][[2]]
       )
 
-    vars <- seq(1:length(cohorts)) %>%
+    vars <- seq(1:length(names(conns))) %>%
       map(
         ~ objects[[.]][objects[[.]] %in% obj == FALSE]
       )
 
-    names(vars) <- cohorts
+    names(vars) <- names(conns)
 
     ## Check no objects to removed have character length >20
     obj_lengths <- vars %>%
@@ -52,7 +52,7 @@ characters. DS does not permit this due to risk of malicious code. Amend your
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.name = value, datasources = opals[cohort])
+      ds.rm(x.name = value, datasources = conns[cohort])
     })
   }
 }

@@ -5,38 +5,36 @@
 #' return the index of variables for a given cohort. It is usefully used in
 #' combination the "keep.cols" argument of ds.dataFrameSubset.
 #'
-#' @param df opal dataframe
+#' @param conns connections object for DataSHIELD backends
+#' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
-#' @param cohorts cohort that you want to find indices for
 #'
 #' @return list of indices where length of list is number of cohorts provided
 #'
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
 #'
-#' @author Tim Cadman
-#'
 #' @export
-dh.findVarsIndex <- function(df, vars, cohorts = names(opals)) {
-  dh.doVarsExist(df, vars, cohorts)
-  dh.doesDfExist(df, cohorts)
+dh.findVarsIndex <- function(conns = opals, df, vars) {
+  dh.doVarsExist(conns, df, vars)
+  dh.doesDfExist(conns, df)
 
   ref_tab <- tibble(
-    var = rep(vars, length(cohorts)),
-    cohort = rep(cohorts, each = length(vars))
+    var = rep(vars, length(names(conns))),
+    cohort = rep(names(conns), each = length(vars))
   )
 
   tmp <- ref_tab %>%
     pmap(
       function(var, cohort) {
         which(
-          ds.colnames(df, datasources = opals[cohort])[[1]] %in% var == TRUE
+          ds.colnames(df, datasources = conns[cohort])[[1]] %in% var == TRUE
         )
       }
     )
 
   out <- split(unlist(tmp), ceiling(seq_along(unlist(tmp)) / length(vars)))
-  names(out) <- cohorts
+  names(out) <- names(conns)
 
   return(out)
 }

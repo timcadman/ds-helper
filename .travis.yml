@@ -15,15 +15,6 @@ cache:
   apt: true
   packages: true
 
-matrix:
-  include:
-  - os: linux
-    r: release
-    script:
-      - R CMD build . --compact-vignettes=gs+qpdf
-      - R CMD check *tar.gz --as-cran
-
-
 before_cache: Rscript -e 'remotes::install_cran("pkgdown")'
 deploy:
   provider: script

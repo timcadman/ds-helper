@@ -1,10 +1,18 @@
 Package: dsHelper
 Title: Helper functions for use with DataSHIELD
 Version: 0.0.0.9007
-Authors@R: person("Tim", "Cadman", email = "t.cadman@bristol.ac.uk",
-                  role = c("aut", "cre"))
-Description: Sometimes we need to automate things with DS. These functions help
-  to do that.
+Authors@R: 
+  c(person(given= "Tim", 
+      family = "Cadman", 
+      email = "t.cadman@bristol.ac.uk",
+      role = c("aut", "cre"),
+      comment = c(ORCID = "0000-0002-7682-5645")),
+    person(given = "Sido",
+      family = "Haakma",
+      role = "ctb",
+      email = "s.haakma@rug.nl",
+      comment = c(ORCID = "0000-0003-1278-9144")))
+Description: Sometimes we need to automate things with DS. These functions help to do that.
 Depends: 
   R (>= 3.5.0),
   dsBaseClient (>= 5.1.0)
@@ -15,12 +23,15 @@ Imports:
   stringr,
   magrittr,
   tibble,
-  tidyr
+  tidyr,
+  rlang
 Suggests: 
-    rmarkdown,
-    testthat,
-    mockery
+  knitr, 
+  rmarkdown,
+  testthat,
+  mockery
+VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
