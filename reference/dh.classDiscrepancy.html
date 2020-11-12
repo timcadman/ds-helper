@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • dsHelper</title>
+<title>Class discrepancy — dh.classDiscrepancy • dsHelper</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,11 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Class discrepancy — dh.classDiscrepancy" />
+<meta property="og:description" content="Either due to using ds.dataFrameFill, or because of mistakes in uploading
+data, some cohorts may have variables uploaded as a different class to other
+cohorts. This can create problems, e.g. when using ds.summary. This function
+produces a table comparing the class of multiple variables." />
 
 
 
@@ -58,7 +62,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -100,109 +104,46 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Class discrepancy</h1>
+    
+    <div class="hidden name"><code>dh.classDiscrepancy.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Either due to using ds.dataFrameFill, or because of mistakes in uploading
+data, some cohorts may have variables uploaded as a different class to other
+cohorts. This can create problems, e.g. when using ds.summary. This function
+produces a table comparing the class of multiple variables.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>dh.classDiscrepancy</span><span class='op'>(</span>conns <span class='op'>=</span> <span class='va'>opals</span>, <span class='va'>df</span>, vars <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="dh.classDiscrepancy.html">dh.classDiscrepancy()</a></code> </p>
-        </td>
-        <td><p>Class discrepancy</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.doVarsExist.html">dh.doVarsExist()</a></code> </p>
-        </td>
-        <td><p>Check whether variables exist in dataframe</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.doesDfExist.html">dh.doesDfExist()</a></code> </p>
-        </td>
-        <td><p>Check whether dataframe exists in environment</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.dropCols.html">dh.dropCols()</a></code> </p>
-        </td>
-        <td><p>Subsets a dataframe using column names.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.findVarsIndex.html">dh.findVarsIndex()</a></code> </p>
-        </td>
-        <td><p>Return return indices of columns in opal dataframe</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.getStats.html">dh.getStats()</a></code> </p>
-        </td>
-        <td><p>Produces descriptive statistics in useful format</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.glmTab.html">dh.glmTab()</a></code> </p>
-        </td>
-        <td><p>Extracts the coefficients and confidence intervals from a ds.glm or
-ds.glmSLMA model.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.lmeMultPoly.html">dh.lmeMultPoly()</a></code> </p>
-        </td>
-        <td><p>Function to perform every combination of MLM fractional polynomials</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.makeOutcome.html">dh.makeOutcome()</a></code> </p>
-        </td>
-        <td><p>Derives one or more outcome variable(s) from repeated measures data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.renameVars.html">dh.renameVars()</a></code> </p>
-        </td>
-        <td><p>Rename multiple variables at once</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.subjHasData.html">dh.subjHasData()</a></code> </p>
-        </td>
-        <td><p>Indicate whether subject has any non-missing values in a set of variables</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dh.tidyEnv.html">dh.tidyEnv()</a></code> </p>
-        </td>
-        <td><p>Tidy up the server environment</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>conns</th>
+      <td><p>connections object for DataSHIELD backends</p></td>
+    </tr>
+    <tr>
+      <th>df</th>
+      <td><p>opal dataframe</p></td>
+    </tr>
+    <tr>
+      <th>vars</th>
+      <td><p>vector of variable names in dataframe (optional). If vars is not
+provided all variables will be included.</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
+       columns for each cohort indicating the class of the variable</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
