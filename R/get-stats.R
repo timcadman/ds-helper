@@ -87,7 +87,7 @@ dh.getStats <- function(df, vars) {
   stats_cat <- list()
 
   if (length(factors > 0)) {
-    stats_cat[[1]] <- lapply(integers, function(x) {
+    stats_cat[[1]] <- lapply(factors, function(x) {
       lengths = ds.length(paste0(df, "$", x), type = 'split')
       names(lengths) = names(opals)
       if(any(lengths==0)){
