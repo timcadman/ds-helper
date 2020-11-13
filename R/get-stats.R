@@ -87,17 +87,28 @@ dh.getStats <- function(df, vars) {
   stats_cat <- list()
 
   if (length(factors > 0)) {
-    stats_cat[[1]] <- lapply(factors, function(x) {
-      sapply(cohorts, USE.NAMES = FALSE, function(y) {
-        if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
-          type = "combine"
-        ) == 0) {
-          list(NULL)
-        } else {
-          ds.summary(paste0(df, "$", x), datasources = opals[y])
+    stats_cat[[1]] <- lapply(integers, function(x) {
+      lengths = ds.length(paste0(df, "$", x), type = 'split')
+      names(lengths) = names(opals)
+      if(any(lengths==0)){
+        to_summarise = lengths[-which(lengths==0)]
+      }
+      else{
+        to_summarise = lengths
+      }
+      opals_to_run = names(to_summarise)
+      summaries = ds.summary(paste0(df, "$", x), datasources = opals[opals_to_run])
+      result = list()
+      result = lapply(seq_along(lengths), function(y){
+        if(lengths[[y]]==0){
+          return(NULL)
+        }
+        else{
+          return(summaries[[names(lengths)[[y]]]])
         }
       })
+      names(result)=names(lengths)
+      return(result)
     })
 
     stats_cat[[2]] <- ds.length(paste0(df, "$", factors[1]),
@@ -116,32 +127,54 @@ dh.getStats <- function(df, vars) {
 
   if (length(integers > 0)) {
     stats_cont[[1]] <- lapply(integers, function(x) {
-      sapply(cohorts, USE.NAMES = FALSE, function(y) {
-        if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
-          type = "combine"
-        ) == 0) {
-          list(NULL)
-        } else {
-          ds.summary(paste0(df, "$", x), datasources = opals[y])
+      lengths = ds.length(paste0(df, "$", x), type = 'split')
+      names(lengths) = names(opals)
+      if(any(lengths==0)){
+        to_summarise = lengths[-which(lengths==0)]
+      }
+      else{
+        to_summarise = lengths
+      }
+      opals_to_run = names(to_summarise)
+      summaries = ds.summary(paste0(df, "$", x), datasources = opals[opals_to_run])
+      result = list()
+      result = lapply(seq_along(lengths), function(y){
+        if(lengths[[y]]==0){
+          return(NULL)
+        }
+        else{
+          return(summaries[[names(lengths)[[y]]]])
         }
       })
+      names(result)=names(lengths)
+      return(result)
     })
 
     names(stats_cont[[1]]) <- integers
     stats_cont[[1]] <- lapply(stats_cont[[1]], setNames, cohorts)
 
     stats_cont[[2]] <- lapply(integers, function(x) {
-      sapply(cohorts, USE.NAMES = FALSE, function(y) {
-        if (ds.length(paste0(df, "$", x),
-          datasources = opals[y],
-          type = "combine"
-        ) == 0) {
-          list(NULL)
-        } else {
-          ds.var(paste0(df, "$", x), datasources = opals[y])[1]
+      lengths = ds.length(paste0(df, "$", x), type = 'split')
+      names(lengths) = names(opals)
+      if(any(lengths==0)){
+        to_summarise = lengths[-which(lengths==0)]
+      }
+      else{
+        to_summarise = lengths
+      }
+      opals_to_run = names(to_summarise)
+      varience = ds.var(paste0(df, "$", x), datasources = opals[opals_to_run])
+      result = list()
+      result = lapply(seq_along(lengths), function(y){
+        if(lengths[[y]]==0){
+          return(NULL)
+        }
+        else{
+          return(varience[[names(lengths)[[y]]]])
         }
       })
+      names(result)=names(lengths)
+      return(result)
     })
 
     names(stats_cont[[2]]) <- integers
