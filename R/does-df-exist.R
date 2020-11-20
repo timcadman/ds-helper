@@ -13,7 +13,8 @@
 #' @importFrom dsBaseClient ds.ls
 #'
 #' @author Tim Cadman
-#' @export
+#' 
+#' @noRd
 dh.doesDfExist <- function(conns = conns, df) {
 
   df_check <- names(conns) %>%

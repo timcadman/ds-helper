@@ -4,7 +4,7 @@
 \alias{dh.subjHasData}
 \title{Indicate whether subject has any non-missing values in a set of variables}
 \usage{
-dh.subjHasData(conns = opals, df, vars, new_label)
+dh.subjHasData(conns = conns, df, vars, new_label)
 }
 \arguments{
 \item{conns}{connection object for DataSHIELD backends}

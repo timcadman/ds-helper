@@ -4,7 +4,7 @@
 \alias{dh.renameVars}
 \title{Rename multiple variables at once}
 \usage{
-dh.renameVars(conns = opals, df, names)
+dh.renameVars(conns = conns, df, names)
 }
 \arguments{
 \item{conns}{connections object for DataSHIELD backends}

@@ -13,7 +13,7 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
 #'
-#' @export
+#' @noRd
 dh.doVarsExist <- function(conns = conns, df, vars) {
 
   allvars <- ds.colnames(x = df, datasources = conns)

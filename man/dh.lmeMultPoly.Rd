@@ -4,7 +4,7 @@
 \alias{dh.lmeMultPoly}
 \title{Function to perform every combination of MLM fractional polynomials}
 \usage{
-dh.lmeMultPoly(conns = opals, data, outcome, type = "Normal")
+dh.lmeMultPoly(conns = conns, data, outcome, type = "Normal")
 }
 \arguments{
 \item{conns}{connection objects for DataSHIELD backends}

@@ -5,14 +5,13 @@
 \title{Derives one or more outcome variable(s) from repeated measures data}
 \usage{
 dh.makeOutcome(
-  conns = opals,
+  conns = conns,
   df,
   outcome,
   age_var,
   bands,
   mult_action = c("earliest", "latest", "nearest"),
   mult_vals = NULL,
-  remove_temp = TRUE,
   keep_original = FALSE,
   df_name = NULL
 )
@@ -37,8 +36,6 @@ period do we keep the earliest or latest? Default =
 \item{mult_vals}{if "mult_action = nearest", this argument specifies which
 which value in each age band to chose values closest to
 in case of multiple values}
-
-\item{remove_temp}{remove temporary objects from the DataSHIELD backend}
 
 \item{keep_original}{keep original data frame in the DataSHIELD backend}
 
