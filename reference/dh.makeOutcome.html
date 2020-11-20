@@ -119,14 +119,13 @@ a long time to run.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dh.makeOutcome</span><span class='op'>(</span>
-  conns <span class='op'>=</span> <span class='va'>opals</span>,
+  conns <span class='op'>=</span> <span class='va'>conns</span>,
   <span class='va'>df</span>,
   <span class='va'>outcome</span>,
   <span class='va'>age_var</span>,
   <span class='va'>bands</span>,
   mult_action <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"earliest"</span>, <span class='st'>"latest"</span>, <span class='st'>"nearest"</span><span class='op'>)</span>,
   mult_vals <span class='op'>=</span> <span class='cn'>NULL</span>,
-  remove_temp <span class='op'>=</span> <span class='cn'>TRUE</span>,
   keep_original <span class='op'>=</span> <span class='cn'>FALSE</span>,
   df_name <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
@@ -167,10 +166,6 @@ period do we keep the earliest or latest? Default =
       <td><p>if "mult_action = nearest", this argument specifies which
 which value in each age band to chose values closest to
 in case of multiple values</p></td>
-    </tr>
-    <tr>
-      <th>remove_temp</th>
-      <td><p>remove temporary objects from the DataSHIELD backend</p></td>
     </tr>
     <tr>
       <th>keep_original</th>
