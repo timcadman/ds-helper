@@ -62,7 +62,6 @@ dh.dropCols <- function(conns = conns, df, vars, new_df_name, comp_var, type = c
       )
     )
 
-  if (remove_temp == TRUE) {
-    dh.tidyEnv(conns, obj = c("comp_var_num", "tmp_sub_var"), type = "remove")
-  }
+  dh.tidyEnv(conns, obj = c("comp_var_num", "tmp_sub_var"), type = "remove")
+  
 }
