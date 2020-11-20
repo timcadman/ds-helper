@@ -14,7 +14,7 @@
 #'
 #' @author Tim Cadman
 #' @export
-dh.doesDfExist <- function(conns = opals, df) {
+dh.doesDfExist <- function(conns = conns, df) {
 
   df_check <- names(conns) %>%
     map(~ (df %in% ds.ls(datasources = conns[.])[[1]][["objects.found"]]))

@@ -20,7 +20,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.dropCols <- function(conns = opals, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
+dh.dropCols <- function(conns = conns, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
 
   type <- match.arg(type)
 

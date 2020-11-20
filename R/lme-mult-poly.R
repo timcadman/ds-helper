@@ -12,7 +12,7 @@
 #' @importFrom dsBaseClient ds.lmerSLMA ds.isNA
 #'
 #' @export
-dh.lmeMultPoly <- function(conns = opals, data, outcome, type = "Normal") {
+dh.lmeMultPoly <- function(conns = conns, data, outcome, type = "Normal") {
   log_lik <- NULL
 
   ## First arrange the data to keep it happy when fitting binomial model
