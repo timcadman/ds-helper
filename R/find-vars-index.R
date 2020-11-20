@@ -15,7 +15,7 @@
 #' @importFrom purrr pmap
 #'
 #' @export
-dh.findVarsIndex <- function(conns = opals, df, vars) {
+dh.findVarsIndex <- function(conns = conns, df, vars) {
   dh.doVarsExist(conns, df, vars)
   dh.doesDfExist(conns, df)
 

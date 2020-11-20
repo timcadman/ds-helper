@@ -17,7 +17,7 @@
 #' @importFrom purrr map pmap
 #'
 #' @export
-dh.renameVars <- function(conns = opals, df, names) {
+dh.renameVars <- function(conns = conns, df, names) {
   old_new <- newvar <- NULL
 
   dh.doesDfExist(conns, df)

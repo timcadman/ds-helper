@@ -52,7 +52,7 @@
 #' @importFrom magrittr %<>%
 #'
 #' @export
-dh.getStats <- function(conns = opals, df, vars) {
+dh.getStats <- function(conns = conns, df, vars) {
   Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
 
   dh.doVarsExist(conns, df, vars)

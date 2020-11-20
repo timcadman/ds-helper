@@ -4,7 +4,7 @@
 \alias{dh.classDiscrepancy}
 \title{Class discrepancy}
 \usage{
-dh.classDiscrepancy(conns = opals, df, vars = NULL)
+dh.classDiscrepancy(conns = conns, df, vars = NULL)
 }
 \arguments{
 \item{conns}{connections object for DataSHIELD backends}

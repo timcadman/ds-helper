@@ -18,7 +18,6 @@
 #' @param mult_vals if "mult_action = nearest", this argument specifies which
 #'                  which value in each age band to chose values closest to
 #'                  in case of multiple values
-#' @param remove_temp remove temporary objects from the DataSHIELD backend
 #' @param keep_original keep original data frame in the DataSHIELD backend
 #' @param df_name specify data frame name on the DataSHIELD backend
 #' 
@@ -35,8 +34,8 @@
 #'
 #' @export
 dh.makeOutcome <- function(
-                           conns = opals, df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, remove_temp = TRUE, keep_original = FALSE, df_name = NULL) {
+                           conns = conns, df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
+                           mult_vals = NULL, keep_original = FALSE, df_name = NULL) {
   mult_action <- match.arg(mult_action)
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- age <- varname <- new_df_name <- available <- bmi_to_subset <- ref_val <- NULL
 
@@ -539,7 +538,6 @@ dh.makeOutcome <- function(
 
 
   ## ---- Tidy environment -------------------------------------------------------
-  if (remove_temp == TRUE) {
     message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
 
     end_objs <- ds.ls(datasources = conns)
@@ -552,8 +550,7 @@ dh.makeOutcome <- function(
     dh.tidyEnv(conns = conns, obj = to_remove, type = "remove")
 
     message("DONE", appendLF = TRUE)
-  }
-
+  
   cat(
     "\nDataframe", "'", out_name, "'",
     "created containing the following variables:\n\n"
