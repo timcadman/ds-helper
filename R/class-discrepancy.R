@@ -1,4 +1,4 @@
-#' Class descrepancy
+#' Class discrepancy
 #'
 #' Either due to using ds.dataFrameFill, or because of mistakes in uploading
 #' data, some cohorts may have variables uploaded as a different class to other
@@ -18,13 +18,13 @@
 #' @importFrom dsBaseClient ds.class ds.colnames
 #'
 #' @export
-dh.classDescrepancy <- function(conns = opals, df, vars = NULL) {
+dh.classDiscrepancy <- function(conns = opals, df, vars = NULL) {
   . <- variable <- discrepancy <- NULL
 
   dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {
-    fun_vars <- ds.colnames(df, datasources = conns)[[1]]
+    fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
   } else {
     fun_vars <- vars
   }
