@@ -241,7 +241,7 @@ dh.makeOutcome <- function(
 
   if (length(valid_coh) == 1) {
     data_available <- data_sum[[1]]$Mean.by.Study[, "EstimatedMean"]
-  } else if (length(valid_coh > 1)) {
+  } else if (length(valid_coh) > 1) {
     data_available <- map_dfr(
       data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
     )
