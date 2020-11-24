@@ -9,7 +9,9 @@ dh.anyData(conns = opals, df, vars = NULL)
 \arguments{
 \item{conns}{connections object for DataSHIELD backends}
 
-\item{df}{sever side dataframe}
+\item{df}{server side dataframe}
+
+\item{vars}{vector of server side variable names within df}
 }
 \value{
 a dataframe with columns for each variable and rows for each cohort indicating if the variable is not completely missing

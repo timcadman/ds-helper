@@ -11,7 +11,8 @@
 #'  The purpose of this function is to generate this look up table automatically.
 #'
 #' @param conns connections object for DataSHIELD backends
-#' @param df sever side dataframe
+#' @param df server side dataframe
+#' @param vars vector of server side variable names within df
 #'
 #' @return a dataframe with columns for each variable and rows for each cohort indicating if the variable is not completely missing
 #'
