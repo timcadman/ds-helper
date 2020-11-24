@@ -231,7 +231,7 @@ dh.makeOutcome <- function(
   ## ---- Handle disclosure issues -----------------------------------------------
 
   # Need to only show data as being available if >= minimum value for subsetting
-  sub_min <- ds.listDisclosureSettings(datasources = opals[valid_coh])$ds.disclosure.settings %>%
+  sub_min <- ds.listDisclosureSettings(datasources = conns[valid_coh])$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset)
 
   min_perc_vec <- sub_min / data_sum[[1]]$Mean.by.Study[, "Ntotal"]
@@ -241,7 +241,7 @@ dh.makeOutcome <- function(
 
   if (length(valid_coh) == 1) {
     data_available <- data_sum[[1]]$Mean.by.Study[, "EstimatedMean"]
-  } else if (length(valid_coh > 1)) {
+  } else if (length(valid_coh) > 1) {
     data_available <- map_dfr(
       data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
     )
