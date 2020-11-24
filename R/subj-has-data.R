@@ -18,7 +18,7 @@
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
 #'
 #' @export
-dh.subjHasData <- function(conns = opals, df, vars, new_label) {
+dh.subjHasData <- function(conns = conns, df, vars, new_label) {
 
   dh.doesDfExist(conns = conns, df = df)
 
