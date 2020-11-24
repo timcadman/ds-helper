@@ -17,21 +17,20 @@
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length
+#' @importFrom tibble as_tibble
 #'
 #' @export
 dh.anyData <- function(conns = opals, df, vars = NULL) {
   
-  discrep = dh.classDiscrepancy(conns = conns, df = df, vars = vars)
-  if(any(discrep$discrepancy=="yes")){
-    warning("All columns not found in all cohorts, please see tibble returned and correct this", call. = FALSE)
-    return(discrep)
-  }
+  dh.doesDfExist(conns, df)
   
   if (is.null(vars)) {
-    fun_vars <- discrep$variable
+    fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
   } else {
     fun_vars <- vars
   }
+  
+  dh.doVarsExist(conns, df, vars)
   
   # get the lengths
   lengths = unlist(ds.length(paste0(df,"$",fun_vars[1]), type = "s", datasources = conns))
@@ -41,8 +40,8 @@ dh.anyData <- function(conns = opals, df, vars = NULL) {
     numNa != lengths
   })
   
-  out <- as.data.frame(do.call(cbind, list_na))
-  colnames(out) <- fun_vars
+  names(list_na) <- fun_vars
+  out <- bind_rows(list_na, .id = "variable")
   
-  return(as_tibble(out))
+  return(out)
 }
