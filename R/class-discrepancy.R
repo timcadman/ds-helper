@@ -24,7 +24,7 @@ dh.classDiscrepancy <- function(conns = conns, df, vars = NULL) {
   dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {
-    fun_vars <- ds.colnames(df, datasources = conns)[[1]]
+    fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
   } else {
     fun_vars <- vars
   }
