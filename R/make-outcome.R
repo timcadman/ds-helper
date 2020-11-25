@@ -435,7 +435,7 @@ dh.makeOutcome <- function(
   combined %>%
     pmap(function(varname, cohort, keep_vars) {
       dh.dropCols(
-        conns = conns,
+        conns = conns[cohort],
         df = paste0(varname, "_wide"),
         vars = keep_vars,
         new_df_name = paste0(varname, "_wide"),
