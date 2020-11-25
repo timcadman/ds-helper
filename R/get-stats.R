@@ -52,7 +52,7 @@
 #' @importFrom magrittr %<>%
 #'
 #' @export
-dh.getStats <- function(conns = opals, df, vars) {
+dh.getStats <- function(conns = conns, df, vars) {
   Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
 
   dh.doVarsExist(conns, df, vars)
@@ -464,6 +464,11 @@ dh.getStats <- function(conns = opals, df, vars) {
 
     ## ---- Combine with main table ------------------------------------------------
     out_cont <- rbind(out_cont, coh_comb)
+
+    ## ---- Calculate missing percent ----------------------------------------------
+     out_cont %<>%
+      mutate(missing_perc = round((missing_n / cohort_n) * 100, 2)) %>%
+      as_tibble()
 
     ## ---- Round combined values --------------------------------------------------
     out_cont %<>%

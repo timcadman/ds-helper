@@ -15,7 +15,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.tidyEnv <- function(conns = opals, obj, type = "remove") {
+dh.tidyEnv <- function(conns = conns, obj, type = "remove") {
   . <- NULL
 
   if (type == "remove") {

@@ -20,7 +20,12 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
+<<<<<<< HEAD
 dh.dropCols <- function(conns = opals, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
+=======
+dh.dropCols <- function(conns = conns, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
+
+>>>>>>> 1064064e394f67598c6b3661ca714fbbab6aa830
   type <- match.arg(type)
 
   vars_index <- dh.findVarsIndex(conns, df, vars)
@@ -61,7 +66,6 @@ dh.dropCols <- function(conns = opals, df, vars, new_df_name, comp_var, type = c
       )
     )
 
-  if (remove_temp == TRUE) {
-    dh.tidyEnv(conns, obj = c("comp_var_num", "tmp_sub_var"), type = "remove")
-  }
+  dh.tidyEnv(conns, obj = c("comp_var_num", "tmp_sub_var"), type = "remove")
+  
 }

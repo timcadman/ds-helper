@@ -13,8 +13,14 @@
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
 #'
+<<<<<<< HEAD
 #' @export
 dh.doVarsExist <- function(conns = opals, df, vars) {
+=======
+#' @noRd
+dh.doVarsExist <- function(conns = conns, df, vars) {
+
+>>>>>>> 1064064e394f67598c6b3661ca714fbbab6aa830
   allvars <- ds.colnames(x = df, datasources = conns)
 
   var_check <- allvars %>% map(~ (vars %in% .))

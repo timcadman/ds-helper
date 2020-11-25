@@ -13,8 +13,15 @@
 #' @importFrom dsBaseClient ds.ls
 #'
 #' @author Tim Cadman
+<<<<<<< HEAD
 #' @export
 dh.doesDfExist <- function(conns = opals, df) {
+=======
+#' 
+#' @noRd
+dh.doesDfExist <- function(conns = conns, df) {
+
+>>>>>>> 1064064e394f67598c6b3661ca714fbbab6aa830
   df_check <- names(conns) %>%
     map(~ (df %in% ds.ls(datasources = conns[.])[[1]][["objects.found"]]))
 

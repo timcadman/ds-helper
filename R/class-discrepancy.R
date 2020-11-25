@@ -18,7 +18,7 @@
 #' @importFrom dsBaseClient ds.class ds.colnames
 #'
 #' @export
-dh.classDiscrepancy <- function(conns = opals, df, vars = NULL) {
+dh.classDiscrepancy <- function(conns = conns, df, vars = NULL) {
   . <- variable <- discrepancy <- NULL
 
   dh.doesDfExist(conns, df)

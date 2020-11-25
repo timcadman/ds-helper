@@ -18,7 +18,12 @@
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
 #'
 #' @export
+<<<<<<< HEAD
 dh.subjHasData <- function(conns = opals, df, vars, new_label) {
+=======
+dh.subjHasData <- function(conns = conns, df, vars, new_label) {
+
+>>>>>>> 1064064e394f67598c6b3661ca714fbbab6aa830
   dh.doesDfExist(conns = conns, df = df)
 
   ## ---- Convert to numeric -----------------------------------------------------
