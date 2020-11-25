@@ -17,7 +17,7 @@ Depends:
   R (>= 3.5.0),
   dsBaseClient (>= 5.1.0)
 Imports:
-  dplyr,
+  dplyr (>= 1.0.2),
   meta,
   purrr,
   stringr,
