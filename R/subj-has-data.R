@@ -19,7 +19,6 @@
 #'
 #' @export
 dh.subjHasData <- function(conns = opals, df, vars, new_label) {
-
   dh.doesDfExist(conns = conns, df = df)
 
   ## ---- Convert to numeric -----------------------------------------------------

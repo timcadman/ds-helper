@@ -21,7 +21,7 @@
 #' @param remove_temp remove temporary objects from the DataSHIELD backend
 #' @param keep_original keep original data frame in the DataSHIELD backend
 #' @param df_name specify data frame name on the DataSHIELD backend
-#' 
+#'
 #' @return a dataset containing the newly derived variables
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole

@@ -17,7 +17,7 @@
 #' @export
 dh.tidyEnv <- function(conns = opals, obj, type = "remove") {
   . <- NULL
-  
+
   if (type == "remove") {
     obj %>% map(ds.rm, datasources = conns)
   } else if (type == "keep") {

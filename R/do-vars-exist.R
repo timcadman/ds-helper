@@ -15,7 +15,6 @@
 #'
 #' @export
 dh.doVarsExist <- function(conns = opals, df, vars) {
-
   allvars <- ds.colnames(x = df, datasources = conns)
 
   var_check <- allvars %>% map(~ (vars %in% .))
