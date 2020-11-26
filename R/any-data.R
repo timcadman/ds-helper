@@ -22,27 +22,26 @@
 #'
 #' @export
 dh.anyData <- function(conns = opals, df, vars = NULL) {
-  
   dh.doesDfExist(conns, df)
-  
+
   if (is.null(vars)) {
     fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
   } else {
     fun_vars <- vars
   }
-  
+
   dh.doVarsExist(conns, df, vars)
-  
+
   # get the lengths
-  lengths = unlist(ds.length(paste0(df,"$",fun_vars[1]), type = "s", datasources = conns))
-  
-  list_na <- lapply(fun_vars, function(x){
-    numNa = unlist(ds.numNA(paste0(df,"$",x), datasources = conns))
+  lengths <- unlist(ds.length(paste0(df, "$", fun_vars[1]), type = "s", datasources = conns))
+
+  list_na <- lapply(fun_vars, function(x) {
+    numNa <- unlist(ds.numNA(paste0(df, "$", x), datasources = conns))
     numNa != lengths
   })
-  
+
   names(list_na) <- fun_vars
   out <- bind_rows(list_na, .id = "variable")
-  
+
   return(out)
 }
