@@ -15,7 +15,6 @@
 #'
 #' @noRd
 dh.doVarsExist <- function(conns = conns, df, vars) {
-
   allvars <- ds.colnames(x = df, datasources = conns)
 
   var_check <- allvars %>% map(~ (vars %in% .))

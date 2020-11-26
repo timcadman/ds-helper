@@ -466,7 +466,7 @@ dh.getStats <- function(conns = conns, df, vars) {
     out_cont <- rbind(out_cont, coh_comb)
 
     ## ---- Calculate missing percent ----------------------------------------------
-     out_cont %<>%
+    out_cont %<>%
       mutate(missing_perc = round((missing_n / cohort_n) * 100, 2)) %>%
       as_tibble()
 

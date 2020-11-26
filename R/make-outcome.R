@@ -435,7 +435,7 @@ dh.makeOutcome <- function(
   combined %>%
     pmap(function(varname, cohort, keep_vars) {
       dh.dropCols(
-        conns = conns,
+        conns = conns[cohort],
         df = paste0(varname, "_wide"),
         vars = keep_vars,
         new_df_name = paste0(varname, "_wide"),
@@ -538,19 +538,19 @@ dh.makeOutcome <- function(
 
 
   ## ---- Tidy environment -------------------------------------------------------
-    message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
+  message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
 
-    end_objs <- ds.ls(datasources = conns)
+  end_objs <- ds.ls(datasources = conns)
 
-    to_remove <- unique(end_objs[[1]][!end_objs[[1]] %in% start_objs[[1]]])
+  to_remove <- unique(end_objs[[1]][!end_objs[[1]] %in% start_objs[[1]]])
 
-    ## but we keep the final dataset
-    to_remove <- to_remove[!(to_remove %in% out_name)]
+  ## but we keep the final dataset
+  to_remove <- to_remove[!(to_remove %in% out_name)]
 
-    dh.tidyEnv(conns = conns, obj = to_remove, type = "remove")
+  dh.tidyEnv(conns = conns, obj = to_remove, type = "remove")
 
-    message("DONE", appendLF = TRUE)
-  
+  message("DONE", appendLF = TRUE)
+
   cat(
     "\nDataframe", "'", out_name, "'",
     "created containing the following variables:\n\n"

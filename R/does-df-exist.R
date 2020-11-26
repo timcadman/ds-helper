@@ -13,10 +13,9 @@
 #' @importFrom dsBaseClient ds.ls
 #'
 #' @author Tim Cadman
-#' 
+#'
 #' @noRd
 dh.doesDfExist <- function(conns = conns, df) {
-
   df_check <- names(conns) %>%
     map(~ (df %in% ds.ls(datasources = conns[.])[[1]][["objects.found"]]))
 
