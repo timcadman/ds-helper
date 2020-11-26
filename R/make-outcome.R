@@ -132,7 +132,7 @@ dh.makeOutcome <- function(
 
   ## ---- Drop variables we don't need -------------------------------------------
   v_ind <- dh.findVarsIndex(
-    conns = conns,
+    conns = conns[valid_coh],
     df = new_df,
     vars = c("child_id", outcome, "age", "outcome_comp")
   )
@@ -343,7 +343,7 @@ dh.makeOutcome <- function(
     cats_to_subset %>%
       pmap(function(cohort, new_subset_name, varname, dif_val, ...) {
         ds.dataFrameSort(
-          datasources = conns,
+          datasources = conns[cohort],
           df.name = paste0(varname, "_y"),
           sort.key.name = paste0(varname, "_y", "$", dif_val),
           newobj = paste0(varname, "_a"),
@@ -530,7 +530,7 @@ dh.makeOutcome <- function(
       by.y.names = "child_id",
       all.x = TRUE,
       newobj = out_name,
-      datasources = conns
+      datasources = conns[cohort]
     )
   }
 
