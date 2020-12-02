@@ -2,7 +2,7 @@
 % Please edit documentation in R/local-proxy.R
 \name{dh.localProxy}
 \alias{dh.localProxy}
-\title{Check whether variables exist in dataframe}
+\title{Generate a local proxy dataframe to enable local autocompletion in RStudio}
 \usage{
 dh.localProxy(conns = conns, df)
 }
@@ -12,10 +12,22 @@ dh.localProxy(conns = conns, df)
 \item{df}{datashield dataframe}
 }
 \value{
-None. Stops function if var(s) don't exist in one of more cohorts.
+Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one of more cohorts.
 }
 \description{
-Probably mostly for internal use, this function can be used at the start
-of functions where users provide both vars and a dataframe to check that
-the vars exist in the dataframe provided
+If you have a remote dataframe on the servers, it can be challenging to remember variable narmes when writing code.
+Because the dataframes are on remote servers, the autocomplete won't work in RStudio. The purpose of this function
+is to create a local object that has the same structure as the remote data frame and enables the use of autocomplete
+when writing DataSHIELD code.
+}
+\details{
+For example, if you have a dataframe "D" with columns LAB_TSC, DIS_CVA and DIS_DIAB, normally you would need to write:
+
+`ds.summary("D$LAB_TSC")` with the variable name spelled correctly (no autocomplete!) and remember quotation marks
+
+after running this function you can type
+
+`ds.summary(D$` and hit tab, and the list of variables will be displayed. Choose one and hit enter to finish up with:
+
+`ds.summary(D$LAB_TSC)` - no quotation marks needed either!
 }
