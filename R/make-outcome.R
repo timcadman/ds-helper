@@ -11,7 +11,8 @@
 #' @param age_var Vector of values indicating pairs of low and high values
 #'             for which to derive outcome variables for. Must be even length
 #' @param bands vector of alternating lower and upper age bands for variable(s)
-#'              you want to create
+#'              you want to create. Variables will be derived for the age range
+#'              > lowest value and <= highest value for each band.
 #' @param mult_action if a subject has more than one value within the time
 #'                    period do we keep the earliest or latest? Default =
 #'                    "earliest"
@@ -132,7 +133,7 @@ dh.makeOutcome <- function(
 
   ## ---- Drop variables we don't need -------------------------------------------
   v_ind <- dh.findVarsIndex(
-    conns = conns,
+    conns = conns[valid_coh],
     df = new_df,
     vars = c("child_id", outcome, "age", "outcome_comp")
   )
@@ -343,7 +344,7 @@ dh.makeOutcome <- function(
     cats_to_subset %>%
       pmap(function(cohort, new_subset_name, varname, dif_val, ...) {
         ds.dataFrameSort(
-          datasources = conns,
+          datasources = conns[cohort],
           df.name = paste0(varname, "_y"),
           sort.key.name = paste0(varname, "_y", "$", dif_val),
           newobj = paste0(varname, "_a"),
@@ -530,7 +531,7 @@ dh.makeOutcome <- function(
       by.y.names = "child_id",
       all.x = TRUE,
       newobj = out_name,
-      datasources = conns
+      datasources = conns[cohort]
     )
   }
 
