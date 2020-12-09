@@ -11,7 +11,8 @@
 #' @param age_var Vector of values indicating pairs of low and high values
 #'             for which to derive outcome variables for. Must be even length
 #' @param bands vector of alternating lower and upper age bands for variable(s)
-#'              you want to create
+#'              you want to create. Variables will be derived for the age range
+#'              > lowest value and <= highest value for each band.
 #' @param mult_action if a subject has more than one value within the time
 #'                    period do we keep the earliest or latest? Default =
 #'                    "earliest"
