@@ -1,6 +1,6 @@
 Package: dsHelper
 Title: Helper functions for use with DataSHIELD
-Version: 0.0.0.9007
+Version: 0.0.0.9008
 Authors@R: 
   c(person(given= "Tim", 
       family = "Cadman", 
