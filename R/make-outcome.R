@@ -531,7 +531,7 @@ dh.makeOutcome <- function(
       by.y.names = "child_id",
       all.x = TRUE,
       newobj = out_name,
-      datasources = conns[cohort]
+      datasources = conns[valid_coh]
     )
   }
 

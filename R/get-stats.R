@@ -458,7 +458,7 @@ dh.getStats <- function(conns = conns, df, vars) {
     coh_comb %<>%
       mutate(
         missing_n = cohort_n - valid_n,
-        std.dev = variance * sqrt(valid_n)
+        std.dev = sqrt(variance) 
       ) %>%
       select(-variance)
 
