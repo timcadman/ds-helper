@@ -380,7 +380,7 @@ dh.getStats <- function(conns = conns, df, vars) {
     valid_n_cont$variable %<>% as.character
 
     coh_comb <- tibble(
-      cohort = "Combined",
+      cohort = "combined",
       variable = sort(names(stats_cont[[1]])),
       cohort_n = Reduce(`+`, stats_cont[["Max_N"]])
     )
@@ -458,7 +458,7 @@ dh.getStats <- function(conns = conns, df, vars) {
     coh_comb %<>%
       mutate(
         missing_n = cohort_n - valid_n,
-        std.dev = sqrt(variance) 
+        std.dev = sqrt(variance)
       ) %>%
       select(-variance)
 
