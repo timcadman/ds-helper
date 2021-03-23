@@ -1,3 +1,31 @@
+#' Derives one or more outcome variable(s) from repeated measures data
+#' 
+#' When running multilevel models we often want to visualise the actual data,
+#' for example the average outcome at different time points. This is useful to
+#' check visually how well our model fits the data. This function does that. At 
+#' the moment this is a really slow, convoluted way to do it involving taking 
+#' lots of subsets. This is because tapply.assign doesn't work properly at the
+#' moment. 
+#' 
+#'
+#' @param df serverside dataframe
+#' @param agevar variable indicating subject age/time
+#' @param outcome outcome variable 
+#' @param bands vector of even length given the upper and low age bands to 
+#'              create the outcomes at. 
+#' @parem grouping an optional variable if you want to stratify the means by 
+#'        another variable, e.g. socioeconomic position.              
+#' @param conns connections object for DataSHIELD backends
+#'
+#' @return a tibble containing mean values of the outcome at different age bands
+#'
+#' @importFrom ds.colnames ds.asFactor ds.levels ds.dataFrameSubset
+#' @importFrom purrr map imap map_df
+#' @importFrom stringr str_detect
+#' @importFrom tidyverse compact flatten bind_rows select separate filter 
+#'             mutate pivot_wider pivot_longer left_join
+#'
+#' @export
 dh.meanByOccasion <- function(df, agevar, outcome, bands, conns, grouping = NULL) {
 
   ##############################################################################
