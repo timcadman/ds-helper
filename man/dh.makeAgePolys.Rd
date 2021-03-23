@@ -5,7 +5,7 @@
 \title{Produces multiple transformations of age term for fractional polynomial 
 analysis.}
 \usage{
-dh.makeAgePolys(df, agevars, conns)
+dh.makeAgePolys(df, agevars, conns = NULL)
 }
 \arguments{
 \item{df}{opal dataframe}

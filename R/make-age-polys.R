@@ -15,10 +15,15 @@
 #' @importFrom tibble tibble
 #' @importFrom dplyr %>% 
 #' @importFrom purrr pmap cross2 map_chr
-#' @importFrom dsBaseClient ds.cbind
-#'
+#' @importFrom dsBaseClient ds.cbind 
+#' 
 #' @export
-dh.makeAgePolys <- function(df, agevars, conns) {
+dh.makeAgePolys <- function(df, agevars, conns = NULL) {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
   
   poly_names <- c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")
 

@@ -5,7 +5,7 @@
 \title{Subsets a dataframe using column names.}
 \usage{
 dh.dropCols(
-  conns = conns,
+  conns = NULL,
   df,
   vars,
   new_df_name,

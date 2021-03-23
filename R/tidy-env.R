@@ -11,11 +11,16 @@
 #' @return None. Objects removed from ds environment
 #'
 #' @importFrom purrr map imap
-#' @importFrom dsBaseClient ds.rm
+#' @importFrom dsBaseClient ds.rm 
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.tidyEnv <- function(conns = conns, obj, type = "remove") {
+dh.tidyEnv <- function(conns = NULL, obj, type = "remove") {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
   . <- NULL
 
   if (type == "remove") {

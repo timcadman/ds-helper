@@ -4,7 +4,7 @@
 \alias{dh.tidyEnv}
 \title{Tidy up the server environment}
 \usage{
-dh.tidyEnv(conns = conns, obj, type = "remove")
+dh.tidyEnv(conns = NULL, obj, type = "remove")
 }
 \arguments{
 \item{conns}{connections object to DataSHIELD backends}

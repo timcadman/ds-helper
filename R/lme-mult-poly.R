@@ -11,9 +11,17 @@
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom stringr str_detect str_remove
 #' @importFrom tibble tibble 
+#' 
+#' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(conns = conns, df, formulae) {
+dh.lmeMultPoly <- function(conns = NULL, df, formulae) {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
+  
   loglik <- model <- study <- log_rank <- . <- av_rank <- desc <- NULL
 
   ## ---- Run the models ---------------------------------------------------------

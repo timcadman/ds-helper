@@ -24,10 +24,15 @@
 #' @importFrom stringr str_detect
 #' @importFrom dplyr bind_rows select filter mutate left_join
 #' @importFrom tidyr pivot_wider pivot_longer separate
-#'      
+#' 
 #' @export
-dh.meanByOccasion <- function(df, agevar, outcome, bands, conns, grouping = NULL) {
+dh.meanByOccasion <- function(df, agevar, outcome, bands, conns = NULL, grouping = NULL) {
 
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
+  
   suff_form <- cohort <- variable <- age <- occage <- value <- . <- 
     factorlevel <- NULL
   ##############################################################################

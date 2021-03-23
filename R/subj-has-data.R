@@ -15,10 +15,16 @@
 #'         subject has a non-missing value on. The second indicates whether
 #'         subjects have non-missing values on at least one of these variables.
 #'
-#' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
+#' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric 
 #'
 #' @export
-dh.subjHasData <- function(conns = conns, df, vars, new_label) {
+dh.subjHasData <- function(conns = NULL, df, vars, new_label) {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
+  
   dh.doesDfExist(conns = conns, df = df)
 
   ## ---- Convert to numeric -----------------------------------------------------

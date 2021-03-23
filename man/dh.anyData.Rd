@@ -4,7 +4,7 @@
 \alias{dh.anyData}
 \title{Not completely missing variables}
 \usage{
-dh.anyData(conns = opals, df, vars = NULL)
+dh.anyData(conns = NULL, df, vars = NULL)
 }
 \arguments{
 \item{conns}{connections object for DataSHIELD backends}

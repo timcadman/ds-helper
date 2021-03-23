@@ -16,10 +16,13 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
-#'
+#' 
 #' @export
 dh.makeLmerForm <- function(
                             outcome, idvar, agevars, random = "intercept", fixed = NULL, age_interactions = NULL) {
+  
+  
+  
   random_eff <- ifelse(random == "intercept", "(1|child_id_int)")
 
   poly_fixed <- combn(agevars, 2, paste, collapse = "+")

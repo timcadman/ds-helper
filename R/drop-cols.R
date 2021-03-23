@@ -20,7 +20,12 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.dropCols <- function(conns = conns, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
+dh.dropCols <- function(conns = NULL, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
   type <- match.arg(type)
 
   vars_index <- dh.findVarsIndex(conns, df, vars)

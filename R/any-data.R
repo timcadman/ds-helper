@@ -17,11 +17,16 @@
 #' @return a dataframe with columns for each variable and rows for each cohort indicating if the variable is not completely missing
 #'
 #' @importFrom dplyr %>% mutate select everything
-#' @importFrom dsBaseClient ds.colnames ds.numNA ds.length
+#' @importFrom dsBaseClient ds.colnames ds.numNA ds.length 
 #' @importFrom tibble as_tibble
-#'
+#' 
 #' @export
-dh.anyData <- function(conns = opals, df, vars = NULL) {
+dh.anyData <- function(conns = NULL, df, vars = NULL) {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
   dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {

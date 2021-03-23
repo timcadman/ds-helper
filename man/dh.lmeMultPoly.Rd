@@ -4,7 +4,7 @@
 \alias{dh.lmeMultPoly}
 \title{Function to perform every combination of MLM fractional polynomials}
 \usage{
-dh.lmeMultPoly(conns = conns, df, formulae)
+dh.lmeMultPoly(conns = NULL, df, formulae)
 }
 \arguments{
 \item{conns}{connection objects for DataSHIELD backends}
@@ -15,4 +15,7 @@ dh.lmeMultPoly(conns = conns, df, formulae)
 }
 \description{
 Function to perform every combination of MLM fractional polynomials
+}
+\author{
+Tim Cadman
 }

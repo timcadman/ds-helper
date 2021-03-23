@@ -4,7 +4,7 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(conns = conns, df, vars)
+dh.getStats(conns = NULL, df, vars)
 }
 \arguments{
 \item{conns}{connection object for DataSHIELD backends}

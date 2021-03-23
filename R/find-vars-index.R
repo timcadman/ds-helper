@@ -11,11 +11,17 @@
 #'
 #' @return list of indices where length of list is number of cohorts provided
 #'
-#' @importFrom dsBaseClient ds.colnames
+#' @importFrom dsBaseClient ds.colnames 
 #' @importFrom purrr pmap
-#'
+#' 
 #' @export
-dh.findVarsIndex <- function(conns = conns, df, vars) {
+dh.findVarsIndex <- function(conns = NULL, df, vars) {
+  
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+  
+  
   dh.doVarsExist(conns, df, vars)
   dh.doesDfExist(conns, df)
 
