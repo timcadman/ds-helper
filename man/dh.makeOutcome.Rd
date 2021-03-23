@@ -5,7 +5,7 @@
 \title{Derives one or more outcome variable(s) from repeated measures data}
 \usage{
 dh.makeOutcome(
-  conns = conns,
+  conns = NULL,
   df,
   outcome,
   age_var,
