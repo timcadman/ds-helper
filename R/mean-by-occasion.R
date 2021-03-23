@@ -9,7 +9,7 @@
 #' 
 #'
 #' @param df serverside dataframe
-#' @param agevar variable indicating subject age/time
+#' @param age_var variable indicating subject age/time
 #' @param outcome outcome variable 
 #' @param bands vector of even length given the upper and low age bands to 
 #'              create the outcomes at. 
@@ -26,7 +26,7 @@
 #' @importFrom tidyr pivot_wider pivot_longer separate
 #' 
 #' @export
-dh.meanByOccasion <- function(df, agevar, outcome, bands, conns = NULL, grouping = NULL) {
+dh.meanByOccasion <- function(df, age_var, outcome, bands, conns = NULL, grouping = NULL) {
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -53,7 +53,7 @@ dh.meanByOccasion <- function(df, agevar, outcome, bands, conns = NULL, grouping
       ~ dh.makeOutcome(
         df = df,
         outcome = outcome,
-        age_var = agevar,
+        age_var = age_var,
         bands = .x,
         df_name = "tmp_df",
         keep_original = TRUE,
@@ -152,7 +152,7 @@ dh.meanByOccasion <- function(df, agevar, outcome, bands, conns = NULL, grouping
         dsHelper::dh.makeOutcome(
           df = strat_dfs,
           outcome = outcome,
-          age_var = agevar,
+          age_var = age_var,
           bands = unlist(strsplit(bands, split = ",")),
           df_name = paste0("zzz_", value),
           keep_original = TRUE,

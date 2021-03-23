@@ -4,12 +4,12 @@
 \alias{dh.meanByOccasion}
 \title{Derives one or more outcome variable(s) from repeated measures data}
 \usage{
-dh.meanByOccasion(df, agevar, outcome, bands, conns = NULL, grouping = NULL)
+dh.meanByOccasion(df, age_var, outcome, bands, conns = NULL, grouping = NULL)
 }
 \arguments{
 \item{df}{serverside dataframe}
 
-\item{agevar}{variable indicating subject age/time}
+\item{age_var}{variable indicating subject age/time}
 
 \item{outcome}{outcome variable}
 
