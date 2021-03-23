@@ -9,11 +9,9 @@ dh.lmeMultPoly(conns = conns, df, formulae)
 \arguments{
 \item{conns}{connection objects for DataSHIELD backends}
 
-\item{data}{name of dataFrame}
+\item{df}{name of dataFrame}
 
-\item{outcome}{list of outcome variables}
-
-\item{type}{type of LME}
+\item{formulae}{tibble containing formulae with column labelled 'formulae'}
 }
 \description{
 Function to perform every combination of MLM fractional polynomials

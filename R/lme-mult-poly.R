@@ -1,19 +1,20 @@
 #' Function to perform every combination of MLM fractional polynomials
 #'
 #' @param conns connection objects for DataSHIELD backends
-#' @param data name of dataFrame
-#' @param outcome list of outcome variables
-#' @param type type of LME
+#' @param df name of dataFrame
+#' @param formulae tibble containing formulae with column labelled 'formulae'
 #'
-#' @importFrom utils combn
-#' @importFrom purrr map_chr
-#' @importFrom dplyr dense_rank
-#'
-#' @importFrom dsBaseClient ds.lmerSLMA ds.isNA
+#' @importFrom dsBaseClient ds.lmerSLMA 
+#' @importFrom purrr map flatten_chr map set_names
+#' @importFrom dplyr arrange bind_rows dense_rank group_split mutate select
+#'             starts_with
+#' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom stringr str_detect str_remove
+#' @importFrom tibble tibble 
 #'
 #' @export
 dh.lmeMultPoly <- function(conns = conns, df, formulae) {
-  log_lik <- NULL
+  loglik <- model <- study <- log_rank <- . <- av_rank <- desc <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   models <- formulae$formulae %>%

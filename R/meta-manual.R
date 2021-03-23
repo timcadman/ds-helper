@@ -13,8 +13,7 @@
 #'         statistics
 #'
 #' @importFrom purrr map map_dbl
-#' @importFrom tidyverse tibble
-#' @importFrom metafor rma
+#' @importFrom tibble tibble
 #'
 #' @export
 dh.metaManual <- function(fit, method = "ML"){

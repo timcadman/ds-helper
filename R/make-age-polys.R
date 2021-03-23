@@ -6,15 +6,15 @@
 #' creates the following age transformations in datashield: age^-2, age^-1,
 #' age^-0.5, log(age), age^0.5, age^2, age^3.
 #'
-#' @param conns 
+#' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
 #' @param agevars the age variable to transform
 #'
 #' @return transformations of age created in df
 #'
-#' @importFrom tibble 
+#' @importFrom tibble tibble
 #' @importFrom dplyr %>% 
-#' @importFrom purrr pmap cross2
+#' @importFrom purrr pmap cross2 map_chr
 #' @importFrom dsBaseClient ds.cbind
 #'
 #' @export

@@ -1,3 +1,23 @@
+#' Make formulae for fitting multiple fractional polynomial models
+#' 
+#' To identify the combination of fractional polynomials which give the best 
+#' fit often we will fit models with lots of different combinations. This 
+#' function builds formulae for that purpose.
+#' 
+#' @param outcome outcome for the models
+#' @param idvar unique identifier for subject
+#' @param agevars vector of names of age polynomials in dataset
+#' @param random either "intercept" or "slope" to specify random effects
+#' @param fixed optional vector of fixed effects
+#' @param age_interactions if TRUE also create interaction terms between age
+#'                         terms and fixed effects#
+#'
+#' @return a tibble containing the created formulae
+#'
+#' @importFrom tibble tibble
+#' @importFrom utils combn
+#'
+#' @export
 dh.makeLmerForm <- function(
                             outcome, idvar, agevars, random = "intercept", fixed = NULL, age_interactions = NULL) {
   random_eff <- ifelse(random == "intercept", "(1|child_id_int)")

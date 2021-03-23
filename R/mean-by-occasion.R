@@ -13,21 +13,23 @@
 #' @param outcome outcome variable 
 #' @param bands vector of even length given the upper and low age bands to 
 #'              create the outcomes at. 
-#' @parem grouping an optional variable if you want to stratify the means by 
+#' @param grouping an optional variable if you want to stratify the means by 
 #'        another variable, e.g. socioeconomic position.              
 #' @param conns connections object for DataSHIELD backends
 #'
 #' @return a tibble containing mean values of the outcome at different age bands
 #'
-#' @importFrom ds.colnames ds.asFactor ds.levels ds.dataFrameSubset
-#' @importFrom purrr map imap map_df
+#' @importFrom dsBaseClient ds.colnames ds.asFactor ds.levels ds.dataFrameSubset
+#' @importFrom purrr map imap map_df compact flatten
 #' @importFrom stringr str_detect
-#' @importFrom tidyverse compact flatten bind_rows select separate filter 
-#'             mutate pivot_wider pivot_longer left_join
-#'
+#' @importFrom dplyr bind_rows select filter mutate left_join
+#' @importFrom tidyr pivot_wider pivot_longer separate
+#'      
 #' @export
 dh.meanByOccasion <- function(df, agevar, outcome, bands, conns, grouping = NULL) {
 
+  suff_form <- cohort <- variable <- age <- occage <- value <- . <- 
+    factorlevel <- NULL
   ##############################################################################
   # 1. Preamble
   ##############################################################################
@@ -55,7 +57,7 @@ dh.meanByOccasion <- function(df, agevar, outcome, bands, conns, grouping = NULL
     )
 
     ## Vector of all variables we've created
-    varsmade <- ds.colnames("tmp_df", datasource = conns)
+    varsmade <- ds.colnames("tmp_df", datasources = conns)
 
     ## Subset of ones we want to keep based on naming convention that the new
     ## variable names will be based on the upper band provided
@@ -159,7 +161,7 @@ dh.meanByOccasion <- function(df, agevar, outcome, bands, conns, grouping = NULL
       pmap(function(name, value, ...) {
         ds.colnames(
           x = paste0("zzz_", value),
-          datasource = conns[name]
+          datasources = conns[name]
         )
       })
 

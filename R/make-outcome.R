@@ -26,7 +26,7 @@
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
-#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape
+#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA
 #' @importFrom purrr pmap map_dfr
 #' @importFrom tidyr pivot_longer tibble
 #' @importFrom dplyr pull %>%
