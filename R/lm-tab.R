@@ -16,9 +16,14 @@
 #' @return A tibble containing the estimate with lower and upper confidence intervals
 #'
 #' @export
-dh.lmTab <- function(model, type, coh_names, direction = "long", ci_format = "paste") {
+dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL, 
+                     direction = "long", ci_format = "separate") {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
     
+  if(is.null(model)){stop("please specify a model from which to extract coefficients")}
+  if(is.null(type)){stop("please specify what type of model was fit")}
+  if(is.null(coh_names)){stop("please provide vector of cohort names")}
+  
   type <- arg_match(type, c("ipd", "slma", "lmer"))
   direction <- arg_match(direction, c("long", "wide"))
   format <- arg_match(format, c("paste", "separate"))

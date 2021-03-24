@@ -15,7 +15,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.tidyEnv <- function(conns = NULL, obj, type = "remove") {
+dh.tidyEnv <- function(obj, type = "remove", conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

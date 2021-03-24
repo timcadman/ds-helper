@@ -35,8 +35,8 @@
 #' 
 #' @export
 dh.makeOutcome <- function(
-                           conns = NULL, df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, keep_original = FALSE, df_name = NULL) {
+                           df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
+                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL) {
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

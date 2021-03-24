@@ -15,7 +15,7 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(conns = NULL, df, formulae) {
+dh.lmeMultPoly <- function(df, formulae, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

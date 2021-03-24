@@ -18,7 +18,7 @@
 #' @importFrom dsBaseClient ds.class ds.colnames 
 #' 
 #' @export
-dh.classDiscrepancy <- function(conns = NULL, df, vars = NULL) {
+dh.classDiscrepancy <- function(df, vars = NULL, conns = NULL) {
   
   . <- variable <- discrepancy <- NULL
 

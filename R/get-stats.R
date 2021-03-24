@@ -52,7 +52,7 @@
 #' @importFrom magrittr %<>%
 #' 
 #' @export
-dh.getStats <- function(conns = NULL, df, vars) {
+dh.getStats <- function(df, vars, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

@@ -17,7 +17,7 @@
 #' @importFrom purrr map pmap
 #' 
 #' @export
-dh.renameVars <- function(conns = NULL, df, names) {
+dh.renameVars <- function(df, names, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

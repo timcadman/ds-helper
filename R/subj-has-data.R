@@ -18,7 +18,7 @@
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric 
 #'
 #' @export
-dh.subjHasData <- function(conns = NULL, df, vars, new_label) {
+dh.subjHasData <- function(df, vars, new_label, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

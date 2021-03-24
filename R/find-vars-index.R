@@ -15,7 +15,7 @@
 #' @importFrom purrr pmap
 #' 
 #' @export
-dh.findVarsIndex <- function(conns = NULL, df, vars) {
+dh.findVarsIndex <- function(df, vars, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

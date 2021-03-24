@@ -21,7 +21,7 @@
 #' @importFrom tibble as_tibble
 #' 
 #' @export
-dh.anyData <- function(conns = NULL, df, vars = NULL) {
+dh.anyData <- function(df, vars = NULL, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()

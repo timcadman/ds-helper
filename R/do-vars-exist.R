@@ -14,7 +14,7 @@
 #' @importFrom dsBaseClient ds.colnames 
 #' 
 #' @noRd
-dh.doVarsExist <- function(conns = NULL, df, vars) {
+dh.doVarsExist <- function(df, vars, conns = NULL) {
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()
