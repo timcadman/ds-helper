@@ -5,7 +5,7 @@
 #' different package or chose different options in metaphor. This allows you
 #' to meta-analyse multiple coefficients in one function call.
 #'
-#' @param fit output from ds.glmSLMA
+#' @param model output from ds.glmSLMA
 #' @param method method of meta-analyis which can be any valid method for the 
 #'               metafor package
 #'
@@ -16,25 +16,25 @@
 #' @importFrom tibble tibble
 #'
 #' @export
-dh.metaManual <- function(fit, method = "ML"){
+dh.metaManual <- function(model, method = "ML"){
   
-  nvar <- seq(1, nrow(fit$betamatrix.valid), 1)
+  nvar <- seq(1, nrow(model$betamatrix.valid), 1)
   
   ma <- nvar %>%
     map(function(x){
       rma(
-        yi = fit$betamatrix.valid[x, ],
-        sei = fit$sematrix.valid[x, ], 
+        yi = model$betamatrix.valid[x, ],
+        sei = model$sematrix.valid[x, ], 
         method = "ML")
     })
   
   coefs <- tibble(
-    term = dimnames(fit$betamatrix.valid)[[1]],
+    term = dimnames(model$betamatrix.valid)[[1]],
     coef = ma %>% map_dbl(function(x){x[["beta"]]}),
     se = ma %>% map_dbl(function(x){x[["se"]]})
   )
   
-  out <- list(fit = ma, coefs =coefs)
+  out <- list(model = ma, coefs =coefs)
   
   return(out)
   
