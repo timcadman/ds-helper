@@ -7,7 +7,7 @@
 #' @importFrom dsBaseClient ds.lmerSLMA 
 #' @importFrom purrr map flatten_chr map set_names
 #' @importFrom dplyr arrange bind_rows dense_rank group_split mutate select
-#'             starts_with
+#'             starts_with desc
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom stringr str_detect str_remove
 #' @importFrom tibble tibble 
@@ -22,7 +22,7 @@ dh.lmeMultPoly <- function(df, formulae, conns = NULL) {
   }
   
   
-  loglik <- model <- study <- log_rank <- . <- av_rank <- desc <- NULL
+  loglik <- model <- study <- log_rank <- . <- av_rank <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   models <- formulae$formulae %>%
@@ -70,7 +70,7 @@ dh.lmeMultPoly <- function(df, formulae, conns = NULL) {
   
 
   fit.tab %<>% map(function(x){
-    mutate(x, log_rank = dense_rank(desc(x$loglik))) %>%
+    mutate(x, log_rank = dense_rank(dplyr::desc(x$loglik))) %>%
       arrange(log_rank)
     
     })
