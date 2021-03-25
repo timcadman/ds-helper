@@ -16,6 +16,7 @@
 #' @importFrom purrr map_df
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.class ds.colnames
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.classDiscrepancy <- function(df, vars = NULL, conns = NULL) {

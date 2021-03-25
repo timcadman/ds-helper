@@ -15,6 +15,7 @@
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.renameVars <- function(df, names, conns = NULL) {

@@ -18,6 +18,7 @@
 #' @importFrom dsBaseClient ds.asNumeric ds.colnames ds.dataFrameSubset ds.make
 #' @importFrom purrr imap map
 #' @importFrom dplyr %>%
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.dropCols <- function(df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE, conns = NULL) {

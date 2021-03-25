@@ -14,6 +14,7 @@
 #'
 #' @importFrom purrr map map_dbl
 #' @importFrom tibble tibble
+#' @importFrom metafor rma
 #'
 #' @export
 dh.metaManual <- function(model, method = "ML") {

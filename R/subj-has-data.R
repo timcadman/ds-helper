@@ -16,6 +16,7 @@
 #'         subjects have non-missing values on at least one of these variables.
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.subjHasData <- function(df, vars, new_label, conns = NULL) {

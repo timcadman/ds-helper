@@ -12,6 +12,7 @@
 #'
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
+#' @importFrom DSI datashield.connections_find
 #'
 #' @noRd
 dh.doVarsExist <- function(df, vars, conns = NULL) {

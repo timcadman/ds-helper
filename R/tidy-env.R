@@ -13,6 +13,7 @@
 #' @importFrom purrr map imap
 #' @importFrom dsBaseClient ds.rm
 #' @importFrom dplyr %>%
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.tidyEnv <- function(obj, type = "remove", conns = NULL) {

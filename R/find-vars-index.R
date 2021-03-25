@@ -13,6 +13,7 @@
 #'
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.findVarsIndex <- function(df, vars, conns = NULL) {

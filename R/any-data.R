@@ -18,6 +18,7 @@
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length
+#' @importFrom DSI datashield.connections_find
 #' @importFrom tibble as_tibble
 #'
 #' @export

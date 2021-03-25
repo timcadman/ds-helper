@@ -16,6 +16,7 @@
 #' @importFrom dplyr %>%
 #' @importFrom purrr pmap cross2 map_chr
 #' @importFrom dsBaseClient ds.cbind
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.makeAgePolys <- function(df, agevars, conns = NULL) {

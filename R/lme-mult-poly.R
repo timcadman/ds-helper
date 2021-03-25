@@ -11,6 +11,7 @@
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom stringr str_detect str_remove
 #' @importFrom tibble tibble
+#' @importFrom DSI datashield.connections_find
 #'
 #' @author Tim Cadman
 #'

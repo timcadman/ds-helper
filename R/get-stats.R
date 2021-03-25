@@ -50,6 +50,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom stats setNames
 #' @importFrom magrittr %<>%
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.getStats <- function(df, vars, conns = NULL) {

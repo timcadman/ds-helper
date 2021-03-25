@@ -11,6 +11,7 @@
 #'
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.ls
+#' @importFrom DSI datashield.connections_find
 #'
 #' @noRd
 dh.doesDfExist <- function(conns = NULL, df) {
