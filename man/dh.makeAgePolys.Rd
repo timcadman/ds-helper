@@ -2,7 +2,7 @@
 % Please edit documentation in R/make-age-polys.R
 \name{dh.makeAgePolys}
 \alias{dh.makeAgePolys}
-\title{Produces multiple transformations of age term for fractional polynomial 
+\title{Produces multiple transformations of age term for fractional polynomial
 analysis.}
 \usage{
 dh.makeAgePolys(df, agevars, conns = NULL)

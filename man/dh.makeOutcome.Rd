@@ -5,7 +5,6 @@
 \title{Derives one or more outcome variable(s) from repeated measures data}
 \usage{
 dh.makeOutcome(
-  conns = NULL,
   df,
   outcome,
   age_var,
@@ -13,12 +12,11 @@ dh.makeOutcome(
   mult_action = c("earliest", "latest", "nearest"),
   mult_vals = NULL,
   keep_original = FALSE,
-  df_name = NULL
+  df_name = NULL,
+  conns = NULL
 )
 }
 \arguments{
-\item{conns}{connections object for DataSHIELD backends}
-
 \item{df}{opal dataframe}
 
 \item{outcome}{name of repeated measures outcome variable}
@@ -41,6 +39,8 @@ in case of multiple values}
 \item{keep_original}{keep original data frame in the DataSHIELD backend}
 
 \item{df_name}{specify data frame name on the DataSHIELD backend}
+
+\item{conns}{connections object for DataSHIELD backends}
 }
 \value{
 a dataset containing the newly derived variables

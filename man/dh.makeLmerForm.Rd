@@ -31,7 +31,7 @@ terms and fixed effects#}
 a tibble containing the created formulae
 }
 \description{
-To identify the combination of fractional polynomials which give the best 
-fit often we will fit models with lots of different combinations. This 
+To identify the combination of fractional polynomials which give the best
+fit often we will fit models with lots of different combinations. This
 function builds formulae for that purpose.
 }

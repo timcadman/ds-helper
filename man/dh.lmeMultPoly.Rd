@@ -4,14 +4,14 @@
 \alias{dh.lmeMultPoly}
 \title{Function to perform every combination of MLM fractional polynomials}
 \usage{
-dh.lmeMultPoly(conns = NULL, df, formulae)
+dh.lmeMultPoly(df, formulae, conns = NULL)
 }
 \arguments{
-\item{conns}{connection objects for DataSHIELD backends}
-
 \item{df}{name of dataFrame}
 
 \item{formulae}{tibble containing formulae with column labelled 'formulae'}
+
+\item{conns}{connection objects for DataSHIELD backends}
 }
 \description{
 Function to perform every combination of MLM fractional polynomials

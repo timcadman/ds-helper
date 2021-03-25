@@ -4,14 +4,14 @@
 \alias{dh.anyData}
 \title{Not completely missing variables}
 \usage{
-dh.anyData(conns = NULL, df, vars = NULL)
+dh.anyData(df, vars = NULL, conns = NULL)
 }
 \arguments{
-\item{conns}{connections object for DataSHIELD backends}
-
 \item{df}{server side dataframe}
 
 \item{vars}{vector of server side variable names within df}
+
+\item{conns}{connections object for DataSHIELD backends}
 }
 \value{
 a dataframe with columns for each variable and rows for each cohort indicating if the variable is not completely missing

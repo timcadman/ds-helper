@@ -4,21 +4,21 @@
 \alias{dh.metaManual}
 \title{Wrapper to manaully perform two-stage meta-analysis using metafor}
 \usage{
-dh.metaManual(fit, method = "ML")
+dh.metaManual(model, method = "ML")
 }
 \arguments{
-\item{fit}{output from ds.glmSLMA}
+\item{model}{output from ds.glmSLMA}
 
-\item{method}{method of meta-analyis which can be any valid method for the 
+\item{method}{method of meta-analyis which can be any valid method for the
 metafor package}
 }
 \value{
-list containing (i) metafor output and (ii) summary tibble of 
+list containing (i) metafor output and (ii) summary tibble of
         statistics
 }
 \description{
 ds.SLMA functions automatically perform two-stage meta-analysis using the
-metafor package. However in some circumstances you might want to use a 
+metafor package. However in some circumstances you might want to use a
 different package or chose different options in metaphor. This allows you
 to meta-analyse multiple coefficients in one function call.
 }

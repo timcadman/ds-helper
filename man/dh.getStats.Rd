@@ -4,14 +4,14 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(conns = NULL, df, vars)
+dh.getStats(df, vars, conns = NULL)
 }
 \arguments{
-\item{conns}{connection object for DataSHIELD backends}
-
 \item{df}{opal dataframe}
 
 \item{vars}{vector of variable names in dataframe}
+
+\item{conns}{connection object for DataSHIELD backends}
 }
 \value{
 The function returns a list with two elements containing dataframes
