@@ -13,17 +13,16 @@
 #'
 #' @return None. The new variables are added to the df specified
 #'
-#' @importFrom dsBaseClient ds.assign ds.dataFrame 
+#' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
-#' 
+#'
 #' @export
 dh.renameVars <- function(df, names, conns = NULL) {
-  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
-  
+
+
   old_new <- newvar <- NULL
 
   dh.doesDfExist(conns, df)

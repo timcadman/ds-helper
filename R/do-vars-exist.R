@@ -11,15 +11,14 @@
 #' @return None. Stops function if var(s) don't exist in one of more cohorts.
 #'
 #' @importFrom purrr map
-#' @importFrom dsBaseClient ds.colnames 
-#' 
+#' @importFrom dsBaseClient ds.colnames
+#'
 #' @noRd
 dh.doVarsExist <- function(df, vars, conns = NULL) {
-  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
+
   allvars <- ds.colnames(x = df, datasources = conns)
 
   var_check <- allvars %>% map(~ (vars %in% .))

@@ -32,7 +32,7 @@
 #' @importFrom dplyr pull %>%
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
-#' 
+#'
 #' @export
 dh.makeOutcome <- function(
                            df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
@@ -40,8 +40,8 @@ dh.makeOutcome <- function(
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
-  
+
+
   mult_action <- match.arg(mult_action)
 
   if (is.null(mult_action)) {

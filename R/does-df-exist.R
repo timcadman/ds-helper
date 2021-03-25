@@ -10,15 +10,14 @@
 #' @return None. Stops function if df doesn't exist in one of more cohorts.
 #'
 #' @importFrom purrr map
-#' @importFrom dsBaseClient ds.ls 
+#' @importFrom dsBaseClient ds.ls
 #'
 #' @noRd
 dh.doesDfExist <- function(conns = NULL, df) {
-  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
+
   df_check <- names(conns) %>%
     map(~ (df %in% ds.ls(datasources = conns[.])[[1]][["objects.found"]]))
 

@@ -15,17 +15,16 @@
 #'
 #' @importFrom purrr map_df
 #' @importFrom dplyr %>% mutate select everything
-#' @importFrom dsBaseClient ds.class ds.colnames 
-#' 
+#' @importFrom dsBaseClient ds.class ds.colnames
+#'
 #' @export
 dh.classDiscrepancy <- function(df, vars = NULL, conns = NULL) {
-  
   . <- variable <- discrepancy <- NULL
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
+
   dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {

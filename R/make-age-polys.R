@@ -1,4 +1,4 @@
-#' Produces multiple transformations of age term for fractional polynomial 
+#' Produces multiple transformations of age term for fractional polynomial
 #' analysis.
 #'
 #' When we do trajectory analyses using fractional polynomials we often want
@@ -13,18 +13,17 @@
 #' @return transformations of age created in df
 #'
 #' @importFrom tibble tibble
-#' @importFrom dplyr %>% 
+#' @importFrom dplyr %>%
 #' @importFrom purrr pmap cross2 map_chr
-#' @importFrom dsBaseClient ds.cbind 
-#' 
+#' @importFrom dsBaseClient ds.cbind
+#'
 #' @export
 dh.makeAgePolys <- function(df, agevars, conns = NULL) {
-  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
-  
+
+
   poly_names <- c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")
 
   poly_form <- c("^-2", "^-1", "^-0.5", "^0", "^0.5", "^2", "^3")
