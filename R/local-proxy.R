@@ -17,18 +17,17 @@
 #'
 #' @param conns connections object to DataSHIELD backends
 #' @param df datashield dataframe
-#' 
+#'
 #' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one of more cohorts.
 #'
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.localProxy <- function(conns = NULL, df) {
-  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
+
   discrep <- dh.classDiscrepancy(conns = conns, df = df)
   if (any(discrep$discrepancy == "yes")) {
     warning("All columns not found in all cohorts, please see tibble returned and correct this", call. = FALSE)
