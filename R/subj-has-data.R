@@ -16,9 +16,15 @@
 #'         subjects have non-missing values on at least one of these variables.
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.subjHasData <- function(conns = conns, df, vars, new_label) {
+dh.subjHasData <- function(df, vars, new_label, conns = NULL) {
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
+
   dh.doesDfExist(conns = conns, df = df)
 
   ## ---- Convert to numeric -----------------------------------------------------

@@ -5,18 +5,16 @@
 \title{Subsets a dataframe using column names.}
 \usage{
 dh.dropCols(
-  conns = conns,
   df,
   vars,
   new_df_name,
   comp_var,
   type = c("keep", "remove"),
-  remove_temp = FALSE
+  remove_temp = FALSE,
+  conns = NULL
 )
 }
 \arguments{
-\item{conns}{connections object to DataSHIELD backends}
-
 \item{df}{datashield dataframe}
 
 \item{vars}{variables to keep or remove}
@@ -29,6 +27,8 @@ dh.dropCols(
 \item{type}{whether to remove or keep specified variables}
 
 \item{remove_temp}{remove temporary objects from the DataSHIELD backends}
+
+\item{conns}{connections object to DataSHIELD backends}
 }
 \value{
 a new dataframe is created containing the specified subset of columns

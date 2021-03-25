@@ -11,11 +11,14 @@
 #'
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.ls
-#'
-#' @author Tim Cadman
+#' @importFrom DSI datashield.connections_find
 #'
 #' @noRd
-dh.doesDfExist <- function(conns = conns, df) {
+dh.doesDfExist <- function(conns = NULL, df) {
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
   df_check <- names(conns) %>%
     map(~ (df %in% ds.ls(datasources = conns[.])[[1]][["objects.found"]]))
 

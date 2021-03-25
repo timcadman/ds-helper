@@ -18,9 +18,14 @@
 #' @importFrom dsBaseClient ds.asNumeric ds.colnames ds.dataFrameSubset ds.make
 #' @importFrom purrr imap map
 #' @importFrom dplyr %>%
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.dropCols <- function(conns = conns, df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE) {
+dh.dropCols <- function(df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE, conns = NULL) {
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
   type <- match.arg(type)
 
   vars_index <- dh.findVarsIndex(conns, df, vars)

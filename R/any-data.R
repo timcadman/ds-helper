@@ -18,10 +18,15 @@
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length
+#' @importFrom DSI datashield.connections_find
 #' @importFrom tibble as_tibble
 #'
 #' @export
-dh.anyData <- function(conns = opals, df, vars = NULL) {
+dh.anyData <- function(df, vars = NULL, conns = NULL) {
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
   dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {

@@ -26,18 +26,28 @@
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
-#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape
+#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA
 #' @importFrom purrr pmap map_dfr
 #' @importFrom tidyr pivot_longer tibble
 #' @importFrom dplyr pull %>%
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
+#' @importFrom DSI datashield.connections_find
 #'
 #' @export
 dh.makeOutcome <- function(
-                           conns = conns, df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, keep_original = FALSE, df_name = NULL) {
+                           df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
+                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL) {
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
+
   mult_action <- match.arg(mult_action)
+
+  if (is.null(mult_action)) {
+    mult_action <- "earliest"
+  }
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- age <- varname <- new_df_name <- available <- bmi_to_subset <- ref_val <- NULL
 
   cat("This may take some time depending on the number and size of datasets\n\n")

@@ -4,7 +4,7 @@
 \alias{dh.localProxy}
 \title{Generate a local proxy dataframe to enable local autocompletion in RStudio}
 \usage{
-dh.localProxy(conns = conns, df)
+dh.localProxy(conns = NULL, df)
 }
 \arguments{
 \item{conns}{connections object to DataSHIELD backends}

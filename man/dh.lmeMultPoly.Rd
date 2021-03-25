@@ -4,17 +4,18 @@
 \alias{dh.lmeMultPoly}
 \title{Function to perform every combination of MLM fractional polynomials}
 \usage{
-dh.lmeMultPoly(conns = conns, data, outcome, type = "Normal")
+dh.lmeMultPoly(df, formulae, conns = NULL)
 }
 \arguments{
+\item{df}{name of dataFrame}
+
+\item{formulae}{tibble containing formulae with column labelled 'formulae'}
+
 \item{conns}{connection objects for DataSHIELD backends}
-
-\item{data}{name of dataFrame}
-
-\item{outcome}{list of outcome variables}
-
-\item{type}{type of LME}
 }
 \description{
 Function to perform every combination of MLM fractional polynomials
+}
+\author{
+Tim Cadman
 }

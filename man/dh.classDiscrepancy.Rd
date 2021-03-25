@@ -4,15 +4,15 @@
 \alias{dh.classDiscrepancy}
 \title{Class discrepancy}
 \usage{
-dh.classDiscrepancy(conns = conns, df, vars = NULL)
+dh.classDiscrepancy(df, vars = NULL, conns = NULL)
 }
 \arguments{
-\item{conns}{connections object for DataSHIELD backends}
-
 \item{df}{opal dataframe}
 
 \item{vars}{vector of variable names in dataframe (optional). If vars is not
 provided all variables will be included.}
+
+\item{conns}{connections object for DataSHIELD backends}
 }
 \value{
 a tibble with columns for (i) variable, (ii) discrepancy (y/n) and

@@ -12,9 +12,14 @@
 #'
 #' @importFrom purrr map
 #' @importFrom dsBaseClient ds.colnames
+#' @importFrom DSI datashield.connections_find
 #'
 #' @noRd
-dh.doVarsExist <- function(conns = conns, df, vars) {
+dh.doVarsExist <- function(df, vars, conns = NULL) {
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
   allvars <- ds.colnames(x = df, datasources = conns)
 
   var_check <- allvars %>% map(~ (vars %in% .))

@@ -4,15 +4,15 @@
 \alias{dh.tidyEnv}
 \title{Tidy up the server environment}
 \usage{
-dh.tidyEnv(conns = conns, obj, type = "remove")
+dh.tidyEnv(obj, type = "remove", conns = NULL)
 }
 \arguments{
-\item{conns}{connections object to DataSHIELD backends}
-
 \item{obj}{objects that you want to either keep or remove}
 
 \item{type}{either "remove" to remove the listed objects of "keep" to keep
 the listed objects and remove everything else.}
+
+\item{conns}{connections object to DataSHIELD backends}
 }
 \value{
 None. Objects removed from ds environment

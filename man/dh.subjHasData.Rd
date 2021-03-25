@@ -4,16 +4,16 @@
 \alias{dh.subjHasData}
 \title{Indicate whether subject has any non-missing values in a set of variables}
 \usage{
-dh.subjHasData(conns = conns, df, vars, new_label)
+dh.subjHasData(df, vars, new_label, conns = NULL)
 }
 \arguments{
-\item{conns}{connection object for DataSHIELD backends}
-
 \item{df}{datashield dataframe}
 
 \item{vars}{= vector of variable names in dataframe}
 
 \item{new_label}{= label which forms the suffix for the two created variables}
+
+\item{conns}{connection object for DataSHIELD backends}
 }
 \value{
 None. Two new variables are variables created within the opal

@@ -12,19 +12,21 @@ Authors@R:
       role = "ctb",
       email = "s.haakma@rug.nl",
       comment = c(ORCID = "0000-0003-1278-9144")))
-Description: Sometimes we need to automate things with DS. These functions help to do that.
+Description: Often we need to automate things with DS. These functions help to do that.
 Depends: 
-  R (>= 3.5.0),
-  dsBaseClient (>= 5.1.0)
+  R (>= 3.5.0)
 Imports:
+  dsBaseClient (>= 6.0.1),
   dplyr (>= 1.0.2),
-  meta,
-  purrr,
-  stringr,
-  magrittr,
   tibble,
+  purrr,
   tidyr,
-  rlang
+  stringr,
+  meta,
+  magrittr,
+  rlang,
+  DSI,
+  metafor
 Suggests: 
   knitr, 
   rmarkdown,
