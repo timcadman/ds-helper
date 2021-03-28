@@ -5,9 +5,9 @@
 \title{Make formulae for fitting multiple fractional polynomial models}
 \usage{
 dh.makeLmerForm(
-  outcome,
-  idvar,
-  agevars,
+  outcome = NULL,
+  idvar = NULL,
+  agevars = NULL,
   random = "intercept",
   fixed = NULL,
   age_interactions = NULL

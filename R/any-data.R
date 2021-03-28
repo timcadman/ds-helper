@@ -22,7 +22,15 @@
 #' @importFrom tibble as_tibble
 #'
 #' @export
-dh.anyData <- function(df, vars = NULL, conns = NULL) {
+dh.anyData <- function(df = NULL, vars = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(vars)) {
+    stop("Please specify variables")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

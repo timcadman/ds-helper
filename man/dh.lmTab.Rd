@@ -9,8 +9,8 @@ dh.lmTab(
   model = NULL,
   type = NULL,
   coh_names = NULL,
-  direction = "long",
-  ci_format = "separate"
+  direction = c("long", "wide"),
+  ci_format = NULL
 )
 }
 \arguments{

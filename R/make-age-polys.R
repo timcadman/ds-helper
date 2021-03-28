@@ -19,7 +19,15 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.makeAgePolys <- function(df, agevars, conns = NULL) {
+dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame which contains age variable(s)")
+  }
+
+  if (is.null(agevars)) {
+    stop("Please specify one or more age variables to transform")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

@@ -4,7 +4,7 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(df, vars, conns = NULL)
+dh.getStats(df = NULL, vars = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{opal dataframe}

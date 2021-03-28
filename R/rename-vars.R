@@ -18,7 +18,15 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.renameVars <- function(df, names, conns = NULL) {
+dh.renameVars <- function(df = NULL, names = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(names)) {
+    stop("Please specify a reference tibble containing old and new names")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

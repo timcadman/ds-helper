@@ -36,18 +36,30 @@
 #'
 #' @export
 dh.makeOutcome <- function(
-                           df, outcome, age_var, bands, mult_action = c("earliest", "latest", "nearest"),
+                           df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = c("earliest", "latest", "nearest"),
                            mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(outcome)) {
+    stop("Please specify an outcome variable")
+  }
+
+  if (is.null(age_var)) {
+    stop("Please specify an age variable")
+  }
+
+  if (is.null(bands)) {
+    stop("Please specify age bands which will be used to create the subset(s)")
+  }
+
+  mult_action <- match.arg(mult_action)
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-
-  mult_action <- match.arg(mult_action)
-
-  if (is.null(mult_action)) {
-    mult_action <- "earliest"
-  }
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- age <- varname <- new_df_name <- available <- bmi_to_subset <- ref_val <- NULL
 
   cat("This may take some time depending on the number and size of datasets\n\n")

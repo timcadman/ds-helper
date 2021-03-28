@@ -5,10 +5,10 @@
 \title{Derives one or more outcome variable(s) from repeated measures data}
 \usage{
 dh.makeOutcome(
-  df,
+  df = NULL,
   outcome,
-  age_var,
-  bands,
+  age_var = NULL,
+  bands = NULL,
   mult_action = c("earliest", "latest", "nearest"),
   mult_vals = NULL,
   keep_original = FALSE,

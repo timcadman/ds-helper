@@ -16,7 +16,15 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(df, formulae, conns = NULL) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify dataframe to use for polynomial models")
+  }
+
+  if (is.null(formulae)) {
+    stop("Please specify a tibble containing model formulae")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
