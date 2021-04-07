@@ -44,7 +44,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = NULL, comp_var = N
     conns <- datashield.connections_find()
   }
 
-  vars_index <- dh.findVarsIndex(conns, df, vars)
+  vars_index <- dh.findVarsIndex(df = df, vars = vars, conns = conns)
 
   if (type == "keep") {
     keep_vars <- vars_index

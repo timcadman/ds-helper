@@ -32,7 +32,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   type <- arg_match(type, c("ipd", "slma", "lmer"))
   direction <- arg_match(direction)
-  format <- arg_match(format, c("paste", "separate"))
+  ci_format <- arg_match(ci_format, c("paste", "separate"))
 
   if (direction == "long" & ci_format == "paste") {
     warning("It is not possible to paste CIs in long format. Argument ignored")

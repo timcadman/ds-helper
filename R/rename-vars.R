@@ -34,8 +34,8 @@ dh.renameVars <- function(df = NULL, names = NULL, conns = NULL) {
 
   old_new <- newvar <- NULL
 
-  dh.doesDfExist(conns, df)
-  dh.doVarsExist(conns, df, names$oldvar)
+  dh.doesDfExist(df = df, conns = conns)
+  dh.doVarsExist(df = df, vars = names$oldvar, conns = conns)
 
   names %>%
     pmap(function(oldvar, newvar, ...) {

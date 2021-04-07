@@ -43,7 +43,7 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL) {
     fun_vars <- vars
   }
 
-  dh.doVarsExist(conns, df, vars)
+  dh.doVarsExist(df = df, vars = vars, conns = conns)
 
   # get the lengths
   lengths <- unlist(ds.length(paste0(df, "$", fun_vars[1]), type = "s", datasources = conns))

@@ -30,8 +30,8 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL) {
   }
 
 
-  dh.doVarsExist(conns, df, vars)
-  dh.doesDfExist(conns, df)
+  dh.doVarsExist(df = df, vars = vars, conns = conns)
+  dh.doesDfExist(df = df, conns = conns)
 
   ref_tab <- tibble(
     var = rep(vars, length(names(conns))),

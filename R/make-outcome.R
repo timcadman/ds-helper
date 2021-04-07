@@ -71,8 +71,8 @@ dh.makeOutcome <- function(
   start_objs <- ds.ls(datasources = conns)
 
   ## ---- Argument checks --------------------------------------------------------
-  dh.doVarsExist(conns = conns, df = df, outcome)
-  dh.doesDfExist(conns = conns, df = df)
+  dh.doVarsExist(df = df, vars = outcome, conns = conns)
+  dh.doesDfExist(df = df, conns = conns)
 
   ## ---- Check bands is an even number ------------------------------------------
   if ((length(bands) %% 2 == 0) == FALSE) {
