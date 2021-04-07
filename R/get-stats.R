@@ -53,7 +53,15 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.getStats <- function(df, vars, conns = NULL) {
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(vars)) {
+    stop("Please specify variable(s) to summarise")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
@@ -61,7 +69,7 @@ dh.getStats <- function(df, vars, conns = NULL) {
 
   Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
 
-  dh.doVarsExist(conns, df, vars)
+  dh.doVarsExist(df = df, vars = vars, conns = conns)
 
   ################################################################################
   # 1. Identify variable type

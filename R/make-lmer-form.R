@@ -19,8 +19,21 @@
 #'
 #' @export
 dh.makeLmerForm <- function(
-                            outcome, idvar, agevars, random = "intercept", fixed = NULL, age_interactions = NULL) {
-  random_eff <- ifelse(random == "intercept", "(1|child_id_int)")
+                            outcome = NULL, idvar = NULL, agevars = NULL, random = "intercept", fixed = NULL, age_interactions = NULL) {
+  if (is.null(outcome)) {
+    stop("Please specify the name of your outcome variable")
+  }
+
+  if (is.null(idvar)) {
+    stop("Please specify the unique identifier")
+  }
+
+  if (is.null(agevars)) {
+    stop("Please specify a vector of age polynomials, corresponding to variables
+         in df")
+  }
+
+  random_eff <- paste0("(", idvar, "|child_id_int)")
 
   poly_fixed <- combn(agevars, 2, paste, collapse = "+")
 

@@ -23,7 +23,11 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.localProxy <- function(conns = NULL, df) {
+dh.localProxy <- function(df = NULL, conns = NULL) {
+  if (is.null(model)) {
+    stop("Please specify a data frame")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

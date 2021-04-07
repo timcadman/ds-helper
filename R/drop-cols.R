@@ -21,14 +21,30 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.dropCols <- function(df, vars, new_df_name, comp_var, type = c("keep", "remove"), remove_temp = FALSE, conns = NULL) {
-  if (is.null(conns)) {
-    conns <- datashield.connections_find()
+dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = NULL, comp_var = NULL, type = c("remove", "keep"), remove_temp = FALSE, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(vars)) {
+    stop("Please specify variable(s) to remove")
+  }
+
+  if (is.null(new_df_name)) {
+    stop("Please specify name for new dataframe")
+  }
+
+  if (is.null(comp_var)) {
+    stop("Please specify a reference variable, usually a unique identifier")
   }
 
   type <- match.arg(type)
 
-  vars_index <- dh.findVarsIndex(conns, df, vars)
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
+  vars_index <- dh.findVarsIndex(df = df, vars = vars, conns = conns)
 
   if (type == "keep") {
     keep_vars <- vars_index

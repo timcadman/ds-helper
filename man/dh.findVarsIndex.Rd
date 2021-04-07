@@ -4,7 +4,7 @@
 \alias{dh.findVarsIndex}
 \title{Return return indices of columns in opal dataframe}
 \usage{
-dh.findVarsIndex(df, vars, conns = NULL)
+dh.findVarsIndex(df = NULL, vars = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{datashield dataframe}

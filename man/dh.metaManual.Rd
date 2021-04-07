@@ -4,7 +4,7 @@
 \alias{dh.metaManual}
 \title{Wrapper to manaully perform two-stage meta-analysis using metafor}
 \usage{
-dh.metaManual(model, method = "ML")
+dh.metaManual(model = NULL, method = "ML")
 }
 \arguments{
 \item{model}{output from ds.glmSLMA}

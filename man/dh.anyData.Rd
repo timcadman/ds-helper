@@ -4,7 +4,7 @@
 \alias{dh.anyData}
 \title{Not completely missing variables}
 \usage{
-dh.anyData(df, vars = NULL, conns = NULL)
+dh.anyData(df = NULL, vars = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{server side dataframe}

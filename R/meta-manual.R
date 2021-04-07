@@ -17,7 +17,11 @@
 #' @importFrom metafor rma
 #'
 #' @export
-dh.metaManual <- function(model, method = "ML") {
+dh.metaManual <- function(model = NULL, method = "ML") {
+  if (is.null(model)) {
+    stop("Please specify a model with coefficients to meta-analyse")
+  }
+
   nvar <- seq(1, nrow(model$betamatrix.valid), 1)
 
   ma <- nvar %>%

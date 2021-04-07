@@ -5,11 +5,11 @@
 \title{Subsets a dataframe using column names.}
 \usage{
 dh.dropCols(
-  df,
-  vars,
-  new_df_name,
-  comp_var,
-  type = c("keep", "remove"),
+  df = NULL,
+  vars = NULL,
+  new_df_name = NULL,
+  comp_var = NULL,
+  type = c("remove", "keep"),
   remove_temp = FALSE,
   conns = NULL
 )

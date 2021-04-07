@@ -4,7 +4,7 @@
 \alias{dh.renameVars}
 \title{Rename multiple variables at once}
 \usage{
-dh.renameVars(df, names, conns = NULL)
+dh.renameVars(df = NULL, names = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{dataframe}
