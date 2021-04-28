@@ -315,9 +315,7 @@ x %>% add_row(
   valid_n = x$valid_n[1],
   perc_missing = x$perc_missing[1], 
   missing_n = x$missing_n[1],
-  perc_total = x$perc_missing[1]) %>%
-select(category, value, valid_n, missing_n, perc_valid, perc_missing, perc_total)
-
+  perc_total = x$perc_missing[1])
 }) %>%
 bind_rows() %>%
 select(-missing_n, -perc_missing)
