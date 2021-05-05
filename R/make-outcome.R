@@ -97,7 +97,7 @@ dh.makeOutcome <- function(
 
   na_replace_vec <- rep("-99999", length(conns))
   
-  ds.replaceNA(x=paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced")
+  ds.replaceNA(x=paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
   
   ds.Boole(
     V1 = "na_replaced",
