@@ -95,15 +95,18 @@ dh.makeOutcome <- function(
   ## ---- Subset to only include cohorts with some data --------------------------
   ds.asNumeric(datasources = conns, x.name = paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
 
+  na_replace_vec <- rep("-99999", length(conns))
+  
+  ds.replaceNA(x=paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
+  
   ds.Boole(
-    V1 = paste0(outcome, "_n"),
-    V2 = "0",
-    Boolean.operator = ">=",
-    na.assign = 0,
+    V1 = "na_replaced",
+    V2 = "-99999",
+    Boolean.operator = ">",
     newobj = "outcome_comp",
     datasources = conns
   )
-
+  
   nonmissing <- ds.mean(datasources = conns, x = "outcome_comp")$Mean.by.Study[, "EstimatedMean"] > 0
 
   if (all(nonmissing == FALSE)) {
@@ -263,11 +266,16 @@ dh.makeOutcome <- function(
     map_df(~ rep(., times = length(subnames)))
 
   if (length(valid_coh) == 1) {
-    data_available <- data_sum[[1]]$Mean.by.Study[, "EstimatedMean"]
+    data_available <- data_sum %>%
+      map(function(x){x$Mean.by.Study[, "EstimatedMean"]}) %>%
+      unlist() %>%
+      as_tibble() %>%
+      rename(!!valid_coh := value)
+    
   } else if (length(valid_coh) > 1) {
-    data_available <- map_dfr(
-      data_sum, ~ .x$Mean.by.Study[, "EstimatedMean"]
-    )
+    data_available <- data_sum %>%
+      map_dfr(function(x){x$Mean.by.Study[, "EstimatedMean"]})
+    
   }
 
   data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%
