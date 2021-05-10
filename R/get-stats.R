@@ -296,7 +296,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
       perc_missing = round((missing_n / cohort_n) * 100, 2), 
       perc_total = round((value / cohort_n) * 100, 2),
     )
-  }
+
 
   ## This is a real hack, but I want is for missing to be a category rather than a separate column.
   ## Here we create a more minimal version of the output which is more completely in long form
@@ -319,6 +319,8 @@ x %>% add_row(
 }) %>%
 bind_rows() %>%
 select(-missing_n, -perc_missing)
+
+  }
 
 
   ################################################################################
