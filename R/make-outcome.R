@@ -37,7 +37,8 @@
 #' @export
 dh.makeOutcome <- function(
                            df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id") {
+                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id", 
+                           band_action = c("g_l", "ge_le", "g_le", "ge_l")) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -55,6 +56,7 @@ dh.makeOutcome <- function(
   }
 
   mult_action <- match.arg(mult_action)
+  band_action <- match.arg(band_action)
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -163,21 +165,20 @@ dh.makeOutcome <- function(
     vars = c(id_var, outcome, "age", "outcome_comp")
   )
 
-  ## Now finally we subset based on valid cases and required variables
+  ## Now finally we subset based on required variables
   v_ind %>%
     imap(
       ~ ds.dataFrameSubset(
         df.name = new_df,
         V1.name = "outcome_comp",
-        V2.name = "1",
-        Boolean.operator = "==",
+        V2.name = "-99999",
+        Boolean.operator = ">=",
         keep.cols = .x,
-        keep.NAs = FALSE,
+        keep.NAs = TRUE,
         newobj = new_df,
         datasources = conns[.y]
       )
     )
-
 
   ## ---- Make paired list for each band ---------------------------------------
   pairs <- split(bands, ceiling(seq_along(bands) / 2))
@@ -188,6 +189,28 @@ dh.makeOutcome <- function(
   )
 
   ## ---- Create table with age bands ------------------------------------------
+  if(band_action == "g_l"){
+
+  cats <- tibble(
+    varname = rep(subnames, each = 2),
+    value = bands,
+    op = rep(c(">", "<"), times = (length(bands) / 2)),
+    tmp = ifelse(op == ">=", "gt", "lt"),
+    new_df_name = paste0(outcome, tmp, value)
+  )
+
+} else if(band_action == "ge_le"){
+
+  cats <- tibble(
+    varname = rep(subnames, each = 2),
+    value = bands,
+    op = rep(c(">=", "<="), times = (length(bands) / 2)),
+    tmp = ifelse(op == ">=", "gte", "lte"),
+    new_df_name = paste0(outcome, tmp, value)
+  ) 
+
+} else if(band_action == "g_le"){
+
   cats <- tibble(
     varname = rep(subnames, each = 2),
     value = bands,
@@ -195,6 +218,18 @@ dh.makeOutcome <- function(
     tmp = ifelse(op == ">", "gt", "lte"),
     new_df_name = paste0(outcome, tmp, value)
   )
+
+} else if(band_action == "ge_l"){
+
+  cats <- tibble(
+    varname = rep(subnames, each = 2),
+    value = bands,
+    op = rep(c(">=", "<"), times = (length(bands) / 2)),
+    tmp = ifelse(op == ">=", "gte", "lt"),
+    new_df_name = paste0(outcome, tmp, value)
+  )
+
+}
 
   ## ---- Check max character length -------------------------------------------
   if (max(nchar(cats$varname)) + 6 > 20) {
@@ -573,12 +608,22 @@ dh.makeOutcome <- function(
 
   end_objs <- ds.ls(datasources = conns)
 
-  to_remove <- unique(end_objs[[1]][!end_objs[[1]] %in% start_objs[[1]]])
+to_keep <- list(
+  before = start_objs %>% map(function(x){x$objects.found}),
+  after = end_objs %>% map(function(x){x$objects.found})) %>%
+pmap(function(before, after){
+
+before[before %in% after == TRUE]
+})
 
   ## but we keep the final dataset
-  to_remove <- to_remove[!(to_remove %in% out_name)]
+to_keep <- to_keep %>% map(function(x){c(x, out_name)})
 
-  dh.tidyEnv(conns = conns, obj = to_remove, type = "remove")
+to_keep %>%
+imap(
+  ~dh.tidyEnv(obj = .x, type = "keep", conns = conns[.y])
+  )
+
 
   message("DONE", appendLF = TRUE)
 
