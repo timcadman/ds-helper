@@ -37,7 +37,7 @@
 #' @export
 dh.makeOutcome <- function(
                            df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = c("earliest", "latest", "nearest"),
-                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL) {
+                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id") {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -160,7 +160,7 @@ dh.makeOutcome <- function(
   v_ind <- dh.findVarsIndex(
     conns = conns[valid_coh],
     df = new_df,
-    vars = c("child_id", outcome, "age", "outcome_comp")
+    vars = c(id_var, outcome, "age", "outcome_comp")
   )
 
   ## Now finally we subset based on valid cases and required variables
@@ -434,7 +434,7 @@ dh.makeOutcome <- function(
         ds.reShape(
           data.name = paste0(varname, "_c"),
           timevar.name = age_cat_name,
-          idvar.name = "child_id",
+          idvar.name = id_var,
           v.names = c(outcome, "age"),
           direction = "wide",
           newobj = paste0(varname, "_wide"),
@@ -470,7 +470,7 @@ dh.makeOutcome <- function(
         df = paste0(varname, "_wide"),
         vars = keep_vars,
         new_df_name = paste0(varname, "_wide"),
-        comp_var = "child_id",
+        comp_var = id_var,
         type = "keep"
       )
     })
@@ -514,8 +514,8 @@ dh.makeOutcome <- function(
         ds.merge(
           x.name = .x[[1]],
           y.name = .x[[2]],
-          by.x.names = "child_id",
-          by.y.names = "child_id",
+          by.x.names = id_var,
+          by.y.names = id_var,
           all.x = TRUE,
           newobj = out_name,
           datasources = conns[.y]
@@ -526,8 +526,8 @@ dh.makeOutcome <- function(
         ds.merge(
           x.name = .x[[1]],
           y.name = .x[[2]],
-          by.x.names = "child_id",
-          by.y.names = "child_id",
+          by.x.names = id_var,
+          by.y.names = id_var,
           all.x = TRUE,
           newobj = out_name,
           datasources = conns[.y]
@@ -543,8 +543,8 @@ dh.makeOutcome <- function(
             ds.merge(
               x.name = out_name,
               y.name = dfs,
-              by.x.names = "child_id",
-              by.y.names = "child_id",
+              by.x.names = id_var,
+              by.y.names = id_var,
               all.x = TRUE,
               newobj = out_name,
               datasources = conns[cohort]
@@ -557,8 +557,8 @@ dh.makeOutcome <- function(
     ds.merge(
       x.name = out_name,
       y.name = df,
-      by.x.names = "child_id",
-      by.y.names = "child_id",
+      by.x.names = id_var,
+      by.y.names = id_var,
       all.x = TRUE,
       newobj = out_name,
       datasources = conns[valid_coh]
