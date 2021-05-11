@@ -21,6 +21,12 @@
 #'                  in case of multiple values
 #' @param keep_original keep original data frame in the DataSHIELD backend
 #' @param df_name specify data frame name on the DataSHIELD backend
+#' @param id_var specify id variable (default assumes LifeCycle name 'child_id')
+#' @param band_action specify how the values of bands are evaluated in making the subsets.
+#' "g_l" = greater than the lowest band and less than the highest band; 
+#' "ge_le" = greater or equal to the lowest band and less than or equal to the highest band; 
+#' "g_le" = greater than the lowest band and less than or equal to the highest band; 
+#' "ge_l" = greater than or equal to the lowest band and less than the highest band; 
 #'
 #' @return a dataset containing the newly derived variables
 #'
@@ -552,6 +558,7 @@ dh.makeOutcome <- function(
           by.x.names = id_var,
           by.y.names = id_var,
           all.x = TRUE,
+          all.y = TRUE,
           newobj = out_name,
           datasources = conns[.y]
         )
@@ -564,6 +571,7 @@ dh.makeOutcome <- function(
           by.x.names = id_var,
           by.y.names = id_var,
           all.x = TRUE,
+          all.y = TRUE,
           newobj = out_name,
           datasources = conns[.y]
         )
@@ -581,6 +589,7 @@ dh.makeOutcome <- function(
               by.x.names = id_var,
               by.y.names = id_var,
               all.x = TRUE,
+              all.y = TRUE,
               newobj = out_name,
               datasources = conns[cohort]
             )
@@ -595,6 +604,7 @@ dh.makeOutcome <- function(
       by.x.names = id_var,
       by.y.names = id_var,
       all.x = TRUE,
+      all.y = TRUE,
       newobj = out_name,
       datasources = conns[valid_coh]
     )
