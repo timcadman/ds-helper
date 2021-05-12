@@ -20,16 +20,13 @@
 #'
 #' Categorical:
 #' variable = variable
-#'  category = level of variable
+#'  category = level of variable, including missing as a category
 #'  value = number of observations
 #'  cohort = name of cohort, including combined values for all cohorts
 #'  cohort_n = total number of observations for cohort in dataset
 #'  valid_n = number of valid observations for variable (sum of ns for each
 #'            categories)
-#'  missing_n = number of observations missing for variable (cohort_n - valid_n)
 #'  valid_perc = observations within a category as percentage of valid_n
-#'  missing_perc = percentage of observations missing for a variable (valid_n /
-#'                 cohort_n)*100
 #'
 #' Continuous:
 #'
@@ -65,7 +62,6 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
 
   Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
 
@@ -257,27 +253,34 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     )
 
 
+    
     ## Get total ns for each cohort
     tmp <- map(out_cat$cohort, function(x) {
       stats_cat[["Max_N"]][[match(x, names(stats_cat[["Max_N"]]))]]
     })
-
 
     ## Combine these with df and convert to tibble
     out_cat %<>%
       mutate(cohort_n = flatten_dbl(tmp)) %>%
       as_tibble()
 
-
-    ## Calculate stats for all cohorts combined and add to tibble
+    # Calculate combined values for each level of each variable
     all_sum <- out_cat %>%
       group_by(variable, category) %>%
       summarise(
-        value = sum(value, na.rm = TRUE),
-        cohort_n = sum(cohort_n, na.rm = TRUE)
-      ) %>%
+        value = sum(value, na.rm = TRUE)) %>%
       mutate(cohort = "combined") %>%
       ungroup()
+
+    ## Calculate combined n for all cohorts
+    comb_coh_n <- out_cat %>%
+      group_by(variable) %>%
+      distinct(cohort, .keep_all = TRUE) %>%
+      summarise(
+        cohort_n = sum(cohort_n, na.rm = TRUE)) 
+
+    ## Add in to previous tibble
+    all_sum <- left_join(all_sum, comb_coh_n, by = "variable")
 
     out_cat <- rbind(out_cat, all_sum)
 
@@ -289,9 +292,34 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
 
     out_cat %<>% mutate(
       missing_n = cohort_n - valid_n,
-      valid_perc = round((value / valid_n) * 100, 2),
-      missing_perc = round((missing_n / cohort_n) * 100, 2)
+      perc_valid = round((value / valid_n) * 100, 2),
+      perc_missing = round((missing_n / cohort_n) * 100, 2), 
+      perc_total = round((value / cohort_n) * 100, 2),
     )
+
+
+  ## This is a real hack, but I want is for missing to be a category rather than a separate column.
+  ## Here we create a more minimal version of the output which is more completely in long form
+
+out_cat <- out_cat %>%
+group_by(cohort, variable) %>%
+group_split() %>%
+map(function(x){
+
+x %>% add_row(
+  variable = x$variable[1], 
+  category = "missing",
+  value = x$missing_n[1],
+  cohort = x$cohort[1],
+  cohort_n = x$cohort_n[1],
+  valid_n = x$valid_n[1],
+  perc_missing = x$perc_missing[1], 
+  missing_n = x$missing_n[1],
+  perc_total = x$perc_missing[1])
+}) %>%
+bind_rows() %>%
+select(-missing_n, -perc_missing)
+
   }
 
 
