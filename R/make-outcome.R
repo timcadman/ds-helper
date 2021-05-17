@@ -642,9 +642,6 @@ imap(
   ~dh.tidyEnv(obj = .x, type = "keep", conns = conns[.y])
   )
 
-## Fill the df
-ds.dataFrameFill(out_name, out_name, datasources = conns[valid_coh])
-
 ## Remove temporary column created whilst making df.
 tmp_to_rem <- ds.colnames(out_name, datasources = conns[valid_coh]) %>%
 map(function(x){which(str_detect(x, "outcome_comp") == FALSE)})
