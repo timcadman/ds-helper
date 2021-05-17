@@ -6,14 +6,16 @@
 \usage{
 dh.makeOutcome(
   df = NULL,
-  outcome,
+  outcome = NULL,
   age_var = NULL,
   bands = NULL,
   mult_action = c("earliest", "latest", "nearest"),
   mult_vals = NULL,
   keep_original = FALSE,
   df_name = NULL,
-  conns = NULL
+  conns = NULL,
+  id_var = "child_id",
+  band_action = c("g_l", "ge_le", "g_le", "ge_l")
 )
 }
 \arguments{
@@ -41,6 +43,14 @@ in case of multiple values}
 \item{df_name}{specify data frame name on the DataSHIELD backend}
 
 \item{conns}{connections object for DataSHIELD backends}
+
+\item{id_var}{specify id variable (default assumes LifeCycle name 'child_id')}
+
+\item{band_action}{specify how the values of bands are evaluated in making the subsets.
+"g_l" = greater than the lowest band and less than the highest band; 
+"ge_le" = greater or equal to the lowest band and less than or equal to the highest band; 
+"g_le" = greater than the lowest band and less than or equal to the highest band; 
+"ge_l" = greater than or equal to the lowest band and less than the highest band;}
 }
 \value{
 a dataset containing the newly derived variables
