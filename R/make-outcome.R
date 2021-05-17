@@ -69,8 +69,8 @@ dh.makeOutcome <- function(
     stop("Please specify how you want to deal with multiple observations within an age bracket using the argument 'mult_action")
   }
 
-  mult_action <- match.arg(c("earliest", "latest", "nearest"))
-  band_action <- match.arg(c("g_l", "ge_le", "g_le", "ge_l"))
+  mult_action <- match.arg(mult_action, c("earliest", "latest", "nearest"))
+  band_action <- match.arg(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
