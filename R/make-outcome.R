@@ -209,7 +209,7 @@ dh.makeOutcome <- function(
     varname = rep(subnames, each = 2),
     value = bands,
     op = rep(c(">", "<"), times = (length(bands) / 2)),
-    tmp = ifelse(op == ">=", "gt", "lt"),
+    tmp = ifelse(op == ">", "gt", "lt"),
     new_df_name = paste0(outcome, tmp, value)
   )
 
