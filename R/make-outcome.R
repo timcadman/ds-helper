@@ -361,7 +361,7 @@ dh.makeOutcome <- function(
           V1.name = varname,
           V2.name = "1",
           Boolean.operator = "==",
-          keep.NAs = TRUE,
+          keep.NAs = FALSE,
           newobj = new_subset_name,
           datasources = conns[cohort]
         )
