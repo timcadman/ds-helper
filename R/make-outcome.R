@@ -42,9 +42,9 @@
 #'
 #' @export
 dh.makeOutcome <- function(
-                           df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = c("earliest", "latest", "nearest"),
+                           df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL,
                            mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id", 
-                           band_action = c("g_l", "ge_le", "g_le", "ge_l")) {
+                           band_action = NULL) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -61,8 +61,16 @@ dh.makeOutcome <- function(
     stop("Please specify age bands which will be used to create the subset(s)")
   }
 
-  mult_action <- match.arg(mult_action)
-  band_action <- match.arg(band_action)
+  if (is.null(band_action)) {
+    stop("Please specify how you want to evaluate the age bands using argument 'band_action'")
+  }
+
+  if (is.null(mult_action)) {
+    stop("Please specify how you want to deal with multiple observations within an age bracket using the argument 'mult_action")
+  }
+
+  mult_action <- match.arg(c("earliest", "latest", "nearest"))
+  band_action <- match.arg(c("g_l", "ge_le", "g_le", "ge_l"))
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -634,6 +642,38 @@ imap(
   ~dh.tidyEnv(obj = .x, type = "keep", conns = conns[.y])
   )
 
+## Fill the df
+ds.dataFrameFill(out_name, out_name, datasources = conns[valid_coh])
+
+## Remove temporary column created whilst making df.
+tmp_to_rem <- ds.colnames(out_name, datasources = conns[valid_coh]) %>%
+map(function(x){which(str_detect(x, "outcome_comp") == FALSE)})
+
+ds.length(paste0(out_name, "$", id_var), type = "split", datasources = conns[valid_coh]) %>%
+setNames(names(conns)) %>%
+imap(
+  ~ds.rep(
+    x1 = 1, 
+    times = .x, 
+    source.times = "c", 
+    each = 1, 
+    source.each = "c", 
+    newobj = "tmp_id", 
+    datasources = conns[.y]))
+
+tmp_to_rem %>%
+    imap(
+      ~ ds.dataFrameSubset(
+        df.name = out_name,
+        V1.name = "tmp_id",
+        V2.name = "1",
+        Boolean.operator = "==",
+        keep.cols = .x,
+        keep.NAs = TRUE,
+        newobj = out_name,
+        datasources = conns[.y]
+      )
+    )
 
   message("DONE", appendLF = TRUE)
 
