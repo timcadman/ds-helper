@@ -59,7 +59,7 @@ dh.subjHasData <- function(df = NULL, vars = NULL, new_label = NULL, conns = NUL
   sapply(vars_num, function(x) {
     ds.Boole(
       V1 = x,
-      V2 = "0",
+      V2 = "-99999",
       Boolean.operator = ">=",
       na.assign = 0,
       newobj = paste0(x, "_yn"),
