@@ -88,7 +88,9 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
 
   colnames(fit.tab) <- str_remove(colnames(fit.tab), ".loglik")
 
-  fit.tab %<>% mutate(av_rank = rowMeans(select(., starts_with("log_rank")), na.rm = TRUE)) %>%
+  fit.tab %<>% mutate(
+    av_rank = rowMeans(select(., starts_with("log_rank")), na.rm = TRUE), 
+    sum_log = rowSums(across(loglik_study1: loglik_study2))) %>%
     arrange(av_rank)
 
   out <- list(models = models, convergence = convergence, fit = fit.tab)
