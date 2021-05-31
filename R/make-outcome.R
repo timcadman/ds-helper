@@ -33,6 +33,7 @@
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find
+#' @importFrom rlang :=
 #'
 #' @export
 dh.makeOutcome <- function(
