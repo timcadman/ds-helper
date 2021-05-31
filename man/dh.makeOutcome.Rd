@@ -6,7 +6,7 @@
 \usage{
 dh.makeOutcome(
   df = NULL,
-  outcome,
+  outcome = NULL,
   age_var = NULL,
   bands = NULL,
   mult_action = c("earliest", "latest", "nearest"),

@@ -26,10 +26,10 @@
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
-#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA
+#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA ds.replaceNA
 #' @importFrom purrr pmap map_dfr
 #' @importFrom tidyr pivot_longer tibble
-#' @importFrom dplyr pull %>%
+#' @importFrom dplyr pull %>% rename
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find
@@ -96,9 +96,9 @@ dh.makeOutcome <- function(
   ds.asNumeric(datasources = conns, x.name = paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
 
   na_replace_vec <- rep("-99999", length(conns))
-  
-  ds.replaceNA(x=paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
-  
+
+  ds.replaceNA(x = paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
+
   ds.Boole(
     V1 = "na_replaced",
     V2 = "-99999",
@@ -106,7 +106,7 @@ dh.makeOutcome <- function(
     newobj = "outcome_comp",
     datasources = conns
   )
-  
+
   nonmissing <- ds.mean(datasources = conns, x = "outcome_comp")$Mean.by.Study[, "EstimatedMean"] > 0
 
   if (all(nonmissing == FALSE)) {
@@ -267,15 +267,17 @@ dh.makeOutcome <- function(
 
   if (length(valid_coh) == 1) {
     data_available <- data_sum %>%
-      map(function(x){x$Mean.by.Study[, "EstimatedMean"]}) %>%
+      map(function(x) {
+        x$Mean.by.Study[, "EstimatedMean"]
+      }) %>%
       unlist() %>%
       as_tibble() %>%
       rename(!!valid_coh := value)
-    
   } else if (length(valid_coh) > 1) {
     data_available <- data_sum %>%
-      map_dfr(function(x){x$Mean.by.Study[, "EstimatedMean"]})
-    
+      map_dfr(function(x) {
+        x$Mean.by.Study[, "EstimatedMean"]
+      })
   }
 
   data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%

@@ -24,7 +24,7 @@
 #'
 #' @export
 dh.localProxy <- function(df = NULL, conns = NULL) {
-  if (is.null(model)) {
+  if (is.null(df)) {
     stop("Please specify a data frame")
   }
 
