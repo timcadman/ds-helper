@@ -4,5 +4,6 @@
 .github
 .ci
 ^README\.Rmd
+^TROUBLESHOOTING\.Rmd$
 ^TROUBLESHOOTING\.md$
 ^cran-comments\.md$
