@@ -253,7 +253,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     )
 
 
-    
+
     ## Get total ns for each cohort
     tmp <- map(out_cat$cohort, function(x) {
       stats_cat[["Max_N"]][[match(x, names(stats_cat[["Max_N"]]))]]
@@ -268,7 +268,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     all_sum <- out_cat %>%
       group_by(variable, category) %>%
       summarise(
-        value = sum(value, na.rm = TRUE)) %>%
+        value = sum(value, na.rm = TRUE)
+      ) %>%
       mutate(cohort = "combined") %>%
       ungroup()
 
@@ -277,7 +278,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
       group_by(variable) %>%
       distinct(cohort, .keep_all = TRUE) %>%
       summarise(
-        cohort_n = sum(cohort_n, na.rm = TRUE)) 
+        cohort_n = sum(cohort_n, na.rm = TRUE)
+      )
 
     ## Add in to previous tibble
     all_sum <- left_join(all_sum, comb_coh_n, by = "variable")
@@ -293,33 +295,32 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     out_cat %<>% mutate(
       missing_n = cohort_n - valid_n,
       perc_valid = round((value / valid_n) * 100, 2),
-      perc_missing = round((missing_n / cohort_n) * 100, 2), 
+      perc_missing = round((missing_n / cohort_n) * 100, 2),
       perc_total = round((value / cohort_n) * 100, 2),
     )
 
 
-  ## This is a real hack, but I want is for missing to be a category rather than a separate column.
-  ## Here we create a more minimal version of the output which is more completely in long form
+    ## This is a real hack, but I want is for missing to be a category rather than a separate column.
+    ## Here we create a more minimal version of the output which is more completely in long form
 
-out_cat <- out_cat %>%
-group_by(cohort, variable) %>%
-group_split() %>%
-map(function(x){
-
-x %>% add_row(
-  variable = x$variable[1], 
-  category = "missing",
-  value = x$missing_n[1],
-  cohort = x$cohort[1],
-  cohort_n = x$cohort_n[1],
-  valid_n = x$valid_n[1],
-  perc_missing = x$perc_missing[1], 
-  missing_n = x$missing_n[1],
-  perc_total = x$perc_missing[1])
-}) %>%
-bind_rows() %>%
-select(-missing_n, -perc_missing)
-
+    out_cat <- out_cat %>%
+      group_by(cohort, variable) %>%
+      group_split() %>%
+      map(function(x) {
+        x %>% add_row(
+          variable = x$variable[1],
+          category = "missing",
+          value = x$missing_n[1],
+          cohort = x$cohort[1],
+          cohort_n = x$cohort_n[1],
+          valid_n = x$valid_n[1],
+          perc_missing = x$perc_missing[1],
+          missing_n = x$missing_n[1],
+          perc_total = x$perc_missing[1]
+        )
+      }) %>%
+      bind_rows() %>%
+      select(-missing_n, -perc_missing)
   }
 
 
