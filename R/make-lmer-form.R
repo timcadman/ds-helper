@@ -33,14 +33,10 @@ dh.makeLmerForm <- function(
          in df")
   }
 
-<<<<<<< HEAD
-  random_eff <- paste0("(", 1, "|", idvar, ")")
-=======
 if(random == "intercept"){
 random_eff <- paste0("(1|", idvar, ")")
 
 } 
->>>>>>> 669629822e62248a4b1b961cc8813417f5aeb2ff
 
   poly_fixed <- combn(agevars, 2, paste, collapse = "+")
 
