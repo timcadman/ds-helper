@@ -3,5 +3,6 @@
 .travis.yml
 .github
 .ci
-TROUBLESHOOTING.md
-inst/examples
+^README\.Rmd
+^TROUBLESHOOTING\.md$
+^cran-comments\.md$

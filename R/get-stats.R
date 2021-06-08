@@ -40,8 +40,8 @@
 #'  missing_n = as above
 #'  missing_perc = as above
 #'
-#' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup left_join bind_rows rename filter mutate_at vars
+#' @importFrom tibble as_tibble tibble add_row
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup left_join bind_rows rename filter mutate_at vars distinct
 #' @importFrom purrr map flatten_dbl
 #' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var ds.quantileMean
 #' @importFrom stringr str_detect
@@ -63,7 +63,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
+  Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
 
