@@ -20,16 +20,13 @@ These data frames are in longform and contain the following variables.
 
 Categorical:
 variable = variable
- category = level of variable
+ category = level of variable, including missing as a category
  value = number of observations
  cohort = name of cohort, including combined values for all cohorts
  cohort_n = total number of observations for cohort in dataset
  valid_n = number of valid observations for variable (sum of ns for each
            categories)
- missing_n = number of observations missing for variable (cohort_n - valid_n)
  valid_perc = observations within a category as percentage of valid_n
- missing_perc = percentage of observations missing for a variable (valid_n /
-                cohort_n)*100
 
 Continuous:
 

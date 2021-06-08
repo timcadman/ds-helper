@@ -23,10 +23,10 @@
 #' @param df_name specify data frame name on the DataSHIELD backend
 #' @param id_var specify id variable (default assumes LifeCycle name 'child_id')
 #' @param band_action specify how the values of bands are evaluated in making the subsets.
-#' "g_l" = greater than the lowest band and less than the highest band; 
-#' "ge_le" = greater or equal to the lowest band and less than or equal to the highest band; 
-#' "g_le" = greater than the lowest band and less than or equal to the highest band; 
-#' "ge_l" = greater than or equal to the lowest band and less than the highest band; 
+#' "g_l" = greater than the lowest band and less than the highest band;
+#' "ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
+#' "g_le" = greater than the lowest band and less than or equal to the highest band;
+#' "ge_l" = greater than or equal to the lowest band and less than the highest band;
 #'
 #' @return a dataset containing the newly derived variables
 #'
@@ -43,7 +43,7 @@
 #' @export
 dh.makeOutcome <- function(
                            df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL,
-                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id", 
+                           mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id",
                            band_action = NULL) {
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -112,9 +112,9 @@ dh.makeOutcome <- function(
   ds.asNumeric(datasources = conns, x.name = paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
 
   na_replace_vec <- rep("-99999", length(conns))
-  
-  ds.replaceNA(x=paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
-  
+
+  ds.replaceNA(x = paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
+
   ds.Boole(
     V1 = "na_replaced",
     V2 = "-99999",
@@ -122,7 +122,7 @@ dh.makeOutcome <- function(
     newobj = "outcome_comp",
     datasources = conns
   )
-  
+
   nonmissing <- ds.mean(datasources = conns, x = "outcome_comp")$Mean.by.Study[, "EstimatedMean"] > 0
 
   if (all(nonmissing == FALSE)) {
@@ -203,47 +203,39 @@ dh.makeOutcome <- function(
   )
 
   ## ---- Create table with age bands ------------------------------------------
-  if(band_action == "g_l"){
-
-  cats <- tibble(
-    varname = rep(subnames, each = 2),
-    value = bands,
-    op = rep(c(">", "<"), times = (length(bands) / 2)),
-    tmp = ifelse(op == ">", "gt", "lt"),
-    new_df_name = paste0(outcome, tmp, value)
-  )
-
-} else if(band_action == "ge_le"){
-
-  cats <- tibble(
-    varname = rep(subnames, each = 2),
-    value = bands,
-    op = rep(c(">=", "<="), times = (length(bands) / 2)),
-    tmp = ifelse(op == ">=", "gte", "lte"),
-    new_df_name = paste0(outcome, tmp, value)
-  ) 
-
-} else if(band_action == "g_le"){
-
-  cats <- tibble(
-    varname = rep(subnames, each = 2),
-    value = bands,
-    op = rep(c(">", "<="), times = (length(bands) / 2)),
-    tmp = ifelse(op == ">", "gt", "lte"),
-    new_df_name = paste0(outcome, tmp, value)
-  )
-
-} else if(band_action == "ge_l"){
-
-  cats <- tibble(
-    varname = rep(subnames, each = 2),
-    value = bands,
-    op = rep(c(">=", "<"), times = (length(bands) / 2)),
-    tmp = ifelse(op == ">=", "gte", "lt"),
-    new_df_name = paste0(outcome, tmp, value)
-  )
-
-}
+  if (band_action == "g_l") {
+    cats <- tibble(
+      varname = rep(subnames, each = 2),
+      value = bands,
+      op = rep(c(">", "<"), times = (length(bands) / 2)),
+      tmp = ifelse(op == ">", "gt", "lt"),
+      new_df_name = paste0(outcome, tmp, value)
+    )
+  } else if (band_action == "ge_le") {
+    cats <- tibble(
+      varname = rep(subnames, each = 2),
+      value = bands,
+      op = rep(c(">=", "<="), times = (length(bands) / 2)),
+      tmp = ifelse(op == ">=", "gte", "lte"),
+      new_df_name = paste0(outcome, tmp, value)
+    )
+  } else if (band_action == "g_le") {
+    cats <- tibble(
+      varname = rep(subnames, each = 2),
+      value = bands,
+      op = rep(c(">", "<="), times = (length(bands) / 2)),
+      tmp = ifelse(op == ">", "gt", "lte"),
+      new_df_name = paste0(outcome, tmp, value)
+    )
+  } else if (band_action == "ge_l") {
+    cats <- tibble(
+      varname = rep(subnames, each = 2),
+      value = bands,
+      op = rep(c(">=", "<"), times = (length(bands) / 2)),
+      tmp = ifelse(op == ">=", "gte", "lt"),
+      new_df_name = paste0(outcome, tmp, value)
+    )
+  }
 
   ## ---- Check max character length -------------------------------------------
   if (max(nchar(cats$varname)) + 6 > 20) {
@@ -316,15 +308,17 @@ dh.makeOutcome <- function(
 
   if (length(valid_coh) == 1) {
     data_available <- data_sum %>%
-      map(function(x){x$Mean.by.Study[, "EstimatedMean"]}) %>%
+      map(function(x) {
+        x$Mean.by.Study[, "EstimatedMean"]
+      }) %>%
       unlist() %>%
       as_tibble() %>%
       rename(!!valid_coh := value)
-    
   } else if (length(valid_coh) > 1) {
     data_available <- data_sum %>%
-      map_dfr(function(x){x$Mean.by.Study[, "EstimatedMean"]})
-    
+      map_dfr(function(x) {
+        x$Mean.by.Study[, "EstimatedMean"]
+      })
   }
 
   data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%
@@ -626,39 +620,49 @@ dh.makeOutcome <- function(
 
   end_objs <- ds.ls(datasources = conns)
 
-to_keep <- list(
-  before = start_objs %>% map(function(x){x$objects.found}),
-  after = end_objs %>% map(function(x){x$objects.found})) %>%
-pmap(function(before, after){
-
-before[before %in% after == TRUE]
-})
+  to_keep <- list(
+    before = start_objs %>% map(function(x) {
+      x$objects.found
+    }),
+    after = end_objs %>% map(function(x) {
+      x$objects.found
+    })
+  ) %>%
+    pmap(function(before, after) {
+      before[before %in% after == TRUE]
+    })
 
   ## but we keep the final dataset
-to_keep <- to_keep %>% map(function(x){c(x, out_name)})
+  to_keep <- to_keep %>% map(function(x) {
+    c(x, out_name)
+  })
 
-to_keep %>%
-imap(
-  ~dh.tidyEnv(obj = .x, type = "keep", conns = conns[.y])
-  )
+  to_keep %>%
+    imap(
+      ~ dh.tidyEnv(obj = .x, type = "keep", conns = conns[.y])
+    )
 
-## Remove temporary column created whilst making df.
-tmp_to_rem <- ds.colnames(out_name, datasources = conns[valid_coh]) %>%
-map(function(x){which(str_detect(x, "outcome_comp") == FALSE)})
+  ##  Remove temporary column created whilst making df.
+  tmp_to_rem <- ds.colnames(out_name, datasources = conns[valid_coh]) %>%
+    map(function(x) {
+      which(str_detect(x, "outcome_comp") == FALSE)
+    })
 
-ds.length(paste0(out_name, "$", id_var), type = "split", datasources = conns[valid_coh]) %>%
-setNames(names(conns)) %>%
-imap(
-  ~ds.rep(
-    x1 = 1, 
-    times = .x, 
-    source.times = "c", 
-    each = 1, 
-    source.each = "c", 
-    newobj = "tmp_id", 
-    datasources = conns[.y]))
+  ds.length(paste0(out_name, "$", id_var), type = "split", datasources = conns[valid_coh]) %>%
+    setNames(names(conns)) %>%
+    imap(
+      ~ ds.rep(
+        x1 = 1,
+        times = .x,
+        source.times = "c",
+        each = 1,
+        source.each = "c",
+        newobj = "tmp_id",
+        datasources = conns[.y]
+      )
+    )
 
-tmp_to_rem %>%
+  tmp_to_rem %>%
     imap(
       ~ ds.dataFrameSubset(
         df.name = out_name,

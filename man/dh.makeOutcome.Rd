@@ -9,13 +9,13 @@ dh.makeOutcome(
   outcome = NULL,
   age_var = NULL,
   bands = NULL,
-  mult_action = c("earliest", "latest", "nearest"),
+  mult_action = NULL,
   mult_vals = NULL,
   keep_original = FALSE,
   df_name = NULL,
   conns = NULL,
   id_var = "child_id",
-  band_action = c("g_l", "ge_le", "g_le", "ge_l")
+  band_action = NULL
 )
 }
 \arguments{
