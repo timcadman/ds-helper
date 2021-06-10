@@ -15,9 +15,12 @@
 #' @importFrom purrr map set_names
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows
-#'
+#' 
 #' @export
 dh.getAnonPlotData <- function(df = NULL, vars = NULL, conns = NULL) {
+  
+  . <- NULL
+  
   if (is.null(df)) {
     stop("Please specify a data frame")
   }

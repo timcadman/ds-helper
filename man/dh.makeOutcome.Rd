@@ -47,9 +47,9 @@ in case of multiple values}
 \item{id_var}{specify id variable (default assumes LifeCycle name 'child_id')}
 
 \item{band_action}{specify how the values of bands are evaluated in making the subsets.
-"g_l" = greater than the lowest band and less than the highest band; 
-"ge_le" = greater or equal to the lowest band and less than or equal to the highest band; 
-"g_le" = greater than the lowest band and less than or equal to the highest band; 
+"g_l" = greater than the lowest band and less than the highest band;
+"ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
+"g_le" = greater than the lowest band and less than or equal to the highest band;
 "ge_l" = greater than or equal to the lowest band and less than the highest band;}
 }
 \value{

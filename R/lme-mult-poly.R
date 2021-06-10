@@ -7,7 +7,7 @@
 #' @importFrom dsBaseClient ds.lmerSLMA
 #' @importFrom purrr map flatten_chr map set_names
 #' @importFrom dplyr arrange bind_rows dense_rank group_split mutate select
-#'             starts_with desc
+#'             starts_with desc across
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom stringr str_detect str_remove
 #' @importFrom tibble tibble
