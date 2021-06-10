@@ -64,7 +64,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- NULL
+  Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
 
