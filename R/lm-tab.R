@@ -17,7 +17,8 @@
 #'
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
-                     direction = c("long", "wide"), ci_format = NULL) {
+                     direction = c("long", "wide"), ci_format = NULL, 
+                     round_digits = 2) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
   if (is.null(model)) {
@@ -41,9 +42,9 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   if (type == "ipd") {
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
-      est = round(model$coefficients[, "Estimate"], 2),
-      lowci = round(model$coefficients[, "low0.95CI"], 2),
-      uppci = round(model$coefficients[, "high0.95CI"], 2)
+      est = round(model$coefficients[, "Estimate"], round_digits),
+      lowci = round(model$coefficients[, "low0.95CI"], round_digits),
+      uppci = round(model$coefficients[, "high0.95CI"], round_digits)
     ) %>%
       pivot_longer(
         cols = -variable,
@@ -95,7 +96,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   out <- out %>%
     mutate(
       variable = ifelse(variable == "(Intercept)", "intercept", variable),
-      value = round(value, 2)
+      value = round(value, round_digits)
     ) %>%
     filter(coefficient != "se")
 
