@@ -10,7 +10,8 @@ dh.lmTab(
   type = NULL,
   coh_names = NULL,
   direction = c("long", "wide"),
-  ci_format = NULL
+  ci_format = NULL,
+  round_digits = 2
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ order as the cohorts provided to the model.}
 \item{ci_format}{format for the confidence intervals when direction == "wide".
 "separate" outputs separate columns with upper and lower CIs.
 "paste" adds these in brackets to the coefficient.'}
+
+\item{round_digits}{Number of decimal places to use in table. Default is 2.}
 }
 \value{
 A tibble containing the estimate with lower and upper confidence intervals

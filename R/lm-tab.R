@@ -9,6 +9,7 @@
 #' @param ci_format format for the confidence intervals when direction == "wide".
 #'                  "separate" outputs separate columns with upper and lower CIs.
 #'                  "paste" adds these in brackets to the coefficient.'
+#' @param round_digits Number of decimal places to use in table. Default is 2.
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select
 #' @importFrom rlang arg_match
