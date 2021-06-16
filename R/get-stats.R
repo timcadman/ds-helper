@@ -494,7 +494,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
       bind_rows(.id = "variable") %>%
       rename(
         perc_5 = "5%",
-        perc_25 = "25%"
+        perc_25 = "25%",
         perc_50 = "50%",
         perc_75 = "75%",
         perc_95 = "95%",
