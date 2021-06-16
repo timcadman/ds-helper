@@ -28,7 +28,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   if (is.null(type)) {
     stop("Please specify which type of model was fit")
   }
-  if (is.null(coh_names)) {
+  if (is.null(coh_names) & type %in% c("lmer", "slma")) {
     stop("Please provide a vector of cohort names")
   }
 
