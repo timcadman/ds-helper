@@ -8,10 +8,7 @@
 #' @param df datashield dataframe
 #' @param vars variables to keep or remove
 #' @param new_df_name name for the new dataframe
-#' @param comp_var name of a variable with df which is complete for all subjects
-#'                 (e.g. an id variable)
 #' @param type whether to remove or keep specified variables
-#' @param remove_temp remove temporary objects from the DataSHIELD backends
 #'
 #' @return a new dataframe is created containing the specified subset of columns
 #'

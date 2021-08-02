@@ -22,11 +22,6 @@ dh.dropCols(
 \item{type}{whether to remove or keep specified variables}
 
 \item{conns}{connections object to DataSHIELD backends}
-
-\item{comp_var}{name of a variable with df which is complete for all subjects
-(e.g. an id variable)}
-
-\item{remove_temp}{remove temporary objects from the DataSHIELD backends}
 }
 \value{
 a new dataframe is created containing the specified subset of columns
