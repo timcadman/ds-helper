@@ -39,7 +39,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
 names <- NULL
 
   dh.doesDfExist(df = df, conns = conns)
-  dh.doVarsExist(df = df, vars = names$oldvar, conns = conns)
+  dh.doVarsExist(df = df, vars = current_names, conns = conns)
 
   if(length(current_names) != length(new_names)){
 
