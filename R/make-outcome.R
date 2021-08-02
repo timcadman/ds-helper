@@ -515,7 +515,6 @@ dh.makeOutcome <- function(
         df = paste0(varname, "_wide"),
         vars = keep_vars,
         new_df_name = paste0(varname, "_wide"),
-        comp_var = id_var,
         type = "keep"
       )
     })
