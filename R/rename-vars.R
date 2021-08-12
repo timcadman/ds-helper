@@ -7,35 +7,47 @@
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df dataframe
-#' @param names a dataframe or tibble containing two columns: "oldvar" (existing
-#'              variable name), "newvar" (new variable name). Each row
-#'              corresponds to one variable you want to rename
-#'
-#' @return None. The new variables are added to the df specified
+#' @param current_names a vector with names of existing DataSHIELD variables to 
+#'        rename
+#' @param new_names a vector corresponding to the vector provided to current_names
+#'        with the new variable names.
+#' @return None. The new variables are added to the df specified 
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.renameVars <- function(df = NULL, names = NULL, conns = NULL) {
+dh.renameVars <- function(df = NULL, current_names = NULL, new_names, 
+  conns = NULL) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
 
-  if (is.null(names)) {
-    stop("Please specify a reference tibble containing old and new names")
+  if (is.null(current_names)) {
+    stop("Please specify a vector containing existing variable names")
+  }
+
+  if (is.null(new_names)) {
+    stop("Please specify a vector containing the new variable names")
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-
-  old_new <- newvar <- NULL
+names <- NULL
 
   dh.doesDfExist(df = df, conns = conns)
-  dh.doVarsExist(df = df, vars = names$oldvar, conns = conns)
+  dh.doVarsExist(df = df, vars = current_names, conns = conns)
+
+  if(length(current_names) != length(new_names)){
+
+  stop("Length of current_names is different from the length of new_names.
+    Please check input vectors")
+  }
+
+  names <- list(oldvar = current_names, newvar = new_names)
 
   names %>%
     pmap(function(oldvar, newvar, ...) {
@@ -46,19 +58,21 @@ dh.renameVars <- function(df = NULL, names = NULL, conns = NULL) {
       )
     })
 
-  names(conns) %>%
-    map(
-      ~ ds.dataFrame(
-        x = c(df, names$newvar),
-        newobj = df,
-        datasources = conns[.]
-      )
+  ds.dataFrame(
+    x = c(df, names$newvar),
+    newobj = df,
+    datasources = conns
+    )
+    
+  dh.dropCols(
+    df = df, 
+    vars = current_names,
+    new_df_name = df, 
+    conns = conns
     )
 
-  names %>%
-    pull(newvar) %>%
-    map(function(x) {
-      dh.tidyEnv(conns = conns, obj = x)
-    }) %>%
-    invisible()
+  dh.tidyEnv(
+    obj = new_names,
+    conns = conns) %>%
+  invisible()
 }
