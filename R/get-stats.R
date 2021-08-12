@@ -51,499 +51,434 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
-  if (is.null(df)) {
-    stop("Please specify a data frame")
-  }
+dh.getStats2 <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
+  
+  
+################################################################################
+# 1. First checks  
+################################################################################
+  
+if (is.null(df)) {
+  stop("Please specify a data frame")
+}
 
-  if (is.null(vars)) {
-    stop("Please specify variable(s) to summarise")
-  }
+if (is.null(vars)) {
+  stop("Please specify variable(s) to summarise")
+}
 
-  if (is.null(conns)) {
-    conns <- datashield.connections_find()
-  }
+if (is.null(conns)) {
+  conns <- datashield.connections_find()
+}
 
-  Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
+dh.doesDfExist(df, conns = conns)
 
-  dh.doVarsExist(df = df, vars = vars, conns = conns)
+  # Not checking whether variable exists because function will show NA if it 
+# doesnt
+  
+Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <- 
+  variance <- variable <- category <- value <- cohort_n <- cohort <- 
+  valid_n <- missing_n <- perc_missing <- NULL
 
-  ################################################################################
-  # 1. Identify variable type
-  ################################################################################
+################################################################################
+# 2. Get classes of variables  
+################################################################################
+check_class <- dh.classDiscrepancy(
+  df = df,
+  vars = vars,
+  conns = conns
+)
+  
+################################################################################
+# 3. Check variable has the same class in each cohort  
+################################################################################
+  
+## We need to distinguish between variables which are NULL and variables which
+## really have a different class.
+real_disc <- check_class %>%
+  select(-variable, -discrepancy) %>%
+  replace(. == "NULL", NA) %>%
+  pmap(~c(...)) %>%
+  map_chr(n_distinct, na.rm = TRUE) %>%
+  bind_cols(check_class, "disc" = .) %>%
+  mutate(disc = ifelse(disc > 1, "yes", "no")) %>%
+  filter(disc == "yes")
 
-  ## Create vector of full names for datashield
-  full_var_names <- paste0(df, "$", vars)
+if(nrow(real_disc) > 0){
+  
+  stop(
+    "\nThe following variables do not have the same class in all cohorts. Please 
+check with ds.class \n\n",
+    real_disc %>% pull(variable) %>% paste(collapse = "\n")
+     )
+}
 
-  class_list <- full_var_names %>% map(function(x) {
-    ds.class(x, datasources = conns)
-  })
+################################################################################
+# 4. Check variable has the same class in each cohort  
+################################################################################
 
-  f <- class_list %>% map(function(x) {
-    any(str_detect(x, "factor") == TRUE)
-  })
-  i <- class_list %>% map(function(x) {
-    any(str_detect(x, "numeric|integer") == TRUE)
-  })
+## ---- Restrict to factors that exist in each cohort --------------------------
+fact_exist <- check_class %>%
+  pivot_longer(
+    cols = c(-variable, -discrepancy),
+    values_to = "type", 
+    names_to = "cohort"
+  ) %>%
+  filter(type == "factor") %>%
+  select(variable, cohort)
 
-  ## Create separate vectors for factors and integers
-  factors <- vars[(which(f == TRUE))]
-  integers <- vars[(which(i == TRUE))]
+## ---- Get the levels of these factors ----------------------------------------
+check_levels <- fact_exist %>%
+  group_by(variable) %>%
+  group_split() %>%
+  map(., 
+    ~pmap(., function(variable, cohort){
+      
+      ds.levels(
+        x = paste0(df, "$", variable),
+        datasources = conns[cohort])[[1]]$Levels
+    }) 
+  ) %>%
+  set_names(sort(unique(fact_exist$variable)))
 
-  ################################################################################
-  # 2. Extract information using ds.summary
-  ################################################################################
+## ---- Check whether these levels are identical for all cohorts ---------------
+level_ref <- check_levels %>%
+map(unique) %>%
+map(length) %>%
+bind_rows() %>%
+pivot_longer(
+  cols = everything(), 
+  values_to = "length",
+  names_to = "variable"
+) %>%
+mutate(same_levels = ifelse(length == 1, "yes", "no")) %>%
+select(-length)
 
-  ## ---- Categorical ------------------------------------------------------------
-  stats_cat <- list()
+if(any(level_ref$same_levels == "no") == TRUE){
 
-  if (length(factors > 0)) {
-    stats_cat[[1]] <- lapply(factors, function(x) {
-      sapply(names(conns), USE.NAMES = FALSE, function(y) {
-        if (ds.length(paste0(df, "$", x),
-          datasources = conns[y],
-          type = "combine"
-        ) == 0) {
-          list(NULL)
-        } else {
-          ds.summary(paste0(df, "$", x), datasources = conns[y])
-        }
-      })
-    })
-
-    stats_cat[[2]] <- ds.length(paste0(df, "$", factors[1]),
-      type = "split",
-      datasources = conns
-    )
-
-    names(stats_cat) <- c("Descriptives", "Max_N")
-    names(stats_cat[[1]]) <- factors
-    stats_cat[[1]] <- lapply(stats_cat[[1]], setNames, names(conns))
-    names(stats_cat[[2]]) <- names(conns)
-  }
-
-  ## ---- Continuous -------------------------------------------------------------
-  stats_cont <- list()
-
-  if (length(integers > 0)) {
-    stats_cont[[1]] <- lapply(integers, function(x) {
-      sapply(names(conns), USE.NAMES = FALSE, function(y) {
-        if (ds.length(paste0(df, "$", x),
-          datasources = conns[y],
-          type = "combine"
-        ) == 0) {
-          list(NULL)
-        } else {
-          ds.summary(paste0(df, "$", x), datasources = conns[y])
-        }
-      })
-    })
-
-    names(stats_cont[[1]]) <- integers
-    stats_cont[[1]] <- lapply(stats_cont[[1]], setNames, names(conns))
-
-    stats_cont[[2]] <- lapply(integers, function(x) {
-      sapply(names(conns), USE.NAMES = FALSE, function(y) {
-        if (ds.length(paste0(df, "$", x),
-          datasources = conns[y],
-          type = "combine"
-        ) == 0) {
-          list(NULL)
-        } else {
-          ds.var(paste0(df, "$", x), datasources = conns[y])[1]
-        }
-      })
-    })
-
-    names(stats_cont[[2]]) <- integers
-    stats_cont[[2]] <- lapply(stats_cont[[2]], setNames, names(conns))
-
-    lapply(stats_cont[[1]], names)
-
-    stats_cont[[3]] <- ds.length(paste0(df, "$", integers[1]),
-      type = "split",
-      datasources = conns
-    )
-
-    names(stats_cont) <- c("Mean", "Variance", "Max_N")
-    names(stats_cont[[3]]) <- names(conns)
-  }
+stop(
+"The following categorical variables do not have the same levels. 
+Please check using ds.levels:\n\n", 
+level_ref %>% 
+dplyr::filter(same_levels == "no") %>% 
+pull(variable) %>%
+paste(., collapse = "\n")
+)
+}
 
 
-  ################################################################################
-  # 3. Transform information into more usable format
-  ################################################################################
+################################################################################
+# 5. Get maximum ns for each cohort  
+################################################################################
+cohort_ns <- ds.dim(df, type = "split") %>% 
+  map_df(~.[1]) %>%
+  set_names(names(conns)) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "cohort", 
+    values_to = "cohort_n"
+  )
 
-  # Here we derive key information we will need for descriptives
+################################################################################
+# 6. Identify variable classes
+################################################################################
 
-  ## Create lists. This means that if there is no variable of that type an
-  ## empty list can still be returned.
+## ---- Table with classes of all variables ------------------------------------
+vars_long <- check_class %>% 
+    pivot_longer(
+      cols = c(-variable, -discrepancy), 
+      names_to = "cohort", 
+      values_to = "type_w_null"
+    ) %>% 
+  mutate(any_obs = ifelse(type_w_null == "NULL", "no", "yes")) %>%
+  select(variable, cohort, any_obs, type_w_null)
 
-  out_cat <- list()
-  out_cont <- list()
+classes <- vars_long %>%
+  distinct(variable, type_w_null) %>%
+  filter(type_w_null != "NULL") %>%
+  dplyr::rename(type = type_w_null)
+
+vars_long <- left_join(vars_long, classes, by = "variable")
 
 
-  ## ---- Categorical variables --------------------------------------------------
+## ---- Final reference table for factors --------------------------------------
+fact_ref <- vars_long %>%
+  dplyr::filter(type == "factor") %>%
+  select(variable, cohort, any_obs)
 
-  ## Here we extract information from the lists we made above. I guess we could
-  ## do it in one stage rather than two but this is how I conceptualise the
-  ## process.
+## Here we get the possible levels of the factors
+unique_levels <- check_levels %>% 
+  map(unlist) %>%
+  map(unique) %>%
+  map(paste, collapse = ",") %>%
+  as_tibble %>%
+  pivot_longer(
+    cols = everything(), 
+    names_to = "variable", 
+    values_to = "levels"
+  )
 
-  ## First we need to create a vector with repetitions of the variable names
-  ## corresponding to the number of categories each variable has. This code isn't
-  ## great but it works.
+fact_ref <- left_join(fact_ref, unique_levels, by = "variable") %>%
+  left_join(., cohort_ns, by = "cohort")
 
-  if (length(stats_cat) > 0) {
-    tmp <- map(stats_cat[[1]], function(x) {
-      map(names(conns), function(y) {
-        if (is.null(x[[y]])) {
-          NA
-        } else {
-          length(x[[y]]$categories)
-        }
-      })
-    })
 
-    cat_len <- map(tmp, function(x) {
-      len <- Reduce(`+`, x)
-    })
+## ---- Final reference table for continuous variables -------------------------
+cont_ref <- vars_long %>%
+  dplyr::filter(type %in% c("numeric", "integer")) %>%
+  select(variable, cohort, any_obs)
 
-    var_vec <- rep(names(cat_len), times = cat_len)
-
-    out_cat <- data.frame(
-      variable = var_vec,
-      category = unlist(
-        map(stats_cat[[1]], function(x) {
-          map(names(conns), function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              x[[y]]$categories
-            }
-          })
-        }),
-        use.names = FALSE
-      ),
-      value = unlist(
-        map(stats_cat[[1]], function(x) {
-          map(names(conns), function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              x[[y]][which(str_detect(names(x[[y]]), "count") == TRUE)]
-            }
-          })
-        }),
-        use.names = FALSE
-      ),
-      cohort = unlist(
-        map(stats_cat[[1]], function(x) {
-          map(names(conns), function(y) {
-            if (is.null(x[[y]])) {
-              y
-            } else {
-              rep(
-                names(x[y]),
-                length = sum(str_detect(names(x[[y]]), "count") == TRUE)
+################################################################################
+# 7. Function to help extract statistics  
+################################################################################
+statsHelper <- function(ref, type = c("table", "quantileMean", "var")){
+  
+  ref %>%
+    group_by(variable) %>%
+    group_map(
+      ~pmap(., function(cohort, any_obs, levels, cohort_n){
+        
+        if(type == "table"){
+          
+          if(any_obs == "no"){
+            tibble(
+              category = c(unlist(strsplit(levels, ",")), NA), 
+              value = c(rep(0, length(category)-1), cohort_n) 
+            )
+            
+          } else{
+            
+            calltext <- call(
+              "tableDS", 
+              rvar.transmit = paste0(df, "$", .y), 
+              cvar.transmit = NULL,
+              stvar.transmit = NULL,
+              rvar.all.unique.levels.transmit = levels,
+              cvar.all.unique.levels.transmit = NULL,
+              stvar.all.unique.levels.transmit = NULL,
+              exclude.transmit = NULL,
+              useNA.transmit = "ifany",
+              force.nfilter.transmit = NULL)
+            
+            datashield.aggregate(conns[cohort], calltext) %>%
+              as.data.frame %>% 
+              as_tibble %>%
+              set_names(c("category", "value"))
+          }
+          
+      } else if(type == "quantileMean"){
+          
+          if(any_obs == "no"){
+            
+            tibble(
+              stat = c(
+                "perc_5", "perc_10", "perc_25", "perc_50", "perc_75", "perc_90", 
+                "perc_95", "mean"),
+              value = NA) 
+            
+          } else{
+            
+            calltext <- paste0("quantileMeanDS(", df, "$", .y, ")")
+            datashield.aggregate(conns[cohort], calltext) %>% 
+              bind_rows %>% 
+              pivot_longer(
+                cols = everything(),
+                names_to = "stat", 
+                values_to = "value"
+              ) %>%
+              mutate(
+                stat = case_when(
+                  stat == "5%" ~ "perc_5", 
+                  stat == "10%" ~ "perc_10", 
+                  stat == "25%" ~ "perc_25", 
+                  stat == "50%" ~ "perc_50", 
+                  stat == "75%" ~ "perc_75", 
+                  stat == "90%" ~ "perc_90", 
+                  stat == "95%" ~ "perc_95", 
+                  stat == "Mean" ~ "mean"
+                )
               )
-            }
-          })
-        }),
-        use.names = FALSE
-      )
-    )
-
-
-
-    ## Get total ns for each cohort
-    tmp <- map(out_cat$cohort, function(x) {
-      stats_cat[["Max_N"]][[match(x, names(stats_cat[["Max_N"]]))]]
-    })
-
-    ## Combine these with df and convert to tibble
-    out_cat %<>%
-      mutate(cohort_n = flatten_dbl(tmp)) %>%
-      as_tibble()
-
-    # Calculate combined values for each level of each variable
-    all_sum <- out_cat %>%
-      group_by(variable, category) %>%
-      summarise(
-        value = sum(value, na.rm = TRUE)
-      ) %>%
-      mutate(cohort = "combined") %>%
-      ungroup()
-
-    ## Calculate combined n for all cohorts
-    comb_coh_n <- out_cat %>%
-      group_by(variable) %>%
-      distinct(cohort, .keep_all = TRUE) %>%
-      summarise(
-        cohort_n = sum(cohort_n, na.rm = TRUE)
-      )
-
-    ## Add in to previous tibble
-    all_sum <- left_join(all_sum, comb_coh_n, by = "variable")
-
-    out_cat <- rbind(out_cat, all_sum)
-
-    ## Calculate additional stats
-    out_cat %<>%
-      group_by(cohort, variable) %>%
-      mutate(valid_n = sum(value, na.rm = TRUE)) %>%
-      ungroup()
-
-    out_cat %<>% mutate(
-      missing_n = cohort_n - valid_n,
-      perc_valid = round((value / valid_n) * 100, 2),
-      perc_missing = round((missing_n / cohort_n) * 100, 2),
-      perc_total = round((value / cohort_n) * 100, 2),
-    )
-
-
-    ## This is a real hack, but I want is for missing to be a category rather than a separate column.
-    ## Here we create a more minimal version of the output which is more completely in long form
-
-    out_cat <- out_cat %>%
-      group_by(cohort, variable) %>%
-      group_split() %>%
-      map(function(x) {
-        x %>% add_row(
-          variable = x$variable[1],
-          category = "missing",
-          value = x$missing_n[1],
-          cohort = x$cohort[1],
-          cohort_n = x$cohort_n[1],
-          valid_n = x$valid_n[1],
-          perc_missing = x$perc_missing[1],
-          missing_n = x$missing_n[1],
-          perc_total = x$perc_missing[1]
-        )
-      }) %>%
-      bind_rows() %>%
-      select(-missing_n, -perc_missing)
-  }
-
-
-  ################################################################################
-  # Continuous variables
-  ################################################################################
-
-  if (length(stats_cont) > 0) {
-    out_cont <- data.frame(
-      cohort = rep(names(conns), times = length(names(stats_cont[[1]]))),
-      variable = rep(names(stats_cont[[1]]), times = 1, each = length(names(conns))),
-      mean = unlist(
-        sapply(stats_cont[[1]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(x[[y]]$"quantiles & mean"["Mean"], 2)
-            }
-          })
-        })
-      ),
-      perc_5 = unlist(
-        sapply(stats_cont[[1]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(x[[y]]$"quantiles & mean"["5%"], 2)
-            }
-          })
-        })
-      ),
-      perc_25 = unlist(
-        sapply(stats_cont[[1]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(x[[y]]$"quantiles & mean"["25%"], 2)
-            }
-          })
-        })
-      ),
-      perc_50 = unlist(
-        sapply(stats_cont[[1]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(x[[y]]$"quantiles & mean"["50%"], 2)
-            }
-          })
-        })
-      ),
-      perc_75 = unlist(
-        sapply(stats_cont[[1]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(x[[y]]$"quantiles & mean"["75%"], 2)
-            }
-          })
-        })
-      ),
-      perc_95 = unlist(
-        sapply(stats_cont[[1]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(x[[y]]$"quantiles & mean"["95%"], 2)
-            }
-          })
-        })
-      ),
-      std.dev = unlist(
-        sapply(stats_cont[[2]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              round(sqrt(x[[y]][1]), 2)
-            }
-          })
-        })
-      ),
-      valid_n = unlist(
-        sapply(stats_cont[[2]], function(x) {
-          sapply(names(conns), simplify = FALSE, function(y) {
-            if (is.null(x[[y]])) {
-              NA
-            } else {
-              x[[y]][3]
-            }
-          })
-        })
-      )
-    )
-
-    out_cont$cohort_n <- unlist(
-      apply(
-        out_cont, 1, function(x) {
-          stats_cont[["Max_N"]][match(x["cohort"], names(stats_cont[["Max_N"]]))]
+          }
+        
+      } else if(type == "var"){
+        
+        if(any_obs == "no"){
+          
+          tibble(
+            stat = c("SumOfSquares", "Nmissing", "Nvalid", "Ntotal", 
+                     "EstimatedVar"), 
+            value = NA
+          )
+          
+        } else{
+        
+          calltext <- paste0("varDS(", df, "$", .y, ")")
+          datashield.aggregate(conns[cohort], calltext)[[1]] %>% 
+            bind_rows %>%
+            mutate(EstimatedVar = SumOfSquares/(Nvalid-1) - (Sum^2/(Nvalid*(Nvalid-1)))) %>%
+            select(-ValidityMessage) %>%
+            pivot_longer(
+              cols = c(Sum, SumOfSquares, Nmissing, Nvalid, Ntotal, EstimatedVar),
+              names_to = "stat", 
+              values_to = "value"
+            )
+          
+      }
+            
         }
-      )
-    )
+          
+        }) 
+    ) %>% set_names(sort(unique(ref$variable))) %>%
+    map(., ~set_names(., names(conns))) %>% 
+    map(bind_rows, .id = "cohort") %>%
+    bind_rows(.id = "variable") 
+}
 
-    ## We replace NAs in the "valid_n" column with 0
-    out_cont$valid_n[is.na(out_cont$valid_n)] <- 0
+################################################################################
+# 8. Extract statistics  
+################################################################################
 
-    out_cont %<>% mutate(missing_n = cohort_n - valid_n)
+## ---- Categorical ------------------------------------------------------------
+stats_cat <- statsHelper(ref = fact_ref, type = "table") %>%
+  left_join(., cohort_ns, by = "cohort")
 
-    ## ---- Get pooled values --------------------------------------------------
-    out_cont %<>% arrange(variable)
+## ---- Continuous -------------------------------------------------------------
+stats_cont <- bind_rows(
+  quantiles = statsHelper(ref = cont_ref, type = "quantileMean"),
+  variance = statsHelper(ref = cont_ref, type = "var")
+)
 
-    valid_n_cont <- out_cont %>%
-      group_by(variable) %>%
-      summarize(valid_n = sum(valid_n, na.rm = TRUE))
 
-    valid_n_cont$variable %<>% as.character
+################################################################################
+# 9. Calculate combined stats for categorical variables  
+################################################################################
 
-    coh_comb <- tibble(
-      cohort = "combined",
-      variable = sort(names(stats_cont[[1]])),
-      cohort_n = Reduce(`+`, stats_cont[["Max_N"]])
-    )
+## ---- Combined value for each level of variables -----------------------------
+levels_comb <- stats_cat %>%
+  group_by(variable, category) %>%
+  summarise(
+    value = sum(value, na.rm = TRUE)
+  ) %>%
+  mutate(cohort = "combined") 
 
-    coh_comb <- left_join(coh_comb, valid_n_cont, by = "variable")
+## ---- Combined n for each variable -------------------------------------------
+n_cat_comb <- stats_cat %>%
+  group_by(variable) %>%
+  distinct(cohort, .keep_all = TRUE) %>%
+  summarise(
+    cohort_n = sum(cohort_n, na.rm = TRUE)
+  )
 
-    ## ---- Identify cohorts with non-missing data -----------------------------
 
-    ## Need this step at the moment as the DS functions returned missing pooled
-    ## values if any cohorts don't have them.
-    pool_avail <- names(stats_cont[[1]]) %>%
-      map(function(x) {
-        tmp <- out_cont %>%
-          filter(variable == x) %>%
-          filter(!is.na(mean)) %>%
-          select(cohort) %>%
-          pull() %>%
-          as.character()
-      })
+################################################################################
+# 10. Join back and calculate final categorical stats 
+################################################################################
+out_cat <- left_join(levels_comb, n_cat_comb, by = "variable") %>%
+  bind_rows(., stats_cat)
 
-    pool_avail <- names(stats_cont[[1]]) %>%
-      map(function(x) {
-        tmp <- out_cont %>%
-          filter(variable == x) %>%
-          filter(!is.na(mean)) %>%
-          select(cohort) %>%
-          pull() %>%
-          as.character()
-      })
+## ---- Calculate valid n for each variable and cohort -------------------------
+cat_valid_n <- out_cat %>%
+  group_by(cohort, variable) %>%
+  filter(!is.na(category)) %>%
+  group_split() %>%
+  map(~mutate(., valid_n = sum(value, na.rm = TRUE))) %>%
+  map(~select(., variable, category, cohort, valid_n)) %>%
+  bind_rows
 
-    names(pool_avail) <- paste0(df, "$", names(stats_cont[[1]]))
+## ---- Final stats ------------------------------------------------------------
+out_cat <- left_join(
+  out_cat, cat_valid_n, by = c("variable", "category", "cohort")) %>%
+  mutate(
+    missing_n = cohort_n - valid_n,
+    perc_valid = (value / valid_n) * 100,
+    perc_missing = (missing_n / cohort_n) * 100,
+    perc_total = (value / cohort_n) * 100)
 
-    ## pooled median
-    medians <- pool_avail %>% imap(
-      ~ ds.quantileMean(
-        x = .y,
-        type = "combine",
-        datasources = conns[.x]
-      )
-    )
 
-    names(medians) <- names(stats_cont[[1]])
+################################################################################
+# 12. Calculate combined statistics for continuous stats
+################################################################################
 
-    medians %<>%
-      bind_rows(.id = "variable") %>%
-      rename(
-        perc_5 = "5%",
-        perc_25 = "25%",
-        perc_50 = "50%",
-        perc_75 = "75%",
-        perc_95 = "95%",
-        mean = Mean
-      ) %>%
-      select(variable, perc_5, perc_25, perc_50, perc_75, perc_95, mean)
+## ---- Put key stats into wide format -----------------------------------------
+stats_cont_wide <- stats_cont %>% 
+  filter(stat %in% c("Sum", "SumOfSquares", "Nmissing", "Nvalid", "Ntotal")) %>%
+  pivot_wider(
+    values_from = value,
+    names_from = stat
+  )
+  
+stats_cont_wide <- stats_cont %>%
+  filter(!stat %in% key_stats) %>%
+  left_join(., stats_wide, by = c("variable", "cohort"))
+  
 
-    coh_comb <- left_join(coh_comb, medians, by = "variable")
+## ---- Combined quantiles --------------------------------------------------------------
+quantiles_comb <- stats_cont_wide %>% 
+  filter(!stat == "EstimatedVar") %>%
+  group_by(variable, stat) %>%
+  group_split %>%
+  map(
+    ~mutate(.,
+      weight = Nvalid / sum(Nvalid, na.rm = TRUE),
+      weighted_val = value*weight, 
+      combined = sum(weighted_val, na.rm = TRUE))) %>%
+  map(
+    ~select(., variable, stat, combined)) %>%
+  map(
+    ~slice(., 1)) %>%
+  bind_rows %>%
+  rename(value = combined) %>%
+  mutate(cohort = "combined")
 
-    ## pooled variance
-    sds <- pool_avail %>% imap(function(.x, .y) {
-      ds.var(
-        x = .y,
-        type = "combine",
-        datasources = conns[.x]
-      )[[1]][[1]]
-    })
 
-    names(sds) <- names(stats_cont[[1]])
+## ---- Combined variance ---------------------------------------------------------------
+var_comb <- stats_cont_wide %>% 
+  filter(stat == "EstimatedVar") %>%
+  group_by(variable, stat) %>%
+  group_split %>%
+  map(
+    ~summarise(., 
+      GlobalSum = sum(Sum, na.rm = TRUE), 
+      GlobalSumSquares = sum(SumOfSquares, na.rm = TRUE),
+      GlobalNvalid = sum(Nvalid, na.rm = TRUE), 
+      EstimatedVar = 
+        GlobalSumSquares/(GlobalNvalid-1) - 
+        (GlobalSum^2)/(GlobalNvalid*(GlobalNvalid-1)),
+      Nvalid = GlobalNvalid)
+  ) %>% 
+  map(~select(., EstimatedVar, Nvalid)) %>%
+  set_names(sort(unique(stats_tmp$variable))) %>%
+  bind_rows(.id = "variable") %>%
+  mutate(cohort = "combined") %>%
+  pivot_longer(
+    cols = c(EstimatedVar, Nvalid),
+    values_to = "value",
+    names_to = "stat"
+  )
 
-    sds %<>%
-      map(as_tibble) %>%
-      bind_rows(.id = "variable") %>%
-      rename(variance = value)
 
-    coh_comb <- left_join(coh_comb, sds, by = "variable")
+################################################################################
+# 13. Join back and calculate final continuous stats
+################################################################################
+cont_out <- bind_rows(list(stats_cont, quantiles_comb, var_comb)) %>%
+  pivot_wider(
+    names_from = "stat", 
+    values_from = "value") %>%
+  left_join(., cohort_ns) %>%
+  mutate(
+    std.dev = sqrt(EstimatedVar), 
+    valid_n = replace_na(Nvalid, 0), 
+    missing_n = cohort_n - valid_n,
+    missing_perc = (missing_n / cohort_n) * 100) %>%
+  select(cohort, variable, mean, std.dev, perc_5:perc_95, valid_n = Nvalid, 
+         cohort_n, missing_n, missing_perc) %>%
+  mutate(across(mean:missing_perc, ~round(., digits)))
 
-    ## missing n and std.dev
-    coh_comb %<>%
-      mutate(
-        missing_n = cohort_n - valid_n,
-        std.dev = sqrt(variance)
-      ) %>%
-      select(-variance)
 
-    ## ---- Combine with main table ------------------------------------------------
-    out_cont <- rbind(out_cont, coh_comb)
+################################################################################
+# 14. Join categorical and continuous as output  
+################################################################################
+out <- list(
+  categorical = out_cat, 
+  continuous = out_cont)
 
-    ## ---- Calculate missing percent ----------------------------------------------
-    out_cont %<>%
-      mutate(missing_perc = round((missing_n / cohort_n) * 100, 2)) %>%
-      as_tibble()
-
-    ## ---- Round combined values --------------------------------------------------
-    out_cont %<>%
-      mutate_at(dplyr::vars(mean:missing_perc), ~ round(., 2))
-  }
-  out <- list(out_cat, out_cont)
-  names(out) <- c("categorical", "continuous")
-
-  return(out)
+return(out)
 }
