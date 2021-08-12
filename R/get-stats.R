@@ -51,7 +51,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.getStats2 <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
   
   
 ################################################################################
