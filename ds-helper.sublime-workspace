@@ -1,0 +1,903 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"coord",
+				"coord_flip"
+			],
+			[
+				"vio",
+				"violinPlot"
+			],
+			[
+				"ind",
+				"include_meta"
+			],
+			[
+				"include",
+				"include_meta"
+			],
+			[
+				"always",
+				"always_include_sub"
+			],
+			[
+				"alwa",
+				"always_include_sub"
+			],
+			[
+				"asl",
+				"alspac_all"
+			],
+			[
+				"alspa",
+				"alspac_all"
+			],
+			[
+				"lc",
+				"lc_data_v3"
+			],
+			[
+				"ethn",
+				"ethn2_m"
+			],
+			[
+				"lc.data",
+				"lc_data_v1_2.RData"
+			],
+			[
+				"outcome",
+				"outcome_folder"
+			],
+			[
+				"core_",
+				"core_folder"
+			],
+			[
+				"not",
+				"not_avilable.vars"
+			],
+			[
+				"cohort",
+				"cohort_sub"
+			],
+			[
+				"core",
+				"core_trim_lc2"
+			],
+			[
+				"asthma_",
+				"asthma_current_ISAAC_"
+			],
+			[
+				"asthma_current_",
+				"asthma_current_ISAAC"
+			],
+			[
+				"lc1",
+				"lc1_missing"
+			],
+			[
+				"required",
+				"required_vars"
+			],
+			[
+				"map",
+				"map_dfr"
+			],
+			[
+				"b",
+				"bind_rows"
+			],
+			[
+				"require",
+				"required_vars"
+			],
+			[
+				"alspac_",
+				"alspac_sub"
+			],
+			[
+				"data_input",
+				"data_input_format"
+			],
+			[
+				"alspac",
+				"alspac_raw"
+			],
+			[
+				"als",
+				"alspac_all.csv"
+			],
+			[
+				"A",
+				"ArmadilloDriver"
+			],
+			[
+				"co",
+				"2_1_core_1_0"
+			],
+			[
+				"bp_non",
+				"bp_nonrep.data"
+			],
+			[
+				"armadill",
+				"armadillo.load_table"
+			],
+			[
+				"year",
+				"yearrep_fixed"
+			],
+			[
+				"data",
+				"datafile"
+			],
+			[
+				"heigh",
+				"height_outcome"
+			],
+			[
+				"datas",
+				"datasources = \tArguments"
+			],
+			[
+				"birth_",
+				"birth_length"
+			],
+			[
+				"height",
+				"height_m"
+			],
+			[
+				"et",
+				"ethnicity_mother"
+			],
+			[
+				"birth",
+				"birth_subset"
+			],
+			[
+				"subj",
+				"subjHasData"
+			],
+			[
+				"class",
+				"classDiscrepancy"
+			],
+			[
+				"test",
+				"test-server-login"
+			],
+			[
+				"compl",
+				"complete.cases"
+			],
+			[
+				"extra",
+				"extra_imp.vars"
+			],
+			[
+				"measure",
+				"measurement_1"
+			],
+			[
+				"lr_",
+				"lr_tab_cc"
+			],
+			[
+				"fscore",
+				"fscore_cc.RData"
+			],
+			[
+				"monito",
+				"monitor_y"
+			],
+			[
+				"war",
+				"warmth_scores"
+			],
+			[
+				"warmth",
+				"warmth_f"
+			],
+			[
+				"warmt",
+				"warmth_scores"
+			],
+			[
+				"tpf_",
+				"tpf_pred.data"
+			],
+			[
+				"monit",
+				"monitor_y"
+			],
+			[
+				"tpf",
+				"tpf_comb.data"
+			],
+			[
+				"warm",
+				"warm_alpha"
+			],
+			[
+				"measureme",
+				"measurement_3"
+			],
+			[
+				"meas",
+				"measurement_1"
+			],
+			[
+				"tpf_pre",
+				"tpf_pred.data"
+			],
+			[
+				"cisR_",
+				"cisr_dep_18"
+			],
+			[
+				"imp",
+				"imp_sub.data"
+			],
+			[
+				"model",
+				"model_df"
+			],
+			[
+				"sdq_imp",
+				"sdq_imp_fit_1"
+			],
+			[
+				"sdq_im",
+				"sdq_imp_fit_1"
+			],
+			[
+				"parent",
+				"parent_comb.data"
+			],
+			[
+				"varna",
+				"varnames_sex"
+			],
+			[
+				"tee",
+				"teen-parenting"
+			],
+			[
+				"emoqual",
+				"emo_qual_rp"
+			],
+			[
+				"te",
+				"teen-parenting"
+			],
+			[
+				"pred",
+				"predicted_2f"
+			],
+			[
+				"Se",
+				"Self-harm"
+			],
+			[
+				"paren",
+				"parent_comb.data"
+			],
+			[
+				"knowl",
+				"knowl_tf1"
+			],
+			[
+				"stab",
+				"stab_mon.fit"
+			],
+			[
+				"correlat",
+				"correlation_matrix"
+			],
+			[
+				"correlation",
+				"correlations"
+			],
+			[
+				"cor_",
+				"cor_mh.data"
+			],
+			[
+				"pare",
+				"parent_comb.data"
+			],
+			[
+				"final",
+				"final_mod.tab"
+			],
+			[
+				"cont",
+				"cont_early"
+			],
+			[
+				"par",
+				"parent_comb.data"
+			],
+			[
+				"ear",
+				"earlyfact.data"
+			],
+			[
+				"vars",
+				"vars_in"
+			],
+			[
+				"long",
+				"longtable"
+			],
+			[
+				"book",
+				"booktabs"
+			],
+			[
+				"tpd",
+				"tpf_ord.data"
+			],
+			[
+				"tp",
+				"tpf_ord.data"
+			],
+			[
+				"disc",
+				"discipline_kw"
+			],
+			[
+				"tpf_yo",
+				"tpf_young.vars"
+			],
+			[
+				"kw",
+				"kw4010"
+			],
+			[
+				"strip",
+				"stripcol"
+			],
+			[
+				"st",
+				"stripe_color"
+			],
+			[
+				"useful",
+				"useful-code-r"
+			],
+			[
+				"acce",
+				"acceptance_y.mod"
+			],
+			[
+				"fac_",
+				"fac_yng.vars"
+			],
+			[
+				"fac",
+				"fac_yng.vars"
+			],
+			[
+				"mfq_",
+				"mfq_adj_plot"
+			],
+			[
+				"kable",
+				"kable_styling"
+			],
+			[
+				"semh_",
+				"semh_linked.data"
+			],
+			[
+				"connect",
+				"connect_14.vars"
+			],
+			[
+				"pp",
+				"ppfu_long.data"
+			],
+			[
+				"ppfu",
+				"ppfu_long.data"
+			],
+			[
+				"ppfu_",
+				"ppfu_long.data"
+			],
+			[
+				"fact",
+				"factor_key"
+			],
+			[
+				"mat_pers_bin",
+				"mat_pers_bin_num"
+			],
+			[
+				"mat_pers",
+				"mat_pers.data"
+			],
+			[
+				"exp",
+				"exponentiate"
+			],
+			[
+				"mat_",
+				"mat_finprob_early"
+			],
+			[
+				"mat",
+				"mat_moderators"
+			],
+			[
+				"mat_f",
+				"mat_finprob_late"
+			],
+			[
+				"mat_p",
+				"mat_pers_symp"
+			],
+			[
+				"latex",
+				"latex_options"
+			],
+			[
+				"col",
+				"col_fact_names"
+			],
+			[
+				"col_",
+				"col_var_names"
+			],
+			[
+				"dec",
+				"decreasing = \tArguments"
+			],
+			[
+				"full",
+				"full_width = \tArguments"
+			],
+			[
+				"para",
+				"parameterestimates\t{lavaan}"
+			],
+			[
+				"school",
+				"school-enjoyment-mh"
+			],
+			[
+				"sec",
+				"sec15.fit"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"r-ide",
+				"Preferences: R-IDE Settings"
+			],
+			[
+				"send",
+				"SendCode: Choose Program"
+			],
+			[
+				"Snippet: ",
+				"Snippet: kable_extra"
+			],
+			[
+				"lintr",
+				"LSP: Disable Language Server in Project"
+			],
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Remove Package"
+			],
+			[
+				"lan",
+				"LSP: Setup Language Server"
+			],
+			[
+				"lsp",
+				"LSP: Enable Language Server Globally"
+			],
+			[
+				"r-",
+				"Preferences: R-IDE Settings"
+			],
+			[
+				"re",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"rbos",
+				"R-Box: Format Selected Code"
+			],
+			[
+				"sen",
+				"SendCode: Choose Program"
+			],
+			[
+				"ter",
+				"Terminus: Open Default Shell in View"
+			],
+			[
+				"term",
+				"Terminus: Open Default Shell in View"
+			],
+			[
+				"termin",
+				"Terminus: Open Default Shell in View"
+			],
+			[
+				"package",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 157.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/timcadman/OneDrive - University of Bristol/repos/ds-helper"
+	],
+	"file_history":
+	[
+		"/Users/timcadman/OneDrive - University of Bristol/repos/ds-helper/R/tidy-env.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/useful-code-r/code/themes/lc-names-neat.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/useful-code-r/code/themes/themes.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-other/code/testing-dem-splines.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-env-pnd/reports/31-may-21/exposure-outcome-descriptives.Rmd",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-env-pnd/reports/31-may-21/.Rprofile",
+		"/Users/timcadman/.Rprofile",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/school-enjoyment-mh/code/rmd/semh-analysis-xl-report.Rmd",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/useful-code-r/code/themes/theme-cor.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/useful-code-r/code/reports/khl_5.tex",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/useful-code-r/code/themes/theme-std.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/useful-code-r/code/themes/theme-supplement-bar.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-alspac-upload/code/upload-alspac.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/molgenis-r-armadillo/R/armadillo-make-subset.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-alspac-upload/code/upload-alspac_v1_3.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-alspac-upload/code/create-views.R",
+		"/Users/timcadman/Documents/wp5-harmonisation-combined_v1_4.R",
+		"/Volumes/MRC-IEU-research/projects/ieu2/p6/048/working/scripts/common/merges/common-merge_v1_2.R",
+		"/Volumes/MRC-IEU-research/projects/ieu2/p6/048/working/scripts/wp6/r/wp6-harmonisation-high_priority.R",
+		"/Volumes/MRC-IEU-research/projects/ieu2/p6/048/working/scripts/wp6/r/wp6-harmonisation-low_priority.R",
+		"/Volumes/MRC-IEU-research/projects/ieu2/p6/048/working/scripts/wp5/r/wp5-harmonisation-combined.R",
+		"/Volumes/MRC-IEU-research/projects/ieu2/p6/048/working/scripts/common/merges/common-merge_v1_1.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-other/alspac-upload/du-fix-class.R",
+		"/Users/timcadman/OneDrive - University of Bristol/repos/lc-other/alspac-upload/upload-alspac.R",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/access-tutorial-data.Rmd",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/README.md",
+		"/C/repos/useful-code-r/code/useful-code-r-packages.r",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/inst/examples/upload_to_testserver.R",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/lc-tutorial/analysis-protocols/R/sample_analysis/ALSPAC/ahmed_demo_analysis.R",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/pre-render.r",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/lc-tutorial/analysis-protocols/R/login.R",
+		"/C/Users/timca/timmyjc_0xBE0988A0_SECRET.asc",
+		"/C/Users/timca/timmyjc_0xBE0988A0_public.asc",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/dsHelper.Rmd.orig",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/dsHelper.Rmd",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/multi-level-modelling.Rmd.orig",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/test-server-login.Rmd",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/R/get-stats.R",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/multi-level-modelling.Rmd",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/display-results.Rmd",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/maniuplate-data.Rmd",
+		"/C/Users/timca/OneDrive - University of Bristol/repos/ds-helper/vignettes/getting-information.Rmd",
+		"/C/Old files/life-cycle/wp3/code/wp3-income.r",
+		"/C/repos/lc-tutorial/analysis-protocols/R/utils.R",
+		"/C/repos/lc-tutorial/analysis-protocols/R/populateCore.R",
+		"/O/repos/useful-code-r/code/functions/lav-tab-fit.r",
+		"/O/repos/useful-code-r/code/functions/descImp.r",
+		"/O/repos/useful-code-r/code/functions/lrTab.R",
+		"/C/Users/tc18889/AppData/Local/Temp/scp24554/newhome/tc18889/repos/teen-parenting/impute.R",
+		"/O/repos/useful-code-r/code/functions/combImp.r",
+		"/O/repos/useful-code-r/code/useful-code-r-packages.r",
+		"/O/repos/parent-personality-sep/code/r/ppsep-manuscript-analysis.R",
+		"/O/repos/school-enjoyment-mh/code/r/semh-manuscript-analysis.R",
+		"/O/repos/teen-parenting/code/r/tpf-manuscript-analysis.r",
+		"/O/repos/teen-parenting/code/r/tpf-manuscript-analysis-imputed.r",
+		"/O/repos/school-enjoyment-mh/code/r/semh-manuscript-tables-23_09_19.R",
+		"/O/repos/teen-parenting/code/old/tpf-analysis-yng.r",
+		"/C/Users/tc18889/AppData/Local/Temp/scp00585/newhome/tc18889/impute.Rout",
+		"/C/Users/tc18889/AppData/Local/Temp/scp00810/newhome/tc18889/repos/teen-parenting/tpf_impute_out.txt",
+		"/C/Users/tc18889/AppData/Local/Temp/scp58777/newhome/tc18889/repos/teen-parenting/impute.R",
+		"/O/repos/teen-parenting/code/r/tpf-manuscript-impute.R",
+		"/C/Users/tc18889/AppData/Local/Temp/scp17435/newhome/tc18889/repos/teen-parenting/impute.R",
+		"/R/Data/Useful_data/Denver/calculating denver - use.SPS",
+		"/C/Users/tc18889/AppData/Local/Temp/scp37232/newhome/tc18889/semh-manuscript-impute.Rout",
+		"/C/Users/tc18889/Google Drive/Research projects/Josh project/Final chapter/SEM R files/Josh SEM.R",
+		"/C/Users/tc18889/Google Drive/Research projects/Josh project/Final chapter/SEM josh syntax.R",
+		"/O/repos/school-enjoyment-mh/code/r/semh-analysis-manuscript.R",
+		"/O/repos/parent-personality-sep/code/r/ppsep-analysis-lr.R",
+		"/O/repos/teen-parenting/code/r/things to do",
+		"/O/repos/teen-parenting/code/r/tpf-getvars-manuscript.R",
+		"/O/repos/teen-parenting/code/r/tpf-manuscript-tables.r",
+		"/C/Users/tc18889/AppData/Local/Temp/scp05953/newhome/tc18889/repos/teen-parenting/tpf_impute.sh",
+		"/C/Users/tc18889/AppData/Local/Temp/scp50781/newhome/tc18889/repos/teen-parenting/impute.R",
+		"/O/repos/parent-personality-sep/code/r/ppsep-source-impute-matpat.R",
+		"/O/repos/parent-personality-sep/code/r/ppsep-source-getvars.R",
+		"/O/repos/parent-personality-sep/code/r/ppsep-manuscript-plots.R",
+		"/O/repos/school-enjoyment-mh/code/r/semh-analysis-tables.R",
+		"/O/repos/school-enjoyment-mh/code/r/semh-analysis-separate.R",
+		"/O/repos/useful-code-r/code/functions/combStdEst.R",
+		"/O/repos/school-enjoyment-mh/code/old/semh-shell-impute.sh",
+		"/O/repos/teen-parenting/code/tpf-analysis.sh",
+		"/O/repos/teen-parenting/code/tpf-shell-impute.sh",
+		"/O/repos/life-cycle/wp1/code/wp1-harmonisation-QC.R",
+		"/C/Users/tc18889/AppData/Local/Microsoft/Windows/INetCache/Content.Outlook/UNQOF545/DataSHIELD_analysis_demo_ae.R",
+		"/O/repos/parent-personality-sep/code/r/ppsep-manuscript-getvars.R",
+		"/O/repos/parent-personality-sep/code/ppsep-source-impute.R",
+		"/O/repos/teen-parenting/code/rmd/tpf-report-13_05_19.rmd",
+		"/O/repos/useful-code-r/code/derived/useful-code-r-derived-child-mh.R",
+		"/O/repos/teen-parenting/code/tpf-report-17_06_19.rmd",
+		"/O/repos/teen-parenting/code/tpf-source-yng.R",
+		"/O/repos/teen-parenting/code/tpf-analysis-manuscript.r",
+		"/C/Old files/Active projects/Teen parenting factor paper/Teen parenting variables.do",
+		"/O/repos/useful-code-r/code/functions/corStars.r",
+		"/O/repos/parent-personality-sep/code/ppsep-analysis-lr.do",
+		"/O/repos/teen-parenting/code/tpf-analysis-yng.r",
+		"/O/repos/school-enjoyment-mh/code/semh-analysis-manuscript.R",
+		"/O/repos/useful-code-r/code/derived/useful-code-r-derived-mat-epds.R",
+		"/O/repos/useful-code-r/code/derived/useful-code-r-derived-child-cov.R",
+		"/O/repos/useful-code-r/code/derived/useful-code-r-derived-mat-cov.r",
+		"/O/repos/useful-code-stata/code/useful-code-stata-childMH.do",
+		"/O/repos/lc-trajectories-inequality/code/lc-traj-ineq-analysis-plan-v1.rmd",
+		"/O/repos/teen-parenting/code/tpf-report-13_05_19.rmd",
+		"/O/repos/useful-code-r/code/reports/khl_3.tex",
+		"/O/repos/useful-code-r/code/reports/khl_4.tex",
+		"/O/repos/useful-code-r/code/reports/report-colours.doc",
+		"/O/Admin/Meeting notes/debbie meeting 24.04.19.txt",
+		"/O/repos/parent-personality-sep/code/ppsep-analysis-lr.R",
+		"/O/repos/teen-parenting/code/tpf_report-24_04_19.rmd",
+		"/O/repos/useful-code-r/code/functions/lav-tab-par.R",
+		"/O/repos/teen-parenting/code/tpf-source.R",
+		"/O/repos/teen-parenting/code/tpf-analysis-meth.r",
+		"/O/Will ASC IRT/Mplus analyses with Hein/females_for_CFA.inp",
+		"/O/Will ASC IRT/Mplus analyses with Hein/split1_for_CFA.inp",
+		"/C/Users/tc18889/AppData/Roaming/Sublime Text 3/Packages/User/yaml.sublime-snippet",
+		"/C/Users/tc18889/AppData/Roaming/Sublime Text 3/Packages/User/kable_extra.sublime-snippet",
+		"/O/repos/teen-parenting/code/tpf-report-10_04_19.rmd",
+		"/C/Users/tc18889/AppData/Roaming/Sublime Text 3/Packages/User/kable.sublime-snippet",
+		"/O/repos/school-enjoyment-mh/reports/semh-analysis-xl-report.tex",
+		"/C/Program Files/R/R-3.5.3/etc/Rprofile.site",
+		"/C/repos/useful-code-r/code/reports/khl_3.tex",
+		"/C/repos/life-cycle/wp3/code/alspac_missing_02_04_19.Rmd",
+		"/C/repos/life-cycle/wp3/code/wp3-constanza_04.03.19.rmd",
+		"/C/repos/school-enjoyment-mh/code/semh-analysis-xl.R",
+		"/C/repos/school-enjoyment-mh/code/semh-analysis-xl-report.Rmd",
+		"/C/repos/useful-code-r/code/useful-code-r-render.r",
+		"/C/repos/life-cycle/wp3/code/wp3-constanza_04.03.19.r",
+		"/C/repos/parent-personality-sep/code/ppsep-source-impute.R",
+		"/C/repos/parent-personality-sep/code/ppsep-analysis-lr.do"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.diagnostics":
+	{
+		"height": 186.0
+	},
+	"output.exec":
+	{
+		"height": 126.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "ds-helper.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 213.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+		"max_columns": 1
+	}
+}
