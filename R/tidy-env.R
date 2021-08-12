@@ -11,7 +11,7 @@
 #' @return None. Objects removed from ds environment
 #'
 #' @importFrom purrr map imap
-#' @importFrom dsBaseClient ds.rm
+#' @importFrom dsBaseClient ds.rm ds.ls
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
 #'

@@ -40,8 +40,9 @@
 #'  missing_n = as above
 #'  missing_perc = as above
 #'
-#' @importFrom tibble as_tibble tibble add_row
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup left_join bind_rows rename filter mutate_at vars distinct
+#' @importFrom tibble as_tibble tibble
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup 
+#' left_join bind_rows rename filter mutate_at vars distinct add_row
 #' @importFrom purrr map flatten_dbl
 #' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var ds.quantileMean
 #' @importFrom stringr str_detect
@@ -63,7 +64,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  Mean <- perc_5 <- perc_50 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
+  Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
 
@@ -354,6 +355,17 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
           })
         })
       ),
+      perc_25 = unlist(
+        sapply(stats_cont[[1]], function(x) {
+          sapply(names(conns), simplify = FALSE, function(y) {
+            if (is.null(x[[y]])) {
+              NA
+            } else {
+              round(x[[y]]$"quantiles & mean"["25%"], 2)
+            }
+          })
+        })
+      ),
       perc_50 = unlist(
         sapply(stats_cont[[1]], function(x) {
           sapply(names(conns), simplify = FALSE, function(y) {
@@ -361,6 +373,17 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
               NA
             } else {
               round(x[[y]]$"quantiles & mean"["50%"], 2)
+            }
+          })
+        })
+      ),
+      perc_75 = unlist(
+        sapply(stats_cont[[1]], function(x) {
+          sapply(names(conns), simplify = FALSE, function(y) {
+            if (is.null(x[[y]])) {
+              NA
+            } else {
+              round(x[[y]]$"quantiles & mean"["75%"], 2)
             }
           })
         })
@@ -471,11 +494,13 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
       bind_rows(.id = "variable") %>%
       rename(
         perc_5 = "5%",
+        perc_25 = "25%",
         perc_50 = "50%",
+        perc_75 = "75%",
         perc_95 = "95%",
         mean = Mean
       ) %>%
-      select(variable, perc_5, perc_50, perc_95, mean)
+      select(variable, perc_5, perc_25, perc_50, perc_75, perc_95, mean)
 
     coh_comb <- left_join(coh_comb, medians, by = "variable")
 

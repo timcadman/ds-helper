@@ -32,7 +32,8 @@
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
-#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA ds.replaceNA
+#'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA
+#'             ds.replaceNA
 #' @importFrom purrr pmap map_dfr
 #' @importFrom tidyr pivot_longer tibble
 #' @importFrom dplyr pull %>% rename
@@ -514,7 +515,6 @@ dh.makeOutcome <- function(
         df = paste0(varname, "_wide"),
         vars = keep_vars,
         new_df_name = paste0(varname, "_wide"),
-        comp_var = id_var,
         type = "keep"
       )
     })

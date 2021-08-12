@@ -8,10 +8,7 @@
 #' @param df datashield dataframe
 #' @param vars variables to keep or remove
 #' @param new_df_name name for the new dataframe
-#' @param comp_var name of a variable with df which is complete for all subjects
-#'                 (e.g. an id variable)
 #' @param type whether to remove or keep specified variables
-#' @param remove_temp remove temporary objects from the DataSHIELD backends
 #'
 #' @return a new dataframe is created containing the specified subset of columns
 #'
@@ -19,10 +16,16 @@
 #' @importFrom purrr imap map
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
+#' @importFrom stringr str_subset
 #'
 #' @export
-dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = NULL, comp_var = NULL, type = c("remove", "keep"), remove_temp = FALSE, conns = NULL) {
-  if (is.null(df)) {
+dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remove", "keep"), conns = NULL) {
+ 
+. <- NULL
+
+dh.doVarsExist(df = df, vars = vars, conns = conns)
+
+   if (is.null(df)) {
     stop("Please specify a data frame")
   }
 
@@ -30,57 +33,41 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = NULL, comp_var = N
     stop("Please specify variable(s) to remove")
   }
 
-  if (is.null(new_df_name)) {
-    stop("Please specify name for new dataframe")
-  }
-
-  if (is.null(comp_var)) {
-    stop("Please specify a reference variable, usually a unique identifier")
-  }
-
   type <- match.arg(type)
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
-  vars_index <- dh.findVarsIndex(df = df, vars = vars, conns = conns)
-
+  
   if (type == "keep") {
-    keep_vars <- vars_index
+
+  ds.dataFrame(
+    x = paste0(df, "$", vars),
+    newobj = new_df_name,
+    datasources = conns
+  )
+    
   } else if (type == "remove") {
-    cols <- ds.colnames(df, datasources = conns) %>% map(~ seq(1:length(.)))
-
-    keep_vars <- seq(1:length(names(cols))) %>%
-      map(
-        ~ cols[[.]][cols[[.]] %in% vars_index[[.]] == FALSE]
-      )
-
-    names(keep_vars) <- names(cols)
-  }
-
-  ds.asNumeric(paste0(df, "$", comp_var), "comp_var_num",
-    datasources = conns
-  )
-
-  ds.make(
-    paste0("comp_var_num", "-", "comp_var_num", "+1"), "tmp_sub_var",
-    datasources = conns
-  )
-
-  keep_vars %>%
-    imap(
-      ~ ds.dataFrameSubset(
-        df.name = df,
-        V1.name = "tmp_sub_var",
-        V2.name = "1",
-        Boolean.operator = "==",
-        keep.cols = .x,
-        keep.NAs = TRUE,
-        newobj = new_df_name,
-        datasources = conns[.y]
+  
+    cols <- ds.colnames(df, datasources = conns)
+      
+    cols_to_keep <- cols %>%
+      map(function(x){
+        
+        str_subset(x, paste0(vars, "\\b", collapse = "|"), negate = TRUE) %>%
+        paste0(df, "$", .)
+        
+        
+      })
+    
+    cols_to_keep %>%
+      imap(
+        ~ds.dataFrame(
+        x = .x,
+        datasources = conns[.y], 
+        newobj = new_df_name
       )
     )
-
-  dh.tidyEnv(conns, obj = c("comp_var_num", "tmp_sub_var"), type = "remove")
+  }
+    
 }
