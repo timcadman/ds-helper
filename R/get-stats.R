@@ -125,7 +125,7 @@ check with ds.class \n\n",
 
 
   ################################################################################
-  # 4. Check variable has the same class in each cohort
+  # 4. Check factor variables have the same levels in each cohort
   ################################################################################
 
   ## ---- Restrict to factors that exist in each cohort --------------------------
@@ -135,16 +135,17 @@ check with ds.class \n\n",
       values_to = "type",
       names_to = "cohort"
     ) %>%
-    filter(type == "factor") %>%
-    select(variable, cohort)
+    filter(type == "factor") 
 
   ## ---- Get the levels of these factors ----------------------------------------
+  if(nrow(fact_exist) > 0){
+
   check_levels <- fact_exist %>%
     group_by(variable) %>%
     group_split() %>%
     map(
       .,
-      ~ pmap(., function(variable, cohort) {
+      ~ pmap(., function(variable, cohort, ...) {
         ds.levels(
           x = paste0(df, "$", variable),
           datasources = conns[cohort]
@@ -176,6 +177,8 @@ Please check using ds.levels:\n\n",
         paste(., collapse = "\n")
     )
   }
+
+}
 
 
   ################################################################################
@@ -214,9 +217,9 @@ Please check using ds.levels:\n\n",
 
   ## ---- Final reference table for factors --------------------------------------
   fact_ref <- vars_long %>%
-    dplyr::filter(type == "factor") %>%
-    select(variable, cohort, any_obs)
+    dplyr::filter(type == "factor") 
 
+  if(nrow(fact_ref) > 0){
   ## Here we get the possible levels of the factors
   unique_levels <- check_levels %>%
     map(unlist) %>%
@@ -230,7 +233,9 @@ Please check using ds.levels:\n\n",
     )
 
   fact_ref <- left_join(fact_ref, unique_levels, by = "variable") %>%
-    left_join(., cohort_ns, by = "cohort")
+    left_join(., cohort_ns, by = "cohort") %>%
+    select(variable, cohort, any_obs, levels, cohort_n)
+  }
 
 
   ## ---- Final reference table for continuous variables -------------------------
@@ -336,20 +341,32 @@ Please check using ds.levels:\n\n",
   # 8. Extract statistics
   ################################################################################
 
+out_cat <- list()
+out_cont <- list()
+
   ## ---- Categorical ------------------------------------------------------------
+  if(nrow(fact_ref) > 0){
+
   stats_cat <- statsHelper(ref = fact_ref, type = "table") %>%
     left_join(., cohort_ns, by = "cohort")
 
+}
   ## ---- Continuous -------------------------------------------------------------
+  
+if(nrow(cont_ref) > 0){
+
   stats_cont <- bind_rows(
     quantiles = statsHelper(ref = cont_ref, type = "quantileMean"),
     variance = statsHelper(ref = cont_ref, type = "var")
   )
 
+}
 
   ################################################################################
   # 9. Calculate combined stats for categorical variables
   ################################################################################
+
+if(nrow(fact_ref) > 0){
 
   ## ---- Combined value for each level of variables -----------------------------
   levels_comb <- stats_cat %>%
@@ -393,29 +410,33 @@ Please check using ds.levels:\n\n",
       perc_valid = (value / valid_n) * 100,
       perc_missing = (missing_n / cohort_n) * 100,
       perc_total = (value / cohort_n) * 100
-    )
+    ) %>%
+    select(variable, cohort, category, value, everything())
 
-
+}
   ################################################################################
   # 12. Calculate combined statistics for continuous stats
   ################################################################################
 
+key_stats <- c("Sum", "SumOfSquares", "Nmissing", "Nvalid", "Ntotal")
+
+if(nrow(cont_ref) > 0){
   ## ---- Put key stats into wide format -----------------------------------------
-  stats_cont_wide <- stats_cont %>%
-    filter(stat %in% c("Sum", "SumOfSquares", "Nmissing", "Nvalid", "Ntotal")) %>%
+  stats_wide <- stats_cont %>%
+    dplyr::filter(stat %in% key_stats) %>%
     pivot_wider(
       values_from = value,
       names_from = stat
     )
 
   stats_cont_wide <- stats_cont %>%
-    filter(!stat %in% key_stats) %>%
+    dplyr::filter(!stat %in% key_stats) %>%
     left_join(., stats_wide, by = c("variable", "cohort"))
 
 
   ## ---- Combined quantiles --------------------------------------------------------------
   quantiles_comb <- stats_cont_wide %>%
-    filter(!stat == "EstimatedVar") %>%
+    dplyr::filter(!stat == "EstimatedVar") %>%
     group_by(variable, stat) %>%
     group_split() %>%
     map(
@@ -453,7 +474,7 @@ Please check using ds.levels:\n\n",
       )
     ) %>%
     map(~ select(., EstimatedVar, Nvalid)) %>%
-    set_names(sort(unique(stats_tmp$variable))) %>%
+    set_names(sort(unique(cont_ref$variable))) %>%
     bind_rows(.id = "variable") %>%
     mutate(cohort = "combined") %>%
     pivot_longer(
@@ -466,25 +487,25 @@ Please check using ds.levels:\n\n",
   ################################################################################
   # 13. Join back and calculate final continuous stats
   ################################################################################
-  cont_out <- bind_rows(list(stats_cont, quantiles_comb, var_comb)) %>%
+  out_cont <- bind_rows(list(stats_cont, quantiles_comb, var_comb)) %>%
     pivot_wider(
       names_from = "stat",
       values_from = "value"
     ) %>%
-    left_join(., cohort_ns) %>%
+    left_join(., cohort_ns, by = "cohort") %>%
     mutate(
       std.dev = sqrt(EstimatedVar),
       valid_n = replace_na(Nvalid, 0),
       missing_n = cohort_n - valid_n,
       missing_perc = (missing_n / cohort_n) * 100
     ) %>%
-    select(cohort, variable, mean, std.dev, perc_5:perc_95,
+    select(variable, cohort, mean, std.dev, perc_5:perc_95,
       valid_n = Nvalid,
       cohort_n, missing_n, missing_perc
     ) %>%
     mutate(across(mean:missing_perc, ~ round(., digits)))
 
-
+}
   ################################################################################
   # 14. Join categorical and continuous as output
   ################################################################################
