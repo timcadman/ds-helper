@@ -140,7 +140,7 @@ check with ds.class \n\n",
       values_to = "type",
       names_to = "cohort"
     ) %>%
-    filter(type == "factor") 
+    dplyr::filter(type == "factor") 
 
   ## ---- Get the levels of these factors ----------------------------------------
   if(nrow(fact_exist) > 0){
@@ -214,7 +214,7 @@ Please check using ds.levels:\n\n",
 
   classes <- vars_long %>%
     distinct(variable, type_w_null) %>%
-    filter(type_w_null != "NULL") %>%
+    dplyr::filter(type_w_null != "NULL") %>%
     dplyr::rename(type = type_w_null)
 
   vars_long <- left_join(vars_long, classes, by = "variable")
@@ -399,7 +399,7 @@ if(nrow(fact_ref) > 0){
   ## ---- Calculate valid n for each variable and cohort -------------------------
   cat_valid_n <- out_cat %>%
     group_by(cohort, variable) %>%
-    filter(!is.na(category)) %>%
+    dplyr::filter(!is.na(category)) %>%
     group_split() %>%
     map(~ mutate(., valid_n = sum(value, na.rm = TRUE))) %>%
     map(~ select(., variable, category, cohort, valid_n)) %>%
@@ -464,7 +464,7 @@ if(nrow(cont_ref) > 0){
 
   ## ---- Combined variance ---------------------------------------------------------------
   var_comb <- stats_cont_wide %>%
-    filter(stat == "EstimatedVar") %>%
+    dplyr::filter(stat == "EstimatedVar") %>%
     group_by(variable, stat) %>%
     group_split() %>%
     map(
