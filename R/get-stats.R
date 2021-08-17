@@ -189,7 +189,7 @@ Please check using ds.levels:\n\n",
   ################################################################################
   # 5. Get maximum ns for each cohort
   ################################################################################
-  cohort_ns <- ds.dim(df, type = "split") %>%
+  cohort_ns <- ds.dim(df, type = "split", datasources = conns) %>%
     map_df(~ .[1]) %>%
     set_names(names(conns)) %>%
     pivot_longer(
