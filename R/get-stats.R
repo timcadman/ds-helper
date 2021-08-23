@@ -45,7 +45,7 @@
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows bind_cols rename filter mutate_at vars distinct add_row 
-#' n_distinct
+#' n_distinct case_when
 #' @importFrom purrr map flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
