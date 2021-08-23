@@ -4,7 +4,7 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(df = NULL, vars = NULL, conns = NULL)
+dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2)
 }
 \arguments{
 \item{df}{opal dataframe}
@@ -12,6 +12,9 @@ dh.getStats(df = NULL, vars = NULL, conns = NULL)
 \item{vars}{vector of variable names in dataframe}
 
 \item{conns}{connection object for DataSHIELD backends}
+
+\item{digits}{number of decimal places to round continuous stats to. Default
+is 2.}
 }
 \value{
 The function returns a list with two elements containing dataframes
