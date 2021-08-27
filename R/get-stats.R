@@ -44,9 +44,8 @@
 #'
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
-#' left_join bind_rows bind_cols rename filter mutate_at vars distinct add_row 
-#' n_distinct case_when slice
-#' @importFrom purrr map flatten_dbl pmap pmap_chr
+#' left_join bind_rows rename filter mutate_at vars distinct add_row 
+#' @importFrom purrr map flatten_dbl pmap
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
 #' @importFrom stringr str_detect
@@ -102,6 +101,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
   ## We need to distinguish between variables which are NULL and variables which
   ## really have a different class.
  real_disc <- check_class %>% 
+
     select(-variable, -discrepancy) %>% 
     replace(. == "NULL", NA) %>% 
     pmap_chr(function(...){
@@ -114,13 +114,6 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
     mutate(disc = ifelse(disc > 1, "yes", "no")) %>% 
     dplyr::filter(disc == "yes")
 
-  if (nrow(real_disc) > 0) {
-    stop(
-      "\nThe following variables do not have the same class in all cohorts. Please 
-check with ds.class \n\n",
-      real_disc %>% pull(variable) %>% paste(collapse = "\n")
-    )
-  }
 
   if (nrow(real_disc) > 0) {
     stop(
@@ -129,6 +122,7 @@ check with ds.class \n\n",
       real_disc %>% pull(variable) %>% paste(collapse = "\n")
     )
   }
+
 
   ################################################################################
   # 4. Check factor variables have the same levels in each cohort
@@ -417,7 +411,8 @@ if(nrow(fact_ref) > 0){
       perc_missing = (missing_n / cohort_n) * 100,
       perc_total = (value / cohort_n) * 100
     ) %>%
-    select(variable, cohort, category, value, everything())
+    select(variable, cohort, category, value, everything()) %>%
+  mutate(across(perc_valid:perc_total, ~ round(., digits)))
 
 }
   ################################################################################
@@ -476,19 +471,19 @@ if(nrow(cont_ref) > 0){
         EstimatedVar =
           GlobalSumSquares / (GlobalNvalid - 1) -
             (GlobalSum^2) / (GlobalNvalid * (GlobalNvalid - 1)),
-        Nvalid = GlobalNvalid
+        Nvalid = GlobalNvalid, 
+        Ntotal = sum(Ntotal, na.rm = TRUE)
       )
     ) %>%
-    map(~ select(., EstimatedVar, Nvalid)) %>%
+    map(~ select(., EstimatedVar, Nvalid, Ntotal)) %>%
     set_names(sort(unique(cont_ref$variable))) %>%
     bind_rows(.id = "variable") %>%
     mutate(cohort = "combined") %>%
     pivot_longer(
-      cols = c(EstimatedVar, Nvalid),
+      cols = c(EstimatedVar, Nvalid, Ntotal),
       values_to = "value",
       names_to = "stat"
     )
-
 
   ################################################################################
   # 13. Join back and calculate final continuous stats
@@ -502,12 +497,12 @@ if(nrow(cont_ref) > 0){
     mutate(
       std.dev = sqrt(EstimatedVar),
       valid_n = replace_na(Nvalid, 0),
+      cohort_n = Ntotal,
       missing_n = cohort_n - valid_n,
       missing_perc = (missing_n / cohort_n) * 100
     ) %>%
     select(variable, cohort, mean, std.dev, perc_5:perc_95,
-      valid_n = Nvalid,
-      cohort_n, missing_n, missing_perc
+      valid_n, cohort_n, missing_n, missing_perc
     ) %>%
     mutate(across(mean:missing_perc, ~ round(., digits)))
 
