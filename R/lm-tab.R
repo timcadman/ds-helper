@@ -41,12 +41,12 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     warning("It is not possible to paste CIs in long format. Argument ignored")
   }
 
-  if(type == "gaussian"){
+  if(family == "gaussian"){
 
 lowci <- "low0.95CI"
 highci <- "high0.95CI"
 
-  } else if(type == "binomial"){
+  } else if(family == "binomial"){
 
 lowci <- "low0.95CI.LP"
 highci <- "high0.95CI.LP"
