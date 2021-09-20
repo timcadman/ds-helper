@@ -63,7 +63,7 @@ characters. DS does not permit this due to risk of malicious code. Amend your
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.names = value, datasources = conns[cohort])
+      ds.rm(x.name = value, datasources = conns[cohort])
     })
   }
 }

@@ -411,7 +411,8 @@ if(nrow(fact_ref) > 0){
       perc_missing = (missing_n / cohort_n) * 100,
       perc_total = (value / cohort_n) * 100
     ) %>%
-    select(variable, cohort, category, value, everything())
+    select(variable, cohort, category, value, everything()) %>%
+  mutate(across(perc_valid:perc_total, ~ round(., digits)))
 
 }
   ################################################################################
@@ -470,19 +471,19 @@ if(nrow(cont_ref) > 0){
         EstimatedVar =
           GlobalSumSquares / (GlobalNvalid - 1) -
             (GlobalSum^2) / (GlobalNvalid * (GlobalNvalid - 1)),
-        Nvalid = GlobalNvalid
+        Nvalid = GlobalNvalid, 
+        Ntotal = sum(Ntotal, na.rm = TRUE)
       )
     ) %>%
-    map(~ select(., EstimatedVar, Nvalid)) %>%
+    map(~ select(., EstimatedVar, Nvalid, Ntotal)) %>%
     set_names(sort(unique(cont_ref$variable))) %>%
     bind_rows(.id = "variable") %>%
     mutate(cohort = "combined") %>%
     pivot_longer(
-      cols = c(EstimatedVar, Nvalid),
+      cols = c(EstimatedVar, Nvalid, Ntotal),
       values_to = "value",
       names_to = "stat"
     )
-
 
   ################################################################################
   # 13. Join back and calculate final continuous stats
@@ -496,12 +497,12 @@ if(nrow(cont_ref) > 0){
     mutate(
       std.dev = sqrt(EstimatedVar),
       valid_n = replace_na(Nvalid, 0),
+      cohort_n = Ntotal,
       missing_n = cohort_n - valid_n,
       missing_perc = (missing_n / cohort_n) * 100
     ) %>%
     select(variable, cohort, mean, std.dev, perc_5:perc_95,
-      valid_n = Nvalid,
-      cohort_n, missing_n, missing_perc
+      valid_n, cohort_n, missing_n, missing_perc
     ) %>%
     mutate(across(mean:missing_perc, ~ round(., digits)))
 
