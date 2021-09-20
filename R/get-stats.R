@@ -412,7 +412,8 @@ if(nrow(fact_ref) > 0){
       perc_total = (value / cohort_n) * 100
     ) %>%
     select(variable, cohort, category, value, everything()) %>%
-  mutate(across(perc_valid:perc_total, ~ round(., digits)))
+  mutate(across(perc_valid:perc_total, ~ round(., digits))) %>%
+    ungroup
 
 }
   ################################################################################
@@ -504,7 +505,8 @@ if(nrow(cont_ref) > 0){
     select(variable, cohort, mean, std.dev, perc_5:perc_95,
       valid_n, cohort_n, missing_n, missing_perc
     ) %>%
-    mutate(across(mean:missing_perc, ~ round(., digits)))
+    mutate(across(mean:missing_perc, ~ round(., digits))) %>%
+    ungroup
 
 }
   ################################################################################
