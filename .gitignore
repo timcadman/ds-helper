@@ -4,5 +4,5 @@
 .Ruserdata
 ds-cs-functions.Rproj
 docs
-.sublime-project
-.sublime-workspace
+*.sublime-project
+*.sublime-workspace
