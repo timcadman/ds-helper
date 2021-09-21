@@ -133,7 +133,7 @@ highci <- "high0.95CI.LP"
       mutate(value = case_when(
         
         coefficient == "pvalue" ~ value,
-        coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits))
+        coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits)
       ))
     
   }
