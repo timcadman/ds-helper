@@ -61,14 +61,13 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
   if(type == "separate"){
     
     meds <- df_vars %>%
-      map(
-        ~ds.quantileMean(
-          x = .,
-          type = "split",
-          datasources = conns)
-      )
-    
-    names(meds) <- vars
+      map(function(x){
+        
+        cally1 <- paste0('quantileMeanDS(',  x, ')')
+        datashield.aggregate(conns, as.symbol(cally1))
+        
+      }) %>%
+      set_names(vars)
     
     iqr <- meds %>% map_depth(., 2, ~.[["75%"]] - .[["25%"]])
     
@@ -85,31 +84,40 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     
     iqr_to_make %>%
       pmap(function(variable, cohort, formula){
-        ds.make(
-          toAssign = formula,
-          newobj = paste0(variable, "_iqr_c"), 
-          datasources = conns[cohort]
-        )
+        
+        datashield.assign(conns, paste0(variable, "_iqr_c"), as.symbol(formula))
+        
       })
     
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_c")),
       newobj = new_df_name, 
-      datasources = conns)
+      datasources = conns, 
+      DataSHIELD.checks = FALSE,
+      check.names = FALSE)
     
   } else if(type == "pooled"){
     
     ## ---- Identify cohorts which are all missing -----------------------------
-    missing <- df_vars %>% map(~ds.isNA(.))
-    
-    missing.tib <- missing %>%
-      set_names(vars) %>%
-      bind_rows(.id = "variable") %>%
-      pivot_longer(
-        cols = -variable, 
-        names_to = "cohort", 
-        values_to = "missing") 
-    
+    missing <- expand.grid(vars, names(conns)) %>%
+      set_names("variable", "cohort") %>%
+      pmap(function(variable, cohort){
+        
+        cally <- paste0("isNaDS(", df, "$", variable, ")")
+        datashield.aggregate(conns[cohort], as.symbol(cally))
+                             
+      }) %>% set_names(rep(vars, times = length(names(conns))))
+        
+        missing.tib <- missing %>% 
+          bind_rows(.id = "variable") %>%
+          pivot_longer(
+            cols = -variable,
+            names_to = "cohort", 
+            values_to = "missing"
+          ) %>%
+          dplyr::filter(!is.na(missing))
+
+    ## ---- Create reference tibble of variables to create  --------------------
     formean <- missing.tib %>%
       dplyr::filter(missing == FALSE) %>%
       group_by(variable)
@@ -119,6 +127,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
       map(~.$cohort) %>%
       set_names(unlist(group_keys(formean)))
     
+    ## ---- Get pooled IQR for non-missing cohorts -----------------------------
     meds <- formean %>%
       imap(
         ~ds.quantileMean(
@@ -134,12 +143,16 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
         values_to = "iqr"
       )
       
+    ## ---- Reference tibble of IQR variables to create ------------------------
+    
+    ## If original variable was NA, new variable will also be NA
     iqr_to_make <- formean %>%
       map(~tibble(cohort = .)) %>%
       bind_rows(.id = "variable") %>%
       left_join(., iqr, by = "variable") %>%
       mutate(formula = paste0(df, "$", variable, "/", iqr))
     
+    ## Add in missing variables
     full_vars <- missing.tib %>%
       select(variable, cohort) %>%
       left_join(., iqr_to_make, by = c("variable", "cohort")) %>%
@@ -154,7 +167,9 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
   ds.dataFrame(
     x = c(df, paste0(vars, "_iqr_p")),
     newobj = new_df_name, 
-    datasources = conns)
+    datasources = conns, 
+    DataSHIELD.checks = FALSE,
+    check.names = FALSE)
   
   }
   
