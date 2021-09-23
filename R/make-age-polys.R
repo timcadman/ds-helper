@@ -9,6 +9,8 @@
 #' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
 #' @param agevars the age variable to transform
+#' @param poly_names vector of suffix names for created transformations
+#' @param poly_form vector of transformations to make for polynomials
 #'
 #' @return transformations of age created in df
 #'
