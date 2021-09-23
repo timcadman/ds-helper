@@ -3,9 +3,7 @@
 \name{dh.getAnonPlotData}
 \alias{dh.getAnonPlotData}
 \title{Extracts an anonymised version of the dataset which can be used
-to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-function but stores the data produced this function. Note you need to make
-sure your plot window is large enough to produce the plot.}
+to create bespoke plots (e.g. using ggplot).}
 \usage{
 dh.getAnonPlotData(df = NULL, vars = NULL, conns = NULL)
 }
@@ -17,12 +15,10 @@ dh.getAnonPlotData(df = NULL, vars = NULL, conns = NULL)
 \item{conns}{connection object for DataSHIELD backends}
 }
 \value{
-A list of the length of the number of variables provided containing
-        anonymised values for each subject of each cohort provided.
+A list of tibbles, the length of the number of variables provided.
+        Contains anonymised values for each subject of each cohort provided.
 }
 \description{
 Extracts an anonymised version of the dataset which can be used
-to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-function but stores the data produced this function. Note you need to make
-sure your plot window is large enough to produce the plot.
+to create bespoke plots (e.g. using ggplot).
 }

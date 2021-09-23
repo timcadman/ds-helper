@@ -1,14 +1,12 @@
 #' Extracts an anonymised version of the dataset which can be used
-#' to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-#' function but stores the data produced this function. Note you need to make
-#' sure your plot window is large enough to produce the plot.
+#' to create bespoke plots (e.g. using ggplot). 
 #'
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe
 #' @param conns connection object for DataSHIELD backends
 #'
-#' @return A list of the length of the number of variables provided containing
-#'         anonymised values for each subject of each cohort provided.
+#' @return A list of tibbles, the length of the number of variables provided.
+#'         Contains anonymised values for each subject of each cohort provided.
 #'
 #' @importFrom DSI datashield.connections_find
 #' @importFrom dsBaseClient ds.scatterPlot
@@ -34,23 +32,22 @@ dh.getAnonPlotData <- function(df = NULL, vars = NULL, conns = NULL) {
   }
 
   scatter <- vars %>%
-    map(
-      ~ ds.scatterPlot(
-        x = paste0(df, "$", .),
-        y = paste0(df, "$", .),
-        return.coords = TRUE,
-        datasources = conns
-      )
-    ) %>%
-    set_names(., vars)
-
-  out <- scatter %>%
-    map(function(x) {
-      x[[1]] %>%
-        map(~ .[, "x"]) %>%
-        map(as_tibble) %>%
-        bind_rows(.id = "cohort")
-    })
-
+    map(function(x){
+      
+      call <- paste0(
+        "scatterPlotDS(", 
+        paste0(df, "$", x), ",", 
+        paste0(df, "$", x), 
+        ",method.indicator = 1, k=3, noise=0.25)")
+      
+      DSI::datashield.aggregate(conns, call)
+    }) %>% set_names(vars)
+  
+  out <- scatter2 %>% 
+    map_depth(2, function(x){
+    x[[1]] %>% as_tibble (.id = "cohort")
+  }) %>%
+    map(bind_rows, .id = "cohort")
+  
   return(out)
 }
