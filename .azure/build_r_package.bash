@@ -11,30 +11,31 @@
 # - NEXUS_USER: repository username
 # - NEXUS_PASS: repository password
 # - REGISTRY: repository url
+# - R_LIBS_USER: home directory user libraries
 
 AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
+echo "Create user libraries directory R [ ${R_LIBS_USER} ]"
+mkdir -p "${R_LIBS_USER}"
 
-Rscript -e "install.packages(c('covr', 'git2r', 'usethis', 'devtools', 'pkgdown', 'mockery'), repos='https://cloud.r-project.org)"
-Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
+Rscript -e "install.packages(c('covr', 'git2r', 'withr', usethis', 'devtools', 'styler', 'mockery'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
+Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor', 'meta'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'), lib='${R_LIBS_USER}')"
 Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
-
-mkdir -p ${R_LIBS_USER}
 
 cd "${BUILD_REPOSITORY_LOCALPATH}"
 if [[ "${BUILD_REASON}" == "PullRequest" ]] 
 then     
-  echo "Build PR for R-package: [ ${BUILD_REPOSTIORY_NAME} ]"  
-  Rscript -e 'devtools::install()'
-  Rscript -e 'devtools::check(remote=TRUE, force_suggests = TRUE)'
+  echo "Build PR for R-package: [ ${BUILD_REPOSITORY_NAME} ]"  
+  Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::install())"
+  Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check(remote=TRUE, force_suggests = TRUE))"
   Rscript -e 'usethis::use_tidy_style()'
   Rscript -e 'covr::codecov()'
 else
   if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]
   then
-    echo "Release R-package: [ ${BUILD_REPOSTIORY_NAME} ]"  
+    echo "Release R-package: [ ${BUILD_REPOSITORY_NAME} ]"  
     RELEASE_SCOPE="patch"
     git checkout master
-    Rscript -e "usethis::use_version('${RELEASE_SCOPE}'')"
+    Rscript -e "usethis::use_version('${RELEASE_SCOPE}')"
     TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     git commit -a -m "[ci skip] Created release: ${TAG}"
@@ -44,11 +45,11 @@ else
     #set +x; curl -v --user "${NEXUS_USER}:${NEXUS_PASS}" --upload-file "${PACKAGE}_${TAG}".tar.gz "${REGISTRY}"/src/contrib/"${PACKAGE}_${TAG}".tar.gz
     git tag "${TAG}"
     git push origin "${TAG}"
-    echo "Creating new development version for R-package: [ ${BUILD_REPOSTIORY_NAME} ]"
+    echo "Creating new development version for R-package: [ ${BUILD_REPOSITORY_NAME} ]"
     Rscript -e "usethis::use_version('dev')"
     git commit -a -m '[ci skip]: Increment dev-version number'
     git push origin master
   else
-    echo "Skip CI for R-package: [ ${BUILD_REPOSTIORY_NAME} ]"
+    echo "Skip CI for R-package: [ ${BUILD_REPOSITORY_NAME} ]"
   fi
 fi

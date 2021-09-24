@@ -17,6 +17,6 @@ jobs:
         filePath: .azure/build_r_package.bash
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
-        R_LIBS_USER: $(AGENT_BUILDDIRECTORY)/R/library
+        R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
 
   
