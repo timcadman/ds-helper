@@ -9,6 +9,7 @@
 #' @param ci_format format for the confidence intervals when direction == "wide".
 #'                  "separate" outputs separate columns with upper and lower CIs.
 #'                  "paste" adds these in brackets to the coefficient.'
+#' @param round_digits Number of decimal places to use in table. Default is 2.
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select
 #' @importFrom rlang arg_match
@@ -17,22 +18,23 @@
 #'
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
-                     direction = "long", ci_format = "separate") {
+                     direction = c("long", "wide"), ci_format = NULL, 
+                     round_digits = 2) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
   if (is.null(model)) {
-    stop("please specify a model from which to extract coefficients")
+    stop("Please specify a model from which to extract coefficients")
   }
   if (is.null(type)) {
-    stop("please specify what type of model was fit")
+    stop("Please specify which type of model was fit")
   }
-  if (is.null(coh_names)) {
-    stop("please provide vector of cohort names")
+  if (is.null(coh_names) & type %in% c("lmer", "slma")) {
+    stop("Please provide a vector of cohort names")
   }
 
   type <- arg_match(type, c("ipd", "slma", "lmer"))
-  direction <- arg_match(direction, c("long", "wide"))
-  format <- arg_match(format, c("paste", "separate"))
+  direction <- arg_match(direction)
+  ci_format <- arg_match(ci_format, c("paste", "separate"))
 
   if (direction == "long" & ci_format == "paste") {
     warning("It is not possible to paste CIs in long format. Argument ignored")
@@ -41,9 +43,10 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   if (type == "ipd") {
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
-      est = round(model$coefficients[, "Estimate"], 2),
-      lowci = round(model$coefficients[, "low0.95CI"], 2),
-      uppci = round(model$coefficients[, "high0.95CI"], 2)
+      est = round(model$coefficients[, "Estimate"], round_digits),
+      lowci = round(model$coefficients[, "low0.95CI"], round_digits),
+      uppci = round(model$coefficients[, "high0.95CI"], round_digits), 
+      pvalue = round(model$coefficients[, "p-value"], round_digits)
     ) %>%
       pivot_longer(
         cols = -variable,
@@ -95,7 +98,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   out <- out %>%
     mutate(
       variable = ifelse(variable == "(Intercept)", "intercept", variable),
-      value = round(value, 2)
+      value = round(value, round_digits)
     ) %>%
     filter(coefficient != "se")
 

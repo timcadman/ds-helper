@@ -19,8 +19,16 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.classDiscrepancy <- function(df, vars = NULL, conns = NULL) {
+dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
   . <- variable <- discrepancy <- NULL
+
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(vars)) {
+    stop("Please specify variable(s) to summarise")
+  }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

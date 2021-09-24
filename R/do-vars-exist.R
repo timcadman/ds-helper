@@ -15,7 +15,15 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @noRd
-dh.doVarsExist <- function(df, vars, conns = NULL) {
+dh.doVarsExist <- function(df = NULL, vars = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(vars)) {
+    stop("Please specify variable(s) to evaluate")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

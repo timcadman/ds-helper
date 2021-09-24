@@ -4,7 +4,7 @@
 \alias{dh.subjHasData}
 \title{Indicate whether subject has any non-missing values in a set of variables}
 \usage{
-dh.subjHasData(df, vars, new_label, conns = NULL)
+dh.subjHasData(df = NULL, vars = NULL, new_label = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{datashield dataframe}

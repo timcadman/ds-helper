@@ -5,12 +5,10 @@
 \title{Subsets a dataframe using column names.}
 \usage{
 dh.dropCols(
-  df,
-  vars,
-  new_df_name,
-  comp_var,
-  type = c("keep", "remove"),
-  remove_temp = FALSE,
+  df = NULL,
+  vars = NULL,
+  new_df_name = df,
+  type = c("remove", "keep"),
   conns = NULL
 )
 }
@@ -21,12 +19,7 @@ dh.dropCols(
 
 \item{new_df_name}{name for the new dataframe}
 
-\item{comp_var}{name of a variable with df which is complete for all subjects
-(e.g. an id variable)}
-
 \item{type}{whether to remove or keep specified variables}
-
-\item{remove_temp}{remove temporary objects from the DataSHIELD backends}
 
 \item{conns}{connections object to DataSHIELD backends}
 }

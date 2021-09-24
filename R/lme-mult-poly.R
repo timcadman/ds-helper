@@ -7,7 +7,7 @@
 #' @importFrom dsBaseClient ds.lmerSLMA
 #' @importFrom purrr map flatten_chr map set_names
 #' @importFrom dplyr arrange bind_rows dense_rank group_split mutate select
-#'             starts_with desc
+#'             starts_with desc across
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom stringr str_detect str_remove
 #' @importFrom tibble tibble
@@ -16,13 +16,21 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(df, formulae, conns = NULL) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify dataframe to use for polynomial models")
+  }
+
+  if (is.null(formulae)) {
+    stop("Please specify a tibble containing model formulae")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
 
-  loglik <- model <- study <- log_rank <- . <- av_rank <- NULL
+  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   models <- formulae$formulae %>%
@@ -80,7 +88,10 @@ dh.lmeMultPoly <- function(df, formulae, conns = NULL) {
 
   colnames(fit.tab) <- str_remove(colnames(fit.tab), ".loglik")
 
-  fit.tab %<>% mutate(av_rank = rowMeans(select(., starts_with("log_rank")), na.rm = TRUE)) %>%
+  fit.tab %<>% mutate(
+    av_rank = rowMeans(select(., starts_with("log_rank")), na.rm = TRUE),
+    sum_log = rowSums(across(loglik_study1:loglik_study2))
+  ) %>%
     arrange(av_rank)
 
   out <- list(models = models, convergence = convergence, fit = fit.tab)

@@ -4,14 +4,16 @@
 \alias{dh.renameVars}
 \title{Rename multiple variables at once}
 \usage{
-dh.renameVars(df, names, conns = NULL)
+dh.renameVars(df = NULL, current_names = NULL, new_names, conns = NULL)
 }
 \arguments{
 \item{df}{dataframe}
 
-\item{names}{a dataframe or tibble containing two columns: "oldvar" (existing
-variable name), "newvar" (new variable name). Each row
-corresponds to one variable you want to rename}
+\item{current_names}{a vector with names of existing DataSHIELD variables to 
+rename}
+
+\item{new_names}{a vector corresponding to the vector provided to current_names
+with the new variable names.}
 
 \item{conns}{connections object for DataSHIELD backends}
 }

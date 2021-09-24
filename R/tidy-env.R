@@ -11,12 +11,18 @@
 #' @return None. Objects removed from ds environment
 #'
 #' @importFrom purrr map imap
-#' @importFrom dsBaseClient ds.rm
+#' @importFrom dsBaseClient ds.rm ds.ls
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.tidyEnv <- function(obj, type = "remove", conns = NULL) {
+dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
+  if (is.null(obj)) {
+    stop("Please specify one or more objects to remove from environment")
+  }
+
+  type <- arg_match(type)
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
@@ -57,7 +63,7 @@ characters. DS does not permit this due to risk of malicious code. Amend your
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.name = value, datasources = conns[cohort])
+      ds.rm(x.names = value, datasources = conns[cohort])
     })
   }
 }

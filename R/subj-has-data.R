@@ -19,7 +19,19 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.subjHasData <- function(df, vars, new_label, conns = NULL) {
+dh.subjHasData <- function(df = NULL, vars = NULL, new_label = NULL, conns = NULL) {
+  if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(vars)) {
+    stop("Please specify variable(s)")
+  }
+
+  if (is.null(new_label)) {
+    stop("Please specify label to form suffix of summary variables")
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
@@ -47,7 +59,7 @@ dh.subjHasData <- function(df, vars, new_label, conns = NULL) {
   sapply(vars_num, function(x) {
     ds.Boole(
       V1 = x,
-      V2 = "0",
+      V2 = "-99999",
       Boolean.operator = ">=",
       na.assign = 0,
       newobj = paste0(x, "_yn"),

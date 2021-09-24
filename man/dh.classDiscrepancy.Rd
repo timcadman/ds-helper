@@ -4,7 +4,7 @@
 \alias{dh.classDiscrepancy}
 \title{Class discrepancy}
 \usage{
-dh.classDiscrepancy(df, vars = NULL, conns = NULL)
+dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{opal dataframe}
