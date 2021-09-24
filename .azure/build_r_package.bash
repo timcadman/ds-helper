@@ -8,12 +8,17 @@
 # - SYSTEM_PULLREQUEST_TARGETBRANCH: PullRequest target branch e.g. main
 # Additional environment variables to make sure the release works
 # - GITHUB_TOKEN: semantic release uses this environment variable to push to github
+# - NEXUS_USER: repository username
+# - NEXUS_PASS: repository password
+# - REGISTRY: repository url
 
 AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
 
-Rscript -e "install.packages(c('covr', 'git2r', 'usethis', 'devtools', 'pkgdown', 'mockery'), repos='https://cloud.r-project.org')"
+Rscript -e "install.packages(c('covr', 'git2r', 'usethis', 'devtools', 'pkgdown', 'mockery'), repos='https://cloud.r-project.org)"
 Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
 Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
+
+mkdir -p ${R_LIBS_USER}
 
 cd "${BUILD_REPOSITORY_LOCALPATH}"
 if [[ "${BUILD_REASON}" == "PullRequest" ]] 
