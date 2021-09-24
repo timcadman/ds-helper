@@ -11,8 +11,8 @@
 
 AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
 
-apt-get update && apt-get install libharfbuzz-dev libfribidi-dev -y
-RScript -e "install.packages(c(git2r, usethis, styler, devtools, pkgdown, mockery, styler, dsBaseClient), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
+#apt-get update && apt-get install libharfbuzz-dev libfribidi-dev -y
+RScript -e "install.packages(c(git2r, devtools, pkgdown, mockery, styler, dsBaseClient, DSI, metafor), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
 Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
 
 cd "${BUILD_REPOSITORY_LOCALPATH}"
@@ -34,7 +34,7 @@ else
   then
     RELEASE_SCOPE="patch"
     git checkout master
-    Rscript -e "usethis::use_version(${RELEASE_SCOPE})"
+    Rscript -e "usethis::use_version('${RELEASE_SCOPE}'')"
     TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     git commit -a -m "[ci skip] Created release: ${TAG}"
