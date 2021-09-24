@@ -3,8 +3,6 @@ title: "DataSHIELD helper functions"
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -14,7 +12,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-[![Build Status](https://travis-ci.org/lifecycle-project/ds-helper.svg?branch=master)](https://travis-ci.org/lifecycle-project/ds-helper)
 [![CRAN status](https://www.r-pkg.org/badges/version/dsHelper)](https://CRAN.R-project.org/package=dsHelper)
 
 This is a set of functions to automate processes in 'DataSHIELD' to make data
@@ -48,4 +45,4 @@ at t.cadman@bristol.ac.uk.
 
 ## Troubleshooting
 
-Please check: [troubleshooting](https://github.com/lifecycle-project/ds-helper/blob/master/TROUBLESHOOTING.md/)
+Please check: [troubleshooting](https://lifecycle-project.github.io/ds-helper/)
