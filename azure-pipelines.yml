@@ -1,0 +1,21 @@
+trigger:
+- master
+
+pr:
+- master
+
+jobs:  
+  - job: RPipeline
+    pool:
+      vmImage: 'ubuntu-latest'
+    container:
+      image: 'rocker/tidyverse:latest'
+    steps:
+    - task: Bash@3
+      displayName: Build R package
+      inputs:
+        filePath: .azure/build_r_package.bash
+      env:
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+  
