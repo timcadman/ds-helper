@@ -12,29 +12,24 @@
 AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
 
 apt-get update && apt-get install libharfbuzz-dev libfribidi-dev -y
-RScript -e "install.packages(c(git2r, usethis, styler, devtools, pkgdown, mockery, styler, dsBaseClient), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
+Rscript -e "install.packages(c('git2r', 'usethis', 'devtools', 'pkgdown', 'mockery'), repos='https://cloud.r-project.org')"
+Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
 Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
 
 cd "${BUILD_REPOSITORY_LOCALPATH}"
 if [[ "${BUILD_REASON}" == "PullRequest" ]] 
 then     
   echo "Building R-package: [ ${BUILD_REPOSTIORY_NAME} ]"  
-  CHANGES=$(git diff --name-only origin/${SYSTEM_PULLREQUEST_TARGETBRANCH} -- .)
-  if [[ ! -z "${CHANGES}" ]]
-  then
-    Rscript -e 'devtools::install()'
-    Rscript -e 'devtools::check(remote=TRUE, force_suggests = TRUE)'
-    Rscript -e 'usethis::use_tidy_style()'
-    Rscript -e 'library(covr);codecov()'
-  else
-    echo "    Nothing to do for [ ${image} ]"
-  fi
+  Rscript -e 'devtools::install()'
+  Rscript -e 'devtools::check(remote=TRUE, force_suggests = TRUE)'
+  Rscript -e 'usethis::use_tidy_style()'
+  Rscript -e 'library(covr);codecov()'
 else
   if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]
   then
     RELEASE_SCOPE="patch"
     git checkout master
-    Rscript -e "usethis::use_version(${RELEASE_SCOPE})"
+    Rscript -e "usethis::use_version('${RELEASE_SCOPE}'')"
     TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     git commit -a -m "[ci skip] Created release: ${TAG}"
