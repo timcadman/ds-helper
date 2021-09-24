@@ -17,6 +17,8 @@
 #'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
+  . <- NULL
+  
   if (is.null(obj)) {
     stop("Please specify one or more objects to remove from environment")
   }
@@ -26,8 +28,6 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
-  . <- NULL
 
   if (type == "remove") {
     obj %>% map(ds.rm, datasources = conns)
@@ -63,7 +63,7 @@ characters. DS does not permit this due to risk of malicious code. Amend your
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.names = value, datasources = conns[cohort])
+      ds.rm(x.name = value, datasources = conns[cohort])
     })
   }
 }

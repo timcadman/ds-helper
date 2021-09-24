@@ -15,14 +15,14 @@ apt-get update && apt-get install libharfbuzz-dev libfribidi-dev -y
 RScript -e "install.packages(c(git2r, usethis, styler, devtools, pkgdown, mockery, styler, dsBaseClient), repos=c('https://cloud.r-project.org','https://cran.obiba.org'))"
 Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
 
-
 cd "${BUILD_REPOSITORY_LOCALPATH}"
 if [[ "${BUILD_REASON}" == "PullRequest" ]] 
 then     
-  echo "  Building R-package: [ ${image} ]"  
+  echo "Building R-package: [ ${BUILD_REPOSTIORY_NAME} ]"  
   CHANGES=$(git diff --name-only origin/${SYSTEM_PULLREQUEST_TARGETBRANCH} -- .)
   if [[ ! -z "${CHANGES}" ]]
   then
+    Rscript -e 'devtools::install()'
     Rscript -e 'devtools::check(remote=TRUE, force_suggests = TRUE)'
     Rscript -e 'usethis::use_tidy_style()'
     Rscript -e 'library(covr);codecov()'
@@ -30,7 +30,7 @@ then
     echo "    Nothing to do for [ ${image} ]"
   fi
 else
-  if [[ ! "${TRAVIS_COMMIT_MESSAGE}" =~ "[ci skip]" ]]
+  if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]
   then
     RELEASE_SCOPE="patch"
     git checkout master

@@ -1,8 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-.travis.yml
 .github
 .azure
+azure-pipelines.yml
+ds-helper.sublime.*
 ^README\.Rmd
 ^TROUBLESHOOTING\.Rmd$
 ^TROUBLESHOOTING\.md$
