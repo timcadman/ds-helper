@@ -44,6 +44,6 @@ else
     git commit -a -m '[ci skip]: Increment dev-version number'
     git push origin master
   else
-    echo "Skip CI due earlier release"
+    echo "Skip CI for R-package: [ ${BUILD_REPOSTIORY_NAME} ]"
   fi
 fi
