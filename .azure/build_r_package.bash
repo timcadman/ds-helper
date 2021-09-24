@@ -17,7 +17,7 @@ AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
 echo "Create user libraries directory R [ ${R_LIBS_USER} ]"
 mkdir -p "${R_LIBS_USER}"
 
-Rscript -e "install.packages(c('covr', 'git2r', 'withr', usethis', 'devtools', 'styler', 'mockery'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
+Rscript -e "install.packages(c('covr', 'git2r', 'withr', 'devtools', 'lintr', 'mockery'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
 Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor', 'meta'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'), lib='${R_LIBS_USER}')"
 Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
 
@@ -27,7 +27,7 @@ then
   echo "Build PR for R-package: [ ${BUILD_REPOSITORY_NAME} ]"  
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::install())"
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check(remote=TRUE, force_suggests = TRUE))"
-  Rscript -e 'usethis::use_tidy_style()'
+  Rscript -e "quit(save = 'no', status = length(lintr::lint_package()))"
   Rscript -e 'covr::codecov()'
 else
   if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]

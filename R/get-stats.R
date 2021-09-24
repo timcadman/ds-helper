@@ -51,6 +51,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
+# nolint
 dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -64,7 +65,9 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
+  Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <-
+  variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <-
+  missing_n <- perc_missing <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
 
@@ -205,6 +208,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     })
 
     cat_len <- map(tmp, function(x) {
+# nolint
       len <- Reduce(`+`, x)
     })
 

@@ -11,7 +11,7 @@
 #' @param conns connection object for DataSHIELD backends
 #' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
-#' @param type can be any or all 
+#' @param type can be any or all
 #'
 #' @return None. A new variable is created within the opal environment. If the option
 #'         "any" is selected for argument "type", the new variable is called "dc_any_data".
@@ -23,6 +23,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
+# nolint
 dh.defineCases <- function(df = NULL, vars = NULL, type = c("any", "all"), conns = NULL) {
   if (is.null(df)) {
     stop("Please specify a data frame")
