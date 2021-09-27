@@ -15,6 +15,7 @@ jobs:
       displayName: Build R package
       inputs:
         filePath: .azure/build_r_package.bash
+        failOnStderr: true
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
