@@ -18,6 +18,7 @@ jobs:
         failOnStderr: true
       env:
         GITHUB_TOKEN: $(GITHUB_TOKEN)
+        CODECOV_TOKEN: $(CODECOV_TOKEN)
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
 
   
