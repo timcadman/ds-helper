@@ -33,10 +33,11 @@ Imports:
   DSI,
   metafor
 Suggests:
-  knitr, 
-  rmarkdown,
-  testthat,
-  mockery
+    knitr,
+    rmarkdown,
+    testthat,
+    mockery,
+    covr
 URL: https://lifecycle-project.github.io/ds-helper/
 BugReports: https://github.com/lifecycle-project/ds-helper/issues/
 VignetteBuilder: knitr

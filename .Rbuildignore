@@ -2,9 +2,12 @@
 ^\.Rproj\.user$
 .github
 .azure
+.lintr
+codecov.yml
 azure-pipelines.yml
 ds-helper.sublime.*
 ^README\.Rmd
 ^TROUBLESHOOTING\.Rmd$
 ^TROUBLESHOOTING\.md$
 ^cran-comments\.md$
+^codecov\.yml$

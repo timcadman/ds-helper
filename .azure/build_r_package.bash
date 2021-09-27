@@ -12,6 +12,7 @@
 # - NEXUS_PASS: repository password
 # - REGISTRY: repository url
 # - R_LIBS_USER: home directory user libraries
+# - CODECOV_TOKEN: token to authenticate to codecov
 
 AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
 echo "Create user libraries directory R [ ${R_LIBS_USER} ]"
