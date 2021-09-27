@@ -1,4 +1,5 @@
 Package: dsHelper
+Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
 Version: 0.0.0.9008
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
@@ -38,7 +39,8 @@ Suggests:
     testthat,
     mockery,
     covr
-URL: https://lifecycle-project.github.io/ds-helper/
+URL: https://github.com/lifecycle-project/ds-helper/,
+  https://lifecycle-project.github.io/ds-helper/
 BugReports: https://github.com/lifecycle-project/ds-helper/issues/
 VignetteBuilder: knitr
 License: GPL-3
