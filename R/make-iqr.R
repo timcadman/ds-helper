@@ -100,7 +100,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     
     ## ---- Identify cohorts which are all missing -----------------------------
     missing <- expand.grid(vars, names(conns)) %>%
-      set_names("variable", "cohort") %>%
+      set_names(c("variable", "cohort")) %>%
       pmap(function(variable, cohort){
         
         cally <- paste0("isNaDS(", df, "$", variable, ")")
