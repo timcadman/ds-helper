@@ -18,9 +18,8 @@ AGENT_USER_HOMEDIRECTORY=$(echo "${AGENT_HOMEDIRECTORY}" | cut -d/ -f 1-3)
 echo "Create user libraries directory R [ ${R_LIBS_USER} ]"
 mkdir -p "${R_LIBS_USER}"
 
-Rscript -e "install.packages(c('covr', 'git2r', 'withr', 'devtools', 'lintr', 'mockery'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
+Rscript -e "install.packages(c('covr', 'withr', 'devtools', 'lintr', 'mockery'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
 Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor', 'meta'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'), lib='${R_LIBS_USER}')"
-Rscript -e "git2r::config(user.email = 'sido@haakma.org', user.name = 'Sido Haakma')"
 
 cd "${BUILD_REPOSITORY_LOCALPATH}"
 if [[ "${BUILD_REASON}" == "PullRequest" ]] 
@@ -28,21 +27,23 @@ then
   echo "Build PR for R-package: [ ${BUILD_REPOSITORY_NAME} ]"  
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::install())"
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check(remote=TRUE, force_suggests = TRUE))"
-  Rscript -e "lintr::lint_package(); quit(save = 'no', status = length(lintr::lint_package()))"
-  #Rscript -e "covr::codecov()"
+  Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', lintr::lint_package())"
+  Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', quit(save = 'no', status = length(lintr::lint_package()))"
+  #Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', covr::codecov())"
 else
   if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]
   then
     echo "Release R-package: [ ${BUILD_REPOSITORY_NAME} ]"  
     RELEASE_SCOPE="patch"
+    git remote set-url origin https://${GITHUB_TOKEN}@github.com/lifecycle-project/ds-helper.git
     git checkout master
     Rscript -e "usethis::use_version('${RELEASE_SCOPE}')"
     TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
     git commit -a -m "[ci skip] Created release: ${TAG}"
     echo "Releasing ${PACKAGE} ${TAG}"
-    R CMD build .
-    Rscript -e "devtools::check_built(path = './${PACKAGE}_${TAG}.tar.gz', remote=TRUE, force_suggests = TRUE)"
+    R CMD build . --library ${R_USER_LIBS}
+    Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check_built(path = './${PACKAGE}_${TAG}.tar.gz', remote=TRUE, force_suggests = TRUE))"
     #set +x; curl -v --user "${NEXUS_USER}:${NEXUS_PASS}" --upload-file "${PACKAGE}_${TAG}".tar.gz "${REGISTRY}"/src/contrib/"${PACKAGE}_${TAG}".tar.gz
     git tag "${TAG}"
     git push origin "${TAG}"
