@@ -4,6 +4,9 @@ trigger:
 pr:
 - master
 
+variables:
+  job_name: $(BUILD_REPOSITORY_NAME)
+
 jobs:  
   - job: RPipeline
     pool:
@@ -12,13 +15,29 @@ jobs:
       image: 'rocker/tidyverse:latest'
     steps:
     - task: Bash@3
-      displayName: Build R package
+      displayName: 'Prepare R-package ${{ variables.job_name }}'
       inputs:
-        filePath: .azure/build_r_package.bash
+        filePath: .azure/prepare.bash
         failOnStderr: true
       env:
-        GITHUB_TOKEN: $(GITHUB_TOKEN)
-        CODECOV_TOKEN: $(CODECOV_TOKEN)
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
-
-  
+    - task: Bash@3
+      displayName: 'Check R-package ${{ variables.job_name }}'
+      condition: eq(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        filePath: .azure/pullrequest.bash
+        failOnStderr: true
+      env:
+        R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
+        CODECOV_TOKEN: $(CODECOV_TOKEN)  
+    - task: Bash@3
+      displayName: 'Release R-package ${{ variables.job_name }}'
+      condition: ne(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        filePath: .azure/release.bash
+        failOnStderr: true
+      env:
+        R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
+        CODECOV_TOKEN: $(CODECOV_TOKEN)  
+        GITHUB_TOKEN: $(GITHUB_TOKEN)
+        
