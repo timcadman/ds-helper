@@ -18,8 +18,8 @@
 #' @importFrom utils combn
 #'
 #' @export
-dh.makeLmerForm <- function(
-                            outcome = NULL, idvar = NULL, agevars = NULL, random = "intercept", fixed = NULL, age_interactions = NULL) {
+dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random = "intercept",
+                            fixed = NULL, age_interactions = NULL) {
   if (is.null(outcome)) {
     stop("Please specify the name of your outcome variable")
   }

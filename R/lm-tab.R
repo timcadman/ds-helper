@@ -18,7 +18,7 @@
 #'
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
-                     direction = c("long", "wide"), ci_format = NULL, 
+                     direction = c("long", "wide"), ci_format = NULL,
                      round_digits = 2) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
@@ -45,7 +45,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       variable = dimnames(model$coefficients)[[1]],
       est = round(model$coefficients[, "Estimate"], round_digits),
       lowci = round(model$coefficients[, "low0.95CI"], round_digits),
-      uppci = round(model$coefficients[, "high0.95CI"], round_digits), 
+      uppci = round(model$coefficients[, "high0.95CI"], round_digits),
       pvalue = round(model$coefficients[, "p-value"], round_digits)
     ) %>%
       pivot_longer(

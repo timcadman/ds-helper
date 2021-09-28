@@ -41,7 +41,7 @@
 #'  missing_perc = as above
 #'
 #' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup 
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows rename filter mutate_at vars distinct add_row
 #' @importFrom purrr map flatten_dbl
 #' @importFrom dsBaseClient ds.class ds.summary ds.length ds.var ds.quantileMean
@@ -51,7 +51,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) { # nolint 
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -64,7 +64,9 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <- variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <- missing_n <- perc_missing <- NULL
+  Mean <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- missing_perc <-
+  variance <- variable <- category <- value <- cohort_n <- cohort <- valid_n <-
+  missing_n <- perc_missing <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
 
@@ -205,7 +207,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     })
 
     cat_len <- map(tmp, function(x) {
-      len <- Reduce(`+`, x)
+      len <- Reduce(`+`, x) # nolint
     })
 
     var_vec <- rep(names(cat_len), times = cat_len)

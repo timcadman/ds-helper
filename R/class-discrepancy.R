@@ -19,6 +19,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
+# nolint
 dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
   . <- variable <- discrepancy <- NULL
 

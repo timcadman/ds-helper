@@ -1,8 +1,8 @@
 ---
-title: "dsHelper Data Manipuation"
+title: "Data Manipuation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dsUpload}
+  %\VignetteIndexEntry{dsHelper}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
