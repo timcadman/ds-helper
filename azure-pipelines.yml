@@ -5,7 +5,7 @@ pr:
 - master
 
 variables:
-  job_name: $(BUILD_REPOSITORY_NAME)
+  job_name: $(Build.RepositoryName)
 
 jobs:  
   - job: RPipeline

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Azure Pipeline predefined environment variables
 # - BUILD_REASON: we check on "PullRequest
 # - BUILD_REPOSTIORY_NAME: we use to determine the package that is build
@@ -15,8 +16,7 @@
 # - CODECOV_TOKEN: token to authenticate to codecov
 
 RELEASE_SCOPE="patch"
-git checkout master
-git remote set-url origin https://${GITHUB_TOKEN}@github.com/lifecycle-project/ds-helper.git
+git checkout -f master
 Rscript -e "usethis::use_version('${RELEASE_SCOPE}')"
 TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
