@@ -37,8 +37,7 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
         ~ ds.ls(datasources = conns[.])[[1]][[2]]
       )
 
-# nolint
-    vars <- seq(1:length(names(conns))) %>%
+    vars <- seq(1:length(names(conns))) %>% # nolint
       map(
         ~ objects[[.]][objects[[.]] %in% obj == FALSE]
       )

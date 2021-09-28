@@ -51,8 +51,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-# nolint
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) { # nolint 
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -208,8 +207,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL) {
     })
 
     cat_len <- map(tmp, function(x) {
-# nolint
-      len <- Reduce(`+`, x)
+      len <- Reduce(`+`, x) # nolint
     })
 
     var_vec <- rep(names(cat_len), times = cat_len)

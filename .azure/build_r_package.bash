@@ -28,8 +28,8 @@ then
   echo "Build PR for R-package: [ ${BUILD_REPOSITORY_NAME} ]"  
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::install())"
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check(remote=TRUE, force_suggests = TRUE))"
-  Rscript -e "quit(save = 'no', status = length(lintr::lint_package()))"
-  #Rscript -e "covr::codecov(token = '${CODECOV_TOKEN}')"
+  Rscript -e "lintr::lint_package(); quit(save = 'no', status = length(lintr::lint_package()))"
+  Rscript -e "covr::codecov()"
 else
   if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]
   then

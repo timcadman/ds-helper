@@ -44,7 +44,7 @@
 #'
 #' @export
 # nolint
-dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL,
+dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL,  # nolint
                            mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id",
                            band_action = NULL) {
   if (is.null(df)) {
