@@ -29,7 +29,7 @@ then
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::install())"
   Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check(remote=TRUE, force_suggests = TRUE))"
   Rscript -e "lintr::lint_package(); quit(save = 'no', status = length(lintr::lint_package()))"
-  Rscript -e "covr::codecov()"
+  #Rscript -e "covr::codecov()"
 else
   if [[ ! "${BUILD_SOURCEVERSIONMESSAGE}" =~ "[ci skip]" ]]
   then
