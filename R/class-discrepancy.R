@@ -37,7 +37,7 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
     
   } else {
-    dh.doVarsExist(conns, df)
+    dh.doVarsExist(df, vars, conns)
     fun_vars <- vars
   }
 
