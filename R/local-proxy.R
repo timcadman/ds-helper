@@ -5,7 +5,8 @@
 #' is to create a local object that has the same structure as the remote data frame and enables the use of autocomplete
 #' when writing DataSHIELD code.
 #'
-#' For example, if you have a dataframe "D" with columns LAB_TSC, DIS_CVA and DIS_DIAB, normally you would need to write:
+#' For example, if you have a dataframe "D" with columns LAB_TSC, DIS_CVA and DIS_DIAB, normally you would need
+#' to write:
 #'
 #' `ds.summary("D$LAB_TSC")` with the variable name spelled correctly (no autocomplete!) and remember quotation marks
 #'
@@ -18,7 +19,8 @@
 #' @param conns connections object to DataSHIELD backends
 #' @param df datashield dataframe
 #'
-#' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one of more cohorts.
+#' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
+#' of more cohorts.
 #'
 #' @importFrom DSI datashield.connections_find
 #'

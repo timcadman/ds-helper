@@ -7,19 +7,19 @@
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df dataframe
-#' @param current_names a vector with names of existing DataSHIELD variables to 
+#' @param current_names a vector with names of existing DataSHIELD variables to
 #'        rename
 #' @param new_names a vector corresponding to the vector provided to current_names
 #'        with the new variable names.
-#' @return None. The new variables are added to the df specified 
+#' @return None. The new variables are added to the df specified
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.renameVars <- function(df = NULL, current_names = NULL, new_names, 
-  conns = NULL) {
+dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
+                          conns = NULL) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -36,14 +36,13 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
     conns <- datashield.connections_find()
   }
 
-names <- NULL
+  names <- NULL
 
   dh.doesDfExist(df = df, conns = conns)
   dh.doVarsExist(df = df, vars = current_names, conns = conns)
 
-  if(length(current_names) != length(new_names)){
-
-  stop("Length of current_names is different from the length of new_names.
+  if (length(current_names) != length(new_names)) {
+    stop("Length of current_names is different from the length of new_names.
     Please check input vectors")
   }
 
@@ -62,17 +61,18 @@ names <- NULL
     x = c(df, names$newvar),
     newobj = df,
     datasources = conns
-    )
-    
+  )
+
   dh.dropCols(
-    df = df, 
+    df = df,
     vars = current_names,
-    new_df_name = df, 
+    new_df_name = df,
     conns = conns
-    )
+  )
 
   dh.tidyEnv(
     obj = new_names,
-    conns = conns) %>%
-  invisible()
+    conns = conns
+  ) %>%
+    invisible()
 }

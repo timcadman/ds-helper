@@ -17,6 +17,8 @@
 #'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
+  . <- NULL
+
   if (is.null(obj)) {
     stop("Please specify one or more objects to remove from environment")
   }
@@ -27,8 +29,6 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  . <- NULL
-
   if (type == "remove") {
     obj %>% map(ds.rm, datasources = conns)
   } else if (type == "keep") {
@@ -37,7 +37,7 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
         ~ ds.ls(datasources = conns[.])[[1]][[2]]
       )
 
-    vars <- seq(1:length(names(conns))) %>%
+    vars <- seq(1:length(names(conns))) %>% # nolint
       map(
         ~ objects[[.]][objects[[.]] %in% obj == FALSE]
       )
@@ -52,9 +52,8 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
       any(. > 20)
 
     if (obj_lengths == TRUE) {
-      stop("You are attempting to remove objects with name(s) longer than 20 
-characters. DS does not permit this due to risk of malicious code. Amend your 
-       script so that your objects have shorter names", call. = FALSE)
+      stop("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
+           due to risk of malicious code. Amend your script so that your objects have shorter names", call. = FALSE)
     }
 
     vars_tibble <- vars %>%
