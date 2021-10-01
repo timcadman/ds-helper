@@ -43,8 +43,8 @@
 #' @importFrom rlang :=
 #'
 #' @export
-dh.makeOutcome <- function(
-                           df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL,
+# nolint
+dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL, # nolint
                            mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id",
                            band_action = NULL) {
   if (is.null(df)) {
@@ -68,7 +68,8 @@ dh.makeOutcome <- function(
   }
 
   if (is.null(mult_action)) {
-    stop("Please specify how you want to deal with multiple observations within an age bracket using the argument 'mult_action")
+    stop("Please specify how you want to deal with multiple observations within an age
+         bracket using the argument 'mult_action")
   }
 
   mult_action <- match.arg(mult_action, c("earliest", "latest", "nearest"))
@@ -78,7 +79,8 @@ dh.makeOutcome <- function(
     conns <- datashield.connections_find()
   }
 
-  op <- tmp <- dfs <- new_subset_name <- value <- cohort <- age <- varname <- new_df_name <- available <- bmi_to_subset <- ref_val <- NULL
+  op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
+    available <- bmi_to_subset <- ref_val <- NULL
 
   cat("This may take some time depending on the number and size of datasets\n\n")
 
@@ -103,10 +105,10 @@ dh.makeOutcome <- function(
   var_class <- ds.class(datasources = conns, x = paste0(df, "$", outcome))
 
   if (length(unique(var_class)) > 1) {
-    stop("The outcome variable does not have the same class in all studies. 
+    stop("The outcome variable does not have the same class in all studies.
          Please fix this and run again.")
   } else if (var_class[[1]] == "character") {
-    stop("The outcome variable is class 'character'. Please provide either a 
+    stop("The outcome variable is class 'character'. Please provide either a
          numeric, integer or factor variable.")
   }
 
@@ -242,11 +244,11 @@ dh.makeOutcome <- function(
   ## ---- Check max character length -------------------------------------------
   if (max(nchar(cats$varname)) + 6 > 20) {
     stop(
-      "Due to disclosure settings, the total string length of [outcome] + 
-      [max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more 
-      than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10, 
+      "Due to disclosure settings, the total string length of [outcome] +
+      [max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more
+      than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10,
       max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
-      is 9. However if your outcome was named 'adiposity' this would give 
+      is 9. However if your outcome was named 'adiposity' this would give
       a string length of 'adiposity104035 = 15' which is too long. I realise
       this is quite annoying. To get round it rename your outcome variable
       to have a shorter name. As a rule of thumb I would rename your outcome to be
@@ -686,8 +688,8 @@ dh.makeOutcome <- function(
 
   print(data_available)
 
-  cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii) 
-that the 5th and 95th percentiles fall within the specified upper and lower 
+  cat("\nUse 'dh.getStats' to check (i) that all values are plausible, and (ii)
+that the 5th and 95th percentiles fall within the specified upper and lower
 bands. Unfortunately you can't check min and max values due to disclosure
 restrictions.\n\n")
 }

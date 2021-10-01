@@ -9,7 +9,7 @@ dh.renameVars(df = NULL, current_names = NULL, new_names, conns = NULL)
 \arguments{
 \item{df}{dataframe}
 
-\item{current_names}{a vector with names of existing DataSHIELD variables to 
+\item{current_names}{a vector with names of existing DataSHIELD variables to
 rename}
 
 \item{new_names}{a vector corresponding to the vector provided to current_names

@@ -18,9 +18,14 @@
 #'
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
+<<<<<<< HEAD
                      direction = c("long", "wide"), ci_format = NULL, 
                      family = "gaussian", round_digits = 2, 
                      exp = TRUE) {
+=======
+                     direction = c("long", "wide"), ci_format = NULL,
+                     family = "gaussian", round_digits = 2) {
+>>>>>>> 040d52aecdd96f64574069e145de9510983d5e90
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
@@ -42,6 +47,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   if (direction == "long" & ci_format == "paste") {
     warning("It is not possible to paste CIs in long format. Argument ignored")
   }
+<<<<<<< HEAD
   
   ## ---- Coefficient names depending on model ---------------------------------
   if(family == "gaussian"){
@@ -54,6 +60,15 @@ highci <- "high0.95CI"
 lowci <- "low0.95CI.LP"
 highci <- "high0.95CI.LP"
 
+=======
+
+  if (family == "gaussian") {
+    lowci <- "low0.95CI"
+    highci <- "high0.95CI"
+  } else if (family == "binomial") {
+    lowci <- "low0.95CI.LP"
+    highci <- "high0.95CI.LP"
+>>>>>>> 040d52aecdd96f64574069e145de9510983d5e90
   }
 
   
@@ -63,7 +78,7 @@ highci <- "high0.95CI.LP"
       variable = dimnames(model$coefficients)[[1]],
       est = round(model$coefficients[, "Estimate"], round_digits),
       lowci = round(model$coefficients[, lowci], round_digits),
-      uppci = round(model$coefficients[, highci], round_digits), 
+      uppci = round(model$coefficients[, highci], round_digits),
       pvalue = round(model$coefficients[, "p-value"], round_digits)
     ) %>%
       pivot_longer(

@@ -20,12 +20,11 @@
 #'
 #' @export
 dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remove", "keep"), conns = NULL) {
- 
-. <- NULL
+  . <- NULL
 
-dh.doVarsExist(df = df, vars = vars, conns = conns)
+  dh.doVarsExist(df = df, vars = vars, conns = conns)
 
-   if (is.null(df)) {
+  if (is.null(df)) {
     stop("Please specify a data frame")
   }
 
@@ -38,36 +37,29 @@ dh.doVarsExist(df = df, vars = vars, conns = conns)
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
-  if (type == "keep") {
 
-  ds.dataFrame(
-    x = paste0(df, "$", vars),
-    newobj = new_df_name,
-    datasources = conns
-  )
-    
+  if (type == "keep") {
+    ds.dataFrame(
+      x = paste0(df, "$", vars),
+      newobj = new_df_name,
+      datasources = conns
+    )
   } else if (type == "remove") {
-  
     cols <- ds.colnames(df, datasources = conns)
-      
+
     cols_to_keep <- cols %>%
-      map(function(x){
-        
+      map(function(x) {
         str_subset(x, paste0(vars, "\\b", collapse = "|"), negate = TRUE) %>%
-        paste0(df, "$", .)
-        
-        
+          paste0(df, "$", .)
       })
-    
+
     cols_to_keep %>%
       imap(
-        ~ds.dataFrame(
-        x = .x,
-        datasources = conns[.y], 
-        newobj = new_df_name
+        ~ ds.dataFrame(
+          x = .x,
+          datasources = conns[.y],
+          newobj = new_df_name
+        )
       )
-    )
   }
-    
 }
