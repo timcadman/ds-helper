@@ -142,10 +142,10 @@ check with ds.class \n\n",
     map(
       .,
       ~ pmap(., function(variable, cohort) {
-        ds.levels(
-          x = paste0(df, "$", variable),
-          datasources = conns[cohort]
-        )[[1]]$Levels
+        
+        cally <- paste0("levelsDS(", df, "$", variable, ")")
+        datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
+
       })
     ) %>%
     set_names(sort(unique(fact_exist$variable)))
