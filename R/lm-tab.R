@@ -18,10 +18,9 @@
 #'
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
-                     direction = c("long", "wide"), ci_format = NULL, 
-                     family = "gaussian", round_digits = 2, 
+                     direction = c("long", "wide"), ci_format = NULL,
+                     family = "gaussian", round_digits = 2,
                      exp = TRUE) {
-
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
@@ -45,19 +44,15 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   }
 
   ## ---- Coefficient names depending on model ---------------------------------
-  if(family == "gaussian"){
-
-lowci <- "low0.95CI"
-highci <- "high0.95CI"
-
-  } else if(family == "binomial"){
-
-lowci <- "low0.95CI.LP"
-highci <- "high0.95CI.LP"
-
+  if (family == "gaussian") {
+    lowci <- "low0.95CI"
+    highci <- "high0.95CI"
+  } else if (family == "binomial") {
+    lowci <- "low0.95CI.LP"
+    highci <- "high0.95CI.LP"
   }
 
-  
+
   ## ---- Extract coefficients -------------------------------------------------
   if (type == "ipd") {
     out <- tibble(
@@ -121,55 +116,48 @@ highci <- "high0.95CI.LP"
     ) %>%
     filter(coefficient != "se")
 
-  
+
   ## ---- Convert to odds ratios where specified -------------------------------
   if (exp == TRUE & family == "gaussian") {
     warning("It is not recommended to exponentiate coefficients from linear 
             regression: argument is ignored")
   }
-  
-  if (exp == TRUE & family == "binomial" & direction == "long"){
-    
+
+  if (exp == TRUE & family == "binomial" & direction == "long") {
     out <- out %>%
       mutate(value = case_when(
-        
         coefficient == "pvalue" ~ value,
         coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits)
       ))
-    
   }
-  
+
   ## ---- Put into final format ------------------------------------------------
   if (direction == "long") {
-    
     out <- out
-    
-  } else if(exp == TRUE & family == "binomial" & direction == "wide"){
-    
+  } else if (exp == TRUE & family == "binomial" & direction == "wide") {
     out <- out %>%
       pivot_wider(
         names_from = c(coefficient),
-        values_from = value) %>% 
-      mutate(across(est:uppci, ~round(exp(.), round_digits)))
-    
-  } 
-  
+        values_from = value
+      ) %>%
+      mutate(across(est:uppci, ~ round(exp(.), round_digits)))
+  }
+
   if (direction == "wide" & ci_format == "separate") {
     out <- out %>%
       pivot_wider(
         names_from = c(coefficient),
         values_from = value
       )
-
   } else if (direction == "wide" & ci_format == "paste") {
     out <- out %>%
       pivot_wider(
         names_from = c(coefficient),
-        values_from = value) %>%
+        values_from = value
+      ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
       select(variable, est, pvalue)
+  }
 
-  } 
-  
   return(out)
 }
