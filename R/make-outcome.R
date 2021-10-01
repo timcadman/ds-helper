@@ -385,11 +385,12 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
 
     cats_to_subset %<>%
       left_join(., ref_tab) %>%
-        mutate(
-          condition = paste0(
+      mutate(
+        condition = paste0(
           "((", new_subset_name, "$", "age", "-", ref_val, ")", "^2",
-          ")", "^0.5"),
-          dif_val = paste0("d_", ref_val)
+          ")", "^0.5"
+        ),
+        dif_val = paste0("d_", ref_val)
       )
 
     cats_to_subset %>%
