@@ -49,7 +49,7 @@ dh.doVarsExist(df = df, vars = vars, conns = conns)
     
   } else if (type == "remove") {
   
-    cols <- ds.colnames(df, datasources = conns)
+    cols <- datashield.aggregate(conns, call("colnamesDS", df))
       
     cols_to_keep <- cols %>%
       map(function(x){
