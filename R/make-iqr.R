@@ -149,5 +149,3 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     datasources = conns
   )
 }
-
-## ---- Join back to main dataframe --------------------------------------------
