@@ -20,8 +20,7 @@
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = c("long", "wide"), ci_format = NULL,
                      family = "gaussian", round_digits = 2) {
-
-    Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
+  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
   if (is.null(model)) {
     stop("Please specify a model from which to extract coefficients")

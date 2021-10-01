@@ -27,7 +27,6 @@
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
                        conns = NULL, new_df_name = df) {
-
   . <- V1 <- cohort <- formula <- variable <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
