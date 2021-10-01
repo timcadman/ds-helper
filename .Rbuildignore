@@ -1,8 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-.travis.yml
-.github
-.ci
+^\.github
+^\.azure
+^\.lintr
+^azure-pipelines\.yml
+^ds-helper\.sublime\.*
 ^README\.Rmd
-^TROUBLESHOOTING\.md$
+^TROUBLESHOOTING\.Rmd$
 ^cran-comments\.md$
+^codecov\.yml$

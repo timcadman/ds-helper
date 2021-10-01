@@ -10,7 +10,9 @@ dh.defineCases(df = NULL, vars = NULL, type = c("any", "all"), conns = NULL)
 \arguments{
 \item{df}{datashield dataframe}
 
-\item{vars}{= vector of variable names in dataframe}
+\item{vars}{vector of variable names in dataframe}
+
+\item{type}{can be any or all}
 
 \item{conns}{connection object for DataSHIELD backends}
 }
@@ -27,5 +29,4 @@ has non-missing values for any or all of a set of given variables.
 }
 \details{
 Note this function replaces the deprecated dh.subjHasData.
-#'
 }
