@@ -60,7 +60,6 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
   ################################################################################
   # 1. First checks
   ################################################################################
-
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
