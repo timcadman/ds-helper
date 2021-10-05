@@ -11,6 +11,7 @@ dh.lmTab(
   coh_names = NULL,
   direction = c("long", "wide"),
   ci_format = NULL,
+  family = "gaussian",
   round_digits = 2
 )
 }

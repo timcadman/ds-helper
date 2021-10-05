@@ -34,11 +34,10 @@ Imports:
   DSI,
   metafor
 Suggests:
-    knitr,
-    rmarkdown,
-    testthat,
-    mockery,
-    covr
+  knitr,
+  rmarkdown,
+  testthat,
+  mockery
 URL: https://github.com/lifecycle-project/ds-helper/,
   https://lifecycle-project.github.io/ds-helper/
 BugReports: https://github.com/lifecycle-project/ds-helper/issues/
@@ -46,5 +45,5 @@ VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.1.1
 Additional_repositories: https://cran.obiba.org/
