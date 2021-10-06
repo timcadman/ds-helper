@@ -17,7 +17,7 @@
 #' @importFrom dplyr bind_rows
 #'
 #' @export
-dh.getAnonPlotData <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL) {
   . <- NULL
 
   if (is.null(df)) {
@@ -32,24 +32,36 @@ dh.getAnonPlotData <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  scatter <- vars %>%
-    map(
-      ~ ds.scatterPlot(
-        x = paste0(df, "$", .),
-        y = paste0(df, "$", .),
-        return.coords = TRUE,
-        datasources = conns
-      )
-    ) %>%
-    set_names(., vars)
+if(is.null(v2)){
 
-  out <- scatter %>%
-    map(function(x) {
-      x[[1]] %>%
+  scatter <- ds.scatterPlot(
+        x = paste0(df, "$", v1),
+        y = paste0(df, "$", v1),
+        return.coords = TRUE,
+        datasources = conns) 
+
+  out <- scatter[[1]] %>%
         map(~ .[, "x"]) %>%
         map(as_tibble) %>%
+        bind_rows(.id = "cohort") %>%
+        dplyr::rename(x = value)
+
+  } else if(!is.null(v2)){
+
+  scatter <- ds.scatterPlot(
+        x = paste0(df, "$", v1),
+        y = paste0(df, "$", v2),
+        return.coords = TRUE,
+        datasources = conns) 
+
+    out <- scatter[[1]] %>%
+        map(~ 
+          tibble(
+            x = .[, "x"], 
+            y = .[, "y"])
+        ) %>%
         bind_rows(.id = "cohort")
-    })
+  }
 
   return(out)
 }
