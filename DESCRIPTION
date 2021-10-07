@@ -18,7 +18,7 @@ Authors@R:
     person(given = "Tom",
       family = "Bishop",
       role = "ctb",
-      email = "tom.bishop@mrc-epid.cam.ac.uk")))
+      email = "tom.bishop@mrc-epid.cam.ac.uk"))
 Depends: 
   R (>= 3.5.0)
 Imports:
