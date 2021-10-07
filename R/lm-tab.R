@@ -19,9 +19,11 @@
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = c("long", "wide"), ci_format = NULL,
-                     family = "gaussian", round_digits = 2) {
+                     family = "gaussian", round_digits = 2,
+                     exp = TRUE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
 
+  ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
     stop("Please specify a model from which to extract coefficients")
   }
@@ -41,6 +43,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     warning("It is not possible to paste CIs in long format. Argument ignored")
   }
 
+  ## ---- Coefficient names depending on model ---------------------------------
   if (family == "gaussian") {
     lowci <- "low0.95CI"
     highci <- "high0.95CI"
@@ -49,6 +52,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     highci <- "high0.95CI.LP"
   }
 
+
+  ## ---- Extract coefficients -------------------------------------------------
   if (type == "ipd") {
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
@@ -112,49 +117,47 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     filter(coefficient != "se")
 
 
+  ## ---- Convert to odds ratios where specified -------------------------------
+  if (exp == TRUE & family == "gaussian") {
+    warning("It is not recommended to exponentiate coefficients from linear 
+            regression: argument is ignored")
+  }
+
+  if (exp == TRUE & family == "binomial" & direction == "long") {
+    out <- out %>%
+      mutate(value = case_when(
+        coefficient == "pvalue" ~ value,
+        coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits)
+      ))
+  }
+
+  ## ---- Put into final format ------------------------------------------------
   if (direction == "long") {
-    return(out)
-  } else if (direction == "wide" & ci_format == "separate") {
+    out <- out
+  } else if (exp == TRUE & family == "binomial" & direction == "wide") {
+    out <- out %>%
+      pivot_wider(
+        names_from = c(coefficient),
+        values_from = value
+      ) %>%
+      mutate(across(est:uppci, ~ round(exp(.), round_digits)))
+  }
+
+  if (direction == "wide" & ci_format == "separate") {
     out <- out %>%
       pivot_wider(
         names_from = c(coefficient),
         values_from = value
       )
-
-    return(out)
-  } else if (direction == "wide" & ci_format == "paste" & type == "ipd") {
+  } else if (direction == "wide" & ci_format == "paste") {
     out <- out %>%
-      group_by(variable) %>%
-      group_split() %>%
-      map(function(x) {
-        mutate(x, value = paste0(x$value[1], " (", x$value[2], ",", x$value[3], ")"))
-      }) %>%
-      map(
-        ~ filter(., coefficient == "est")
-      ) %>%
-      bind_rows() %>%
-      select(-coefficient) %>%
-      rename(est = value)
-
-    return(out)
-  } else if (direction == "wide" & ci_format == "paste" & type != "ipd") {
-    out <- out %>%
-      group_by(cohort, variable) %>%
-      group_split() %>%
-      map(function(x) {
-        mutate(x, value = paste0(x$value[1], " (", x$value[2], ",", x$value[3], ")"))
-      }) %>%
-      map(
-        ~ filter(., coefficient == "est")
-      ) %>%
-      bind_rows() %>%
-      select(-coefficient) %>%
-      rename(est = value) %>%
       pivot_wider(
-        names_from = variable,
-        values_from = est
-      )
-
-    return(out)
+        names_from = c(coefficient),
+        values_from = value
+      ) %>%
+      mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
+      select(variable, est, pvalue)
   }
+
+  return(out)
 }

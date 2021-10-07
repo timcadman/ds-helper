@@ -336,7 +336,7 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
       names_to = "cohort",
       values_to = "available"
     ) %>%
-    filter(available == "yes") %>%
+    dplyr::filter(available == "yes") %>%
     select(-available) %>%
     mutate(new_subset_name = paste0(varname, "_a"))
 
@@ -378,19 +378,14 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
     ## Make a variable specifying distance between age of measurement and prefered
     ## value (provided by "mult_vals")
 
-    johan_sort <- tibble(
-      subset = unique(cats$varname),
+    ref_tab <- tibble(
+      varname = unique(cats$varname),
       ref_val = mult_vals
     )
 
     cats_to_subset %<>%
+      left_join(., ref_tab) %>%
       mutate(
-        ref_val = johan_sort$ref_val[
-          match(
-            as.character(bmi_to_subset$varname),
-            as.character(johan_sort$subset)
-          )
-        ],
         condition = paste0(
           "((", new_subset_name, "$", "age", "-", ref_val, ")", "^2",
           ")", "^0.5"
