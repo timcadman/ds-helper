@@ -33,7 +33,7 @@ Imports:
   rlang,
   DSI,
   metafor
-Suggests:
+Suggests: 
   knitr,
   rmarkdown,
   testthat,
