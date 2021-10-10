@@ -10,6 +10,8 @@
 #'                  "separate" outputs separate columns with upper and lower CIs.
 #'                  "paste" adds these in brackets to the coefficient.'
 #' @param round_digits Number of decimal places to use in table. Default is 2.
+#' @param family can be gaussian
+#' @param exp exponentiate coefficients is TRUE of FALSE 
 #' 
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when

@@ -30,7 +30,11 @@ order as the cohorts provided to the model.}
 "separate" outputs separate columns with upper and lower CIs.
 "paste" adds these in brackets to the coefficient.'}
 
+\item{family}{can be gaussian}
+
 \item{round_digits}{Number of decimal places to use in table. Default is 2.}
+
+\item{exp}{exponentiate coefficients is TRUE of FALSE}
 }
 \value{
 A tibble containing the estimate with lower and upper confidence intervals
