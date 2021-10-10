@@ -17,7 +17,7 @@
 
 RELEASE_SCOPE="patch"
 git checkout -f master
-Rscript -e "usethis::use_version('${RELEASE_SCOPE}')"
+Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', usethis::use_version('${RELEASE_SCOPE}'))"
 TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 git commit -a -m "[ci skip] Created release: ${TAG}"
@@ -28,6 +28,6 @@ Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check_built(p
 git tag "${TAG}"
 git push origin "${TAG}"
 echo "Creating new development version for R-package: [ ${BUILD_REPOSITORY_NAME} ]"
-Rscript -e "usethis::use_version('dev')"
+Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', usethis::use_version('dev'))"
 git commit -a -m '[ci skip]: Increment dev-version number'
 git push origin master
