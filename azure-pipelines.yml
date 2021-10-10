@@ -9,7 +9,7 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     container:
-      image: 'rocker/tidyverse:latest'
+      image: 'rocker/verse:4.1.1'
     steps:
     - task: Bash@3
       displayName: Prepare R-package

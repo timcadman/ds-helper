@@ -3,7 +3,6 @@ Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
 Version: 0.0.0.9008
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
-Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
 Authors@R: 
   c(person(given= "Tim", 
       family = "Cadman", 
@@ -19,6 +18,7 @@ Authors@R:
       family = "Bishop",
       role = "ctb",
       email = "tom.bishop@mrc-epid.cam.ac.uk"))
+Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
 Depends: 
   R (>= 3.5.0)
 Imports:
