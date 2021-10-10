@@ -48,7 +48,7 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
                            mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id",
                            band_action = NULL) {
   . <- NULL
-  
+
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
