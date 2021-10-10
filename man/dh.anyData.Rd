@@ -14,16 +14,21 @@ dh.anyData(df = NULL, vars = NULL, conns = NULL)
 \item{conns}{connections object for DataSHIELD backends}
 }
 \value{
-a dataframe with columns for each variable and rows for each cohort indicating if the variable is not completely missing
+a dataframe with columns for each variable and rows for each cohort
+indicating if the variable is not completely missing
 }
 \description{
-When performing a Study Level Meta Analysis of coefficients linear models (for example), the intention should be that a consistent set of confounding variables
-is available for each cohort and used during model fitting.
-However it is not strictly necessary to have all confounding variables available in all cohorts in order to generate a coefficient representing the
-relationship between exposure and outcome. Assume that some cohorts
-have some completely empty confounding variables. In this scenario it is useful
-to be able to specify a model to fit on all cohorts and use a look up table to understand if there are any cohorts that lack a
-particular confounder. This look up table can be used to automatically exclude completely missing confounders without having to do this by hand. This is particularly
-useful if you are looking at a large number of combinations of exposures, outcomes and confounders.
- The purpose of this function is to generate this look up table automatically.
+When performing a Study Level Meta Analysis of coefficients linear models (for example),
+the intention should be that a consistent set of confounding variables is available
+for each cohort and used during model fitting.
+However it is not strictly necessary to have all confounding variables available in all
+cohorts in order to generate a coefficient representing the relationship between exposure
+and outcome.
+Assume that some cohorts have some completely empty confounding variables. In this scenario
+it is useful to be able to specify a model to fit on all cohorts and use a look up table
+to understand if there are any cohorts that lack a particular confounder. This look up
+table can be used to automatically exclude completely missing confounders without having
+to do this by hand. This is particularly useful if you are looking at a large number of
+combinations of exposures, outcomes and confounders.
+The purpose of this function is to generate this look up table automatically.
 }
