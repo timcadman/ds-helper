@@ -113,7 +113,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
 
   if (direction == "long") {
-    return(out)
+    out <- out
   } else if (direction == "wide" & ci_format == "separate") {
     out <- out %>%
       pivot_wider(
@@ -121,7 +121,6 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         values_from = value
       )
 
-    return(out)
   } else if (direction == "wide" & ci_format == "paste" & type == "ipd") {
     out <- out %>%
       group_by(variable) %>%
@@ -136,7 +135,6 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       select(-coefficient) %>%
       rename(est = value)
 
-    return(out)
   } else if (direction == "wide" & ci_format == "paste" & type != "ipd") {
     out <- out %>%
       group_by(cohort, variable) %>%
@@ -155,6 +153,48 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         values_from = est
       )
 
-    return(out)
   }
+
+  if(type == "lmer"){
+
+## Get random effects
+    random_sd <- paste0("study", seq(1, nstudy, 1)) %>%
+      map(function(x) {
+        model$output.summary[[x]]$varcor
+      }) %>%
+      set_names(coh_names) %>%
+      map_depth(2, function(x){
+
+          attr(x, "stddev")
+        
+      }) %>%
+      map(as.data.frame) %>%
+      map(as_tibble, rownames = "coefficient") %>%
+      bind_rows(.id = "cohort") %>%
+      pivot_longer(
+        cols = id_int, 
+        names_to = "cluster", 
+        values_to = "stddev"
+      )
+
+    random_cor <- paste0("study", seq(1, nstudy, 1)) %>%
+      map(function(x) {
+        model$output.summary[[x]]$varcor
+      }) %>%
+      set_names(coh_names) %>%
+      map_depth(2, function(x){
+
+          attr(x, "correlation")
+        
+      })
+
+  out <- list(
+    fixed = out,
+    random_st = random_sd, 
+    random_cor = random_cor
+  )
+
+  }
+
+  return(out)
 }

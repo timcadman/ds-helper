@@ -32,7 +32,7 @@ coefs_by_cohort_names <- group_keys(coefs_by_cohort) %>% pull(cohort)
 
 ## ---- Make sure the columns are in the correct order -------------------------
 coefs_by_cohort %<>% select(cohort, all_of(coef_names))
-newdata %<>% select(all_of(coef_names))
+newdata_min <- newdata %>% select(all_of(coef_names))
 
 ## ---- Now we multiply the coefficients by new data ---------------------------
 coefs_split <- coefs_by_cohort %>%
@@ -42,7 +42,7 @@ set_names(coefs_by_cohort_names)
 fixed <- coefs_split %>%
 map(function(x){
 
-newdata %>%
+newdata_min %>%
 pmap_df(function(...){
 
 out <- c(...)*x 
@@ -55,8 +55,8 @@ return(out)
 pred <- fixed %>%
 map(function(x){
 
-x %>%
-mutate(predicted = rowSums(.))
+newdata %>%
+mutate(predicted = rowSums(x))
 
 }) %>%
 bind_rows(.id = "cohort")
