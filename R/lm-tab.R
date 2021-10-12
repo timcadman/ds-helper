@@ -190,7 +190,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   out <- list(
     fixed = out,
-    random_st = random_sd, 
+    random_sd = random_sd, 
     random_cor = random_cor
   )
 
