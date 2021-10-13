@@ -82,7 +82,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
     missing_n <- perc_missing <- EstimatedVar <- Nvalid <- any_obs <-
     bind_cols <- cohort <- combined <- disc <- discrepancy <- key_stats <-
     n_distinct <- out_cont <- outcome <- same_levels <- se <- stat <-
-    stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <- 
+    stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
     perc_valid <- perc_total <- Ntotal <- NULL
 
   ################################################################################

@@ -11,8 +11,9 @@
 #' @importFrom purrr map
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows %>%
-
-dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL){
+#' @export
+dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL) {
+  age <- . <- NULL
 
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -34,36 +35,35 @@ dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL
   dh.doVarsExist(conns = conns, vars = c(outcome, age_var), df = df)
 
 
-## ---- First we round up the age variable -----------------------------------------------
-DSI::datashield.assign(conns, "age_tmp", as.symbol(paste0(df, "$", age_var, "+0.5")))
+  ## ---- First we round up the age variable -----------------------------------------------
+  DSI::datashield.assign(conns, "age_tmp", as.symbol(paste0(df, "$", age_var, "+0.5")))
 
-calltext <- call("asIntegerDS", "age_tmp")
-DSI::datashield.assign(conns, "age_round", calltext)
+  calltext <- call("asIntegerDS", "age_tmp")
+  DSI::datashield.assign(conns, "age_round", calltext)
 
-## ---- Now we get the mean values for the outcome by age --------------------------------
-calltext <- paste0("meanSdGpDS(", paste0(df, "$", outcome), ",", "age_round", ")")
-mean_tmp <- DSI::datashield.aggregate(conns, as.symbol(calltext))
-
-
-mean_tmp[[1]]$Mean_gp
+  ## ---- Now we get the mean values for the outcome by age --------------------------------
+  calltext <- paste0("meanSdGpDS(", paste0(df, "$", outcome), ",", "age_round", ")")
+  mean_tmp <- DSI::datashield.aggregate(conns, as.symbol(calltext))
 
 
-## ---- Now put into neat long format -------------------------------------------------------
-out <- mean_tmp %>%
-map(function(x){
-
-x$Mean_gp %>% as_tibble(rownames = "age") %>%
-mutate(age = as.numeric(str_remove(age, "age_round_"))) 
-}) %>%
-bind_rows(.id = "cohort")
+  mean_tmp[[1]]$Mean_gp
 
 
-## ---- Remove temporary objects ------------------------------------------------------------
-dh.tidyEnv(
-	obj = c("age_tmp", "age_round"), 
-	type = "remove"
-)
+  ## ---- Now put into neat long format -------------------------------------------------------
+  out <- mean_tmp %>%
+    map(function(x) {
+      x$Mean_gp %>%
+        as_tibble(rownames = "age") %>%
+        mutate(age = as.numeric(str_remove(age, "age_round_")))
+    }) %>%
+    bind_rows(.id = "cohort")
 
-return(out)
 
+  ## ---- Remove temporary objects ------------------------------------------------------------
+  dh.tidyEnv(
+    obj = c("age_tmp", "age_round"),
+    type = "remove"
+  )
+
+  return(out)
 }

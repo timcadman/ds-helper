@@ -12,9 +12,11 @@ dh.getAnonPlotData(df = NULL, v1 = NULL, v2 = NULL, conns = NULL)
 \arguments{
 \item{df}{opal dataframe}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{v1}{variable in df to get plotdata for}
 
-\item{vars}{vector of variable names in dataframe}
+\item{v2}{optional second variable if you want to get scatterplot data}
+
+\item{conns}{connection object for DataSHIELD backends}
 }
 \value{
 A list of the length of the number of variables provided containing

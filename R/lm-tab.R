@@ -10,6 +10,8 @@
 #'                  "separate" outputs separate columns with upper and lower CIs.
 #'                  "paste" adds these in brackets to the coefficient.'
 #' @param round_digits Number of decimal places to use in table. Default is 2.
+#' @param family where type is ipd or slma, specify the family used in the model
+#' @param exp specify whether you want odds ratios to be exponentiated
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match
@@ -20,9 +22,9 @@
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = c("long", "wide"), ci_format = NULL,
                      family = "gaussian", round_digits = 2,
-                     exp = TRUE) {
-  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- 
-  upp_ci <- pvalue <- NULL
+                     exp = FALSE) {
+  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <-
+    uppci <- pvalue <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
@@ -146,7 +148,6 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         names_from = coefficient,
         values_from = value
       )
-
   } else if (direction == "wide" & ci_format == "paste") {
     out <- out %>%
       pivot_wider(
@@ -157,25 +158,23 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       select(variable, est, pvalue)
   }
 
-  if(type == "lmer"){
+  if (type == "lmer") {
 
-## Get random effects
+    ## Get random effects
     random_sd <- paste0("study", seq(1, nstudy, 1)) %>%
       map(function(x) {
         model$output.summary[[x]]$varcor
       }) %>%
       set_names(coh_names) %>%
-      map_depth(2, function(x){
-
-          attr(x, "stddev")
-        
+      map_depth(2, function(x) {
+        attr(x, "stddev")
       }) %>%
       map(as.data.frame) %>%
       map(as_tibble, rownames = "coefficient") %>%
       bind_rows(.id = "cohort") %>%
       pivot_longer(
-        cols = c(-cohort, - coefficient), 
-        names_to = "cluster", 
+        cols = c(-cohort, -coefficient),
+        names_to = "cluster",
         values_to = "stddev"
       )
 
@@ -184,18 +183,15 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         model$output.summary[[x]]$varcor
       }) %>%
       set_names(coh_names) %>%
-      map_depth(2, function(x){
-
-          attr(x, "correlation")
-        
+      map_depth(2, function(x) {
+        attr(x, "correlation")
       })
 
-  out <- list(
-    fixed = out,
-    random_sd = random_sd, 
-    random_cor = random_cor
-  )
-
+    out <- list(
+      fixed = out,
+      random_sd = random_sd,
+      random_cor = random_cor
+    )
   }
 
   return(out)
