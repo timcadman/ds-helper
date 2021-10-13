@@ -7,8 +7,10 @@
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'
-#' @importFrom ds
-
+#' @importFrom DSI datashield.connections_find datashield.assign
+#' @importFrom purrr map
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr bind_rows %>%
 
 dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL){
 
@@ -58,8 +60,8 @@ bind_rows(.id = "cohort")
 
 ## ---- Remove temporary objects ------------------------------------------------------------
 dh.tidyEnv(
-	obj = c("age_tmp", "age_round"),
-  type = "remove"
+	obj = c("age_tmp", "age_round"), 
+	type = "remove"
 )
 
 return(out)
