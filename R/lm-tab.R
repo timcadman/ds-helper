@@ -11,7 +11,7 @@
 #'                  "paste" adds these in brackets to the coefficient.'
 #' @param round_digits Number of decimal places to use in table. Default is 2.
 #' @importFrom tibble tibble
-#' @importFrom dplyr mutate %>% select
+#' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
@@ -21,7 +21,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = c("long", "wide"), ci_format = NULL,
                      family = "gaussian", round_digits = 2,
                      exp = TRUE) {
-  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
+  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- 
+  upp_ci <- pvalue <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
@@ -114,26 +115,19 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       variable = ifelse(variable == "(Intercept)", "intercept", variable),
       value = round(value, round_digits)
     ) %>%
-    filter(coefficient != "se")
+    dplyr::filter(coefficient != "se")
 
 
   ## ---- Convert to odds ratios where specified -------------------------------
   if (exp == TRUE & family == "gaussian") {
     warning("It is not recommended to exponentiate coefficients from linear 
             regression: argument is ignored")
-  }
-
-  if (exp == TRUE & family == "binomial" & direction == "long") {
+  } else if (exp == TRUE & family == "binomial" & direction == "long") {
     out <- out %>%
       mutate(value = case_when(
         coefficient == "pvalue" ~ value,
         coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits)
       ))
-  }
-
-  ## ---- Put into final format ------------------------------------------------
-  if (direction == "long") {
-    out <- out
   } else if (exp == TRUE & family == "binomial" & direction == "wide") {
     out <- out %>%
       pivot_wider(
@@ -143,17 +137,20 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       mutate(across(est:uppci, ~ round(exp(.), round_digits)))
   }
 
-  if (direction == "wide" & ci_format == "separate") {
+  ## ---- Put into final format ------------------------------------------------
+  if (direction == "long") {
+    out <- out
+  } else if (direction == "wide" & ci_format == "separate") {
     out <- out %>%
       pivot_wider(
-        names_from = c(coefficient),
+        names_from = coefficient,
         values_from = value
       )
 
   } else if (direction == "wide" & ci_format == "paste") {
     out <- out %>%
       pivot_wider(
-        names_from = c(coefficient),
+        names_from = coefficient,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
@@ -177,7 +174,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       map(as_tibble, rownames = "coefficient") %>%
       bind_rows(.id = "cohort") %>%
       pivot_longer(
-        cols = id_int, 
+        cols = c(-cohort, - coefficient), 
         names_to = "cluster", 
         values_to = "stddev"
       )
