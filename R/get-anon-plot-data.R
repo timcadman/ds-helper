@@ -18,7 +18,7 @@
 #'
 #' @export
 dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL) {
-  . <- NULL
+  . <- value <- x <- y <- NULL
 
   if (is.null(df)) {
     stop("Please specify a data frame")
