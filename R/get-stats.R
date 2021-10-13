@@ -45,7 +45,7 @@
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows rename filter mutate_at vars distinct add_row
-#' @importFrom purrr map flatten_dbl pmap
+#' @importFrom purrr map flatten_dbl pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
 #' @importFrom stringr str_detect
@@ -82,7 +82,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
     missing_n <- perc_missing <- EstimatedVar <- Nvalid <- any_obs <-
     bind_cols <- cohort <- combined <- disc <- discrepancy <- key_stats <-
     n_distinct <- out_cont <- outcome <- same_levels <- se <- stat <-
-    stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <- NULL
+    stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <- 
+    perc_valid <- perc_total <- Ntotal <- NULL
 
   ################################################################################
   # 2. Get classes of variables
