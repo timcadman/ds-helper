@@ -12,7 +12,8 @@ dh.lmTab(
   direction = c("long", "wide"),
   ci_format = NULL,
   family = "gaussian",
-  round_digits = 2
+  round_digits = 2,
+  exp = TRUE
 )
 }
 \arguments{
