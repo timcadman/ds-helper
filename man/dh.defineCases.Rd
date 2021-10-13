@@ -5,16 +5,24 @@
 \title{Indicates whether each subject has any or all of the variables contained
 within a set}
 \usage{
-dh.defineCases(df = NULL, vars = NULL, type = c("any", "all"), conns = NULL)
+dh.defineCases(
+  df = NULL,
+  vars = NULL,
+  type = c("any", "all"),
+  conns = NULL,
+  newobj = "dc_data_avail"
+)
 }
 \arguments{
 \item{df}{datashield dataframe}
 
 \item{vars}{vector of variable names in dataframe}
 
-\item{type}{can be any or all}
+\item{type}{whther to define cases based on any or all provided variables}
 
 \item{conns}{connection object for DataSHIELD backends}
+
+\item{newobj}{optional name for outputted object. Defaults to "dc_data_avail"}
 }
 \value{
 None. A new variable is created within the opal environment. If the option
