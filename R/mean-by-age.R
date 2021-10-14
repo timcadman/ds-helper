@@ -39,7 +39,7 @@ intervals = NULL) {
 ## There is an easy way and a hard way. If we bin based on integer units of the
 ## binning variable it is quite quick
 
-  if(is.null(intervals){
+  if(is.null(intervals)){
 
 
   ## ---- First we round up the age variable -----------------------------------------------

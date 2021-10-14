@@ -178,6 +178,17 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         values_to = "stddev"
       )
 
+    ## Get std of residual error
+    res_sd <- paste0("study", seq(1, nstudy, 1)) %>%
+      map(function(x) {
+        model$output.summary[[x]]$sigma
+      }) %>%
+      set_names(coh_names) %>%
+      map(as.data.frame) %>%
+      map(as_tibble) %>%
+      bind_rows(.id = "cohort") %>%
+      set_names(c("cohort", "res_std")) 
+
     random_cor <- paste0("study", seq(1, nstudy, 1)) %>%
       map(function(x) {
         model$output.summary[[x]]$varcor
@@ -190,6 +201,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     out <- list(
       fixed = out,
       random_sd = random_sd,
+      resid_sd = res_sd,
       random_cor = random_cor
     )
   }
