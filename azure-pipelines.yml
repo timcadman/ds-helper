@@ -32,7 +32,7 @@ jobs:
       condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         filePath: .azure/release.bash
-        failOnStderr: true
+        failOnStderr: false
       env:
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
         CODECOV_TOKEN: $(CODECOV_TOKEN)  
