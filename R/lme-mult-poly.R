@@ -2,7 +2,7 @@
 #'
 #' @param conns connection objects for DataSHIELD backends
 #' @param df name of dataFrame
-#' @param formulae tibble containing formulae with column labelled 'formulae'
+#' @param formulae a vector of model formulae to fit
 #'
 #' @importFrom dsBaseClient ds.lmerSLMA
 #' @importFrom purrr map flatten_chr map set_names
@@ -16,13 +16,17 @@
 #' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL) {
   if (is.null(df)) {
     stop("Please specify dataframe to use for polynomial models")
   }
 
   if (is.null(formulae)) {
-    stop("Please specify a tibble containing model formulae")
+    stop("Please specify a vector of model formulae")
+  }
+
+  if (is.null(poly_names)) {
+    stop("Please specify a vector of names for your models")
   }
 
   if (is.null(conns)) {
@@ -33,7 +37,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
-  models <- formulae$formulae %>%
+  models <- formulae %>%
     map(
       ~ ds.lmerSLMA(
         dataName = df,
@@ -44,7 +48,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
 
   ## ---- Summarise convergence info ---------------------------------------------
   convergence <- models %>% map(~ .x$Convergence.error.message)
-  names(convergence) <- formulae$polys
+  names(convergence) <- poly_names
 
   if (all(str_detect(flatten_chr(convergence), "no convergence error reported") != TRUE)) {
     warning("Not all models have converged for all cohorts. Check 'convergence' table for more details")
@@ -53,46 +57,31 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, conns = NULL) {
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
-  fit.tab <- models %>% map(function(x) {
+## First we get the loglikelihood value for each study and each model
+  raw_logs <- models %>% map(function(x) {
     nstudies %>% map(function(y) {
       tibble(
         loglik = x$output.summary[[y]]$logLik
       )
     })
-  })
+  }) %>% map(function(x) {
+    set_names(x, names(conns))
+  }) %>%
+  set_names(poly_names)
 
-  fit.tab <- fit.tab %>% map(function(x) {
-    set_names(x, nstudies)
-  })
-  names(fit.tab) <- formulae$polys
-  fit.tab <- fit.tab %>% map(unlist)
-
-  fit.tab <- bind_rows(fit.tab, .id = "model")
-
-  fit.tab %<>% pivot_longer(
-    cols = !model,
-    names_to = "study",
-    values_to = "loglik"
-  ) %>% group_split(study)
-
-
-  fit.tab %<>% map(function(x) {
-    mutate(x, log_rank = dense_rank(dplyr::desc(x$loglik))) %>%
-      arrange(log_rank)
-  })
-
-  fit.tab <- bind_rows(fit.tab) %>% pivot_wider(
-    names_from = study,
-    values_from = c(loglik, log_rank)
-  )
+  ## Now we put this into a nicer format
+  fit.tab <- raw_logs %>% 
+  map(unlist) %>%
+  bind_rows(.id = "model") 
 
   colnames(fit.tab) <- str_remove(colnames(fit.tab), ".loglik")
 
-  fit.tab %<>% mutate(
-    av_rank = rowMeans(select(., starts_with("log_rank")), na.rm = TRUE),
-    sum_log = rowSums(across(loglik_study1:loglik_study2))
+  ## Calculate a sum of the loglikelihoods
+  fit.tab <- fit.tab %>% 
+  mutate(
+    sum_log = rowSums(across(-model))
   ) %>%
-    arrange(av_rank)
+    arrange(desc(sum_log))
 
   out <- list(models = models, convergence = convergence, fit = fit.tab)
 

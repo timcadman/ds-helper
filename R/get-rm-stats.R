@@ -1,64 +1,91 @@
-### Age range of participants
-# First we derive a variable indicating the age range of subjects within each
-# cohort. Note, that for disclosure reasons it is not possible to view the minimum
-# and maximum values. Instead we can view the range from 5% to 95%.
-# ```{r summarise-ages}
+#' Produces descriptive statistics based on repeated measures data
+#' which it would be useful to report in papers.
+#'
+#' @param df datashield dataframe
+#' @param age_var name of age variable in df
+#' @param outcome name of outcome variable in df
+#' @param conns connection object for DataSHIELD backends
+#' 
+#' @importFrom
+#'
+#' @export
+
+dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL){
+
+if(is.null(df)){
+stop("Please provide the name of a datashield dataframe")
+}
+
+if(is.null(outcome)){
+stop("Please provide the name of your outcome variable")
+}
+
+if(is.null(age_var)){
+stop("Please provide the name of your age variable in df")
+}
+
+if (is.null(conns)) {
+conns <- datashield.connections_find()
+}
 
 
-# df = "data"
-# outcome = "weight"
-# age_var = "age"
+df = "data"
+outcome = "weight"
+age_var = "age"
 
+## ---- First get overall stats for some of the easy ones -------------------------------------------
+stats <- dh.getStats(
+ 	df = df,
+ 	vars = c(outcome, age_var)
+ )
 
-# dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL){
+## ---- Age range of participants -------------------------------------------------------------------
+ age_ranges <- stats$continuous %>%
+ dplyr::filter(variable == age_var) %>%
+ mutate(
+ 	min_age = perc_5,
+ 	max_age = perc_95) %>%
+ dplyr::select(cohort, min_age, max_age)
 
-## ---- Overall outcome stats ------------------------------------------------------
-# tmp <- dh.getStats(
-# 	df = df,
-# 	vars = c(outcome, age_var)
-# )
-
-## ---- Minish and maxish range ---------------------------------------------------
-# age_ranges <- tmp$continuous %>%
-# dplyr::filter(variable == age_var) %>%
-# mutate(
-# 	min_age = perc_5,
-# 	max_age = perc_95) %>%
-# dplyr::select(cohort, min_age, max_age)
-#
-#
 ## ---- Total number of outcome measurements -------------------------------------
-# outcome_n <- tmp$continuous %>%
-# dplyr::filter(variable == outcome) %>%
-# dplyr::select(cohort, n_obs = valid_n)
+outcome_n <- stats$continuous %>%
+dplyr::filter(variable == outcome) %>%
+dplyr::select(cohort, n_obs = valid_n)
 
 
 ## ---- Total number of unique participants ----------------------------------------
 
-
-### Number of participants
-# We also need to calculate how many participants (not observations) there are
-# within our data. This is a little convoluted in DataSHIELD. First, we use the
-# function 'ds.tapply.assign' to summarise the number of observations for each
+# First, we use ds.tapply.assign to summarise the number of observations for each
 # subject. The length of this created object then gives us the number of subjects.
-# ```{r summarise-subjects}
 
-# COULD ALSO RESHAPE TO WIDE AND GET DIMENSIONS
+ds.summary("data$id_int")
 
-# ds.tapply.assign(
-# 	X.name = "data$weight",
-# 	INDEX.names = "data$id",
-# 	FUN.name = "N",
-# 	newobj = "id_summary")
+ds.asFactorSimple("data$id_int", "id_fact")
 
-# n_subjects <- ds.length("id_summary$N")[1:length(names(conns))] %>%
-# setNames(names(conns)) %>%
-# bind_rows() %>%
-# mutate(
-# 	variable = "No. participants",
-# 	category = "") %>%
-# select(variable, everything()) %>%
-# mutate(across(where(is.numeric), as.character))
+ds.summary("id_fact")
+
+ds.tapply.assign(
+	X.name = "data$weight",
+ 	INDEX.names = "id_fact",
+ 	FUN.name = "N",
+ 	newobj = "id_summary")
+
+ds.length("id_summary")
+ds.class("id_summary")
+
+ds.tapply(
+	X.name = 'data$weight',
+ 	INDEX.names = 'data$id_int',
+ 	FUN.name = 'N')
+
+n_subjects <- ds.length("id_summary$N")[1:length(names(conns))] %>%
+ setNames(names(conns)) %>%
+ bind_rows() %>%
+ mutate(
+ 	variable = "No. participants",
+ 	category = "") %>%
+ select(variable, everything()) %>%
+ mutate(across(where(is.numeric), as.character))
 
 
 ### Median number of weight measurements per child
