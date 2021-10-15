@@ -4,7 +4,13 @@
 \alias{dh.meanByAge}
 \title{Calculate mean values of one repeated measures variable by an age variable}
 \usage{
-dh.meanByAge(df = NULL, outcome = NULL, age_var = NULL, conns = NULL)
+dh.meanByAge(
+  df = NULL,
+  outcome = NULL,
+  age_var = NULL,
+  conns = NULL,
+  intervals = NULL
+)
 }
 \arguments{
 \item{df}{datashield dataframe}

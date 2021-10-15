@@ -9,7 +9,7 @@ dh.makeAgePolys(
   df = NULL,
   agevars = NULL,
   conns = NULL,
-  poly_form = c("^-2", "^-1", "^-0.5", "^0", "^0.5", "^2", "^3"),
+  poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
   poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")
 )
 }

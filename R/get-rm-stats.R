@@ -6,7 +6,7 @@
 #' @param outcome name of outcome variable in df
 #' @param conns connection object for DataSHIELD backends
 #' 
-#' @importFrom
+#' @importFrom dplyr %>%
 #'
 #' @export
 
@@ -173,3 +173,4 @@ n_subjects <- ds.length("id_summary$N")[1:length(names(conns))] %>%
 # mutate(
 # 	variable = "Median ALMc in years (IQR)",
 # 	category = "")
+}
