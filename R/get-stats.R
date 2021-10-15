@@ -114,7 +114,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
 
   if (nrow(real_disc) > 0) {
     stop(
-      "\nThe following variables do not have the same class in all cohorts. Please 
+      "\nThe following variables do not have the same class in all cohorts. Please
 check with ds.class \n\n",
       real_disc %>% pull(variable) %>% paste(collapse = "\n")
     )
@@ -165,7 +165,7 @@ check with ds.class \n\n",
 
     if (any(level_ref$same_levels == "no") == TRUE) {
       stop(
-        "The following categorical variables do not have the same levels. 
+        "The following categorical variables do not have the same levels.
 Please check using ds.levels:\n\n",
         level_ref %>%
           dplyr::filter(same_levels == "no") %>%

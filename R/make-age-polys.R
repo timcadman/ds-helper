@@ -22,9 +22,9 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL, 
-  poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-  poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")) {
+dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
+                            poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
+                            poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")) {
   if (is.null(df)) {
     stop("Please specify a data frame which contains age variable(s)")
   }
@@ -33,26 +33,22 @@ dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
     stop("Please specify one or more age variables to transform")
   }
 
-if(length(poly_names) != length(poly_form)){
-
-stop("The vectors supplied to arguments 'poly_names' and 'poly_form
+  if (length(poly_names) != length(poly_form)) {
+    stop("The vectors supplied to arguments 'poly_names' and 'poly_form
   are not the same length")
-
-}
+  }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-## We have to do log a bit more differently
-log_yn <- any(str_detect(poly_form, "log") == TRUE)
-  
-if(log_yn == TRUE){
+  ## We have to do log a bit more differently
+  log_yn <- any(str_detect(poly_form, "log") == TRUE)
 
-poly_names <- poly_names[str_detect(poly_names, "log") == FALSE]
-poly_form <- poly_form[str_detect(poly_form, "log") == FALSE]
-
-}  
+  if (log_yn == TRUE) {
+    poly_names <- poly_names[str_detect(poly_names, "log") == FALSE]
+    poly_form <- poly_form[str_detect(poly_form, "log") == FALSE]
+  }
   df_age <- c(paste0(df, "$", agevars))
 
   polys <- tibble(
@@ -60,13 +56,13 @@ poly_form <- poly_form[str_detect(poly_form, "log") == FALSE]
     form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = "")
   )
 
-if(log_yn == TRUE){
-
-  polys <- add_row(
-    polys, 
-    poly = paste0("log", agevars), 
-    form = paste0("log(", df_age, ")"))
-}
+  if (log_yn == TRUE) {
+    polys <- add_row(
+      polys,
+      poly = paste0("log", agevars),
+      form = paste0("log(", df_age, ")")
+    )
+  }
 
   polys %>%
     pmap(function(poly, form, ...) {

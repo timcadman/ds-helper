@@ -35,43 +35,34 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
 
   random <- arg_match(random, c("intercept", "slope"))
 
-## ---- Make all combinations of polynomials ---------------------------------------------------
-poly_fixed <- combn(agevars, 2, paste, collapse = "+")
+  ## ---- Make all combinations of polynomials ---------------------------------------------------
+  poly_fixed <- combn(agevars, 2, paste, collapse = "+")
 
 
-## ---- Define our random effects --------------------------------------------------------------
+  ## ---- Define our random effects --------------------------------------------------------------
 
   if (random == "intercept") {
     random_eff <- paste0("(1|", idvar, ")")
   } else if (random == "slope") {
-
     random_eff <- paste0("(1+", poly_fixed, "|", idvar, ")")
-
   }
 
-## ---- Do the business -----------------------------------------------------------------
-  
+  ## ---- Do the business -----------------------------------------------------------------
+
   if (is.null(fixed) & !is.null(age_interactions)) {
-
     stop("You must specify fixed effects if you want to include age X fixed effects interactions")
-
   } else if (is.null(fixed) & is.null(age_interactions)) {
-
     forms <- paste0(outcome, "~1+", poly_fixed, "+", random_eff)
-
   } else if (!is.null(fixed) & is.null(age_interactions)) {
-
     forms <- paste0(outcome, "~1+", poly_fixed, "+", fixed, "+", random_eff)
-
   } else if (!is.null(fixed) & !is.null(age_interactions)) {
-
     fixed_tmp <- paste0(fixed, "*", agevars)
     fixed_int <- combn(fixed_tmp, 2, paste, collapse = "+")
 
     forms <- paste0(outcome, "~1+", poly_fixed, "+", fixed, "+", fixed_int, "+", random_eff)
   }
 
-## ---- Output -------------------------------------------------------------------
+  ## ---- Output -------------------------------------------------------------------
   out <- tibble(
     polys = combn(agevars, 2, paste, collapse = ","),
     formulae = forms

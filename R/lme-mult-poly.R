@@ -57,30 +57,32 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
-## First we get the loglikelihood value for each study and each model
-  raw_logs <- models %>% map(function(x) {
-    nstudies %>% map(function(y) {
-      tibble(
-        loglik = x$output.summary[[y]]$logLik
-      )
-    })
-  }) %>% map(function(x) {
-    set_names(x, names(conns))
-  }) %>%
-  set_names(poly_names)
+  ## First we get the loglikelihood value for each study and each model
+  raw_logs <- models %>%
+    map(function(x) {
+      nstudies %>% map(function(y) {
+        tibble(
+          loglik = x$output.summary[[y]]$logLik
+        )
+      })
+    }) %>%
+    map(function(x) {
+      set_names(x, names(conns))
+    }) %>%
+    set_names(poly_names)
 
   ## Now we put this into a nicer format
-  fit.tab <- raw_logs %>% 
-  map(unlist) %>%
-  bind_rows(.id = "model") 
+  fit.tab <- raw_logs %>%
+    map(unlist) %>%
+    bind_rows(.id = "model")
 
   colnames(fit.tab) <- str_remove(colnames(fit.tab), ".loglik")
 
   ## Calculate a sum of the loglikelihoods
-  fit.tab <- fit.tab %>% 
-  mutate(
-    sum_log = rowSums(across(-model))
-  ) %>%
+  fit.tab <- fit.tab %>%
+    mutate(
+      sum_log = rowSums(across(-model))
+    ) %>%
     arrange(desc(sum_log))
 
   out <- list(models = models, convergence = convergence, fit = fit.tab)

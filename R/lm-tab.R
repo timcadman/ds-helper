@@ -122,7 +122,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   ## ---- Convert to odds ratios where specified -------------------------------
   if (exp == TRUE & family == "gaussian") {
-    warning("It is not recommended to exponentiate coefficients from linear 
+    warning("It is not recommended to exponentiate coefficients from linear
             regression: argument is ignored")
   } else if (exp == TRUE & family == "binomial" & direction == "long") {
     out <- out %>%
@@ -187,7 +187,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       map(as.data.frame) %>%
       map(as_tibble) %>%
       bind_rows(.id = "cohort") %>%
-      set_names(c("cohort", "res_std")) 
+      set_names(c("cohort", "res_std"))
 
     random_cor <- paste0("study", seq(1, nstudy, 1)) %>%
       map(function(x) {
