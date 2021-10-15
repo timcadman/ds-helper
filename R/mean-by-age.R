@@ -137,6 +137,7 @@ slice(2)
 }) %>%
 bind_rows() %>%
 mutate(group = str_remove(group, "_[^_]+$")) %>%
+mutate(group = str_remove(group, "grp_")) %>%
 pivot_longer(
   cols = -group,
   names_to = "cohort", 
