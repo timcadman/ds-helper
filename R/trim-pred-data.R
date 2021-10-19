@@ -39,7 +39,7 @@ dh.trimPredData <- function(pred = NULL, coh_names = NULL, age = "age", min = NU
   out <- ref %>%
     pmap(function(coh_ref, min, max) {
       pred %>%
-        filter(cohort == coh_ref & between(age, min, max))
+        dplyr::filter(cohort == coh_ref & between(age, min, max))
     }) %>%
     bind_rows()
 
