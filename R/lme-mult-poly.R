@@ -37,28 +37,62 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
-  models <- formulae %>%
-    map(
-      ~ ds.lmerSLMA(
-        dataName = df,
-        formula = .x,
-        datasources = conns
-      )
-    )
+  suppressWarnings(
+    models <- formulae %>%
+      map(
+        ~tryCatch(
+          {ds.lmerSLMA(
+              dataName = df,
+              formula = .x,
+              datasources = conns)}, 
+            error = function(error_message){
+              out <- list("failed", error_message)
+              return(out)
+              })
+        )
+  )
+  
+  ## ---- Identify models which failed completely ------------------------------
+  fail_tmp <- models %>% 
+    map_chr(~.[[1]][[1]][[1]] %>% str_detect("failed", negate = TRUE)) 
+  
+  fail_messages <- tibble(
+    poly = poly_names[fail_tmp == FALSE], 
+    message = models[fail_tmp == FALSE] %>% map_chr(~.[[2]]$message))
+  
+  failure <- tibble(
+    poly = poly_names,
+    completed = fail_tmp
+  ) %>%
+    left_join(., fail_messages, by = "poly")
+  
+  ## ---- Identify the models with some convergence issues ---------------------
+  poly_comp <- models[fail_tmp == TRUE]
+  
+  con_tmp <- poly_comp %>% map(~ .x$Convergence.error.message)
+  
+  convergence <- tibble(
+    poly = poly_names[fail_tmp == TRUE], 
+    converged = all(str_detect(flatten_chr(con_tmp), "no convergence error reported"))
+  )
+  
+  problems <- left_join(failure, convergence, by = "poly")
 
   ## ---- Summarise convergence info ---------------------------------------------
-  convergence <- models %>% map(~ .x$Convergence.error.message)
-  names(convergence) <- poly_names
-
-  if (all(str_detect(flatten_chr(convergence), "no convergence error reported") != TRUE)) {
-    warning("Not all models have converged for all cohorts. Check 'convergence' table for more details")
+  if (any(problems$completed == FALSE)) {
+    warning("Some models threw an error message. Check 'convergence' table for more details")
+  }
+  
+  if (any(!is.na(problems$converged) & problems$converged == FALSE)) {
+    warning("Not all models have converged for all cohorts. Check 'convergence' 
+            table for more details")
   }
 
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
   ## First we get the loglikelihood value for each study and each model
-  raw_logs <- models %>%
+  raw_logs <- models[fail_tmp == TRUE] %>%
     map(function(x) {
       nstudies %>% map(function(y) {
         tibble(
@@ -69,7 +103,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
     map(function(x) {
       set_names(x, names(conns))
     }) %>%
-    set_names(poly_names)
+    set_names(poly_names[fail_tmp == TRUE])
 
   ## Now we put this into a nicer format
   fit.tab <- raw_logs %>%
@@ -85,7 +119,11 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
     ) %>%
     arrange(desc(sum_log))
 
-  out <- list(models = models, convergence = convergence, fit = fit.tab)
+  ## Add in some NAs for the models which threw errors
+  fit.tab <- fit.tab %>% 
+    add_row(model = poly_names[fail_tmp == FALSE])
+
+  out <- list(models = models, convergence = problems, fit = fit.tab)
 
   return(out)
 }
