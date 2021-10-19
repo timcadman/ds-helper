@@ -1,7 +1,7 @@
 Package: dsHelper
 Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
-Version: 0.0.0.9008
+Version: 0.0.0.9100
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
 Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
 Authors@R: 
