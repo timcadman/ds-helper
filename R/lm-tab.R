@@ -92,9 +92,9 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       select(cohort, variable, est, se)
     
     ## Fix a problem where variables are not named correctly
-    if(length(nstudy == 1)){
+    if(length(nstudy) == 1){
       
-    slma$variable <- separate$variable
+    slma$variable <- unique(separate$variable)
       
     }
 
