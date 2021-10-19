@@ -52,6 +52,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
         )
   )
   
+  names(models) <- poly_names
+  
   ## ---- Identify models which failed completely ------------------------------
   fail_tmp <- models %>% 
     map_chr(~.[[1]][[1]][[1]] %>% str_detect("failed", negate = TRUE)) 
@@ -79,7 +81,11 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   problems <- left_join(failure, convergence, by = "poly")
 
   ## ---- Summarise convergence info ---------------------------------------------
-  if (any(problems$completed == FALSE)) {
+  if (all(problems$completed == FALSE)) {
+    warning("All models failed. Check 'convergence' table for more details")
+  }
+  
+  if (all(problems$completed != FALSE) & any(problems$completed == FALSE)) {
     warning("Some models threw an error message. Check 'convergence' table for more details")
   }
   
@@ -91,6 +97,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
+  if(length(poly_comp) > 1){
   ## First we get the loglikelihood value for each study and each model
   raw_logs <- models[fail_tmp == TRUE] %>%
     map(function(x) {
@@ -122,7 +129,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   ## Add in some NAs for the models which threw errors
   fit.tab <- fit.tab %>% 
     add_row(model = poly_names[fail_tmp == FALSE])
-
+  }
+  
   out <- list(models = models, convergence = problems, fit = fit.tab)
 
   return(out)
