@@ -90,6 +90,13 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       rename(se = se.ML) %>%
       mutate(cohort = "combined") %>%
       select(cohort, variable, est, se)
+    
+    ## Fix a problem where variables are not named correctly
+    if(length(nstudy) == 1){
+      
+    slma$variable <- unique(separate$variable)
+      
+    }
 
     out <- bind_rows(separate, slma) %>%
       group_by(variable, cohort) %>%
