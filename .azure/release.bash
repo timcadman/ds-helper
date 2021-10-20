@@ -23,7 +23,7 @@ PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 git commit -a -m "[ci skip] Created release: ${TAG}"
 echo "Releasing ${PACKAGE} ${TAG}"
 R CMD build . --library ${R_USER_LIBS}
-Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check_built(path = './${PACKAGE}_${TAG}.tar.gz', remote=TRUE, force_suggests = TRUE))"
+Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check_built(path = './${PACKAGE}_${TAG}.tar.gz', force_suggests = TRUE))"
 #set +x; curl -v --user "${NEXUS_USER}:${NEXUS_PASS}" --upload-file "${PACKAGE}_${TAG}".tar.gz "${REGISTRY}"/src/contrib/"${PACKAGE}_${TAG}".tar.gz
 git tag "${TAG}"
 git push origin "${TAG}"
