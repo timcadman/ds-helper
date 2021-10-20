@@ -9,6 +9,6 @@ git config --global user.name "Azure Pipeline"
 git remote set-url origin "https://${GITHUB_TOKEN}@github.com/lifecycle-project/ds-helper.git"
 
 Rscript -e "install.packages(c('covr', 'withr', 'devtools', 'lintr', 'mockery'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
-Rscript -e "install.packages(c('dsBaseClient', 'DSI', 'metafor', 'meta'), repos=c('https://cloud.r-project.org','https://cran.obiba.org'), lib='${R_LIBS_USER}')"
-
+Rscript -e "install.packages(c('DSI', 'metafor', 'meta'), repos='https://cloud.r-project.org', lib='${R_LIBS_USER}')"
+Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::install_github('datashield/dsBaseClient', ref='6.1.0'))"
 cd "${BUILD_REPOSITORY_LOCALPATH}"
