@@ -15,7 +15,6 @@ jobs:
       displayName: Prepare R-package
       inputs:
         filePath: .azure/prepare.bash
-        failOnStderr: false
       env:
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
     - task: Bash@3
@@ -23,7 +22,6 @@ jobs:
       condition: eq(variables['Build.Reason'], 'PullRequest')
       inputs:
         filePath: .azure/pullrequest.bash
-        failOnStderr: false
       env:
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
         CODECOV_TOKEN: $(CODECOV_TOKEN)  
@@ -32,7 +30,6 @@ jobs:
       condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         filePath: .azure/release.bash
-        failOnStderr: false
       env:
         R_LIBS_USER: '$(Agent.BuildDirectory)/R/library'
         CODECOV_TOKEN: $(CODECOV_TOKEN)  
