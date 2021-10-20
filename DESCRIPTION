@@ -37,8 +37,7 @@ Suggests:
   knitr,
   rmarkdown,
   testthat,
-  mockery,
-  covr
+  mockery
 URL: https://github.com/lifecycle-project/ds-helper/,
   https://lifecycle-project.github.io/ds-helper/
 BugReports: https://github.com/lifecycle-project/ds-helper/issues/
