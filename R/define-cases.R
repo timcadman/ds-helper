@@ -21,9 +21,10 @@
 #' @importFrom DSI datashield.connections_find
 #' @importFrom purrr map
 #' @importFrom dplyr %>%
+#' @importFrom rlang arg_match
 #'
 #' @export
-dh.defineCases <- function(df = NULL, vars = NULL, type = c("any", "all"), conns = NULL,
+dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
                            newobj = "dc_data_avail") {
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -32,6 +33,13 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = c("any", "all"), conns
   if (is.null(vars)) {
     stop("Please specify variable(s)")
   }
+  
+  if (is.null(type)) {
+    stop("Please specify whether you want to define cases based on any or all of
+         provided variable(s)")
+  }
+  
+  type <- match.arg(type, c("any", "all"))
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -41,38 +49,29 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = c("any", "all"), conns
 
   ## ---- Convert to numeric -----------------------------------------------------
   vars %>%
-    map(
-      ~ ds.asNumeric(
-        x.name = paste0(df, "$", .),
-        newobj = .,
-        datasources = conns
-      )
-    )
-
+    map(function(x){
+      calltext <- call("asNumericDS", paste0(df, "$", x))
+      DSI::datashield.assign(conns, x, calltext)
+      })
+   
   ## Does subject have non-missing data for all of these vars?
   if (type == "all") {
-    ds.make(
-      toAssign = paste0(vars, collapse = "+"),
-      newobj = "dc_all_data",
-      datasources = conns
-    )
-
+    
+    DSI::datashield.assign(
+      conns, 
+      "dc_all_data", 
+      as.symbol(paste0(vars, collapse = "+")))
+    
     ds.replaceNA(
       x = "dc_all_data",
-      forNA = -999999,
+      forNA = rep(-999999, length(conns)),
       newobj = "dc_all_data",
       datasources = conns
     )
-
-    ds.Boole(
-      V1 = "dc_all_data",
-      V2 = -999999,
-      Boolean.operator = ">",
-      na.assign = 0,
-      newobj = newobj,
-      datasources = conns
-    )
-
+    
+    calltext <- call("BooleDS", "dc_all_data", -999999, 5, 0, TRUE)
+    DSI::datashield.assign(conns, newobj, calltext)
+    
     ## Does subject have non-missing data for any of these vars?
   } else if (type == "any") {
     vars %>%
@@ -86,33 +85,13 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = c("any", "all"), conns
       ) ## Replace all NAs. All variables will now either be the original value or -999999
 
     vars %>%
-      map(
-        ~ ds.Boole(
-          V1 = .,
-          V2 = -999999,
-          Boolean.operator = ">",
-          newobj = paste0(., "_dc_1"),
-          datasources = conns
-        )
-      )
+      map(function(x){
+    
+    calltext <- call("BooleDS", x, -999999, 6, 0, TRUE)
+    DSI::datashield.assign(conns, paste0(x, "_dc_1"), calltext)
 
-    ds.make(
-      toAssign = paste0(
-        paste0(vars, "_dc_1"),
-        collapse = "+"
-      ),
-      newobj = "dc_any_data",
-      datasources = conns
-    )
-
-    ds.Boole(
-      V1 = "dc_any_data",
-      V2 = 1,
-      Boolean.operator = ">=",
-      na.assign = 0,
-      newobj = newobj,
-      datasources = conns
-    )
+      })
+    
   }
 
   if (type == "all") {
