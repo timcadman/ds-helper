@@ -71,12 +71,14 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   ## ---- Identify the models with some convergence issues ---------------------
   poly_comp <- models[fail_tmp == TRUE]
   
-  con_tmp <- poly_comp %>% map(~ .x$Convergence.error.message)
-  
+  con_any <- poly_comp %>% 
+  map(~ .x$Convergence.error.message) %>% 
+  map(~ str_detect(., "no convergence error reported")) %>% 
+  map_lgl(function(x){any(x == FALSE)}) 
+
   convergence <- tibble(
     poly = poly_names[fail_tmp == TRUE], 
-    converged = all(str_detect(flatten_chr(con_tmp), "no convergence error reported"))
-  )
+    all_converged = !con_any)
   
   problems <- left_join(failure, convergence, by = "poly")
 
@@ -89,9 +91,9 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
     warning("Some models threw an error message. Check 'convergence' table for more details")
   }
   
-  if (any(!is.na(problems$converged) & problems$converged == FALSE)) {
+  if (any(!is.na(problems$all_converged) & problems$all_converged == FALSE)) {
     warning("Not all models have converged for all cohorts. Check 'convergence' 
-            table for more details")
+            table for more details along with model output")
   }
 
   ## ---- Summarise fit info -----------------------------------------------------
