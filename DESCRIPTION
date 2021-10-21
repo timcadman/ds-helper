@@ -1,24 +1,24 @@
 Package: dsHelper
 Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
-Version: 0.0.0.9100
+Version: 0.0.1.9000
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
-Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
 Authors@R: 
   c(person(given= "Tim", 
-      family = "Cadman", 
-      email = "t.cadman@bristol.ac.uk",
-      role = c("aut", "cre"),
-      comment = c(ORCID = "0000-0002-7682-5645")),
+           family = "Cadman", 
+           email = "t.cadman@bristol.ac.uk",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-7682-5645")),
     person(given = "Sido",
-      family = "Haakma",
-      role = "ctb",
-      email = "s.haakma@rug.nl",
-      comment = c(ORCID = "0000-0003-1278-9144")),
+           family = "Haakma",
+           role = "ctb",
+           email = "s.haakma@rug.nl",
+           comment = c(ORCID = "0000-0003-1278-9144")),
     person(given = "Tom",
-      family = "Bishop",
-      role = "ctb",
-      email = "tom.bishop@mrc-epid.cam.ac.uk"))
+           family = "Bishop",
+           role = "ctb",
+           email = "tom.bishop@mrc-epid.cam.ac.uk"))
+Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
 Depends: 
   R (>= 3.5.0)
 Imports:
@@ -33,7 +33,7 @@ Imports:
   rlang,
   DSI,
   metafor
-Suggests: 
+Suggests:
   knitr,
   rmarkdown,
   testthat,
@@ -44,5 +44,4 @@ BugReports: https://github.com/lifecycle-project/ds-helper/issues/
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 RoxygenNote: 7.1.2

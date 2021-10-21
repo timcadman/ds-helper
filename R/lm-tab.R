@@ -12,6 +12,7 @@
 #' @param round_digits Number of decimal places to use in table. Default is 2.
 #' @param family where type is ipd or slma, specify the family used in the model
 #' @param exp specify whether you want odds ratios to be exponentiated
+#'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match
