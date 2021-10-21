@@ -1,20 +1,22 @@
 #' Calculate mean values of one repeated measures variable by an age variable
-
+#' 
+#' @importFrom DSI datashield.connections_find datashield.assign
+#' @importFrom purrr map
+#' @importFrom tibble as_tibble
+#' @importFrom dplyr bind_rows %>% slice
+#' 
 #' @param conns connection object for DataSHIELD backends
 #' @param df datashield dataframe
 #' @param outcome outcome variable in long format
 #' @param age_var age in years
+#' @param intervals table defining our age bands
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'
-#' @importFrom DSI datashield.connections_find datashield.assign
-#' @importFrom purrr map
-#' @importFrom tibble as_tibble
-#' @importFrom dplyr bind_rows %>%
 #' @export
 dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL,
                          intervals = NULL) {
-  age <- . <- NULL
+  value <- op <- tmp <- varname<- new_df_name <- age <- group <- cohort <- . <- NULL
 
   if (is.null(df)) {
     stop("Please specify a data frame")

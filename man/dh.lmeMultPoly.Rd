@@ -11,6 +11,8 @@ dh.lmeMultPoly(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL)
 
 \item{formulae}{a vector of model formulae to fit}
 
+\item{poly_names}{a vector of names for your models}
+
 \item{conns}{connection objects for DataSHIELD backends}
 }
 \description{

@@ -1,11 +1,7 @@
 #' Function to perform every combination of MLM fractional polynomials
 #'
-#' @param conns connection objects for DataSHIELD backends
-#' @param df name of dataFrame
-#' @param formulae a vector of model formulae to fit
-#'
 #' @importFrom dsBaseClient ds.lmerSLMA
-#' @importFrom purrr map flatten_chr map set_names
+#' @importFrom purrr map flatten_chr map set_names map_lgl
 #' @importFrom dplyr arrange bind_rows dense_rank group_split mutate select
 #'             starts_with desc across
 #' @importFrom tidyr pivot_longer pivot_wider
@@ -13,10 +9,17 @@
 #' @importFrom tibble tibble
 #' @importFrom DSI datashield.connections_find
 #'
+#' @param conns connection objects for DataSHIELD backends
+#' @param df name of dataFrame
+#' @param formulae a vector of model formulae to fit
+#' @param poly_names a vector of names for your models
+#'
 #' @author Tim Cadman
 #'
 #' @export
 dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL) {
+  sum_log <- NULL
+  
   if (is.null(df)) {
     stop("Please specify dataframe to use for polynomial models")
   }

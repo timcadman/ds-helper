@@ -20,6 +20,8 @@ dh.meanByAge(
 \item{age_var}{age in years}
 
 \item{conns}{connection object for DataSHIELD backends}
+
+\item{intervals}{table defining our age bands}
 }
 \value{
 Mean values for each unit of your age variable are returned
