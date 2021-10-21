@@ -8,14 +8,15 @@
 # - SYSTEM_PULLREQUEST_PULLREQUESTID: PullRequestID from GitHub
 # - SYSTEM_PULLREQUEST_TARGETBRANCH: PullRequest target branch e.g. main
 # Additional environment variables to make sure the release works
-# - GITHUB_TOKEN: semantic release uses this environment variable to push to github
+# - GITHUB_TOKEN: password used to push to github
+# - GITHUB_USER: username used to push to github
 # - NEXUS_USER: repository username
 # - NEXUS_PASS: repository password
 # - REGISTRY: repository url
 # - R_LIBS_USER: home directory user libraries
 # - CODECOV_TOKEN: token to authenticate to codecov
 
-git remote set-url origin "https://${GITHUB_TOKEN}@github.com/lifecycle-project/ds-helper.git"
+git remote set-url origin "https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/lifecycle-project/ds-helper.git"
 Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', git2r::config(user.email = 'sido@haakma.org', user.name = 'Azure Pipeline'))"
 RELEASE_SCOPE="patch"
 git checkout -f master
