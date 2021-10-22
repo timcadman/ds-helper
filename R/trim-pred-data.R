@@ -6,7 +6,7 @@
 #' @importFrom purrr pmap
 #' @importFrom dplyr bind_rows filter between
 #' @importFrom rlang sym
-#' 
+#'
 #' @param pred a tibble of predicted values
 #' @param coh_names a vector of cohort names corresponding to the cohort names in pred
 #' @param age name of the variable corresponding to age in the predicted values
@@ -14,10 +14,9 @@
 #' @param max a vector of maximum values of age, length equal to number of cohorts
 #'
 #' @return The original tibble of predicted values, trimmed by the min and max ages
-#' 
+#'
 #' @export
 dh.trimPredData <- function(pred = NULL, coh_names = NULL, age = "age", min = NULL, max = NULL) {
-  
   cohort <- NULL
 
   if (is.null(pred)) {

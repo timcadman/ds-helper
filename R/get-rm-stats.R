@@ -1,6 +1,6 @@
 #' Produces descriptive statistics based on repeated measures data
 #' which it would be useful to report in papers.
-#' 
+#'
 #' @importFrom dplyr %>% mutate across
 #' @importFrom tidyselect vars_select_helpers
 #' @importFrom dsBaseClient ds.summary ds.asFactorSimple ds.tapply.assign ds.tapply
@@ -14,9 +14,9 @@
 
 dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL) {
   # https://github.com/r-lib/tidyselect/issues/201#issuecomment-650547846
-  
-  variable <- perc_5 <- perc_95 <- cohort <- min_age <- max_age <- valid_n <-NULL
-  
+
+  variable <- perc_5 <- perc_95 <- cohort <- min_age <- max_age <- valid_n <- NULL
+
   if (is.null(df)) {
     stop("Please provide the name of a datashield dataframe")
   }
@@ -85,7 +85,7 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NUL
     INDEX.names = "data$id_int",
     FUN.name = "N"
   )
-  
+
   n_subjects <- ds.length("id_summary$N")[1:length(names(conns))] %>%
     setNames(names(conns)) %>%
     bind_rows() %>%
@@ -95,7 +95,7 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NUL
     ) %>%
     select(variable, everything()) %>%
     mutate(across(tidyselect::vars_select_helpers$where(is.numeric), as.character))
-  
+
 
   ### Median number of weight measurements per child
   # We can use the ds.quantileMean function with the object we created above (number

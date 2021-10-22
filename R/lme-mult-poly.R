@@ -19,7 +19,7 @@
 #' @export
 dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL) {
   sum_log <- NULL
-  
+
   if (is.null(df)) {
     stop("Please specify dataframe to use for polynomial models")
   }
@@ -43,99 +43,107 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   suppressWarnings(
     models <- formulae %>%
       map(
-        ~tryCatch(
-          {ds.lmerSLMA(
+        ~ tryCatch(
+          {
+            ds.lmerSLMA(
               dataName = df,
               formula = .x,
-              datasources = conns)}, 
-            error = function(error_message){
-              out <- list("failed", error_message)
-              return(out)
-              })
+              datasources = conns
+            )
+          },
+          error = function(error_message) {
+            out <- list("failed", error_message)
+            return(out)
+          }
         )
+      )
   )
-  
+
   names(models) <- poly_names
-  
+
   ## ---- Identify models which failed completely ------------------------------
-  fail_tmp <- models %>% 
-    map_chr(~.[[1]][[1]][[1]] %>% str_detect("failed", negate = TRUE)) 
-  
+  fail_tmp <- models %>%
+    map_chr(~ .[[1]][[1]][[1]] %>% str_detect("failed", negate = TRUE))
+
   fail_messages <- tibble(
-    poly = poly_names[fail_tmp == FALSE], 
-    message = models[fail_tmp == FALSE] %>% map_chr(~.[[2]]$message))
-  
+    poly = poly_names[fail_tmp == FALSE],
+    message = models[fail_tmp == FALSE] %>% map_chr(~ .[[2]]$message)
+  )
+
   failure <- tibble(
     poly = poly_names,
     completed = fail_tmp
   ) %>%
     left_join(., fail_messages, by = "poly")
-  
+
   ## ---- Identify the models with some convergence issues ---------------------
   poly_comp <- models[fail_tmp == TRUE]
-  
-  con_any <- poly_comp %>% 
-  map(~ .x$Convergence.error.message) %>% 
-  map(~ str_detect(., "no convergence error reported")) %>% 
-  map_lgl(function(x){any(x == FALSE)}) 
+
+  con_any <- poly_comp %>%
+    map(~ .x$Convergence.error.message) %>%
+    map(~ str_detect(., "no convergence error reported")) %>%
+    map_lgl(function(x) {
+      any(x == FALSE)
+    })
 
   convergence <- tibble(
-    poly = poly_names[fail_tmp == TRUE], 
-    all_converged = !con_any)
-  
+    poly = poly_names[fail_tmp == TRUE],
+    all_converged = !con_any
+  )
+
   problems <- left_join(failure, convergence, by = "poly")
 
   ## ---- Summarise convergence info ---------------------------------------------
   if (all(problems$completed == FALSE)) {
     warning("All models failed. Check 'convergence' table for more details")
   }
-  
+
   if (all(problems$completed != FALSE) & any(problems$completed == FALSE)) {
     warning("Some models threw an error message. Check 'convergence' table for more details")
   }
-  
+
   if (any(!is.na(problems$all_converged) & problems$all_converged == FALSE)) {
-    warning("Not all models have converged for all cohorts. Check 'convergence' 
+    warning("Not all models have converged for all cohorts. Check 'convergence'
             table for more details along with model output")
   }
 
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
-  if(length(poly_comp) > 1){
-  ## First we get the loglikelihood value for each study and each model
-  raw_logs <- models[fail_tmp == TRUE] %>%
-    map(function(x) {
-      nstudies %>% map(function(y) {
-        tibble(
-          loglik = x$output.summary[[y]]$logLik
-        )
-      })
-    }) %>%
-    map(function(x) {
-      set_names(x, names(conns))
-    }) %>%
-    set_names(poly_names[fail_tmp == TRUE])
+  if (length(poly_comp) > 1) {
+    ## First we get the loglikelihood value for each study and each model
+    raw_logs <- models[fail_tmp == TRUE] %>%
+      map(function(x) {
+        nstudies %>% map(function(y) {
+          tibble(
+            loglik = x$output.summary[[y]]$logLik
+          )
+        })
+      }) %>%
+      map(function(x) {
+        set_names(x, names(conns))
+      }) %>%
+      set_names(poly_names[fail_tmp == TRUE])
 
-  ## Now we put this into a nicer format
-  fit.tab <- raw_logs %>%
-    map(unlist) %>%
-    bind_rows(.id = "model")
+    ## Now we put this into a nicer format
+    fit.tab <- raw_logs %>%
+      map(unlist) %>%
+      bind_rows(.id = "model")
 
-  colnames(fit.tab) <- str_remove(colnames(fit.tab), ".loglik")
+    colnames(fit.tab) <- str_remove(colnames(fit.tab), ".loglik")
 
-  ## Calculate a sum of the loglikelihoods
-  fit.tab <- fit.tab %>%
-    mutate(
-      sum_log = rowSums(across(-model))
-    ) %>%
-    arrange(desc(sum_log))
+    ## Calculate a sum of the loglikelihoods
+    fit.tab <- fit.tab %>%
+      mutate(
+        sum_log = rowSums(across(-model))
+      ) %>%
+      arrange(desc(sum_log))
 
-  ## Add in some NAs for the models which threw errors
-  fit.tab <- fit.tab %>% 
-    add_row(model = poly_names[fail_tmp == FALSE])
+    ## Add in some NAs for the models which threw errors
+    fit.tab <- fit.tab %>%
+      add_row(model = poly_names[fail_tmp == FALSE])
   }
-  
+
   out <- list(models = models, convergence = problems, fit = fit.tab)
 
   return(out)

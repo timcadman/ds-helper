@@ -5,8 +5,7 @@ test_that("Test if vars exists", {
   df <- data.frame(c("weight", "height"))
   conns <- data.frame(validate = "OpalDriver")
   with_mock("dsBaseClient::ds.colnames" = mock(data.frame(c("weight", "height"))), {
-      result <- dh.doVarsExist(df, vars, conns)
-      expect_equal(result, NULL)
-    }
-  )
+    result <- dh.doVarsExist(df, vars, conns)
+    expect_equal(result, NULL)
+  })
 })
