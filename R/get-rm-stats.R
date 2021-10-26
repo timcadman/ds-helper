@@ -2,8 +2,9 @@
 #' which it would be useful to report in papers.
 #'
 #' @param df datashield dataframe
-#' @param age_var name of age variable in df
 #' @param outcome name of outcome variable in df
+#' @param id_var name of id variable in df
+#' @param age_var name of age variable in df
 #' @param conns connection object for DataSHIELD backends
 #' 
 #' @return a tibble containing the following columns:
@@ -19,13 +20,17 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL) {
+dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NULL, conns = NULL) {
   if (is.null(df)) {
     stop("Please provide the name of a datashield dataframe")
   }
 
   if (is.null(outcome)) {
     stop("Please provide the name of your outcome variable")
+  }
+
+  if (is.null(id_var)) {
+    stop("Please provide the name of id variable in df")
   }
 
   if (is.null(age_var)) {
@@ -63,7 +68,7 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NUL
   # First, we use ds.tapply.assign to summarise the number of observations for each
   # subject. The length of this created object then gives us the number of subjects.
 
-  ds.asFactorSimple("data$id_int", "id_fact", datasources = conns)
+  ds.asFactorSimple(paste0(df, "$", id_var), "id_fact", datasources = conns)
 
   ds.tapply.assign(
     X.name = "data$weight",
