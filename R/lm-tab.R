@@ -10,8 +10,11 @@
 #'                  "separate" outputs separate columns with upper and lower CIs.
 #'                  "paste" adds these in brackets to the coefficient.'
 #' @param round_digits Number of decimal places to use in table. Default is 2.
+#' @param family can be gaussian
+#' @param exp exponentiate coefficients is TRUE of FALSE
+#'
 #' @importFrom tibble tibble
-#' @importFrom dplyr mutate %>% select
+#' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match
 #'
 #' @return A tibble containing the estimate with lower and upper confidence intervals
@@ -21,7 +24,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = c("long", "wide"), ci_format = NULL,
                      family = "gaussian", round_digits = 2,
                      exp = TRUE) {
-  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <- NULL
+  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <-
+    uppci <- pvalue <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
@@ -119,7 +123,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   ## ---- Convert to odds ratios where specified -------------------------------
   if (exp == TRUE & family == "gaussian") {
-    warning("It is not recommended to exponentiate coefficients from linear 
+    warning("It is not recommended to exponentiate coefficients from linear
             regression: argument is ignored")
   }
 

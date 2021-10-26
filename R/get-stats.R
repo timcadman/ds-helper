@@ -45,7 +45,7 @@
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows rename filter mutate_at vars distinct add_row
-#' @importFrom purrr map flatten_dbl pmap
+#' @importFrom purrr map flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
 #' @importFrom stringr str_detect
@@ -54,8 +54,7 @@
 #' @importFrom DSI datashield.connections_find datashield.aggregate
 #'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
-
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) { # nolint
 
   ################################################################################
   # 1. First checks
@@ -82,7 +81,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
     missing_n <- perc_missing <- EstimatedVar <- Nvalid <- any_obs <-
     bind_cols <- cohort <- combined <- disc <- discrepancy <- key_stats <-
     n_distinct <- out_cont <- outcome <- same_levels <- se <- stat <-
-    stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <- NULL
+    stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
+    perc_valid <- perc_total <- Ntotal <- NULL
 
   ################################################################################
   # 2. Get classes of variables
@@ -113,7 +113,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) {
 
   if (nrow(real_disc) > 0) {
     stop(
-      "\nThe following variables do not have the same class in all cohorts. Please 
+      "\nThe following variables do not have the same class in all cohorts. Please
 check with ds.class \n\n",
       real_disc %>% pull(variable) %>% paste(collapse = "\n")
     )
@@ -163,7 +163,7 @@ check with ds.class \n\n",
 
     if (any(level_ref$same_levels == "no") == TRUE) {
       stop(
-        "The following categorical variables do not have the same levels. 
+        "The following categorical variables do not have the same levels.
 Please check using ds.levels:\n\n",
         level_ref %>%
           dplyr::filter(same_levels == "no") %>%
