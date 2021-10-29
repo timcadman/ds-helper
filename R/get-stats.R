@@ -43,8 +43,7 @@
 #'  missing_perc = as above
 #'
 #' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
-#' left_join bind_rows rename filter mutate_at vars distinct add_row
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup left_join bind_rows rename filter mutate_at vars distinct add_row
 #' @importFrom purrr map flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels

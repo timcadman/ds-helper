@@ -5,7 +5,13 @@
 \title{Produces multiple transformations of age term for fractional polynomial
 analysis.}
 \usage{
-dh.makeAgePolys(df = NULL, agevars = NULL, conns = NULL)
+dh.makeAgePolys(
+  df = NULL,
+  agevars = NULL,
+  conns = NULL,
+  poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
+  poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")
+)
 }
 \arguments{
 \item{df}{opal dataframe}
@@ -13,6 +19,11 @@ dh.makeAgePolys(df = NULL, agevars = NULL, conns = NULL)
 \item{agevars}{the age variable to transform}
 
 \item{conns}{connections object for DataSHIELD backends}
+
+\item{poly_form}{a vector of powers by which to transform the age variable}
+
+\item{poly_names}{a vector of names for the created variables, the same length
+and order as poly_form}
 }
 \value{
 transformations of age created in df

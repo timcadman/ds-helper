@@ -7,12 +7,14 @@ to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
 function but stores the data produced this function. Note you need to make
 sure your plot window is large enough to produce the plot.}
 \usage{
-dh.getAnonPlotData(df = NULL, vars = NULL, conns = NULL)
+dh.getAnonPlotData(df = NULL, v1 = NULL, v2 = NULL, conns = NULL)
 }
 \arguments{
 \item{df}{opal dataframe}
 
-\item{vars}{vector of variable names in dataframe}
+\item{v1}{variable in df to get plotdata for}
+
+\item{v2}{optional second variable if you want to get scatterplot data}
 
 \item{conns}{connection object for DataSHIELD backends}
 }

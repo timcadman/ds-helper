@@ -13,7 +13,7 @@ dh.lmTab(
   ci_format = NULL,
   family = "gaussian",
   round_digits = 2,
-  exp = TRUE
+  exp = FALSE
 )
 }
 \arguments{
@@ -30,11 +30,11 @@ order as the cohorts provided to the model.}
 "separate" outputs separate columns with upper and lower CIs.
 "paste" adds these in brackets to the coefficient.'}
 
-\item{family}{can be gaussian}
+\item{family}{where type is ipd or slma, specify the family used in the model}
 
 \item{round_digits}{Number of decimal places to use in table. Default is 2.}
 
-\item{exp}{exponentiate coefficients is TRUE of FALSE}
+\item{exp}{specify whether you want odds ratios to be exponentiated}
 }
 \value{
 A tibble containing the estimate with lower and upper confidence intervals
