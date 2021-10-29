@@ -22,7 +22,7 @@ Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
 Depends: 
   R (>= 3.5.0)
 Imports:
-  dsBaseClient (>= 6.1.0),
+  dsBaseClient (>= 6.2.0),
   dplyr (>= 1.0.2),
   tibble,
   purrr,
