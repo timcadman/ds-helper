@@ -27,7 +27,7 @@ jobs:
         CODECOV_TOKEN: $(CODECOV_TOKEN)  
     - task: Bash@3
       displayName: Release R-package
-      condition: ne(variables['Build.Reason'], 'PullRequest')
+      condition: and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest'))
       inputs:
         filePath: .azure/release.bash
       env:
