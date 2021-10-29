@@ -17,7 +17,7 @@
 #'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
-  . <- n_meas_5 <- n_meas_95 <- n_meas_med <- NULL
+  . <- NULL
 
   if (is.null(obj)) {
     stop("Please specify one or more objects to remove from environment")

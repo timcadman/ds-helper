@@ -22,7 +22,8 @@
 #'
 #' @export
 dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NULL, conns = NULL) {
-  variable <- perc_5 <- perc_95 <- cohort <- min_age <- max_age <- valid_n <- NULL
+  . <- n_meas_5 <- n_meas_95 <- n_meas_med <- variable <- perc_5 <- perc_95 <- cohort <- min_age <- 
+    max_age <- valid_n <- NULL
 
   if (is.null(df)) {
     stop("Please provide the name of a datashield dataframe")
