@@ -17,7 +17,7 @@
 #'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
-  . <- NULL
+  . <- n_meas_5 <- n_meas_95 <- n_meas_med <- NULL
 
   if (is.null(obj)) {
     stop("Please specify one or more objects to remove from environment")
@@ -62,7 +62,7 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.name = value, datasources = conns[cohort])
+      ds.rm(x.names = value, datasources = conns[cohort])
     })
   }
 }
