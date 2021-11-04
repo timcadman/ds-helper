@@ -4,7 +4,7 @@ DataSHIELD helper functions
 [![CRAN
 status](https://www.r-pkg.org/badges/version/dsHelper)](https://CRAN.R-project.org/package=dsHelper)
 [![Codecov test
-coverage](https://app.codecov.io/gh/lifecycle-project/ds-helper/branch/master/graph/badge.svg)](https://app.codecov.io/gh/lifecycle-project/ds-helper?branch=master)
+coverage](https://codecov.io/gh/lifecycle-project/ds-helper/branch/master/graph/badge.svg)](https://app.codecov.io/gh/lifecycle-project/ds-helper?branch=master)
 
 This is a set of functions to automate processes in ‘DataSHIELD’ to make
 data manipulation and analysis easier. They are very much a work in
