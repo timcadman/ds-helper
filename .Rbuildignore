@@ -3,6 +3,7 @@
 ^\.github
 ^\.azure
 ^\.lintr
+^docs
 ^azure-pipelines\.yml
 ^ds-helper\.sublime\.*
 ^README\.Rmd
