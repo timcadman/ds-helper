@@ -82,7 +82,7 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
   }
 
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
-    available <- bmi_to_subset <- ref_val <- NULL
+    available <- bmi_to_subset <- ref_val <- . <- NULL
 
   cat("This may take some time depending on the number and size of datasets\n\n")
 

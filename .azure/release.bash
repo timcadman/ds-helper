@@ -15,7 +15,7 @@
 # - R_LIBS_USER: home directory user libraries
 # - CODECOV_TOKEN: token to authenticate to codecov
 
-git remote set-url origin "https://${GITHUB_TOKEN}@github.com/lifecycle-project/ds-helper.git"
+git remote set-url origin "https://${GITHUB_TOKEN}@github.com/${BUILD_REPOSITORY_NAME}.git"
 git checkout -f master
 git fetch --tags
 Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', git2r::config(user.email = 'sido@haakma.org', user.name = 'Azure Pipeline'))"
@@ -23,6 +23,7 @@ RELEASE_SCOPE="patch"
 Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', usethis::use_version('${RELEASE_SCOPE}'))"
 TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
+Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', pkgdown::build_site())"
 git commit -a -m "[ci skip] Created release: ${TAG}"
 echo "Releasing ${PACKAGE} ${TAG}"
 R CMD build .

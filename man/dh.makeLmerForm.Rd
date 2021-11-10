@@ -8,7 +8,7 @@ dh.makeLmerForm(
   outcome = NULL,
   idvar = NULL,
   agevars = NULL,
-  random = "intercept",
+  random = NULL,
   fixed = NULL,
   age_interactions = NULL
 )
@@ -18,14 +18,14 @@ dh.makeLmerForm(
 
 \item{idvar}{unique identifier for subject}
 
-\item{agevars}{vector of names of age polynomials in dataset}
+\item{agevars}{vector of names of age polynomials in dataset that you will use in your models}
 
 \item{random}{either "intercept" or "slope" to specify random effects}
 
 \item{fixed}{optional vector of fixed effects}
 
 \item{age_interactions}{if TRUE also create interaction terms between age
-terms and fixed effects#}
+terms and fixed effects}
 }
 \value{
 a tibble containing the created formulae

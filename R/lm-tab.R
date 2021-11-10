@@ -10,8 +10,8 @@
 #'                  "separate" outputs separate columns with upper and lower CIs.
 #'                  "paste" adds these in brackets to the coefficient.'
 #' @param round_digits Number of decimal places to use in table. Default is 2.
-#' @param family can be gaussian
-#' @param exp exponentiate coefficients is TRUE of FALSE
+#' @param family where type is ipd or slma, specify the family used in the model
+#' @param exp specify whether you want odds ratios to be exponentiated
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
@@ -23,7 +23,7 @@
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = c("long", "wide"), ci_format = NULL,
                      family = "gaussian", round_digits = 2,
-                     exp = TRUE) {
+                     exp = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <-
     uppci <- pvalue <- NULL
 
@@ -92,6 +92,11 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       mutate(cohort = "combined") %>%
       select(cohort, variable, est, se)
 
+    ## Fix a problem where variables are not named correctly
+    if (length(nstudy) == 1) {
+      slma$variable <- unique(separate$variable)
+    }
+
     out <- bind_rows(separate, slma) %>%
       group_by(variable, cohort) %>%
       group_split() %>%
@@ -118,26 +123,19 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       variable = ifelse(variable == "(Intercept)", "intercept", variable),
       value = round(value, round_digits)
     ) %>%
-    filter(coefficient != "se")
+    dplyr::filter(coefficient != "se")
 
 
   ## ---- Convert to odds ratios where specified -------------------------------
   if (exp == TRUE & family == "gaussian") {
     warning("It is not recommended to exponentiate coefficients from linear
             regression: argument is ignored")
-  }
-
-  if (exp == TRUE & family == "binomial" & direction == "long") {
+  } else if (exp == TRUE & family == "binomial" & direction == "long") {
     out <- out %>%
       mutate(value = case_when(
         coefficient == "pvalue" ~ value,
         coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits)
       ))
-  }
-
-  ## ---- Put into final format ------------------------------------------------
-  if (direction == "long") {
-    out <- out
   } else if (exp == TRUE & family == "binomial" & direction == "wide") {
     out <- out %>%
       pivot_wider(
@@ -147,20 +145,71 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       mutate(across(est:uppci, ~ round(exp(.), round_digits)))
   }
 
-  if (direction == "wide" & ci_format == "separate") {
+  ## ---- Put into final format ------------------------------------------------
+  if (direction == "long") {
+    out <- out
+  } else if (direction == "wide" & ci_format == "separate") {
     out <- out %>%
       pivot_wider(
-        names_from = c(coefficient),
+        names_from = coefficient,
         values_from = value
       )
   } else if (direction == "wide" & ci_format == "paste") {
     out <- out %>%
       pivot_wider(
-        names_from = c(coefficient),
+        names_from = coefficient,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
       select(variable, est, pvalue)
+  }
+
+  if (type == "lmer") {
+
+    ## Get random effects
+    random_sd <- paste0("study", seq(1, nstudy, 1)) %>%
+      map(function(x) {
+        model$output.summary[[x]]$varcor
+      }) %>%
+      set_names(coh_names) %>%
+      map_depth(2, function(x) {
+        attr(x, "stddev")
+      }) %>%
+      map(as.data.frame) %>%
+      map(as_tibble, rownames = "coefficient") %>%
+      bind_rows(.id = "cohort") %>%
+      pivot_longer(
+        cols = c(-cohort, -coefficient),
+        names_to = "cluster",
+        values_to = "stddev"
+      )
+
+    ## Get std of residual error
+    res_sd <- paste0("study", seq(1, nstudy, 1)) %>%
+      map(function(x) {
+        model$output.summary[[x]]$sigma
+      }) %>%
+      set_names(coh_names) %>%
+      map(as.data.frame) %>%
+      map(as_tibble) %>%
+      bind_rows(.id = "cohort") %>%
+      set_names(c("cohort", "res_std"))
+
+    random_cor <- paste0("study", seq(1, nstudy, 1)) %>%
+      map(function(x) {
+        model$output.summary[[x]]$varcor
+      }) %>%
+      set_names(coh_names) %>%
+      map_depth(2, function(x) {
+        attr(x, "correlation")
+      })
+
+    out <- list(
+      fixed = out,
+      random_sd = random_sd,
+      resid_sd = res_sd,
+      random_cor = random_cor
+    )
   }
 
   return(out)
