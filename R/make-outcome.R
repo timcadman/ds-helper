@@ -144,41 +144,28 @@ check_missing_age_var <- ds.isNA(
 
 message("DONE", appendLF = TRUE)
 
-  ## ---- Create numeric version of age_var --------------------------------------
-  ds.asNumeric(
-    x.name = paste0(df, "$", age_var),
-    newobj = "age",
-    datasources = conns[valid_coh]
-  )
+message("** Step 2 of 7: Preparing data ... ", appendLF = FALSE)
 
-  new_df <- paste0(df, "_tmp")
+calltext <- call("asNumericDS", paste0(df, "$", age_var))
+DSI::datashield.assign(conns[valid_coh], "age", calltext)
+
+dh.dropCols(
+  df = df, 
+  vars = c(id_var, outcome), 
+  new_df_name = "df_slim",
+  type = "keep")
+
   ds.dataFrame(
-    x = c(df, "age", "outcome_comp"),
-    newobj = new_df,
-    datasources = conns[valid_coh]
+    x = c("df_slim", "age"),
+    newobj = "df_slim",
+    datasources = conns[valid_coh], 
+    check.rows = FALSE,
+    check.names = FALSE,
+    completeCases = TRUE
   )
 
-  ## ---- Drop variables we don't need -------------------------------------------
-  v_ind <- dh.findVarsIndex(
-    conns = conns[valid_coh],
-    df = new_df,
-    vars = c(id_var, outcome, "age", "outcome_comp")
-  )
+  message("DONE", appendLF = TRUE)
 
-  ## Now finally we subset based on required variables
-  v_ind %>%
-    imap(
-      ~ ds.dataFrameSubset(
-        df.name = new_df,
-        V1.name = "outcome_comp",
-        V2.name = "-99999",
-        Boolean.operator = ">=",
-        keep.cols = .x,
-        keep.NAs = TRUE,
-        newobj = new_df,
-        datasources = conns[.y]
-      )
-    )
 
   ## ---- Make paired list for each band ---------------------------------------
   pairs <- split(bands, ceiling(seq_along(bands) / 2))
