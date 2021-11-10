@@ -47,7 +47,16 @@
 dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL, # nolint
                            mult_vals = NULL, keep_original = FALSE, df_name = NULL, conns = NULL, id_var = "child_id",
                            band_action = NULL) {
-  . <- NULL
+
+  
+  op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
+  available <- bmi_to_subset <- ref_val <- . <- NULL
+  
+  start_objs <- ds.ls(datasources = conns) 
+
+  cat("This may take some time depending on the number and size of datasets\n\n")
+
+  message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
 
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -74,6 +83,12 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
          bracket using the argument 'mult_action")
   }
 
+  if ((length(bands) %% 2 == 0) == FALSE) {
+    stop("The length of the vector provided to the 'bands' argument is not an even number",
+      call. = FALSE
+    )
+  }
+
   mult_action <- match.arg(mult_action, c("earliest", "latest", "nearest"))
   band_action <- match.arg(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
@@ -81,29 +96,9 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
     conns <- datashield.connections_find()
   }
 
-  op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
-    available <- bmi_to_subset <- ref_val <- . <- NULL
-
-  cat("This may take some time depending on the number and size of datasets\n\n")
-
-  message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
-
-  ## ---- Store current object names ---------------------------------------------
-
-  start_objs <- ds.ls(datasources = conns)
-
-  ## ---- Argument checks --------------------------------------------------------
   dh.doVarsExist(df = df, vars = outcome, conns = conns)
   dh.doesDfExist(df = df, conns = conns)
 
-  ## ---- Check bands is an even number ------------------------------------------
-  if ((length(bands) %% 2 == 0) == FALSE) {
-    stop("The length of the vector provided to the 'bands' argument is not an even number",
-      call. = FALSE
-    )
-  }
-
-  ## ---- Check class of outcome -----------------------------------------------
   var_class <- ds.class(datasources = conns, x = paste0(df, "$", outcome))
 
   if (length(unique(var_class)) > 1) {
@@ -114,40 +109,29 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
          numeric, integer or factor variable.")
   }
 
-  ## ---- Subset to only include cohorts with some data --------------------------
-  ds.asNumeric(datasources = conns, x.name = paste0(df, "$", outcome), newobj = paste0(outcome, "_n"))
+  check_missing_outcome <- ds.isNA(
+    x = paste0(df, "$", outcome), 
+    datasources = conns)
 
-  na_replace_vec <- rep("-99999", length(conns))
-
-  ds.replaceNA(x = paste0(outcome, "_n"), forNA = na_replace_vec, newobj = "na_replaced", datasources = conns)
-
-  ds.Boole(
-    V1 = "na_replaced",
-    V2 = "-99999",
-    Boolean.operator = ">",
-    newobj = "outcome_comp",
-    datasources = conns
-  )
-
-  nonmissing <- ds.mean(datasources = conns, x = "outcome_comp")$Mean.by.Study[, "EstimatedMean"] > 0
-
-  if (all(nonmissing == FALSE)) {
+  if (all(check_missing == TRUE)) {
     stop("None of the cohorts have available outcome data")
   }
 
-  if (any(nonmissing == FALSE)) {
+  if (any(check_missing == FALSE)) {
     warning(paste0(
       paste0(
         "No valid data on ", "'", outcome, "'",
         " available for the following cohort(s): "
       ),
-      paste0(names(which(nonmissing == FALSE)), collapse = ", ")
+      paste0(names(which(check_missing == FALSE)), collapse = ", ")
     ), call. = FALSE)
   }
 
-  ## ---- Check there are non missing values for age and outcome ---------------
-  age_missing <- unlist(ds.isNA(x = paste0(df, "$", age_var), datasources = conns))
-  if (any(age_missing) == TRUE) {
+check_missing_age_var <- ds.isNA(
+  x = paste0(df, "$", age_var), 
+  datasources = conns)
+
+  if (any(check_missing_age_var) == TRUE) {
     stop(paste0(
       paste0(
         "No valid data on age of measurement available for the following cohort(s): "
@@ -156,13 +140,9 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
     ), call. = FALSE)
   }
 
-  if (length(nonmissing) == 1) {
-    nonmissing <- list(nonmissing)
-    names(nonmissing) <- names(conns)
-  }
+  valid_coh <- names(which(check_missing_outcome == FALSE))
 
-  valid_coh <- names(which(nonmissing == TRUE))
-
+message("DONE", appendLF = TRUE)
 
   ## ---- Create numeric version of age_var --------------------------------------
   ds.asNumeric(
