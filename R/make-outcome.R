@@ -56,7 +56,7 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
 
   cat("This may take some time depending on the number and size of datasets\n\n")
 
-  message("** Step 1 of 7: Checking input data ... ", appendLF = FALSE)
+  message("** Step 1 of 8: Checking input data ... ", appendLF = FALSE)
 
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -144,7 +144,7 @@ check_missing_age_var <- ds.isNA(
 
 message("DONE", appendLF = TRUE)
 
-message("** Step 2 of 7: Preparing data ... ", appendLF = FALSE)
+message("** Step 2 of 8: Preparing data ... ", appendLF = FALSE)
 
 calltext <- call("asNumericDS", paste0(df, "$", age_var))
 DSI::datashield.assign(conns[valid_coh], "age", calltext)
@@ -166,101 +166,66 @@ dh.dropCols(
 
   message("DONE", appendLF = TRUE)
 
+  message("** Step 3 of 8: Defining subsets ... ", appendLF = FALSE)
 
-  ## ---- Make paired list for each band ---------------------------------------
   pairs <- split(bands, ceiling(seq_along(bands) / 2))
 
-  subnames <- unlist(
-    pairs %>% map(~ paste0(outcome, "_", paste0(., collapse = "_"))),
-    use.names = FALSE
-  )
+  subnames <- pairs %>% 
+  map_chr(~ paste0("sub", "_", paste0(., collapse = "_")))
 
-  ## ---- Create table with age bands ------------------------------------------
-  if (band_action == "g_l") {
-    cats <- tibble(
+  n_subsets <- length(bands) / 2
+
+  sub_short_names <- letters[1:n_subsets]
+
+op_symbol <- case_when(
+  band_action == "g_l" ~ c(">", "<"),
+  band_action == "ge_le" ~ c(">=", "<="),
+  band_action == "g_le" ~ c(">", "<="),
+  band_action == "ge_l" ~ c(">=", "<")
+)
+
+  boole_1_ref <- tibble(
       varname = rep(subnames, each = 2),
       value = bands,
-      op = rep(c(">", "<"), times = (length(bands) / 2)),
-      tmp = ifelse(op == ">", "gt", "lt"),
-      new_df_name = paste0(outcome, tmp, value)
-    )
-  } else if (band_action == "ge_le") {
-    cats <- tibble(
-      varname = rep(subnames, each = 2),
-      value = bands,
-      op = rep(c(">=", "<="), times = (length(bands) / 2)),
-      tmp = ifelse(op == ">=", "gte", "lte"),
-      new_df_name = paste0(outcome, tmp, value)
-    )
-  } else if (band_action == "g_le") {
-    cats <- tibble(
-      varname = rep(subnames, each = 2),
-      value = bands,
-      op = rep(c(">", "<="), times = (length(bands) / 2)),
-      tmp = ifelse(op == ">", "gt", "lte"),
-      new_df_name = paste0(outcome, tmp, value)
-    )
-  } else if (band_action == "ge_l") {
-    cats <- tibble(
-      varname = rep(subnames, each = 2),
-      value = bands,
-      op = rep(c(">=", "<"), times = (length(bands) / 2)),
-      tmp = ifelse(op == ">=", "gte", "lt"),
-      new_df_name = paste0(outcome, tmp, value)
-    )
-  }
+      op = rep(op_symbol, times = n_subsets), 
+      boole_1_name = paste0(
+        "sub_",
+        rep(sub_short_names, each = n_subsets),
+        rep(c("_low", "_up"), times = n_subset))) 
 
-  ## ---- Check max character length -------------------------------------------
-  if (max(nchar(cats$varname)) + 6 > 20) {
-    stop(
-      "Due to disclosure settings, the total string length of [outcome] +
-      [max(lower_band)] + [max(upper_band)] + [max(mult_vals)] must be no more
-      than 14 characters. For example: [outcome = 'bmi', max(low_band) = 10,
-      max(upper_band) = 40, max(mult_vals) = 35] is ok (length of 'bmi104035
-      is 9. However if your outcome was named 'adiposity' this would give
-      a string length of 'adiposity104035 = 15' which is too long. I realise
-      this is quite annoying. To get round it rename your outcome variable
-      to have a shorter name. As a rule of thumb I would rename your outcome to be
-      no more than three characters",
-      call. = FALSE
-    )
-  }
+ 
+  boole_2_ref <- boole_1_ref %>%
+  group_by(varname) %>%
+  summarise(condition = paste(boole_1_name, collapse = "*")) %>%
+  mutate(boole_2_name = paste0("sub_", sub_short_names))
 
-  message("DONE", appendLF = TRUE)
-  ## ---- ds.Boole ---------------------------------------------------------------
-
-  message("** Step 2 of 7: Defining subsets ... ", appendLF = FALSE)
-
-  # Use each row from this table in a call to ds.Boole. Here we make vectors
-  # indicating whether or not the value meets the evaluation criteria
-
-  cats %>%
-    pmap(function(value, op, new_df_name, ...) {
+# First we define which subjects meet lower and uppper conditions separately
+  boole_1_ref %>%
+    pmap(function(value, op, boole_1_name, ...) {
       ds.Boole(
-        V1 = paste0(new_df, "$", "age"),
+        V1 = paste0("df_slim", "$", "age"),
         V2 = value,
         Boolean.operator = op,
-        newobj = new_df_name,
+        newobj = boole_1_name,
         datasources = conns[valid_coh]
       )
     })
-
-  ## ---- Create second table with assign conditions -----------------------------
-  suppressMessages(
-    assign_conditions <- cats %>%
-      group_by(varname) %>%
-      summarise(condition = paste(new_df_name, collapse = "*"))
-  )
-
-  ## ---- Assign variables indicating membership of age band ---------------------
-  assign_conditions %>%
-    pmap(function(condition, varname) {
+  
+# Now we define which subjects meet both of these conditions
+  boole_2_ref %>%
+    pmap(function(condition, boole_2_name, ...) {
       ds.assign(
         toAssign = condition,
-        newobj = varname,
+        newobj = boole_2_name,
         datasources = conns[valid_coh]
       )
     })
+
+  message("DONE", appendLF = TRUE)
+
+
+
+
 
   ## ---- Now we want to find out which cohorts have data ------------------------
   data_sum <- assign_conditions %>%
