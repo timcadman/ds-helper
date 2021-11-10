@@ -56,7 +56,7 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
 
   cat("This may take some time depending on the number and size of datasets\n\n")
 
-  message("** Step 1 of 8: Checking input data ... ", appendLF = FALSE)
+  message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)
 
   if (is.null(df)) {
     stop("Please specify a data frame")
@@ -144,7 +144,7 @@ check_missing_age_var <- ds.isNA(
 
 message("DONE", appendLF = TRUE)
 
-message("** Step 2 of 8: Preparing data ... ", appendLF = FALSE)
+message("** Step 2 of 9: Preparing data ... ", appendLF = FALSE)
 
 calltext <- call("asNumericDS", paste0(df, "$", age_var))
 DSI::datashield.assign(conns[valid_coh], "age", calltext)
@@ -166,16 +166,19 @@ dh.dropCols(
 
   message("DONE", appendLF = TRUE)
 
-  message("** Step 3 of 8: Defining subsets ... ", appendLF = FALSE)
+  message("** Step 3 of 9: Defining subsets ... ", appendLF = FALSE)
 
   pairs <- split(bands, ceiling(seq_along(bands) / 2))
 
   subnames <- pairs %>% 
   map_chr(~ paste0("sub", "_", paste0(., collapse = "_")))
 
-  n_subsets <- length(bands) / 2
+n_subsets <- length(bands) / 2
 
-  sub_short_names <- letters[1:n_subsets]
+varname_ref <- tibble(
+  subset = subnames, 
+  short_name = letters[1:n_subsets]
+)
 
 op_symbol <- case_when(
   band_action == "g_l" ~ c(">", "<"),
@@ -189,7 +192,7 @@ op_symbol <- case_when(
       value = bands,
       op = rep(op_symbol, times = n_subsets), 
       boole_1_name = paste0(
-        "sub_",
+        "boole_",
         rep(sub_short_names, each = n_subsets),
         rep(c("_low", "_up"), times = n_subset))) 
 
@@ -197,7 +200,7 @@ op_symbol <- case_when(
   boole_2_ref <- boole_1_ref %>%
   group_by(varname) %>%
   summarise(condition = paste(boole_1_name, collapse = "*")) %>%
-  mutate(boole_2_name = paste0("sub_", sub_short_names))
+  mutate(boole_2_name = paste0("boole_", varname_ref$short_name))
 
 # First we define which subjects meet lower and uppper conditions separately
   boole_1_ref %>%
@@ -223,58 +226,46 @@ op_symbol <- case_when(
 
   message("DONE", appendLF = TRUE)
 
+message("** Step 4 of 9: Check for disclosure issues ... ", appendLF = FALSE)
 
+# We need to check that the subsets will have enough rows to avoid triggering
+# disclosure traps.
 
+n_obs <- boole_2_ref %>%
+    pmap(function(boole_2_name, ...) {
 
+      ds.table(boole_2_name)$output.list$TABLE_rvar.by.study_counts
 
-  ## ---- Now we want to find out which cohorts have data ------------------------
-  data_sum <- assign_conditions %>%
-    pmap(function(varname, ...) {
-      ds.mean(varname, datasources = conns[valid_coh])
-    })
+    }) 
 
-  ## ---- Handle disclosure issues -----------------------------------------------
+min_obs_filter <- ds.listDisclosureSettings(
+  datasources = conns[valid_coh])
 
-  # Need to only show data as being available if >= minimum value for subsetting
-  sub_min <- ds.listDisclosureSettings(datasources = conns[valid_coh])$ds.disclosure.settings %>%
-    map_df(~ .$nfilter.subset)
-
-  min_perc_vec <- sub_min / data_sum[[1]]$Mean.by.Study[, "Ntotal"]
-
-  min_perc <- min_perc_vec %>%
-    map_df(~ rep(., times = length(subnames)))
-
-  if (length(valid_coh) == 1) {
-    data_available <- data_sum %>%
-      map(function(x) {
-        x$Mean.by.Study[, "EstimatedMean"]
-      }) %>%
-      unlist() %>%
-      as_tibble() %>%
-      rename(!!valid_coh := value)
-  } else if (length(valid_coh) > 1) {
-    data_available <- data_sum %>%
-      map_dfr(function(x) {
-        x$Mean.by.Study[, "EstimatedMean"]
-      })
-  }
-
-  data_available <- as_tibble(ifelse(data_available <= min_perc, "no", "yes")) %>%
-    mutate(varname = assign_conditions$varname) %>%
-    select(varname, everything())
-
-  ## ---- Create a new table listing which subsets to create ---------------------
-  cats_to_subset <- data_available %>%
+n_obs_neat <- n_obs_per_subset %>%
+    set_names(unique(boole_1_ref$varname)) %>%
+    map(as_tibble, rownames = "levels") %>%
+    bind_rows(.id = "subset") %>%
+    dplyr::filter(levels == 1) %>%
     pivot_longer(
-      cols = -varname,
-      names_to = "cohort",
-      values_to = "available"
+      cols = c(-subset, -levels),
+      names_to = "cohort", 
+      values_to = "observations"
     ) %>%
-    dplyr::filter(available == "yes") %>%
-    select(-available) %>%
-    mutate(new_subset_name = paste0(varname, "_a"))
+    left_join
 
-  if (nrow(cats_to_subset) < 1) {
+min_obs_neat <- min_obs_filter$ds.disclosure.settings %>%  
+    map_df(~ .$nfilter.subset) %>%
+    pivot_longer(
+      cols = everything(),
+      names_to = "cohort", 
+      values_to = "min_obs"
+    )   
+
+subset_ref <- left_join(n_obs_neat, min_obs_neat, by = "cohort") %>%
+left_join(., varname_ref, by = "subset") %>%
+mutate(sub_name = paste0("sub_", short_name))
+
+  if (nrow(subset_ref) < 1) {
     stop("There is no data available within the specified bands",
       call. = FALSE
     )
