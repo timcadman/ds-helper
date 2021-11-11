@@ -46,7 +46,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remo
     )
   } else if (type == "remove") {
     cols <- datashield.aggregate(conns, call("colnamesDS", df))
-      
+
     cols_to_keep <- cols %>%
       map(function(x) {
         str_subset(x, paste0(vars, "\\b", collapse = "|"), negate = TRUE) %>%

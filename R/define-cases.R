@@ -33,12 +33,12 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
   if (is.null(vars)) {
     stop("Please specify variable(s)")
   }
-  
+
   if (is.null(type)) {
     stop("Please specify whether you want to define cases based on any or all of
          provided variable(s)")
   }
-  
+
   type <- match.arg(type, c("any", "all"))
 
   if (is.null(conns)) {
@@ -49,29 +49,29 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
 
   ## ---- Convert to numeric -----------------------------------------------------
   vars %>%
-    map(function(x){
+    map(function(x) {
       calltext <- call("asNumericDS", paste0(df, "$", x))
       DSI::datashield.assign(conns, x, calltext)
-      })
-   
+    })
+
   ## Does subject have non-missing data for all of these vars?
   if (type == "all") {
-    
     DSI::datashield.assign(
-      conns, 
-      "dc_all_data", 
-      as.symbol(paste0(vars, collapse = "+")))
-    
+      conns,
+      "dc_all_data",
+      as.symbol(paste0(vars, collapse = "+"))
+    )
+
     ds.replaceNA(
       x = "dc_all_data",
       forNA = rep(-999999, length(conns)),
       newobj = "dc_all_data",
       datasources = conns
     )
-    
+
     calltext <- call("BooleDS", "dc_all_data", -999999, 5, 0, TRUE)
     DSI::datashield.assign(conns, newobj, calltext)
-    
+
     ## Does subject have non-missing data for any of these vars?
   } else if (type == "any") {
     vars %>%
@@ -85,13 +85,10 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
       ) ## Replace all NAs. All variables will now either be the original value or -999999
 
     vars %>%
-      map(function(x){
-    
-    calltext <- call("BooleDS", x, -999999, 6, 0, TRUE)
-    DSI::datashield.assign(conns, paste0(x, "_dc_1"), calltext)
-
+      map(function(x) {
+        calltext <- call("BooleDS", x, -999999, 6, 0, TRUE)
+        DSI::datashield.assign(conns, paste0(x, "_dc_1"), calltext)
       })
-    
   }
 
   if (type == "all") {

@@ -20,11 +20,11 @@ dh.doesDfExist <- function(conns = NULL, df) {
     conns <- datashield.connections_find()
   }
 
-  objs <- datashield.aggregate(conns, call("lsDS", env.to.search=1L))
-  objs <- objs %>% map(~.[["objects.found"]])
-  
-  df_check <- objs %>% map(~df %in% .)
-  
+  objs <- datashield.aggregate(conns, call("lsDS", env.to.search = 1L))
+  objs <- objs %>% map(~ .[["objects.found"]])
+
+  df_check <- objs %>% map(~ df %in% .)
+
   df_missing <- df_check %>% map(~ any(. == FALSE))
 
   if (any(unlist(df_missing) == TRUE)) {

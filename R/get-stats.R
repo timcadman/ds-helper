@@ -139,10 +139,8 @@ check with ds.class \n\n",
     map(
       .,
       ~ pmap(., function(variable, cohort) {
-        
         cally <- paste0("levelsDS(", df, "$", variable, ")")
         datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
-
       })
     ) %>%
     set_names(sort(unique(fact_exist$variable)))
@@ -160,17 +158,17 @@ check with ds.class \n\n",
     mutate(same_levels = ifelse(length == 1, "yes", "no")) %>%
     select(-length)
 
-    if (any(level_ref$same_levels == "no") == TRUE) {
-      stop(
-        "The following categorical variables do not have the same levels.
+  if (any(level_ref$same_levels == "no") == TRUE) {
+    stop(
+      "The following categorical variables do not have the same levels.
 Please check using ds.levels:\n\n",
-        level_ref %>%
-          dplyr::filter(same_levels == "no") %>%
-          pull(variable) %>%
-          paste(., collapse = "\n")
-      )
-    }
-  
+      level_ref %>%
+        dplyr::filter(same_levels == "no") %>%
+        pull(variable) %>%
+        paste(., collapse = "\n")
+    )
+  }
+
 
 
   ################################################################################
@@ -505,6 +503,4 @@ Please check using ds.levels:\n\n",
   )
 
   return(out)
-
 }
-

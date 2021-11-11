@@ -29,7 +29,7 @@ dh.doVarsExist <- function(df = NULL, vars = NULL, conns = NULL) {
   }
 
   allvars <- datashield.aggregate(conns, call("colnamesDS", df))
-  
+
   var_check <- allvars %>% map(~ (vars %in% .))
 
   any_missing <- var_check %>% map(~ any(. == FALSE))
