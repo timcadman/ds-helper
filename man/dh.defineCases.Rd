@@ -8,7 +8,7 @@ within a set}
 dh.defineCases(
   df = NULL,
   vars = NULL,
-  type = c("any", "all"),
+  type = NULL,
   conns = NULL,
   newobj = "dc_data_avail"
 )
