@@ -62,7 +62,7 @@ dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
       bind_rows()
 
     vars_tibble %>% pmap(function(cohort, value) {
-      ds.rm(x.name = value, datasources = conns[cohort])
+      ds.rm(x.names = value, datasources = conns[cohort])
     })
   }
 }
