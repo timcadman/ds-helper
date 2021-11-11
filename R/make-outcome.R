@@ -92,6 +92,10 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
   mult_action <- match.arg(mult_action, c("earliest", "latest", "nearest"))
   band_action <- match.arg(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
+
+multvals should be half length of bands
+
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
@@ -207,30 +211,45 @@ dplyr::filter(enough_obs == FALSE)
 
   message("DONE", appendLF = TRUE)
 
-  ## ---- Create subsets ---------------------------------------------------------
   message("** Step 5 of 9: Creating subsets ... ", appendLF = FALSE)
 
-  boole_ref %>%
+  subset_ref_final %>%
     pmap(
-      function(varname, cohort, new_subset_name, ...) {
+      function(cohort, boole_name, subset_name) {
         ds.dataFrameSubset(
           df.name = "df_slim",
           V1.name = boole_name,
-          V2.name = 1,
+          V2.name = "1",
           Boolean.operator = "==",
           keep.NAs = FALSE,
           newobj = subset_name,
-          datasources = conns[valid_coh]
+          datasources = conns[cohort]
         )
       }
     )
 
   message("DONE", appendLF = TRUE)
 
-  ## ---- Sort subsets -----------------------------------------------------------
-  message("** Step 4 of 7: Dealing with subjects with multiple observations within age bands ... ",
+  message("** Step 6 of 9: Dealing with subjects with multiple observations within age bands ... ",
     appendLF = FALSE
   )
+
+  if (mult_action == "nearest") {
+
+nearest_ref <- tibble(
+  subset_name = unique(subset_ref_final$subset_name),
+  nearest_value = mult_vals
+)
+
+subset_ref_final <- left_join(subset_ref_final, nearest_ref, by = "subset_name")
+
+}
+
+
+
+
+
+
 
   if (mult_action == "nearest") {
 
@@ -653,7 +672,6 @@ DSI::datashield.assign(conns, newobj, as.symbol("boole_1*boole_2"))
 
 }
 
-
 #' Check whether a provided binary vector (output from ds.Boole) has 
 #' a number of cases > minimum number of rows for subsets.
 #' 
@@ -693,5 +711,123 @@ mutate(
 return(disclosure_ref)
 
 } 
+
+#' Sorts the subsets. This is necessary because it determines how multiple rows
+#' per id are handled when reshaping to wide format
+
+
+cohort = "alspac"
+boole_name = "boole_3_5"
+subset_name = "subset_3_5"
+nearest_value = 4
+newobj = "subset_3_5_sort"
+
+old_conns <- conns
+
+conns <- conns["alspac"]
+
+.sortSubset <- function(mult_action, mult_vals, subset_name, age_var, newobj, conns)
+
+if(mult_action == "nearest"){
+
+    ## Make a variable specifying distance between age of measurement and prefered
+    ## value (provided by "mult_vals")
+
+calltext <- paste0(
+          "((", subset_name, "$", "age", "-", nearest_value, ")", "^2",
+          ")", "^0.5"
+        )
+
+DSI::datashield.assign(conns, "difference_val", as.symbol(calltext))
+
+sort_key <- "difference_val"
+sort_action <- FALSE
+
+} else if (mult_action %in% c("earliest", "latest")){
+
+sort_key <- 
+sort_action <- ifelse(mult_action == "earliest", FALSE, TRUE)
+
+}
+
+
+
+
+ds.dataFrameSort(
+  df.name = subset_name,
+  sort.key.name = "difference_val",
+  newobj = newobj,
+  sort.descending = FALSE,
+  datasources = conns)
+
+if (mult_action %in% c("earliest", "latest") {
+
+
+
+    ds.dataFrameSort(
+          df.name = subset_name,
+          sort.key.name = paste0(subset_name, "$", age_var),
+          newobj = newobj,
+          sort.descending = sort_action,
+          datasources = conns)
+
+} 
+ds.summary("difference_val", datasources = conns)
+
+ds.assign()
+
+
+
+
+
+    cats_to_subset %<>%
+      left_join(., ref_tab) %>%
+      mutate(
+        condition = paste0(
+          "((", new_subset_name, "$", "age", "-", ref_val, ")", "^2",
+          ")", "^0.5"
+        ),
+        dif_val = paste0("d_", ref_val)
+      )
+
+    cats_to_subset %>%
+      pmap(function(condition, cohort, dif_val, ...) {
+        ds.make(
+          toAssign = condition,
+          newobj = dif_val,
+          datasources = conns[cohort]
+        )
+      })
+
+    ## Join this variable back with the dataset
+    cats_to_subset %>%
+      pmap(function(dif_val, new_subset_name, varname, cohort, ...) {
+        ds.dataFrame(
+          x = c(new_subset_name, dif_val),
+          newobj = paste0(varname, "_y"),
+          datasources = conns[cohort]
+        )
+      })
+
+    ## Sort by it
+    cats_to_subset %>%
+      pmap(function(cohort, new_subset_name, varname, dif_val, ...) {
+        ds.dataFrameSort(
+          datasources = conns[cohort],
+          df.name = paste0(varname, "_y"),
+          sort.key.name = paste0(varname, "_y", "$", dif_val),
+          newobj = paste0(varname, "_a"),
+          sort.descending = FALSE
+        )
+      })
+  } 
+
+
+
+
+
+}
+
+
 
 
