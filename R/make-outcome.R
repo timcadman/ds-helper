@@ -110,10 +110,12 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
   }
 
 available_outcome <- .checkDataAvailable(
+  df = df,
   var = outcome,
   conns = conns) 
 
 available_age <- .checkDataAvailable(
+  df = df,
   var = age_var,
   conns = conns)
 
@@ -129,39 +131,16 @@ message("DONE", appendLF = TRUE)
 
 message("** Step 2 of 9: Preparing data ... ", appendLF = FALSE)
 
-calltext <- call("asNumericDS", paste0(df, "$", age_var))
-DSI::datashield.assign(conns[valid_coh], "age", calltext)
+.makeSlim()
 
-dh.dropCols(
-  df = df, 
-  vars = c(id_var, outcome), 
-  new_df_name = "df_slim",
-  type = "keep")
+age as numeric
 
-  ds.dataFrame(
-    x = c("df_slim", "age"),
-    newobj = "df_slim",
-    datasources = conns[valid_coh], 
-    check.rows = FALSE,
-    check.names = FALSE,
-    completeCases = TRUE
-  )
 
-  message("DONE", appendLF = TRUE)
+message("DONE", appendLF = TRUE)
 
-  message("** Step 3 of 9: Defining subsets ... ", appendLF = FALSE)
+message("** Step 3 of 9: Defining subsets ... ", appendLF = FALSE)
 
-  pairs <- split(bands, ceiling(seq_along(bands) / 2))
-
-  subnames <- pairs %>% 
-  map_chr(~ paste0("sub", "_", paste0(., collapse = "_")))
-
-n_subsets <- length(bands) / 2
-
-varname_ref <- tibble(
-  subset = subnames, 
-  short_name = letters[1:n_subsets]
-)
+pairs <- split(bands, ceiling(seq_along(bands) / 2))
 
 op_symbol <- case_when(
   band_action == "g_l" ~ c(">", "<"),
@@ -170,106 +149,78 @@ op_symbol <- case_when(
   band_action == "ge_l" ~ c(">=", "<")
 )
 
-  boole_1_ref <- tibble(
-      varname = rep(subnames, each = 2),
-      value = bands,
-      op = rep(op_symbol, times = n_subsets), 
-      boole_1_name = paste0(
-        "boole_",
-        rep(sub_short_names, each = n_subsets),
-        rep(c("_low", "_up"), times = n_subset))) 
+subset_ref <- tibble(
+  value_1 = bands[c(TRUE, FALSE)], 
+  op_1 = op_symbol[1],
+  value_2 = bands[c(FALSE, TRUE)], 
+  op_2 = op_symbol[2],
+  boole_name = pairs %>% map_chr(~ paste0("boole", "_", paste0(., collapse = "_"))),
+  subset_name = pairs %>% map_chr(~ paste0("subset", "_", paste0(., collapse = "_")))
+)
 
- 
-  boole_2_ref <- boole_1_ref %>%
-  group_by(varname) %>%
-  summarise(condition = paste(boole_1_name, collapse = "*")) %>%
-  mutate(boole_2_name = paste0("boole_", varname_ref$short_name))
+subset_ref %>%
+pmap(function(value_1, op_1, value_2, op_2, boole_name, ...){
 
-# First we define which subjects meet lower and uppper conditions separately
-  boole_1_ref %>%
-    pmap(function(value, op, boole_1_name, ...) {
-      ds.Boole(
-        V1 = paste0("df_slim", "$", "age"),
-        V2 = value,
-        Boolean.operator = op,
-        newobj = boole_1_name,
-        datasources = conns[valid_coh]
-      )
-    })
-  
-# Now we define which subjects meet both of these conditions
-  boole_2_ref %>%
-    pmap(function(condition, boole_2_name, ...) {
-      ds.assign(
-        toAssign = condition,
-        newobj = boole_2_name,
-        datasources = conns[valid_coh]
-      )
-    })
+.BooleTwoConditions(
+  df = "df_slim", 
+  var = age_var, 
+  value_1 = value_1, 
+  op_1 = op_1, 
+  value_2 = value_2, 
+  op_2 = op_2, 
+  newobj = boole_name, 
+  conns = conns[valid_coh])
+})
 
-  message("DONE", appendLF = TRUE)
+message("DONE", appendLF = TRUE)
 
 message("** Step 4 of 9: Check for disclosure issues ... ", appendLF = FALSE)
 
 # We need to check that the subsets will have enough rows to avoid triggering
 # disclosure traps.
+discloure_ref <- subset_ref$boole_name %>%
+map(
+  ~.checkDisclosure(
+    bin_vec = .x,
+    conns = conns[valid_coh]
+  )) %>%
+bind_rows
 
-n_obs <- boole_2_ref %>%
-    pmap(function(boole_2_name, ...) {
+if (nrow(discloure_ref) < 1) {
+    stop("No subsets can be created as they would all contain fewer rows than the disclosure filter value")
 
-      ds.table(boole_2_name)$output.list$TABLE_rvar.by.study_counts
-
-    }) 
-
-min_obs_filter <- ds.listDisclosureSettings(
-  datasources = conns[valid_coh])
-
-n_obs_neat <- n_obs_per_subset %>%
-    set_names(unique(boole_1_ref$varname)) %>%
-    map(as_tibble, rownames = "levels") %>%
-    bind_rows(.id = "subset") %>%
-    dplyr::filter(levels == 1) %>%
-    pivot_longer(
-      cols = c(-subset, -levels),
-      names_to = "cohort", 
-      values_to = "observations"
-    ) %>%
-    left_join
-
-min_obs_neat <- min_obs_filter$ds.disclosure.settings %>%  
-    map_df(~ .$nfilter.subset) %>%
-    pivot_longer(
-      cols = everything(),
-      names_to = "cohort", 
-      values_to = "min_obs"
-    )   
-
-subset_ref <- left_join(n_obs_neat, min_obs_neat, by = "cohort") %>%
-left_join(., varname_ref, by = "subset") %>%
-mutate(sub_name = paste0("sub_", short_name))
-
-  if (nrow(subset_ref) < 1) {
-    stop("There is no data available within the specified bands",
-      call. = FALSE
-    )
   }
+
+failed_disclosure <- discloure_ref %>%
+dplyr::filter(enough_obs == FALSE)
+
+  if (nrow(failed_disclosure) > 1) {
+    warning("The following subsets cannot be created as they would contain fewer observations
+      than the disclosure filter value: \n\n", 
+    paste0(failed_disclosure$cohort, ": " ,failed_disclosure$subset, sep = "\n")
+  )
+  }
+
+  subset_ref_final <- left_join(subset_ref, discloure_ref, by = "boole_name") %>%
+  dplyr::filter(enough_obs == TRUE) %>%
+  select(cohort, boole_name, subset_name)
 
   message("DONE", appendLF = TRUE)
 
   ## ---- Create subsets ---------------------------------------------------------
   message("** Step 5 of 9: Creating subsets ... ", appendLF = FALSE)
 
-  cats_to_subset %>%
+  boole_ref %>%
     pmap(
       function(varname, cohort, new_subset_name, ...) {
         ds.dataFrameSubset(
-          df.name = new_df,
-          V1.name = varname,
-          V2.name = "1",
+          df.name = "df_slim",
+          V1.name = boole_name,
+          V2.name = 1,
           Boolean.operator = "==",
           keep.NAs = FALSE,
-          newobj = new_subset_name,
-          datasources = conns[cohort]
+          newobj = subset_name,
+          datasources = conns[valid_coh]
         )
       }
     )
@@ -602,6 +553,7 @@ restrictions.\n\n")
 #' This checks that there is some non-missing data on provided variable.
 #' This is needed so we don't try to create empty subsets later
 #'
+#' @param df 
 #' @param var variable in df to check
 #' @param conns datashield connections object
 #'
@@ -610,7 +562,7 @@ restrictions.\n\n")
 #' @importFrom tidyr pivot_longer
 #'
 #' @noRD
-.checkDataAvailable <- function(var, conns){
+.checkDataAvailable <- function(df, var, conns){
 
 missing_col_name <- paste0(var, "_missing")
 
@@ -637,4 +589,109 @@ pivot_longer(
 
   return(check_missing)
 }
+
+#' Trim the dataset to include only relevant columns and non-
+#' missing rows. This should improve performance with large
+#' datasets
+#'
+#' @importFrom dsBaseClient ds.dataFrame
+#' 
+#' noRD
+.makeSlim <- function(){
+  calltext <- call("asNumericDS", paste0(df, "$", age_var))
+  DSI::datashield.assign(conns[valid_coh], "age", calltext)
+
+dh.dropCols(
+  df = df, 
+  vars = c(id_var, outcome), 
+  new_df_name = "df_slim",
+  type = "keep")
+
+  ds.dataFrame(
+    x = c("df_slim", "age"),
+    newobj = "df_slim",
+    datasources = conns[valid_coh], 
+    check.rows = FALSE,
+    check.names = FALSE,
+    completeCases = TRUE
+  )
+}
+
+#' Create a variable indicating whether two conditions are met.
+#' ds.Boole only allows one condition to be specified.
+#' 
+#' @param df opal/armadillo data frame
+#' @param var variable in df to evaluate
+#' @param value_1 first value to evaluate against
+#' @param op_1 first operator for evaluation
+#' @param value_2 second value to evaluate against
+#' @param op_2 second operator for evaluation
+#' @param newobj name of object to create indicating if both conditions are met
+#' @param conns datashield connections object
+#'
+#' @importFrom dsBaseClient ds.Bools
+#' @importFrom DSI datashield.assign
+#'
+#' NoRD
+.BooleTwoConditions <- function(df, var, value_1, op_1, value_2, op_2, newobj, conns){
+
+ds.Boole(
+  V1 = paste0(df, "$", var),
+  V2 = value_1,
+  Boolean.operator = op_1,
+  newobj = "boole_1",
+  datasources = conns)
+
+ds.Boole(
+  V1 = paste0(df, "$", var),
+  V2 = value_2,
+  Boolean.operator = op_2,
+  newobj = "boole_2",
+  datasources = conns)
+
+DSI::datashield.assign(conns, newobj, as.symbol("boole_1*boole_2"))
+
+}
+
+
+#' Check whether a provided binary vector (output from ds.Boole) has 
+#' a number of cases > minimum number of rows for subsets.
+#' 
+#' @param bin_vec a binary vector containing only 0, 1 or NA
+#' @param conns datashield connections object
+#'
+#' @importFrom dsBaseClient ds.table ds.listDisclosureSettings
+#' @importFrom dplyr %>% filter mutate left_join select
+#' @importFrom purrr map_df
+#' @importFrom ready pivot_longer
+#' @importFrom tibble as_tibble
+.checkDisclosure <- function(bin_vec, conns){
+
+n_obs <- ds.table(bin_vec)$output.list$TABLE_rvar.by.study_counts %>%
+ as_tibble(rownames = "levels") %>%
+ dplyr::filter(levels == 1) %>%
+    pivot_longer(
+      cols = c(-levels),
+      names_to = "cohort", 
+      values_to = "observations"
+    ) %>%
+    dplyr::select(-levels)
+
+min_obs <- ds.listDisclosureSettings(datasources = conns)$ds.disclosure.settings %>%  
+    map_df(~ .$nfilter.subset) %>%
+    pivot_longer(
+      cols = everything(),
+      names_to = "cohort", 
+      values_to = "min_obs"
+    ) 
+
+disclosure_ref <- left_join(n_obs, min_obs, by = "cohort") %>%
+mutate(
+  boole_name = bin_vec,
+  enough_obs = ifelse(observations > min_obs, TRUE, FALSE))
+
+return(disclosure_ref)
+
+} 
+
 
