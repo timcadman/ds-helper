@@ -109,38 +109,21 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
          numeric, integer or factor variable.")
   }
 
-  check_missing_outcome <- ds.isNA(
-    x = paste0(df, "$", outcome), 
-    datasources = conns)
+available_outcome <- .checkDataAvailable(
+  var = outcome,
+  conns = conns) 
 
-  if (all(check_missing == TRUE)) {
-    stop("None of the cohorts have available outcome data")
-  }
+available_age <- .checkDataAvailable(
+  var = age_var,
+  conns = conns)
 
-  if (any(check_missing == FALSE)) {
-    warning(paste0(
-      paste0(
-        "No valid data on ", "'", outcome, "'",
-        " available for the following cohort(s): "
-      ),
-      paste0(names(which(check_missing == FALSE)), collapse = ", ")
-    ), call. = FALSE)
-  }
+available <- left_join(
+  x = available_outcome,
+  y = available_age,
+  by = "cohort") %>%
+dplyr::filter(if_all(-cohort, ~ .x == FALSE))
 
-check_missing_age_var <- ds.isNA(
-  x = paste0(df, "$", age_var), 
-  datasources = conns)
-
-  if (any(check_missing_age_var) == TRUE) {
-    stop(paste0(
-      paste0(
-        "No valid data on age of measurement available for the following cohort(s): "
-      ),
-      paste0(names(which(age_missing == TRUE)), collapse = ", ")
-    ), call. = FALSE)
-  }
-
-  valid_coh <- names(which(check_missing_outcome == FALSE))
+valid_coh <- available$cohort
 
 message("DONE", appendLF = TRUE)
 
@@ -274,7 +257,7 @@ mutate(sub_name = paste0("sub_", short_name))
   message("DONE", appendLF = TRUE)
 
   ## ---- Create subsets ---------------------------------------------------------
-  message("** Step 3 of 7: Creating subsets ... ", appendLF = FALSE)
+  message("** Step 5 of 9: Creating subsets ... ", appendLF = FALSE)
 
   cats_to_subset %>%
     pmap(
@@ -613,3 +596,45 @@ that the 5th and 95th percentiles fall within the specified upper and lower
 bands. Unfortunately you can't check min and max values due to disclosure
 restrictions.\n\n")
 }
+
+
+
+#' This checks that there is some non-missing data on provided variable.
+#' This is needed so we don't try to create empty subsets later
+#'
+#' @param var variable in df to check
+#' @param conns datashield connections object
+#'
+#' @importFrom dsBaseClient ds.isNA
+#' @importFrom dplyr %>% bind_rows filter pull
+#' @importFrom tidyr pivot_longer
+#'
+#' @noRD
+.checkDataAvailable <- function(var, conns){
+
+missing_col_name <- paste0(var, "_missing")
+
+check_missing <- ds.isNA(
+  x = paste0(df, "$", var), 
+  datasources = conns) %>%
+bind_rows %>%
+pivot_longer(
+  cols = everything(), 
+  names_to = "cohort", 
+  values_to = missing_col_name
+)
+
+  if (any(check_missing[missing_col_name] == TRUE)) {
+    warning(
+      "Cohort(s) '", 
+      check_missing %>% 
+        dplyr::filter(missing_col_name == TRUE) %>% 
+        pull(cohort), 
+      "' have no available data on variable '", var, "'", 
+      "and will be excluded from the analysis")
+
+  }
+
+  return(check_missing)
+}
+
