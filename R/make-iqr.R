@@ -3,8 +3,8 @@
 #' This function is used to scale variables by the interquartile range
 #' calulcated either within cohort or using the pooled IQR across cohorts.
 #' The formula is: value(subject) / (75th percentile - 25th percentile).
-#'
-#' @param df datashield dataframe
+#' #'
+##' @param df datashield dataframe
 #' @param vars variables to transform
 #' @param type either "separate" to transform the variable based on the IQR
 #'             calculated within cohort, or "pooled" to transform based on the
@@ -27,7 +27,7 @@
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
                        conns = NULL, new_df_name = df) {
-  . <- V1 <- cohort <- formula <- variable <- NULL
+  . <- variable <- cohort <- formula <- NULL
 
   dh.doVarsExist(df = df, vars = vars, conns = conns)
 
@@ -49,9 +49,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
   ## ---- Checks -----------------------------------------------------------------
   check_cont <- df_vars %>%
-    map(
-      ~ ds.class(., datasources = conns)
-    )
+    map(~ datashield.aggregate(conns, call("classDS", .)))
 
   if (
     all(
@@ -61,32 +59,14 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
          provided vars")
   }
 
-  check_na <- df_vars %>%
-    map(~ ds.mean(., datasources = conns)) %>%
-    map(~ .[["Mean.by.Study"]][, "EstimatedMean"]) %>%
-    map(~ any(is.na(.)))
-
-  names(check_na) <- vars
-
-  any_na <- check_na[check_na == TRUE]
-
-  if (length(any_na) > 0) {
-    stop(paste0("The following variables have missing values for at least 1
-                cohort: \n\n", names(any_na)))
-  }
-
   ## ---- Calculate IQRs ---------------------------------------------------------
   if (type == "separate") {
     meds <- df_vars %>%
-      map(
-        ~ ds.quantileMean(
-          x = .,
-          type = "split",
-          datasources = conns
-        )
-      )
-
-    names(meds) <- vars
+      map(function(x) {
+        cally1 <- paste0("quantileMeanDS(", x, ")")
+        datashield.aggregate(conns, as.symbol(cally1))
+      }) %>%
+      set_names(vars)
 
     iqr <- meds %>% map_depth(., 2, ~ .[["75%"]] - .[["25%"]])
 
@@ -96,56 +76,100 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
       map(as.data.frame) %>%
       map(as_tibble, rownames = "cohort") %>%
       bind_rows(.id = "variable") %>%
-      mutate(formula = paste0(df, "$", variable, "/", V1)) %>%
+      mutate(formula = case_when(
+        is.na(V1) ~ paste0(df, "$", variable),
+        !is.na(V1) ~ paste0(df, "$", variable, "/", V1)
+      )) %>%
       select(variable, cohort, formula)
 
     iqr_to_make %>%
       pmap(function(variable, cohort, formula) {
-        ds.make(
-          toAssign = formula,
-          newobj = paste0(variable, "_iqr_c"),
-          datasources = conns[cohort]
-        )
+        datashield.assign(conns, paste0(variable, "_iqr_c"), as.symbol(formula))
       })
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_c")),
       newobj = new_df_name,
-      datasources = conns
+      datasources = conns,
+      DataSHIELD.checks = FALSE,
+      check.names = FALSE
     )
   } else if (type == "pooled") {
-    meds <- df_vars %>%
-      map(
+
+    ## ---- Identify cohorts which are all missing -----------------------------
+    missing <- expand.grid(vars, names(conns)) %>%
+      set_names(c("variable", "cohort")) %>%
+      pmap(function(variable, cohort) {
+        cally <- paste0("isNaDS(", df, "$", variable, ")")
+        datashield.aggregate(conns[cohort], as.symbol(cally))
+      }) %>%
+      set_names(rep(vars, times = length(names(conns))))
+
+    missing.tib <- missing %>%
+      bind_rows(.id = "variable") %>%
+      pivot_longer(
+        cols = -variable,
+        names_to = "cohort",
+        values_to = "missing"
+      ) %>%
+      dplyr::filter(!is.na(missing))
+
+    ## ---- Create reference tibble of variables to create  --------------------
+    formean <- missing.tib %>%
+      dplyr::filter(missing == FALSE) %>%
+      group_by(variable)
+
+    formean <- formean %>%
+      group_split() %>%
+      map(~ .$cohort) %>%
+      set_names(unlist(group_keys(formean)))
+
+    ## ---- Get pooled IQR for non-missing cohorts -----------------------------
+    meds <- formean %>%
+      imap(
         ~ ds.quantileMean(
-          x = .,
+          x = paste0(df, "$", .y),
           type = "combine",
-          datasources = conns
+          datasources = conns[.x]
         )
       )
 
-    iqr <- meds %>% map(~ .[["75%"]] - .[["25%"]])
-
-    names(iqr) <- vars
-
-    iqr_to_make <-
-      tibble(
-        variable = names(iqr),
-        formula = paste0(df, "$", variable, "/", unlist(iqr))
+    iqr <- meds %>%
+      map_df(~ .[["75%"]] - .[["25%"]]) %>%
+      pivot_longer(
+        cols = everything(),
+        names_to = "variable",
+        values_to = "iqr"
       )
 
-    iqr_to_make %>%
-      pmap(function(variable, formula) {
-        ds.make(
-          toAssign = formula,
-          newobj = paste0(variable, "_iqr_p"),
-          datasources = conns
+    ## ---- Reference tibble of IQR variables to create ------------------------
+
+    ## If original variable was NA, new variable will also be NA
+    iqr_to_make <- formean %>%
+      map(~ tibble(cohort = .)) %>%
+      bind_rows(.id = "variable") %>%
+      left_join(., iqr, by = "variable") %>%
+      mutate(formula = paste0(df, "$", variable, "/", iqr))
+
+    ## Add in missing variables
+    full_vars <- missing.tib %>%
+      select(variable, cohort) %>%
+      left_join(., iqr_to_make, by = c("variable", "cohort")) %>%
+      mutate(formula = ifelse(is.na(formula), paste0(df, "$", variable), formula))
+
+    full_vars %>%
+      pmap(function(cohort, variable, formula, ...) {
+        datashield.assign(
+          conns[cohort], paste0(variable, "_iqr_p"), as.symbol(formula)
         )
       })
-  }
 
-  ds.dataFrame(
-    x = c(df, paste0(vars, "_iqr_p")),
-    newobj = new_df_name,
-    datasources = conns
-  )
+    ds.dataFrame(
+      x = c(df, paste0(vars, "_iqr_p")),
+      newobj = new_df_name,
+      datasources = conns,
+      DataSHIELD.checks = FALSE,
+      check.names = FALSE
+    )
+  }
 }

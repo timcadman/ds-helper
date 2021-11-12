@@ -28,7 +28,7 @@ dh.doVarsExist <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-  allvars <- ds.colnames(x = df, datasources = conns)
+  allvars <- datashield.aggregate(conns, call("colnamesDS", df))
 
   var_check <- allvars %>% map(~ (vars %in% .))
 

@@ -34,4 +34,5 @@ the original dataframe with transformed variables added with the
 This function is used to scale variables by the interquartile range
 calulcated either within cohort or using the pooled IQR across cohorts.
 The formula is: value(subject) / (75th percentile - 25th percentile).
+#'
 }

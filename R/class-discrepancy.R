@@ -27,10 +27,6 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
     stop("Please specify a data frame")
   }
 
-  if (is.null(vars)) {
-    stop("Please specify variable(s) to summarise")
-  }
-
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
@@ -38,18 +34,25 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
   dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {
-    fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
+    fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
   } else {
+    dh.doVarsExist(df, vars, conns)
     fun_vars <- vars
   }
 
-  out <- paste0(df, "$", fun_vars) %>%
+  ## ---- Get variable classes -------------------------------------------------
+  classes <- paste0(df, "$", fun_vars) %>%
     map_df(function(x) {
-      ds.class(x, datasources = conns)
-    }) %>%
+      calltext <- call("classDS", x)
+      datashield.aggregate(conns, calltext)
+    })
+
+  ## ---- Create column indicating whether there is a discrepancy --------------
+  out <- classes %>%
     mutate(
-      discrepancy = apply(., 1, function(x) {
-        ifelse(length(unique(x)) == 1, "no", "yes")
+      discrepancy = pmap_chr(., function(...) {
+        dots <- list(...)
+        ifelse(length(unique(dots)) == 1, "no", "yes")
       }),
       variable = fun_vars
     ) %>%
