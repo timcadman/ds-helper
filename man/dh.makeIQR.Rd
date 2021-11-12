@@ -18,7 +18,7 @@ dh.makeIQR(
 \item{vars}{variables to transform}
 
 \item{type}{either "separate" to transform the variable based on the IQR
-calculated within cohort, or "pooled" to transform based on the 
+calculated within cohort, or "pooled" to transform based on the
 pooled IQR across all cohorts provided in the 'conns' argument.}
 
 \item{conns}{connections object to DataSHIELD backends}
@@ -26,13 +26,13 @@ pooled IQR across all cohorts provided in the 'conns' argument.}
 \item{new_df_name}{name for new dataframe with original vars and iqr versions.}
 }
 \value{
-the original dataframe with transformed variables added with the 
+the original dataframe with transformed variables added with the
         suffix "_iqr_c" (if cohort range was used) or "iqr_p" if pooled
         range was used.
 }
 \description{
-This function is used to scale variables by the interquartile range 
-calulcated either within cohort or using the pooled IQR across cohorts. 
-The formula is: value(subject) / (75th percentile - 25th percentile).  
+This function is used to scale variables by the interquartile range
+calulcated either within cohort or using the pooled IQR across cohorts.
+The formula is: value(subject) / (75th percentile - 25th percentile).
 #'
 }
