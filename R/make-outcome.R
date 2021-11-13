@@ -58,60 +58,7 @@ dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NU
 
   message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)
 
-  if (is.null(df)) {
-    stop("Please specify a data frame")
-  }
-
-  if (is.null(outcome)) {
-    stop("Please specify an outcome variable")
-  }
-
-  if (is.null(age_var)) {
-    stop("Please specify an age variable")
-  }
-
-  if (is.null(bands)) {
-    stop("Please specify age bands which will be used to create the subset(s)")
-  }
-
-  if (is.null(band_action)) {
-    stop("Please specify how you want to evaluate the age bands using argument 'band_action'")
-  }
-
-  if (is.null(mult_action)) {
-    stop("Please specify how you want to deal with multiple observations within an age
-         bracket using the argument 'mult_action")
-  }
-
-  if ((length(bands) %% 2 == 0) == FALSE) {
-    stop("The length of the vector provided to the 'bands' argument is not an even number",
-      call. = FALSE
-    )
-  }
-
-  mult_action <- match.arg(mult_action, c("earliest", "latest", "nearest"))
-  band_action <- match.arg(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
-
-
-multvals should be half length of bands
-
-
-  if (is.null(conns)) {
-    conns <- datashield.connections_find()
-  }
-
-  dh.doVarsExist(df = df, vars = outcome, conns = conns)
-  dh.doesDfExist(df = df, conns = conns)
-
-  var_class <- ds.class(datasources = conns, x = paste0(df, "$", outcome))
-
-  if (length(unique(var_class)) > 1) {
-    stop("The outcome variable does not have the same class in all studies.
-         Please fix this and run again.")
-  } else if (var_class[[1]] == "character") {
-    stop("The outcome variable is class 'character'. Please provide either a
-         numeric, integer or factor variable.")
-  }
+.checkInputs()
 
 available_outcome <- .checkDataAvailable(
   df = df,
@@ -136,9 +83,6 @@ message("DONE", appendLF = TRUE)
 message("** Step 2 of 9: Preparing data ... ", appendLF = FALSE)
 
 .makeSlim()
-
-age as numeric
-
 
 message("DONE", appendLF = TRUE)
 
@@ -196,12 +140,13 @@ if (nrow(discloure_ref) < 1) {
   }
 
 failed_disclosure <- discloure_ref %>%
+left_join(., subset_ref, by = "boole_name") %>%
 dplyr::filter(enough_obs == FALSE)
 
   if (nrow(failed_disclosure) > 1) {
     warning("The following subsets cannot be created as they would contain fewer observations
       than the disclosure filter value: \n\n", 
-    paste0(failed_disclosure$cohort, ": " ,failed_disclosure$subset, sep = "\n")
+    paste0(failed_disclosure$cohort, ": " ,failed_disclosure$subset_name, sep = "\n")
   )
   }
 
@@ -209,9 +154,9 @@ dplyr::filter(enough_obs == FALSE)
   dplyr::filter(enough_obs == TRUE) %>%
   select(cohort, boole_name, subset_name)
 
-  message("DONE", appendLF = TRUE)
+message("DONE", appendLF = TRUE)
 
-  message("** Step 5 of 9: Creating subsets ... ", appendLF = FALSE)
+message("** Step 5 of 9: Creating subsets ... ", appendLF = FALSE)
 
   subset_ref_final %>%
     pmap(
@@ -241,160 +186,51 @@ nearest_ref <- tibble(
   nearest_value = mult_vals
 )
 
-subset_ref_final <- left_join(subset_ref_final, nearest_ref, by = "subset_name")
+sort_ref <- left_join(subset_ref_final, nearest_ref, by = "subset_name")
+
+} else if (mult_action %in% c("earliest", "latest")) {
+
+sort_ref <- subset_ref_final
 
 }
 
+sort_ref <- sort_ref %>%
+mutate(sort_name = paste0(subset_name, "_s"))
 
+sort_ref %>%
+pmap(function(cohort, subset_name, sort_name, ...){
 
+.sortSubset(
+  mult_action = mult_action,
+  subset_name = subset_name,
+  age_var = age_var,
+  newobj = sort_name,
+  conns = conns[cohort])
 
+})
 
+message("DONE", appendLF = TRUE)
 
+message("** Step 7 of 9: Reshaping to wide format ... ", appendLF = FALSE)
 
-  if (mult_action == "nearest") {
-
-    ## Make a variable specifying distance between age of measurement and prefered
-    ## value (provided by "mult_vals")
-
-    ref_tab <- tibble(
-      varname = unique(cats$varname),
-      ref_val = mult_vals
-    )
-
-    cats_to_subset %<>%
-      left_join(., ref_tab) %>%
-      mutate(
-        condition = paste0(
-          "((", new_subset_name, "$", "age", "-", ref_val, ")", "^2",
-          ")", "^0.5"
-        ),
-        dif_val = paste0("d_", ref_val)
-      )
-
-    cats_to_subset %>%
-      pmap(function(condition, cohort, dif_val, ...) {
-        ds.make(
-          toAssign = condition,
-          newobj = dif_val,
-          datasources = conns[cohort]
-        )
-      })
-
-    ## Join this variable back with the dataset
-    cats_to_subset %>%
-      pmap(function(dif_val, new_subset_name, varname, cohort, ...) {
-        ds.dataFrame(
-          x = c(new_subset_name, dif_val),
-          newobj = paste0(varname, "_y"),
-          datasources = conns[cohort]
-        )
-      })
-
-    ## Sort by it
-    cats_to_subset %>%
-      pmap(function(cohort, new_subset_name, varname, dif_val, ...) {
-        ds.dataFrameSort(
-          datasources = conns[cohort],
-          df.name = paste0(varname, "_y"),
-          sort.key.name = paste0(varname, "_y", "$", dif_val),
-          newobj = paste0(varname, "_a"),
-          sort.descending = FALSE
-        )
-      })
-  } else if (mult_action == "earliest" | mult_action == "latest") {
-    sort_action <- ifelse(mult_action == "earliest", FALSE, TRUE)
-
-    cats_to_subset %>%
-      pmap(function(cohort, new_subset_name, varname, ...) {
-        ds.dataFrameSort(
-          df.name = new_subset_name,
-          sort.key.name = paste0(new_subset_name, "$age"),
-          newobj = paste0(varname, "_a"),
-          sort.descending = sort_action,
-          datasources = conns[cohort]
-        )
-      })
-  }
-
-  message("DONE", appendLF = TRUE)
-
-  message("** Step 5 of 7: Reshaping to wide format ... ", appendLF = FALSE)
-  ## Now we create variables indicating the age of subset
-  cats_to_subset %<>%
+  reshape_ref <- sort_ref %>%
     mutate(
-      value = str_extract(varname, "[^_]+$"),
-      age_cat_name = paste0(varname, "_age")
+      suffix = str_extract(subset_name, "[^_]+$"),
+      wide_name = paste0(subset_name, "_w")
     )
 
-  cats_to_subset %>%
-    pmap(
-      function(cohort, new_subset_name, value, age_cat_name, varname, ...) {
-        ds.assign(
-          toAssign = paste0("(", paste0(varname, "_a"), "$age*0)+", value),
-          newobj = age_cat_name,
-          datasources = conns[cohort]
-        )
-      }
-    )
+reshape_ref %>%
+pmap(function(cohort, sort_name, suffix, wide_name, ...){
 
-  ## ---- Join age variables with subsets ----------------------------------------
-  cats_to_subset %>%
-    pmap(function(varname, cohort, age_cat_name, ...) {
-      ds.dataFrame(
-        x = c(paste0(varname, "_a"), age_cat_name),
-        newobj = paste0(varname, "_c"),
-        datasources = conns[cohort]
-      )
-    })
+.reshapeSubset(
+  sorted_subset = sort_name, 
+  var_suffix = suffix, 
+  conns = conns[cohort], 
+  newobj = wide_name)
 
-  ## ---- Convert subsets to wide form -------------------------------------------
-  cats_to_subset %>%
-    pmap(
-      function(cohort, varname, age_cat_name, ...) {
-        ds.reShape(
-          data.name = paste0(varname, "_c"),
-          timevar.name = age_cat_name,
-          idvar.name = id_var,
-          v.names = c(outcome, "age"),
-          direction = "wide",
-          newobj = paste0(varname, "_wide"),
-          datasources = conns[cohort]
-        )
-      }
-    )
+})
 
-
-  ## ---- Remove NA variables from dataframes ------------------------------------
-
-  ## First we identify the variables we want to keep
-  all_vars <- cats_to_subset %>%
-    pmap(function(varname, cohort, ...) {
-      ds.colnames(paste0(varname, "_wide"), datasources = conns[cohort])[[1]]
-    })
-
-  names(all_vars) <- cats_to_subset$cohort
-
-  keep_vars <- all_vars %>%
-    map(~ .[str_detect(., ".NA") == FALSE])
-
-  var_list <- split(cats_to_subset$varname, seq(nrow(cats_to_subset)))
-  coh_list <- split(cats_to_subset$cohort, seq(nrow(cats_to_subset)))
-
-  combined <- list(var_list, coh_list, keep_vars)
-  names(combined) <- c("varname", "cohort", "keep_vars")
-
-  combined %>%
-    pmap(function(varname, cohort, keep_vars) {
-      dh.dropCols(
-        conns = conns[cohort],
-        df = paste0(varname, "_wide"),
-        vars = keep_vars,
-        new_df_name = paste0(varname, "_wide"),
-        type = "keep"
-      )
-    })
-
-  message("DONE", appendLF = TRUE)
+message("DONE", appendLF = TRUE)
 
 
   ## ---- Merge back with non-repeated dataset -----------------------------------
@@ -567,9 +403,83 @@ bands. Unfortunately you can't check min and max values due to disclosure
 restrictions.\n\n")
 }
 
+#' Perform various checks on the availability and class of input objects
+#'
+#' @importFrom DSI datashield.connections_find datashield.aggregate
+#' @importFrom rlang arg_match
+#'
+#' noRD
+.checkInputs <- function(){
+
+if (is.null(df)) {
+    stop("Please specify a data frame")
+  }
+
+  if (is.null(outcome)) {
+    stop("Please specify an outcome variable")
+  }
+
+  if (is.null(age_var)) {
+    stop("Please specify an age variable")
+  }
+
+  if (is.null(bands)) {
+    stop("Please specify age bands which will be used to create the subset(s)")
+  }
+
+  if (is.null(band_action)) {
+    stop("Please specify how you want to evaluate the age bands using argument 'band_action'")
+  }
+
+  if (is.null(mult_action)) {
+    stop("Please specify how you want to deal with multiple observations within an age
+         bracket using the argument 'mult_action")
+  }
+
+  if ((length(bands) %% 2 == 0) == FALSE) {
+    stop("The length of the vector provided to the 'bands' argument is not an even number",
+      call. = FALSE
+    )
+  }
+
+  mult_action <- arg_match(mult_action, c("earliest", "latest", "nearest"))
+  band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
+
+if(is.null(mult_vals) & (length(mult_vals) != length(bands) /2 )){
+
+stop("Length of argument 'mult_vals' must be half the length of argument 'bands'")
+
+}
+
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
+  dh.doVarsExist(df = df, vars = outcome, conns = conns)
+  dh.doesDfExist(df = df, conns = conns)
 
 
-#' This checks that there is some non-missing data on provided variable.
+  cally <- call('classDS', paste0(df, "$", outcome))
+  outcome_class <- DSI::datashield.aggregate(conns, cally)
+
+  if (length(unique(outcome_class)) > 1) {
+    stop("The outcome variable does not have the same class in all studies")
+  } else if (any(!outcome_class %in% c("numeric", "integer"))) {
+    stop("The class of the outcome variable needs to be either numeric or integer.")
+  }
+
+  cally <- call('classDS', paste0(df, "$", age_var))
+  age_var_class <- DSI::datashield.aggregate(conns, cally)
+
+ if (length(unique(age_var_class)) > 1) {
+    stop("The age variable does not have the same class in all studies.")
+  } else if (any(!age_var_class %in% c("numeric", "integer"))) {
+    stop("The class of the age variable needs to be either numeric or integer.")
+  }
+
+}
+
+#' Check that there is some non-missing data on provided variable.
 #' This is needed so we don't try to create empty subsets later
 #'
 #' @param df 
@@ -648,25 +558,44 @@ dh.dropCols(
 #' @param newobj name of object to create indicating if both conditions are met
 #' @param conns datashield connections object
 #'
-#' @importFrom dsBaseClient ds.Bools
 #' @importFrom DSI datashield.assign
+#' @importFrom dplyr %>% filter select pull
 #'
 #' NoRD
+
+df = df
+var = outcome
+op_1 = ">="
+op_2 = "<="
+newobj = "test"
+value_1 = 3
+value_2 = 5
+
+
 .BooleTwoConditions <- function(df, var, value_1, op_1, value_2, op_2, newobj, conns){
 
-ds.Boole(
-  V1 = paste0(df, "$", var),
-  V2 = value_1,
-  Boolean.operator = op_1,
-  newobj = "boole_1",
-  datasources = conns)
+op_ref <- tibble(
+  symbol = c("==", "!=", "<", "<=", ">", ">="),
+  number = seq(1, 6, 1)
+)
 
-ds.Boole(
-  V1 = paste0(df, "$", var),
-  V2 = value_2,
-  Boolean.operator = op_2,
-  newobj = "boole_2",
-  datasources = conns)
+get_op_number <- function(op){
+
+op_ref %>%
+dplyr::filter(symbol == op) %>% 
+dplyr::select(number) %>% 
+pull
+
+}
+
+op_1 <- get_op_number(op_1)
+op_2 <- get_op_number(op_2)
+
+calltext <- call("BooleDS", paste0(df, "$", var), value_1, op_1, "NA", TRUE)
+DSI::datashield.assign(conns, "boole_1", calltext)
+
+calltext <- call("BooleDS", paste0(df, "$", var), value_2, op_2, "NA", TRUE)
+DSI::datashield.assign(conns, "boole_2", calltext)
 
 DSI::datashield.assign(conns, newobj, as.symbol("boole_1*boole_2"))
 
@@ -714,19 +643,19 @@ return(disclosure_ref)
 
 #' Sorts the subsets. This is necessary because it determines how multiple rows
 #' per id are handled when reshaping to wide format
-
-
-cohort = "alspac"
-boole_name = "boole_3_5"
-subset_name = "subset_3_5"
-nearest_value = 4
-newobj = "subset_3_5_sort"
-
-old_conns <- conns
-
-conns <- conns["alspac"]
-
-.sortSubset <- function(mult_action, mult_vals, subset_name, age_var, newobj, conns)
+#' 
+#' @param mult_action how to handle multiple observations.
+#' @param mult_values values when mult_action == "nearest"
+#' @param subset_name name of subset to sort
+#' @param age_var name of age var in subset
+#' @param newobj name for sorted dataset
+#' @param conns datashield connections object
+#' 
+#' @importFrom DSI datashield.assign
+#' @importFrom dsBaseClient ds.dataFrameSort
+#' 
+#' @return noRD
+.sortSubset <- function(mult_action, mult_vals, subset_name, age_var, newobj, conns){
 
 if(mult_action == "nearest"){
 
@@ -745,89 +674,52 @@ sort_action <- FALSE
 
 } else if (mult_action %in% c("earliest", "latest")){
 
-sort_key <- 
+sort_key <- paste0(subset_name, "$", age_var)
 sort_action <- ifelse(mult_action == "earliest", FALSE, TRUE)
 
 }
 
-
-
-
 ds.dataFrameSort(
   df.name = subset_name,
-  sort.key.name = "difference_val",
+  sort.key.name = sort_key,
   newobj = newobj,
-  sort.descending = FALSE,
+  sort.descending = sort_action,
   datasources = conns)
-
-if (mult_action %in% c("earliest", "latest") {
-
-
-
-    ds.dataFrameSort(
-          df.name = subset_name,
-          sort.key.name = paste0(subset_name, "$", age_var),
-          newobj = newobj,
-          sort.descending = sort_action,
-          datasources = conns)
-
-} 
-ds.summary("difference_val", datasources = conns)
-
-ds.assign()
-
-
-
-
-
-    cats_to_subset %<>%
-      left_join(., ref_tab) %>%
-      mutate(
-        condition = paste0(
-          "((", new_subset_name, "$", "age", "-", ref_val, ")", "^2",
-          ")", "^0.5"
-        ),
-        dif_val = paste0("d_", ref_val)
-      )
-
-    cats_to_subset %>%
-      pmap(function(condition, cohort, dif_val, ...) {
-        ds.make(
-          toAssign = condition,
-          newobj = dif_val,
-          datasources = conns[cohort]
-        )
-      })
-
-    ## Join this variable back with the dataset
-    cats_to_subset %>%
-      pmap(function(dif_val, new_subset_name, varname, cohort, ...) {
-        ds.dataFrame(
-          x = c(new_subset_name, dif_val),
-          newobj = paste0(varname, "_y"),
-          datasources = conns[cohort]
-        )
-      })
-
-    ## Sort by it
-    cats_to_subset %>%
-      pmap(function(cohort, new_subset_name, varname, dif_val, ...) {
-        ds.dataFrameSort(
-          datasources = conns[cohort],
-          df.name = paste0(varname, "_y"),
-          sort.key.name = paste0(varname, "_y", "$", dif_val),
-          newobj = paste0(varname, "_a"),
-          sort.descending = FALSE
-        )
-      })
-  } 
-
-
-
-
 
 }
 
+#' Reshapes sorted subset to wide format
+#'
+#' @param sorted_subset name of sorted subset created by function .sortSubset
+#' @param var_suffix integer which will form the suffix of outcome and age variables in long format
+#' @param conns datashield connections object
+#' @param newobj name for created wide subset'
+#'
+#' NoRD
+.reshapeSubset <- function(sorted_subset, var_suffix, conns, newobj){
+
+# We need a vector the length of our subset with an integer value describing 
+# the name of the subset. We use this to create our final variables names
+
+calltext <- paste0("(", sorted_subset, "$", age_var, "*0)+", value)
+DSI::datashield.assign(conns, "variable_suffix", as.symbol(calltext))
+
+ds.dataFrame(
+  x = c(sorted_subset, "variable_suffix"),
+  newobj = "subset_w_suffix",
+  datasources = conns)
+
+# Now we convert to wide format
+ds.reShape(
+  data.name = "subset_w_suffix",
+  timevar.name = "variable_suffix",
+  idvar.name = id_var,
+  v.names = c(outcome, age_var),
+  direction = "wide",
+  newobj = newobj,
+  datasources = conns)
+
+}
 
 
 
