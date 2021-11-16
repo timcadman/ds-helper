@@ -4,7 +4,6 @@
 #' those not present in the first
 #'
 #' @param start_objs output from ds.ls run at the start of a function
-#' @param end_objs output from ds.ls run at the end of a function
 #' @param others_to_keep optional. Additional variables not to remove,
 #' e.g. you might not want to remove an output object you have created.
 #'
@@ -14,7 +13,7 @@
 #' @importFrom purrr map pmap imap
 #'
 #' @noRd
-.removeTempObjs <- function(start_objs, end_objs, others_to_keep, conns) {
+.removeTempObjs <- function(start_objs, others_to_keep, conns) {
   
 out_to_keep <- NULL
 
@@ -31,7 +30,7 @@ out_to_keep <- NULL
     })
 
   to_keep <- to_keep %>% map(function(x) {
-    c(x, out_to_keep)
+    c(x, others_to_keep)
   })
 
   to_keep %>%
