@@ -286,7 +286,6 @@ dh.subsetRM <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset 
 
   .removeTempObjs(
     start_objs = start_objs, 
-    end_objs = end_objs, 
     others_to_keep = df_name, 
     conns = conns)
 
