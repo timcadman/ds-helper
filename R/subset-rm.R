@@ -1,4 +1,4 @@
-#' Derives one or more outcome variable(s) from repeated measures data
+#' Derives subsets for a given variable from repeated measures data.
 #'
 #' Many analyses will want to use outcomes derived at a single time point,
 #' e.g. BMI between ages 10-14. This function automates the process to do this
@@ -7,7 +7,7 @@
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
-#' @param outcome name of repeated measures outcome variable
+#' @param var_to_subset name of repeated measures to create subsets for
 #' @param age_var Vector of values indicating pairs of low and high values
 #'             for which to derive outcome variables for. Must be even length
 #' @param bands vector of alternating lower and upper age bands for variable(s)
@@ -20,7 +20,7 @@
 #'                  which value in each age band to chose values closest to
 #'                  in case of multiple values
 #' @param df_name specify data frame name on the DataSHIELD backend
-#' @param id_var specify id variable (default assumes LifeCycle name 'child_id')
+#' @param id_var specify id variable 
 #' @param band_action specify how the values of bands are evaluated in making the subsets.
 #' "g_l" = greater than the lowest band and less than the highest band;
 #' "ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
@@ -43,12 +43,15 @@
 #'
 #' @export
 # nolint
-dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL, mult_action = NULL, # nolint
-                        mult_vals = NULL, df_name = NULL, conns = NULL, id_var = "child_id",
-                        band_action = NULL) {
+dh.subsetRM <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
+                        mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
-    end_objs <- . <- NULL
+    end_objs <- . <- nearest_value <- NULL
+
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
 
   start_objs <- ds.ls(datasources = conns)
 
@@ -58,14 +61,16 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
 
   .checkInputs(
     df = df, 
-    outcome = outcome, 
+    var_to_subset = var_to_subset, 
     age_var = age_var, 
     bands = bands, 
+    band_action = band_action,
+    mult_action = mult_action,
     mult_vals = mult_vals)
 
-  available_outcome <- .checkDataAvailable(
+  available_var <- .checkDataAvailable(
     df = df,
-    var = outcome,
+    var = var_to_subset,
     conns = conns
   )
 
@@ -76,7 +81,7 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
   )
 
   available <- left_join(
-    x = available_outcome,
+    x = available_var,
     y = available_age,
     by = "cohort"
   ) %>%
@@ -88,7 +93,12 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
 
   message("** Step 2 of 9: Preparing data ... ", appendLF = FALSE)
 
-  .makeSlim(conns)
+  .makeSlim(
+    df = df,
+    id_var = id_var,
+    age_var = age_var,
+    var_to_subset = var_to_subset,
+    conns = conns[valid_coh])
 
   message("DONE", appendLF = TRUE)
 
@@ -231,7 +241,7 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
       .reshapeSubset(
         id_var = id_var, 
         age_var = age_var, 
-        outcome = outcome, 
+        var_to_subset = var_to_subset, 
         sorted_subset = sort_name,
         var_suffix = suffix,
         conns = conns[cohort],
@@ -249,7 +259,7 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
   .makeEmptyWide(
     df = df,
     id_var = id_var,
-    outcome = outcome, 
+    var_to_subset = var_to_subset, 
     conns = conns[valid_coh], 
     finalobj = df_name)
 
@@ -277,26 +287,23 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
   .removeTempObjs(
     start_objs = start_objs, 
     end_objs = end_objs, 
-    others_to_keep = new_df, 
+    others_to_keep = df_name, 
     conns = conns)
 
   created <- subset_ref %>%
-    mutate(bands = subset_name %>% str_remove("subset_")) %>%
-    dplyr::select(cohort, bands)
+    mutate(age = subset_name %>% str_remove("subset_")) %>%
+    dplyr::select(cohort, age)
 
   message("DONE", appendLF = TRUE)
 
   cat(
-    "\nDataframe", "'", df_name, "'",
-    "created containing the following variables:\n\n"
+    "\nDataframe ", "'", df_name, "'",
+    " has been created containing ", "'", var_to_subset, "'", " variables derived at the following ages:\n\n", 
+    sep = ""
   )
 
   print(created)
 }
-
-
-
-
 
 #' Perform various checks on the availability and class of input objects
 #'
@@ -304,14 +311,14 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
 #' @importFrom rlang arg_match
 #'
 #' @noRd
-.checkInputs <- function(df, outcome, age_var, bands, mult_vals) {
+.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals) {
 
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
 
-  if (is.null(outcome)) {
-    stop("Please specify an outcome variable")
+  if (is.null(var_to_subset)) {
+    stop("Please specify an variable to create subsets for")
   }
 
   if (is.null(age_var)) {
@@ -337,28 +344,30 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
     )
   }
 
+  if(mult_action == "nearest" & is.null(mult_vals)){
+
+stop("You must provide value(s) to argument mult_vals when mult_action is set to 'nearest'")
+
+  }
+
   mult_action <- arg_match(mult_action, c("earliest", "latest", "nearest"))
   band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
-  if (is.null(mult_vals) & (length(mult_vals) != length(bands) / 2)) {
+  if (mult_action == "nearest" & (length(mult_vals) != length(bands) / 2)) {
     stop("Length of argument 'mult_vals' must be half the length of argument 'bands'")
   }
 
-  if (is.null(conns)) {
-    conns <- datashield.connections_find()
-  }
-
-  dh.doVarsExist(df = df, vars = outcome, conns = conns)
+  dh.doVarsExist(df = df, vars = var_to_subset, conns = conns)
   dh.doesDfExist(df = df, conns = conns)
 
 
-  cally <- call("classDS", paste0(df, "$", outcome))
-  outcome_class <- DSI::datashield.aggregate(conns, cally)
+  cally <- call("classDS", paste0(df, "$", var_to_subset))
+  var_class <- DSI::datashield.aggregate(conns, cally)
 
-  if (length(unique(outcome_class)) > 1) {
-    stop("The outcome variable does not have the same class in all studies")
-  } else if (any(!outcome_class %in% c("numeric", "integer"))) {
-    stop("The class of the outcome variable needs to be either numeric or integer.")
+  if (length(unique(var_class)) > 1) {
+    stop("The variable to subset does not have the same class in all studies")
+  } else if (any(!var_class %in% c("numeric", "integer"))) {
+    stop("The class of the variable to subset needs to be either numeric or integer.")
   }
 
   cally <- call("classDS", paste0(df, "$", age_var))
@@ -386,7 +395,7 @@ dh.subsetRM <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
 .checkDataAvailable <- function(df, var, conns) {
  
 
-cohort <- .
+cohort <- . <- NULL
 
   missing_col_name <- paste0(var, "_missing")
 
@@ -419,13 +428,21 @@ cohort <- .
 #' missing rows. This should improve performance with large
 #' datasets
 #'
-#' @importFrom dsBaseClient ds.dataFrame
+#' @param df Opal/armadillo data frame
+#' @param id_var subject idvariable in df
+#' @param age_var subject age variable in df
+#' @param var_to_subset variable in df
+#' @param conns datashield connection object
+#'
+#'
+#' @importFrom dsBaseClient ds.completeCases
 #'
 #' @noRd
-.makeSlim <- function(conns) {
+.makeSlim <- function(df, id_var, age_var, var_to_subset, conns) {
+ 
   dh.dropCols(
     df = df,
-    vars = c(id_var, age_var, outcome),
+    vars = c(id_var, age_var, var_to_subset),
     new_df_name = "df_slim",
     type = "keep",
     conns = conns
@@ -456,7 +473,7 @@ cohort <- .
 #' @noRd
 .BooleTwoConditions <- function(df, var, value_1, op_1, value_2, op_2, newobj, conns) {
   
-symbol <- number <- .
+symbol <- number <- . <- NULL
 
   op_ref <- tibble(
     symbol = c("==", "!=", "<", "<=", ">", ">="),
@@ -470,13 +487,13 @@ symbol <- number <- .
       pull()
   }
 
-  op_1 <- get_op_number(op_1)
-  op_2 <- get_op_number(op_2)
+  op_1_num <- get_op_number(op = op_1)
+  op_2_num <- get_op_number(op = op_2)
 
-  calltext <- call("BooleDS", paste0(df, "$", var), value_1, op_1, 0, TRUE)
+  calltext <- call("BooleDS", paste0(df, "$", var), value_1, op_1_num, "0", TRUE)
   DSI::datashield.assign(conns, "boole_1", calltext)
 
-  calltext <- call("BooleDS", paste0(df, "$", var), value_2, op_2, 0, TRUE)
+  calltext <- call("BooleDS", paste0(df, "$", var), value_2, op_2_num, "0", TRUE)
   DSI::datashield.assign(conns, "boole_2", calltext)
 
   DSI::datashield.assign(conns, newobj, as.symbol("boole_1*boole_2"))
@@ -497,9 +514,9 @@ symbol <- number <- .
 #' @noRd
 .checkDisclosure <- function(bin_vec, conns) {
   
-observations <- .
+observations <- . <- NULL
 
-  n_obs <- ds.table(bin_vec)$output.list$TABLE_rvar.by.study_counts %>%
+  n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
     as_tibble(rownames = "levels") %>%
     dplyr::filter(levels == 1) %>%
     pivot_longer(
@@ -507,7 +524,8 @@ observations <- .
       names_to = "cohort",
       values_to = "observations"
     ) %>%
-    dplyr::select(-levels)
+    dplyr::select(-levels) %>%
+    mutate(cohort = names(conns))
 
   min_obs <- ds.listDisclosureSettings(datasources = conns)$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset) %>%
@@ -575,12 +593,15 @@ nearest_value <- NULL
 #' Reshapes sorted subset to wide format
 #'
 #' @param sorted_subset name of sorted subset created by function .sortSubset
+#' @param id_var subject id variable in sorted subset
+#' @param age_var subject age variable in sorted subset
+#' @param var_to_subset subject outcome variable in sorted subset
 #' @param var_suffix integer which will form the suffix of outcome and age variables in long format
 #' @param conns datashield connections object
 #' @param newobj name for created wide subset'
 #'
 #' @noRd
-.reshapeSubset <- function(id_var, age_var, outcome, sorted_subset, var_suffix, conns, newobj) {
+.reshapeSubset <- function(sorted_subset, id_var, age_var, var_to_subset, var_suffix, conns, newobj) {
 
   # We need a vector the length of our subset with an integer value describing
   # the name of the subset. We use this to create our final variables names
@@ -599,7 +620,7 @@ nearest_value <- NULL
     data.name = "subset_w_suffix",
     timevar.name = "variable_suffix",
     idvar.name = id_var,
-    v.names = c(outcome, age_var),
+    v.names = c(var_to_subset, age_var),
     direction = "wide",
     newobj = newobj,
     datasources = conns
@@ -610,7 +631,10 @@ nearest_value <- NULL
 #' We want to return final dataframes with length equal to number of
 #' unique subjects in long format. This creates a wide format data
 #' frame from the long format input containing only the id variable.
-#'
+#' 
+#' @param df opal/armadillo dataframe
+#' @param id_var subject id variable in df
+#' @param var_to_subset subject outcome variable in df
 #' @param conns datashield connections object
 #' @param finalobj name for this data frame
 #'
@@ -620,9 +644,9 @@ nearest_value <- NULL
 #' @importFrom purrr map_int pmap
 #'
 #' @noRd
-.makeEmptyWide <- function(df, id_var, outcome, conns, finalobj) {
+.makeEmptyWide <- function(df, id_var, var_to_subset, conns, finalobj) {
  
-  df_dim <- ds.dim(df, type = "split")
+  df_dim <- ds.dim(df, type = "split", datasources = conns)
 
   rep_ref <- tibble(
     cohort = str_remove(names(df_dim), "dimensions of data in "),
@@ -651,7 +675,7 @@ nearest_value <- NULL
     data.name = "df_tmp",
     timevar.name = "rep_vec",
     idvar.name = id_var,
-    v.names = outcome,
+    v.names = var_to_subset,
     direction = "wide",
     newobj = "df_minimal",
     datasources = conns
