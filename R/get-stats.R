@@ -132,6 +132,7 @@ check with ds.class \n\n",
     ) %>%
     dplyr::filter(type == "factor")
 
+if(nrow(fact_exist) > 0){
   ## ---- Get the levels of these factors ----------------------------------------
   check_levels <- fact_exist %>%
     group_by(variable) %>%
@@ -168,6 +169,8 @@ Please check using ds.levels:\n\n",
         paste(., collapse = "\n")
     )
   }
+
+}
 
 
 
