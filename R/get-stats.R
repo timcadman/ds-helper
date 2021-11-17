@@ -91,7 +91,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
   check_class <- dh.classDiscrepancy(
     df = df,
     vars = vars,
-    conns = conns
+    conns = conns,
+    checks = FALSE
   )
 
   ################################################################################

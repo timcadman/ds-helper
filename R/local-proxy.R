@@ -39,7 +39,7 @@ dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
     conns <- datashield.connections_find()
   }
 
-  discrep <- dh.classDiscrepancy(conns = conns, df = df)
+  discrep <- dh.classDiscrepancy(conns = conns, df = df, checks = FALSE)
   if (any(discrep$discrepancy == "yes")) {
     warning("All columns not found in all cohorts, please see tibble returned and correct this", call. = FALSE)
     return(discrep)
