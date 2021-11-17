@@ -17,15 +17,15 @@ dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
-    stop("Please provide a model from ds.lmerSLMA")
+    stop("`model` must not be NULL.")
   }
 
   if (is.null(newdata)) {
-    stop("Please provide a tibble of new data corresponding to the variables in your model")
+    stop("`newdata` must not be NULL.")
   }
 
   if (is.null(coh_names)) {
-    stop("Please provide a vector of cohort names in the same order as the cohorts in your model")
+    stop("`coh_names` must not be NULL.")
   }
 
 

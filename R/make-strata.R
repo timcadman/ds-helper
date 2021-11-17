@@ -344,45 +344,44 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @noRd
 .checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+      stop("`df` must not be NULL.")
   }
 
   if (is.null(var_to_subset)) {
-    stop("Please specify an variable to create subsets for")
+      stop("`var_to_subset` must not be NULL.")
   }
 
   if (is.null(age_var)) {
-    stop("Please specify an age variable")
+    stop("`age_var` must not be NULL.")
   }
 
   if (is.null(bands)) {
-    stop("Please specify age bands which will be used to create the subset(s)")
+    stop("`bands` must not be NULL.")
   }
 
   if (is.null(band_action)) {
-    stop("Please specify how you want to evaluate the age bands using argument 'band_action'")
+    stop("`band_action` must not be NULL.")
   }
 
   if (is.null(mult_action)) {
-    stop("Please specify how you want to deal with multiple observations within an age
-         bracket using the argument 'mult_action")
+    stop("`mult_action` must not be NULL.")
   }
 
   if ((length(bands) %% 2 == 0) == FALSE) {
-    stop("The length of the vector provided to the 'bands' argument is not an even number",
+    stop("The length of the vector specified in `bands` is not an even number.",
       call. = FALSE
     )
   }
 
   if (mult_action == "nearest" & is.null(mult_vals)) {
-    stop("You must provide value(s) to argument mult_vals when mult_action is set to 'nearest'")
+    stop("`mult_vals` must not be NULL when `mult_action` is 'nearest'.")
   }
 
   mult_action <- arg_match(mult_action, c("earliest", "latest", "nearest"))
   band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
   if (mult_action == "nearest" & (length(mult_vals) != length(bands) / 2)) {
-    stop("Length of argument 'mult_vals' must be half the length of argument 'bands'")
+    stop("Length of `mult_vals` must be half the length of `bands`.")
   }
 
   dh.doVarsExist(df = df, vars = var_to_subset, conns = conns)
@@ -393,18 +392,18 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   var_class <- DSI::datashield.aggregate(conns, cally)
 
   if (length(unique(var_class)) > 1) {
-    stop("The variable to subset does not have the same class in all studies")
+    stop("`var_to_subset` does not have the same class in all studies.")
   } else if (any(!var_class %in% c("numeric", "integer"))) {
-    stop("The class of the variable to subset needs to be either numeric or integer.")
+    stop("`var_to_subset` must be class numeric or integer.")
   }
 
   cally <- call("classDS", paste0(df, "$", age_var))
   age_var_class <- DSI::datashield.aggregate(conns, cally)
 
   if (length(unique(age_var_class)) > 1) {
-    stop("The age variable does not have the same class in all studies.")
+    stop("`age_var` does not have the same class in all studies.")
   } else if (any(!age_var_class %in% c("numeric", "integer"))) {
-    stop("The class of the age variable needs to be either numeric or integer.")
+    stop("`age_var` must be class numeric or integer.")
   }
 }
 

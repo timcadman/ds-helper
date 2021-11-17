@@ -30,11 +30,11 @@
 #' @export
 dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.")
   }
 
   if (is.null(vars)) {
-    stop("Please specify variables")
+    stop("`vars` must not be NULL.")
   }
 
   if (is.null(conns)) {

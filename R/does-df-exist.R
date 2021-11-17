@@ -28,6 +28,6 @@ dh.doesDfExist <- function(conns = NULL, df) {
   df_missing <- df_check %>% map(~ any(. == FALSE))
 
   if (any(unlist(df_missing) == TRUE)) {
-    stop("Dataframe not present in one or more cohorts", call. = FALSE)
+    stop("Dataframe specified in `df` not present in one or more cohorts.", call. = FALSE)
   }
 }

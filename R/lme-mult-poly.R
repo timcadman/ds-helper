@@ -22,15 +22,15 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   sum_log <- NULL
 
   if (is.null(df)) {
-    stop("Please specify dataframe to use for polynomial models")
+     stop("`df` must not be NULL.")
   }
 
   if (is.null(formulae)) {
-    stop("Please specify a vector of model formulae")
+     stop("`formulae` must not be NULL.")
   }
 
   if (is.null(poly_names)) {
-    stop("Please specify a vector of names for your models")
+     stop("`poly_names` must not be NULL.")
   }
 
   if (is.null(conns)) {

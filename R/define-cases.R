@@ -28,16 +28,15 @@
 dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
                            newobj = "dc_data_avail") {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.")
   }
 
   if (is.null(vars)) {
-    stop("Please specify variable(s)")
+    stop("`vars` must not be NULL.")
   }
 
   if (is.null(type)) {
-    stop("Please specify whether you want to define cases based on any or all of
-         provided variable(s)")
+    stop("`type` must not be NULL.")
   }
 
   type <- match.arg(type, c("any", "all"))

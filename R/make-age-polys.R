@@ -28,16 +28,15 @@ dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
                             poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"), 
                             checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame which contains age variable(s)")
+      stop("`df` must not be NULL.")
   }
 
   if (is.null(agevars)) {
-    stop("Please specify one or more age variables to transform")
+      stop("`agevars` must not be NULL.")
   }
 
   if (length(poly_names) != length(poly_form)) {
-    stop("The vectors supplied to arguments 'poly_names' and 'poly_form
-  are not the same length")
+    stop("The vectors supplied to `poly_names` and `poly_form` are not the same length")
   }
 
   if(checks == TRUE){

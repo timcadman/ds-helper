@@ -17,11 +17,11 @@
 #' @noRd
 dh.doVarsExist <- function(df = NULL, vars = NULL, conns = NULL) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+   stop("`df` must not be NULL.")
   }
 
   if (is.null(vars)) {
-    stop("Please specify variable(s) to evaluate")
+    stop("`vars` must not be NULL.")
   }
 
   if (is.null(conns)) {
@@ -45,7 +45,7 @@ dh.doVarsExist <- function(df = NULL, vars = NULL, conns = NULL) {
       unlist()
 
     stop(paste0(
-      "Variable(s) not present in the data frame: ",
+      "Variable(s) specified in `vars` are not present in dataframe specified in `df`: ",
       paste0(missing, " (", names(missing), ")", collapse = ", ")
     ),
     call. = FALSE

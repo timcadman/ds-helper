@@ -28,7 +28,7 @@
 #' @export
 dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+      stop("`df` must not be NULL.")
   }
 
   if(checks == TRUE){

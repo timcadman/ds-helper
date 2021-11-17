@@ -20,15 +20,15 @@ dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <- . <- NULL
 
   if (is.null(df)) {
-    stop("Please specify a data frame")
+      stop("`df` must not be NULL.")
   }
 
   if (is.null(outcome)) {
-    stop("Please specify an outcome variable")
+      stop("`outcome` must not be NULL.")
   }
 
   if (is.null(age_var)) {
-    stop("Please specify a grouping age/time variable")
+      stop("`age_var` must not be NULL.")
   }
 
   if (is.null(conns)) {

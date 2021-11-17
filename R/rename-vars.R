@@ -22,15 +22,15 @@
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
                           conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+     stop("`df` must not be NULL.")
   }
 
   if (is.null(current_names)) {
-    stop("Please specify a vector containing existing variable names")
+     stop("`current_names` must not be NULL.")
   }
 
   if (is.null(new_names)) {
-    stop("Please specify a vector containing the new variable names")
+    stop("`new_names` must not be NULL.")
   }
 
   if (is.null(conns)) {
@@ -45,7 +45,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
 }
 
   if (length(current_names) != length(new_names)) {
-    stop("Length of current_names is different from the length of new_names.
+    stop("Length of `current_names` must equal length of `new_names`.
     Please check input vectors")
   }
 

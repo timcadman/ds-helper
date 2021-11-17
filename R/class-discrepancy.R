@@ -25,7 +25,7 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
   . <- variable <- discrepancy <- NULL
 
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.")
   }
 
   if (is.null(conns)) {

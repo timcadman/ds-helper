@@ -29,13 +29,13 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
-    stop("Please specify a model from which to extract coefficients")
+     stop("`model` must not be NULL.")
   }
   if (is.null(type)) {
-    stop("Please specify which type of model was fit")
+     stop("`type` must not be NULL.")
   }
   if (is.null(coh_names) & type %in% c("lmer", "slma")) {
-    stop("Please provide a vector of cohort names")
+      stop("`coh_names` must not be NULL.")
   }
 
   type <- arg_match(type, c("ipd", "slma", "lmer"))
