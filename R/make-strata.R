@@ -1,4 +1,4 @@
-#' Creates strata of a repeated measures variable within specified age or time bands 
+#' Creates strata of a repeated measures variable within specified age or time bands
 #'
 #' For many analyses you will want to use values from repeated measures data within
 #' specified bands. For example, you may have BMI measures between ages 0-18, but want
@@ -6,14 +6,14 @@
 #' This is quite complicated to do in DataSHIELD so this function automates the process.
 #'
 #' The steps here are equivalent to the following dplyr chain:
-#' 
-#' df %>% 
-#' group_by(band, id) %>% 
-#' arrange() %<% 
-#' slice(1) 
-#' 
 #'
-#' One of the complexities of this operation is how to deal with cases where 
+#' df %>%
+#' group_by(band, id) %>%
+#' arrange() %<%
+#' slice(1)
+#'
+#'
+#' One of the complexities of this operation is how to deal with cases where
 #' subjects have multiple observations within a specified band. This is handled
 #' by first sorting the group so that the required value is first. When we reshape
 #' the data all but the first value for subjects with multiple observations within a band
@@ -26,21 +26,21 @@
 #' @param var_to_subset String providing name of the variable in df
 #'                      to stratify according to bands.
 #' @param age_var String providing name of age or time variable in df.
-#' @param bands A numeric vector of alternating lower and upper values to specify 
+#' @param bands A numeric vector of alternating lower and upper values to specify
 #'              the bands in which to derive strata of var_to_subset. This vector should
 #'              be an even number and twice the length of the number of bands required.
-#' @param band_action String specifying how the values provided in 'bands' arguments are 
+#' @param band_action String specifying how the values provided in 'bands' arguments are
 #'                    evaluated in creating the strata:
 #' "g_l" = greater than the lowest band and less than the highest band;
 #' "ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
 #' "g_le" = greater than the lowest band and less than or equal to the highest band;
 #' "ge_l" = greater than or equal to the lowest band and less than the highest band;
-#' @param mult_action String specifying how to handle cases where a subject has more 
+#' @param mult_action String specifying how to handle cases where a subject has more
 #'                    than one measurement within a specified band. Use 'earliest' to
 #'                    take the earliest measurement, 'latest' to take the
-#'                    latest measurement and 'nearest' to take the measurement nearest to 
+#'                    latest measurement and 'nearest' to take the measurement nearest to
 #'                    the value(s) specified in mult_vals.
-#' @param mult_vals Numeric vector specifying the value in each age band to chose values 
+#' @param mult_vals Numeric vector specifying the value in each age band to chose values
 #'                  closest to. Required only if mult_action = "nearest". The order and length of the vector
 #'                  should correspond to the order and number of the bands.
 #' @param df_name String providing name of data frame to be created on the DataSHIELD backend
@@ -48,7 +48,7 @@
 #'
 #' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two
 #'         variables will be returned: (i) var_to_subset and (ii) age_var. The suffix
-#'          .[lower_band] identifies the band for that variable. 
+#'          .[lower_band] identifies the band for that variable.
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
@@ -65,7 +65,7 @@
 #' @export
 # nolint
 dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
-                        mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL) {
+                          mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -81,14 +81,15 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)
 
   .checkInputs(
-    df = df, 
-    var_to_subset = var_to_subset, 
-    age_var = age_var, 
-    bands = bands, 
+    df = df,
+    var_to_subset = var_to_subset,
+    age_var = age_var,
+    bands = bands,
     band_action = band_action,
     mult_action = mult_action,
-    mult_vals = mult_vals, 
-    conns = conns)
+    mult_vals = mult_vals,
+    conns = conns
+  )
 
   available_var <- .checkDataAvailable(
     df = df,
@@ -120,7 +121,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     id_var = id_var,
     age_var = age_var,
     var_to_subset = var_to_subset,
-    conns = conns[valid_coh])
+    conns = conns[valid_coh]
+  )
 
   message("DONE", appendLF = TRUE)
 
@@ -229,10 +231,9 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     )
 
     sort_ref <- left_join(subset_ref, nearest_ref, by = "subset_name")
-
   } else if (mult_action %in% c("earliest", "latest")) {
     sort_ref <- subset_ref %>%
-    mutate(nearest_value = NA)
+      mutate(nearest_value = NA)
   }
 
   sort_ref <- sort_ref %>%
@@ -263,9 +264,9 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   reshape_ref %>%
     pmap(function(cohort, sort_name, suffix, wide_name, ...) {
       .reshapeSubset(
-        id_var = id_var, 
-        age_var = age_var, 
-        var_to_subset = var_to_subset, 
+        id_var = id_var,
+        age_var = age_var,
+        var_to_subset = var_to_subset,
         sorted_subset = sort_name,
         var_suffix = suffix,
         conns = conns[cohort],
@@ -283,9 +284,10 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   .makeEmptyWide(
     df = df,
     id_var = id_var,
-    var_to_subset = var_to_subset, 
-    conns = conns[valid_coh], 
-    finalobj = df_name)
+    var_to_subset = var_to_subset,
+    conns = conns[valid_coh],
+    finalobj = df_name
+  )
 
   merge_ref <- reshape_ref %>%
     dplyr::select(cohort, wide_name)
@@ -309,9 +311,10 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
 
   .removeTempObjs(
-    start_objs = start_objs, 
-    others_to_keep = df_name, 
-    conns = conns)
+    start_objs = start_objs,
+    others_to_keep = df_name,
+    conns = conns
+  )
 
   created <- subset_ref %>%
     mutate(age = subset_name %>% str_remove("subset_")) %>%
@@ -321,7 +324,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   cat(
     "\nDataframe ", "'", df_name, "'",
-    " has been created containing ", "'", var_to_subset, "'", " variables derived at the following ages:\n\n", 
+    " has been created containing ", "'", var_to_subset, "'", " variables derived at the following ages:\n\n",
     sep = ""
   )
 
@@ -335,7 +338,6 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #'
 #' @noRd
 .checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns) {
-
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -367,10 +369,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     )
   }
 
-  if(mult_action == "nearest" & is.null(mult_vals)){
-
-stop("You must provide value(s) to argument mult_vals when mult_action is set to 'nearest'")
-
+  if (mult_action == "nearest" & is.null(mult_vals)) {
+    stop("You must provide value(s) to argument mult_vals when mult_action is set to 'nearest'")
   }
 
   mult_action <- arg_match(mult_action, c("earliest", "latest", "nearest"))
@@ -416,9 +416,7 @@ stop("You must provide value(s) to argument mult_vals when mult_action is set to
 #'
 #' @noRd
 .checkDataAvailable <- function(df, var, conns) {
- 
-
-cohort <- . <- NULL
+  cohort <- . <- NULL
 
   missing_col_name <- paste0(var, "_missing")
 
@@ -462,7 +460,6 @@ cohort <- . <- NULL
 #'
 #' @noRd
 .makeSlim <- function(df, id_var, age_var, var_to_subset, conns) {
- 
   dh.dropCols(
     df = df,
     vars = c(id_var, age_var, var_to_subset),
@@ -495,8 +492,7 @@ cohort <- . <- NULL
 #'
 #' @noRd
 .BooleTwoConditions <- function(df, var, value_1, op_1, value_2, op_2, newobj, conns) {
-  
-symbol <- number <- . <- NULL
+  symbol <- number <- . <- NULL
 
   op_ref <- tibble(
     symbol = c("==", "!=", "<", "<=", ">", ">="),
@@ -536,8 +532,7 @@ symbol <- number <- . <- NULL
 #'
 #' @noRd
 .checkDisclosure <- function(bin_vec, conns) {
-  
-observations <- . <- NULL
+  observations <- . <- NULL
 
   n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
     as_tibble(rownames = "levels") %>%
@@ -582,7 +577,6 @@ observations <- . <- NULL
 #'
 #' @noRd
 .sortSubset <- function(mult_action, nearest_value, subset_name, age_var, newobj, conns) {
- 
   if (mult_action == "nearest") {
 
     ## Make a variable specifying distance between age of measurement and prefered
@@ -652,7 +646,7 @@ observations <- . <- NULL
 #' We want to return final dataframes with length equal to number of
 #' unique subjects in long format. This creates a wide format data
 #' frame from the long format input containing only the id variable.
-#' 
+#'
 #' @param df opal/armadillo dataframe
 #' @param id_var subject id variable in df
 #' @param var_to_subset subject outcome variable in df
@@ -666,7 +660,6 @@ observations <- . <- NULL
 #'
 #' @noRd
 .makeEmptyWide <- function(df, id_var, var_to_subset, conns, finalobj) {
- 
   df_dim <- ds.dim(df, type = "split", datasources = conns)
 
   rep_ref <- tibble(

@@ -14,8 +14,7 @@
 #'
 #' @noRd
 .removeTempObjs <- function(start_objs, others_to_keep, conns) {
-  
-out_to_keep <- NULL
+  out_to_keep <- NULL
 
   end_objs <- ds.ls(datasources = conns)
 
