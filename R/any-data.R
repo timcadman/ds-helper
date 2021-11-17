@@ -17,6 +17,7 @@
 #' @param conns connections object for DataSHIELD backends
 #' @param df server side dataframe
 #' @param vars vector of server side variable names within df
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return a dataframe with columns for each variable and rows for each cohort
 #' indicating if the variable is not completely missing
@@ -27,7 +28,7 @@
 #' @importFrom tibble as_tibble
 #'
 #' @export
-dh.anyData <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -40,7 +41,9 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
+  if(checks == TRUE){
   dh.doesDfExist(conns, df)
+}
 
   if (is.null(vars)) {
     fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))

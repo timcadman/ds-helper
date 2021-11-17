@@ -18,6 +18,7 @@
 #'
 #' @param conns connections object to DataSHIELD backends
 #' @param df datashield dataframe
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
 #' of more cohorts.
@@ -25,10 +26,14 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.localProxy <- function(df = NULL, conns = NULL) {
+dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
+
+  if(checks == TRUE){
+  dh.doesDfExist(conns = conns, df = df)
+}
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

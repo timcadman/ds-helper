@@ -45,6 +45,7 @@
 #'                  should correspond to the order and number of the bands.
 #' @param df_name String providing name of data frame to be created on the DataSHIELD backend
 #' @param conns Connections object for DataSHIELD backends.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two
 #'         variables will be returned: (i) var_to_subset and (ii) age_var. The suffix
@@ -65,7 +66,7 @@
 #' @export
 # nolint
 dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
-                          mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL) {
+                          mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL, checks = TRUE) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -80,6 +81,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)
 
+  if(checks == TRUE){
+
   .checkInputs(
     df = df,
     var_to_subset = var_to_subset,
@@ -90,6 +93,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     mult_vals = mult_vals,
     conns = conns
   )
+
+}
 
   available_var <- .checkDataAvailable(
     df = df,

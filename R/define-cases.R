@@ -16,6 +16,7 @@
 #' @return None. A new variable is created within the opal environment. If the option
 #'         "any" is selected for argument "type", the new variable is called "dc_any_data".
 #'         If the option "all" is selected, the new variable is called "dc_all_data"
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric ds.replaceNA
 #' @importFrom DSI datashield.connections_find
@@ -45,7 +46,9 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
     conns <- datashield.connections_find()
   }
 
+  if(checks == TRUE){
   dh.doesDfExist(conns = conns, df = df)
+}
 
   ## ---- Convert to numeric -----------------------------------------------------
   vars %>%

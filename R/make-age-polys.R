@@ -12,6 +12,7 @@
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length
 #' and order as poly_form
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return transformations of age created in df
 #'
@@ -24,7 +25,8 @@
 #' @export
 dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-                            poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")) {
+                            poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"), 
+                            checks = TRUE) {
   if (is.null(df)) {
     stop("Please specify a data frame which contains age variable(s)")
   }
@@ -37,6 +39,11 @@ dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
     stop("The vectors supplied to arguments 'poly_names' and 'poly_form
   are not the same length")
   }
+
+  if(checks == TRUE){
+  dh.doVarsExist(df = df, vars = vars, conns = conns)
+  dh.doesDfExist(df = df, conns = conns)
+}    
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

@@ -15,6 +15,7 @@
 #' @param vars vector of variable names in dataframe
 #' @param digits number of decimal places to round continuous stats to. Default
 #'               is 2.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return The function returns a list with two elements containing dataframes
 #' with summary statistics for (i) categorical and (ii) continuous variables.
@@ -53,7 +54,7 @@
 #' @importFrom DSI datashield.connections_find datashield.aggregate
 #'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) { # nolint
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE) { # nolint
 
   ################################################################################
   # 1. First checks
@@ -70,8 +71,9 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) { # no
     conns <- datashield.connections_find()
   }
 
+  if(checks == TRUE){
   dh.doesDfExist(df, conns = conns)
-
+}
   # Not checking whether variable exists because function will show NA if it
   # doesnt
 

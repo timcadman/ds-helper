@@ -10,6 +10,7 @@
 #' @param outcome outcome variable in long format
 #' @param age_var age in years
 #' @param intervals table defining our age bands
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'
@@ -34,9 +35,10 @@ dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL
     conns <- datashield.connections_find()
   }
 
+  if(checks == TRUE){
   dh.doesDfExist(conns = conns, df = df)
   dh.doVarsExist(conns = conns, vars = c(outcome, age_var), df = df)
-
+}
 
   ## There is an easy way and a hard way. If we bin based on integer units of the
   ## binning variable it is quite quick

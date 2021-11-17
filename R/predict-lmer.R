@@ -5,7 +5,7 @@
 #' at which you want to get predicted values. All variables from the model must
 #' be in the new data frame
 #' @param coh_names a vector of cohort names, in the order that these were provided
-#' in the original lmer model. #'
+#' in the original lmer model.
 #' @return A tibble of predicted outcome values based on provide variable values.
 #'
 #' @importFrom dplyr pull filter select group_by group_keys all_of group_split rename bind_cols bind_rows mutate

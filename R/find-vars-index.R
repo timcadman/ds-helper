@@ -8,6 +8,7 @@
 #' @param conns connections object for DataSHIELD backends
 #' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return list of indices where length of list is number of cohorts provided
 #'
@@ -16,7 +17,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -29,9 +30,10 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
-
+  if(checks == TRUE){
   dh.doVarsExist(df = df, vars = vars, conns = conns)
   dh.doesDfExist(df = df, conns = conns)
+}
 
   ## -- Make reference table of vars and cohorts -------------------------------
   ref_tab <- tibble(

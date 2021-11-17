@@ -13,11 +13,12 @@
 #' @param df name of dataFrame
 #' @param formulae a vector of model formulae to fit
 #' @param poly_names a vector of names for your models
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL, checks = TRUE) {
   sum_log <- NULL
 
   if (is.null(df)) {
@@ -36,6 +37,9 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
     conns <- datashield.connections_find()
   }
 
+  if(checks == TRUE){
+      dh.doesDfExist(conns = conns, df = df)
+    }
 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
 

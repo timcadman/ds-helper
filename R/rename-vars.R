@@ -11,6 +11,7 @@
 #'        rename
 #' @param new_names a vector corresponding to the vector provided to current_names
 #'        with the new variable names.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #' @return None. The new variables are added to the df specified
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
@@ -19,7 +20,7 @@
 #'
 #' @export
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
-                          conns = NULL) {
+                          conns = NULL, checks = TRUE) {
   if (is.null(df)) {
     stop("Please specify a data frame")
   }
@@ -38,8 +39,10 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
 
   names <- NULL
 
+  if(checks == TRUE){
   dh.doesDfExist(df = df, conns = conns)
   dh.doVarsExist(df = df, vars = current_names, conns = conns)
+}
 
   if (length(current_names) != length(new_names)) {
     stop("Length of current_names is different from the length of new_names.

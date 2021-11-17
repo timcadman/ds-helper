@@ -7,6 +7,7 @@
 #' @param v1 variable in df to get plotdata for
 #' @param v2 optional second variable if you want to get scatterplot data
 #' @param conns connection object for DataSHIELD backends
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return A list of the length of the number of variables provided containing
 #'         anonymised values for each subject of each cohort provided.
@@ -19,7 +20,7 @@
 #' @importFrom rlang quo_name
 #'
 #' @export
-dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL) {
+dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, checks = TRUE) {
   . <- value <- x <- y <- NULL
 
   if (is.null(df)) {
@@ -33,6 +34,11 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL) {
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
+
+  if(checks == TRUE){
+  dh.doesDfExist(conns = conns, df = df)
+  dh.doVarsExist(conns = conns, vars = c(v1, v2), df = df)
+}
 
   ## ---- Where only one variable is provided ------------------------------------------------
   if (is.null(v2)) {

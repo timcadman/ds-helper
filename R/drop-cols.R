@@ -9,6 +9,7 @@
 #' @param vars variables to keep or remove
 #' @param new_df_name name for the new dataframe
 #' @param type whether to remove or keep specified variables
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return a new dataframe is created containing the specified subset of columns
 #'
@@ -19,10 +20,12 @@
 #' @importFrom stringr str_subset
 #'
 #' @export
-dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remove", "keep"), conns = NULL) {
+dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remove", "keep"), conns = NULL, checks = TRUE) {
   . <- NULL
 
+  if(checks == TRUE){
   dh.doVarsExist(df = df, vars = vars, conns = conns)
+}
 
   if (is.null(df)) {
     stop("Please specify a data frame")

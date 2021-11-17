@@ -9,6 +9,7 @@
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe (optional). If vars is not
 #'      provided all variables will be included.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
 #'        columns for each cohort indicating the class of the variable
@@ -20,7 +21,7 @@
 #'
 #' @export
 # nolint
-dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   . <- variable <- discrepancy <- NULL
 
   if (is.null(df)) {
@@ -31,8 +32,10 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
     conns <- datashield.connections_find()
   }
 
+  if(checks == TRUE){
   dh.doesDfExist(conns, df)
-
+}
+ 
   if (is.null(vars)) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
   } else {
