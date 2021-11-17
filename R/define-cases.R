@@ -26,7 +26,7 @@
 #'
 #' @export
 dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
-                           newobj = "dc_data_avail") {
+                           new_obj = NULL) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -37,6 +37,10 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
 
   if (is.null(type)) {
     stop("`type` must not be NULL.", call. = FALSE)
+  }
+
+  if (is.null(new_obj)) {
+    stop("`new_obj` must not be NULL.", call. = FALSE)
   }
 
   type <- match.arg(type, c("any", "all"))
@@ -72,7 +76,7 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
     )
 
     calltext <- call("BooleDS", "dc_all_data", -999999, 5, 0, TRUE)
-    DSI::datashield.assign(conns, newobj, calltext)
+    DSI::datashield.assign(conns, new_obj, calltext)
 
     ## Does subject have non-missing data for any of these vars?
   } else if (type == "any") {
@@ -105,7 +109,7 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
     conns = conns
   )
 
-  cat("\n Vector ", "'", newobj, "'", " has been created indicating whether ", type, 
+  cat("\n Vector ", "'", new_obj, "'", " has been created indicating whether ", type, 
     " data is available on the following variables: \n\n ", 
     paste0(vars, sep = ", "),
     sep = "")

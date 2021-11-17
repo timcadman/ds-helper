@@ -7,7 +7,7 @@
 #' @param conns connections object to DataSHIELD backends
 #' @param df datashield dataframe
 #' @param vars variables to keep or remove
-#' @param new_df_name name for the new dataframe
+#' @param new_obj name for the new dataframe
 #' @param type whether to remove or keep specified variables
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
@@ -20,7 +20,7 @@
 #' @importFrom stringr str_subset
 #'
 #' @export
-dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remove", "keep"), conns = NULL, checks = TRUE) {
+dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove", "keep"), conns = NULL, checks = TRUE) {
   . <- NULL
 
   if(checks == TRUE){
@@ -44,7 +44,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remo
   if (type == "keep") {
     ds.dataFrame(
       x = paste0(df, "$", vars),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns
     )
   } else if (type == "remove") {
@@ -61,7 +61,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remo
         ~ ds.dataFrame(
           x = .x,
           datasources = conns[.y],
-          newobj = new_df_name
+          newobj = new_obj
         )
       )
   }

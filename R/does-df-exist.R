@@ -15,7 +15,12 @@
 #' @importFrom dplyr %>%
 #'
 #' @noRd
-dh.doesDfExist <- function(conns = NULL, df) {
+dh.doesDfExist <- function(df = NULL, conns = NULL, ) {
+  
+  if (is.null(df)) {
+    stop("`df` must not be NULL.", call. = FALSE)
+  }
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

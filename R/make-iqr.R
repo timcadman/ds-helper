@@ -27,7 +27,7 @@
 #'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
-                       conns = NULL, new_df_name = df, checks = TRUE) {
+                       conns = NULL, new_obj = df, checks = TRUE) {
   . <- variable <- cohort <- formula <- NULL
 
   if (is.null(df)) {
@@ -91,7 +91,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_c")),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
@@ -168,14 +168,14 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_p")),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
 
   }
-  cat("\nThe following IQR transformations have been created in dataframe ", "'", new_df_name, "':", "\n\n", sep = "")
+  cat("\nThe following IQR transformations have been created in dataframe ", "'", new_obj, "':", "\n\n", sep = "")
 iqr_to_make %>%
 dplyr::select(variable, cohort) %>%
 print()

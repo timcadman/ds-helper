@@ -43,7 +43,7 @@
 #' @param mult_vals Numeric vector specifying the value in each age band to chose values
 #'                  closest to. Required only if mult_action = "nearest". The order and length of the vector
 #'                  should correspond to the order and number of the bands.
-#' @param df_name String providing name of data frame to be created on the DataSHIELD backend
+#' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
 #' @param conns Connections object for DataSHIELD backends.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
@@ -66,7 +66,7 @@
 #' @export
 # nolint
 dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
-                          mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL, checks = TRUE) {
+                          mult_vals = NULL, new_obj = NULL, conns = NULL, band_action = NULL, checks = TRUE) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -291,7 +291,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     id_var = id_var,
     var_to_subset = var_to_subset,
     conns = conns[valid_coh],
-    finalobj = df_name
+    finalobj = new_obj
   )
 
   merge_ref <- reshape_ref %>%
@@ -300,13 +300,13 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   merge_ref %>%
     pmap(function(cohort, wide_name) {
       ds.merge(
-        x.name = df_name,
+        x.name = new_obj,
         y.name = wide_name,
         by.x.names = id_var,
         by.y.names = id_var,
         all.x = TRUE,
         all.y = FALSE,
-        newobj = df_name,
+        newobj = new_obj,
         datasources = conns[cohort]
       )
     })
@@ -317,7 +317,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   .removeTempObjs(
     start_objs = start_objs,
-    others_to_keep = df_name,
+    others_to_keep = new_obj,
     conns = conns
   )
 
@@ -328,7 +328,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   message("DONE", appendLF = TRUE)
 
   cat(
-    "\nDataframe ", "'", df_name, "'",
+    "\nDataframe ", "'", new_obj, "'",
     " has been created containing ", "'", var_to_subset, "'", " variables derived at the following ages:\n\n",
     sep = ""
   )
