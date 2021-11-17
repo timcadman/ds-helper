@@ -171,5 +171,11 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
+
   }
+  cat("\nThe following IQR transformations have been created in dataframe ", "'", new_df_name, "':", "\n\n", sep = "")
+iqr_to_make %>%
+dplyr::select(variable, cohort) %>%
+print()
+
 }
