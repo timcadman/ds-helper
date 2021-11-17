@@ -102,4 +102,9 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
     type = "remove",
     conns = conns
   )
+
+  cat("\n Vector ", "'", newobj, "'", " has been created indicating whether ", type, 
+    " data is available on the following variables: \n\n ", 
+    paste0(vars, sep = ", "),
+    sep = "")
 }
