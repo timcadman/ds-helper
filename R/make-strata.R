@@ -68,7 +68,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
                         mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
-    end_objs <- . <- nearest_value <- NULL
+    end_objs <- . <- nearest_value <- age <- NULL
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -87,7 +87,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     bands = bands, 
     band_action = band_action,
     mult_action = mult_action,
-    mult_vals = mult_vals)
+    mult_vals = mult_vals, 
+    conns = conns)
 
   available_var <- .checkDataAvailable(
     df = df,
@@ -333,7 +334,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @importFrom rlang arg_match
 #'
 #' @noRd
-.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals) {
+.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns) {
 
   if (is.null(df)) {
     stop("Please specify a data frame")
