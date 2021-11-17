@@ -17,15 +17,15 @@ dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
-    stop("`model` must not be NULL.")
+    stop("`model` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(newdata)) {
-    stop("`newdata` must not be NULL.")
+    stop("`newdata` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(coh_names)) {
-    stop("`coh_names` must not be NULL.")
+    stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
 

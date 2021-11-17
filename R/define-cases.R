@@ -28,15 +28,15 @@
 dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
                            newobj = "dc_data_avail") {
   if (is.null(df)) {
-    stop("`df` must not be NULL.")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-    stop("`vars` must not be NULL.")
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(type)) {
-    stop("`type` must not be NULL.")
+    stop("`type` must not be NULL.", call. = FALSE)
   }
 
   type <- match.arg(type, c("any", "all"))

@@ -21,15 +21,15 @@
 dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random = NULL,
                             fixed = NULL, age_interactions = NULL) {
   if (is.null(outcome)) {
-     stop("`outcome` must not be NULL.")
+     stop("`outcome` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(idvar)) {
-      stop("`idvar` must not be NULL.")
+      stop("`idvar` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(agevars)) {
-     stop("`agevars` must not be NULL.")
+     stop("`agevars` must not be NULL.", call. = FALSE)
   }
 
   random <- arg_match(random, c("intercept", "slope"))
@@ -49,7 +49,7 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
   ## ---- Do the business -----------------------------------------------------------------
 
   if (is.null(fixed) & !is.null(age_interactions)) {
-    stop("`fixed` must not be NULL if `age_interactions` is not NULL.")
+    stop("`fixed` must not be NULL if `age_interactions` is not NULL.", call. = FALSE)
   } else if (is.null(fixed) & is.null(age_interactions)) {
     forms <- paste0(outcome, "~1+", poly_fixed, "+", random_eff)
   } else if (!is.null(fixed) & is.null(age_interactions)) {

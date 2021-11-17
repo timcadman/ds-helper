@@ -344,27 +344,27 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @noRd
 .checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns) {
   if (is.null(df)) {
-      stop("`df` must not be NULL.")
+      stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(var_to_subset)) {
-      stop("`var_to_subset` must not be NULL.")
+      stop("`var_to_subset` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(age_var)) {
-    stop("`age_var` must not be NULL.")
+    stop("`age_var` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(bands)) {
-    stop("`bands` must not be NULL.")
+    stop("`bands` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(band_action)) {
-    stop("`band_action` must not be NULL.")
+    stop("`band_action` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(mult_action)) {
-    stop("`mult_action` must not be NULL.")
+    stop("`mult_action` must not be NULL.", call. = FALSE)
   }
 
   if ((length(bands) %% 2 == 0) == FALSE) {
@@ -374,14 +374,14 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   }
 
   if (mult_action == "nearest" & is.null(mult_vals)) {
-    stop("`mult_vals` must not be NULL when `mult_action` is 'nearest'.")
+    stop("`mult_vals` must not be NULL when `mult_action` is 'nearest'.", call. = FALSE)
   }
 
   mult_action <- arg_match(mult_action, c("earliest", "latest", "nearest"))
   band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
   if (mult_action == "nearest" & (length(mult_vals) != length(bands) / 2)) {
-    stop("Length of `mult_vals` must be half the length of `bands`.")
+    stop("Length of `mult_vals` must be half the length of `bands`.", call. = FALSE)
   }
 
   dh.doVarsExist(df = df, vars = var_to_subset, conns = conns)
@@ -392,18 +392,18 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   var_class <- DSI::datashield.aggregate(conns, cally)
 
   if (length(unique(var_class)) > 1) {
-    stop("`var_to_subset` does not have the same class in all studies.")
+    stop("`var_to_subset` does not have the same class in all studies.", call. = FALSE)
   } else if (any(!var_class %in% c("numeric", "integer"))) {
-    stop("`var_to_subset` must be class numeric or integer.")
+    stop("`var_to_subset` must be class numeric or integer.", call. = FALSE)
   }
 
   cally <- call("classDS", paste0(df, "$", age_var))
   age_var_class <- DSI::datashield.aggregate(conns, cally)
 
   if (length(unique(age_var_class)) > 1) {
-    stop("`age_var` does not have the same class in all studies.")
+    stop("`age_var` does not have the same class in all studies.", call. = FALSE)
   } else if (any(!age_var_class %in% c("numeric", "integer"))) {
-    stop("`age_var` must be class numeric or integer.")
+    stop("`age_var` must be class numeric or integer.", call. = FALSE)
   }
 }
 

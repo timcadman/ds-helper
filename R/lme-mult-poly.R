@@ -22,15 +22,15 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   sum_log <- NULL
 
   if (is.null(df)) {
-     stop("`df` must not be NULL.")
+     stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(formulae)) {
-     stop("`formulae` must not be NULL.")
+     stop("`formulae` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(poly_names)) {
-     stop("`poly_names` must not be NULL.")
+     stop("`poly_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {

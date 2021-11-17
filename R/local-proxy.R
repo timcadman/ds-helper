@@ -28,7 +28,7 @@
 #' @export
 dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-      stop("`df` must not be NULL.")
+      stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if(checks == TRUE){

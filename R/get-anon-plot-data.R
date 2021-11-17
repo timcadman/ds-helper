@@ -24,11 +24,11 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
   . <- value <- x <- y <- NULL
 
   if (is.null(df)) {
-     stop("`df` must not be NULL.")
+     stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(v1)) {
-    stop("`v1` must not be NULL. Please specify at least one variable to get plot data for")
+    stop("`v1` must not be NULL. Please specify at least one variable to get plot data for.", call. = FALSE)
   }
 
   if (is.null(conns)) {

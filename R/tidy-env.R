@@ -20,11 +20,11 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   . <- NULL
 
   if (is.null(obj)) {
-     stop("`obj` must not be NULL.")
+     stop("`obj` must not be NULL.", call. = FALSE)
   }
 
  if (is.null(type)) {
-     stop("`type` must not be NULL.")
+     stop("`type` must not be NULL.", call. = FALSE)
   }
 
   type <- arg_match(c("remove", "keep"))

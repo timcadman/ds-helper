@@ -60,11 +60,11 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
   # 1. First checks
   ################################################################################
   if (is.null(df)) {
-     stop("`df` must not be NULL.")
+     stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-      stop("`vars` must not be NULL.")
+      stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
@@ -117,7 +117,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
     stop(
       "\nThe following variables specified in `vars` do not have the same class in all cohorts. Please
 check with ds.class \n\n",
-      real_disc %>% pull(variable) %>% paste(collapse = "\n")
+      real_disc %>% pull(variable) %>% paste(collapse = "\n"), call. = FALSE
     )
   }
 
@@ -169,7 +169,7 @@ Please check using ds.levels:\n\n",
         level_ref %>%
           dplyr::filter(same_levels == "no") %>%
           pull(variable) %>%
-          paste(., collapse = "\n")
+          paste(., collapse = "\n"), call. = FALSE
       )
     }
   }

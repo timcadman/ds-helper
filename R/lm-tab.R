@@ -29,13 +29,13 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
-     stop("`model` must not be NULL.")
+     stop("`model` must not be NULL.", call. = FALSE)
   }
   if (is.null(type)) {
-     stop("`type` must not be NULL.")
+     stop("`type` must not be NULL.", call. = FALSE)
   }
   if (is.null(coh_names) & type %in% c("lmer", "slma")) {
-      stop("`coh_names` must not be NULL.")
+      stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
   type <- arg_match(type, c("ipd", "slma", "lmer"))

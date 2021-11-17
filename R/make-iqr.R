@@ -31,11 +31,11 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
   . <- variable <- cohort <- formula <- NULL
 
   if (is.null(df)) {
-      stop("`df` must not be NULL.")
+      stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-     stop("`vars` must not be NULL.")
+     stop("`vars` must not be NULL.", call. = FALSE)
   }
 
     if(checks == TRUE){
@@ -58,7 +58,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     all(
       str_detect(unlist(check_cont), "numeric|integer")
     ) == FALSE) {
-    stop("Can only calculate IQR for continous variables: please check class variables specified in `vars`")
+    stop("Can only calculate IQR for continous variables: please check class variables specified in `vars`", call. = FALSE)
   }
 
   ## ---- Calculate IQRs ---------------------------------------------------------

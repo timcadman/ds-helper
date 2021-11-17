@@ -28,11 +28,11 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_df_name = df, type = c("remo
 }
 
   if (is.null(df)) {
-      stop("`df` must not be NULL.")
+      stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-     stop("`vars` must not be NULL.")
+     stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   type <- match.arg(type)

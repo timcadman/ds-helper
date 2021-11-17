@@ -17,11 +17,11 @@
 #' @noRd
 dh.doVarsExist <- function(df = NULL, vars = NULL, conns = NULL) {
   if (is.null(df)) {
-   stop("`df` must not be NULL.")
+   stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-    stop("`vars` must not be NULL.")
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
