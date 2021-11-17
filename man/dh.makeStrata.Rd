@@ -27,17 +27,17 @@ dh.makeStrata(
 \item{var_to_subset}{String providing name of the variable in df
 to stratify according to bands.}
 
-\item{bands}{A numeric vector of alternating lower and upper values to specify 
+\item{bands}{A numeric vector of alternating lower and upper values to specify
 the bands in which to derive strata of var_to_subset. This vector should
 be an even number and twice the length of the number of bands required.}
 
-\item{mult_action}{String specifying how to handle cases where a subject has more 
+\item{mult_action}{String specifying how to handle cases where a subject has more
 than one measurement within a specified band. Use 'earliest' to
 take the earliest measurement, 'latest' to take the
-latest measurement and 'nearest' to take the measurement nearest to 
+latest measurement and 'nearest' to take the measurement nearest to
 the value(s) specified in mult_vals.}
 
-\item{mult_vals}{Numeric vector specifying the value in each age band to chose values 
+\item{mult_vals}{Numeric vector specifying the value in each age band to chose values
 closest to. Required only if mult_action = "nearest". The order and length of the vector
 should correspond to the order and number of the bands.}
 
@@ -45,7 +45,7 @@ should correspond to the order and number of the bands.}
 
 \item{conns}{Connections object for DataSHIELD backends.}
 
-\item{band_action}{String specifying how the values provided in 'bands' arguments are 
+\item{band_action}{String specifying how the values provided in 'bands' arguments are
                    evaluated in creating the strata:
 "g_l" = greater than the lowest band and less than the highest band;
 "ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
@@ -66,13 +66,13 @@ This is quite complicated to do in DataSHIELD so this function automates the pro
 \details{
 The steps here are equivalent to the following dplyr chain:
 
-df %>% 
-group_by(band, id) %>% 
-arrange() %<% 
-slice(1) 
+df %>%
+group_by(band, id) %>%
+arrange() %<%
+slice(1)
 
 
-One of the complexities of this operation is how to deal with cases where 
+One of the complexities of this operation is how to deal with cases where
 subjects have multiple observations within a specified band. This is handled
 by first sorting the group so that the required value is first. When we reshape
 the data all but the first value for subjects with multiple observations within a band
