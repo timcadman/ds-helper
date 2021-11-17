@@ -470,7 +470,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     vars = c(id_var, age_var, var_to_subset),
     new_df_name = "df_slim",
     type = "keep",
-    conns = conns
+    conns = conns, 
+    checks = FALSE
   )
 
   ds.completeCases(
@@ -705,6 +706,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     vars = "id",
     type = "keep",
     new_df_name = finalobj,
-    conns = conns
+    conns = conns, 
+    checks = FALSE
   )
 }

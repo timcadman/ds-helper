@@ -70,7 +70,8 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
     df = df,
     vars = current_names,
     new_df_name = df,
-    conns = conns
+    conns = conns, 
+    checks = FALSE
   )
 
   dh.tidyEnv(
