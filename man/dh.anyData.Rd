@@ -4,7 +4,7 @@
 \alias{dh.anyData}
 \title{Not completely missing variables}
 \usage{
-dh.anyData(df = NULL, vars = NULL, conns = NULL)
+dh.anyData(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
 \item{df}{server side dataframe}
@@ -12,6 +12,8 @@ dh.anyData(df = NULL, vars = NULL, conns = NULL)
 \item{vars}{vector of server side variable names within df}
 
 \item{conns}{connections object for DataSHIELD backends}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \value{
 a dataframe with columns for each variable and rows for each cohort

@@ -4,12 +4,14 @@
 \alias{dh.localProxy}
 \title{Generate a local proxy dataframe to enable local autocompletion in RStudio}
 \usage{
-dh.localProxy(df = NULL, conns = NULL)
+dh.localProxy(df = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
 \item{df}{datashield dataframe}
 
 \item{conns}{connections object to DataSHIELD backends}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \value{
 Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one

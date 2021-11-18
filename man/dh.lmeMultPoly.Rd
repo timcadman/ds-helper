@@ -4,7 +4,13 @@
 \alias{dh.lmeMultPoly}
 \title{Function to perform every combination of MLM fractional polynomials}
 \usage{
-dh.lmeMultPoly(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL)
+dh.lmeMultPoly(
+  df = NULL,
+  formulae = NULL,
+  poly_names = NULL,
+  conns = NULL,
+  checks = TRUE
+)
 }
 \arguments{
 \item{df}{name of dataFrame}
@@ -14,6 +20,8 @@ dh.lmeMultPoly(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL)
 \item{poly_names}{a vector of names for your models}
 
 \item{conns}{connection objects for DataSHIELD backends}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \description{
 Function to perform every combination of MLM fractional polynomials

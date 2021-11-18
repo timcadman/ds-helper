@@ -9,7 +9,8 @@ dh.meanByAge(
   outcome = NULL,
   age_var = NULL,
   conns = NULL,
-  intervals = NULL
+  intervals = NULL,
+  checks = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ dh.meanByAge(
 \item{conns}{connection object for DataSHIELD backends}
 
 \item{intervals}{table defining our age bands}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \value{
 Mean values for each unit of your age variable are returned

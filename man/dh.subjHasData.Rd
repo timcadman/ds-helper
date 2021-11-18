@@ -2,28 +2,10 @@
 % Please edit documentation in R/subj-has-data.R
 \name{dh.subjHasData}
 \alias{dh.subjHasData}
-\title{Indicate whether subject has any non-missing values in a set of variables}
+\title{This was an old version of dh.defineCases which is now defunct}
 \usage{
-dh.subjHasData(df = NULL, vars = NULL, new_label = NULL, conns = NULL)
-}
-\arguments{
-\item{df}{datashield dataframe}
-
-\item{vars}{= vector of variable names in dataframe}
-
-\item{new_label}{= label which forms the suffix for the two created variables}
-
-\item{conns}{connection object for DataSHIELD backends}
-}
-\value{
-None. Two new variables are variables created within the opal
-        environment. The first indicates how many of the variables each
-        subject has a non-missing value on. The second indicates whether
-        subjects have non-missing values on at least one of these variables.
+dh.subjHasData()
 }
 \description{
-At some point in the analysis you will want to subset your dataset to contain
-only subjects meeting some criteria, e.g. data on at least one exposure and
-one outcome. This function speeds things up by indicating whether a subject
-has any non-missing values for a given set of variables.
+This was an old version of dh.defineCases which is now defunct
 }

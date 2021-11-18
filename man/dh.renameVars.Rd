@@ -4,7 +4,13 @@
 \alias{dh.renameVars}
 \title{Rename multiple variables at once}
 \usage{
-dh.renameVars(df = NULL, current_names = NULL, new_names, conns = NULL)
+dh.renameVars(
+  df = NULL,
+  current_names = NULL,
+  new_names,
+  conns = NULL,
+  checks = TRUE
+)
 }
 \arguments{
 \item{df}{dataframe}
@@ -16,6 +22,8 @@ rename}
 with the new variable names.}
 
 \item{conns}{connections object for DataSHIELD backends}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \value{
 None. The new variables are added to the df specified

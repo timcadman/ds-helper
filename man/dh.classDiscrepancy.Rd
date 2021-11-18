@@ -4,7 +4,7 @@
 \alias{dh.classDiscrepancy}
 \title{Class discrepancy}
 \usage{
-dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL)
+dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
 \item{df}{opal dataframe}
@@ -13,6 +13,8 @@ dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL)
 provided all variables will be included.}
 
 \item{conns}{connections object for DataSHIELD backends}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \value{
 a tibble with columns for (i) variable, (ii) discrepancy (y/n) and

@@ -10,7 +10,9 @@ dh.defineCases(
   vars = NULL,
   type = NULL,
   conns = NULL,
-  newobj = "dc_data_avail"
+  new_obj = NULL,
+  checks = FALSE,
+  newobj = NULL
 )
 }
 \arguments{
@@ -22,7 +24,11 @@ dh.defineCases(
 
 \item{conns}{connection object for DataSHIELD backends}
 
-\item{newobj}{optional name for outputted object. Defaults to "dc_data_avail"}
+\item{new_obj}{optional name for outputted object. Defaults to "dc_data_avail"}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+
+\item{newobj}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
 None. A new variable is created within the opal environment. If the option

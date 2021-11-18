@@ -5,17 +5,19 @@
 \title{Gets predicted values based on a new dataframe for lmer models. Calculates
 standard errors for individual cohorts but not pooled at this point.}
 \usage{
-dh.predictLmer(model = NULL, newdata = NULL, coh_names = NULL)
+dh.predictLmer(model = NULL, new_data = NULL, coh_names = NULL, newdata = NULL)
 }
 \arguments{
 \item{model}{output model from ds.lmerSLMA function}
 
-\item{newdata}{a dataframe or tibble with the values of the model variables
+\item{new_data}{a dataframe or tibble with the values of the model variables
 at which you want to get predicted values. All variables from the model must
 be in the new data frame}
 
 \item{coh_names}{a vector of cohort names, in the order that these were provided
-in the original lmer model. #'}
+in the original lmer model.}
+
+\item{newdata}{Retired argument name. Please use `new_data' instead.}
 }
 \value{
 A tibble of predicted outcome values based on provide variable values.

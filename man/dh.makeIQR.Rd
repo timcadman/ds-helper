@@ -9,7 +9,9 @@ dh.makeIQR(
   vars = NULL,
   type = c("separate", "pooled"),
   conns = NULL,
-  new_df_name = df
+  new_obj = df,
+  checks = TRUE,
+  new_df_name = NULL
 )
 }
 \arguments{
@@ -23,7 +25,11 @@ pooled IQR across all cohorts provided in the 'conns' argument.}
 
 \item{conns}{connections object to DataSHIELD backends}
 
-\item{new_df_name}{name for new dataframe with original vars and iqr versions.}
+\item{new_obj}{name for new dataframe with original vars and iqr versions.}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+
+\item{new_df_name}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
 the original dataframe with transformed variables added with the

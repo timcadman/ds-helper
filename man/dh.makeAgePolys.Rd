@@ -7,16 +7,18 @@ analysis.}
 \usage{
 dh.makeAgePolys(
   df = NULL,
-  agevars = NULL,
+  age_vars = NULL,
   conns = NULL,
   poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-  poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")
+  poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"),
+  checks = TRUE,
+  agevars = NULL
 )
 }
 \arguments{
 \item{df}{opal dataframe}
 
-\item{agevars}{the age variable to transform}
+\item{age_vars}{the age variable to transform}
 
 \item{conns}{connections object for DataSHIELD backends}
 
@@ -24,6 +26,10 @@ dh.makeAgePolys(
 
 \item{poly_names}{a vector of names for the created variables, the same length
 and order as poly_form}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+
+\item{agevars}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
 transformations of age created in df

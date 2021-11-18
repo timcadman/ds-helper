@@ -7,9 +7,11 @@
 dh.dropCols(
   df = NULL,
   vars = NULL,
-  new_df_name = df,
+  new_obj = df,
   type = c("remove", "keep"),
-  conns = NULL
+  conns = NULL,
+  checks = TRUE,
+  new_df_name = NULL
 )
 }
 \arguments{
@@ -17,11 +19,15 @@ dh.dropCols(
 
 \item{vars}{variables to keep or remove}
 
-\item{new_df_name}{name for the new dataframe}
+\item{new_obj}{name for the new dataframe}
 
 \item{type}{whether to remove or keep specified variables}
 
 \item{conns}{connections object to DataSHIELD backends}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+
+\item{new_df_name}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
 a new dataframe is created containing the specified subset of columns
