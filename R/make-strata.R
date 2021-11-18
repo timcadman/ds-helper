@@ -479,7 +479,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   dh.dropCols(
     df = df,
     vars = c(id_var, age_var, var_to_subset),
-    new_df_name = "df_slim",
+    new_obj = "df_slim",
     type = "keep",
     conns = conns, 
     checks = FALSE
@@ -716,7 +716,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     df = "df_minimal",
     vars = "id",
     type = "keep",
-    new_df_name = finalobj,
+    new_obj = finalobj,
     conns = conns, 
     checks = FALSE
   )
