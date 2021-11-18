@@ -10,8 +10,9 @@
 #'             calculated within cohort, or "pooled" to transform based on the
 #'             pooled IQR across all cohorts provided in the 'conns' argument.
 #' @param conns connections object to DataSHIELD backends
-#' @param new_df_name name for new dataframe with original vars and iqr versions.
+#' @param new_obj name for new dataframe with original vars and iqr versions.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param new_df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return the original dataframe with transformed variables added with the
 #'         suffix "_iqr_c" (if cohort range was used) or "iqr_p" if pooled
@@ -27,7 +28,7 @@
 #'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
-                       conns = NULL, new_obj = df, checks = TRUE) {
+                       conns = NULL, new_obj = df, checks = TRUE, new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
 
   if (is.null(df)) {
@@ -37,6 +38,11 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
   if (is.null(vars)) {
      stop("`vars` must not be NULL.", call. = FALSE)
   }
+
+    if (!missing(new_df_name)) {
+        warning("Please use `new_obj` instead of `new_df_name`")
+        new_obj <- new_df_name
+    }
 
     if(checks == TRUE){
    dh.doVarsExist(df = df, vars = vars, conns = conns)

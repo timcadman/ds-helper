@@ -6,6 +6,7 @@
 #' be in the new data frame
 #' @param coh_names a vector of cohort names, in the order that these were provided
 #' in the original lmer model.
+#' @param newdata Retired argument name. Please use `new_data' instead.
 #' @return A tibble of predicted outcome values based on provide variable values.
 #'
 #' @importFrom dplyr pull filter select group_by group_keys all_of group_split rename bind_cols bind_rows mutate
@@ -13,7 +14,7 @@
 #' @importFrom purrr set_names map pmap_df pmap_dbl
 #' @importFrom tibble tibble
 #' @export
-dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL) {
+dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL, newdata = NULL) {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
@@ -28,6 +29,10 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL) {
     stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
+   if (!missing(newdata)) {
+        warning("Please use `new_data` instead of `newdata`")
+        new_data <- newdata
+    }
 
   ## ---- First we add a column to the new data for the intercept ----------------
   new_data <- new_data %>%

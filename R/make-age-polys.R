@@ -8,11 +8,12 @@
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
-#' @param vars the age variable to transform
+#' @param age_vars the age variable to transform
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length
 #' and order as poly_form
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param agevars Retired argument name. Please use `new_obj' instead.
 #'
 #' @return transformations of age created in df
 #'
@@ -23,10 +24,10 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.makeAgePolys <- function(df = NULL, vars = NULL, conns = NULL,
+dh.makeAgePolys <- function(df = NULL, age_vars = NULL, conns = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
                             poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"), 
-                            checks = TRUE) {
+                            checks = TRUE, agevars = NULL) {
   if (is.null(df)) {
       stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -38,6 +39,11 @@ dh.makeAgePolys <- function(df = NULL, vars = NULL, conns = NULL,
   if (length(poly_names) != length(poly_form)) {
     stop("The vectors supplied to `poly_names` and `poly_form` are not the same length", call. = FALSE)
   }
+
+    if (!missing(agevars)) {
+        warning("Please use `age_vars` instead of `agevars`")
+        age_vars <- agevars
+    }
 
   if(checks == TRUE){
   dh.doVarsExist(df = df, vars = vars, conns = conns)

@@ -46,6 +46,7 @@
 #' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
 #' @param conns Connections object for DataSHIELD backends.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two
 #'         variables will be returned: (i) var_to_subset and (ii) age_var. The suffix
@@ -66,7 +67,7 @@
 #' @export
 # nolint
 dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
-                          mult_vals = NULL, new_obj = NULL, conns = NULL, band_action = NULL, checks = TRUE) {
+                          mult_vals = NULL, new_obj = NULL, conns = NULL, band_action = NULL, checks = TRUE, df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -91,7 +92,9 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     band_action = band_action,
     mult_action = mult_action,
     mult_vals = mult_vals,
-    conns = conns
+    conns = conns, 
+    new_obj = new_obj,
+    df_name = df_name
   )
 
 }
@@ -342,13 +345,17 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @importFrom rlang arg_match
 #'
 #' @noRd
-.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns) {
+.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns, new_obj, df_name) {
   if (is.null(df)) {
       stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(var_to_subset)) {
       stop("`var_to_subset` must not be NULL.", call. = FALSE)
+  }
+
+  if (is.null(new_obj)) {
+    stop("`new_obj` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(age_var)) {
@@ -366,6 +373,11 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   if (is.null(mult_action)) {
     stop("`mult_action` must not be NULL.", call. = FALSE)
   }
+
+     if (!missing(df_name)) {
+        warning("Please use `new_obj` instead of `df_name`")
+        new_obj <- df_name
+    }
 
   if ((length(bands) %% 2 == 0) == FALSE) {
     stop("The length of the vector specified in `bands` is not an even number.",

@@ -12,11 +12,12 @@
 #' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
 #' @param type whther to define cases based on any or all provided variables
-#' @param newobj optional name for outputted object. Defaults to "dc_data_avail"
+#' @param new_obj optional name for outputted object. Defaults to "dc_data_avail"
 #' @return None. A new variable is created within the opal environment. If the option
 #'         "any" is selected for argument "type", the new variable is called "dc_any_data".
 #'         If the option "all" is selected, the new variable is called "dc_all_data"
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param newobj Retired argument name. Please use `new_obj' instead.
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric ds.replaceNA
 #' @importFrom DSI datashield.connections_find
@@ -26,7 +27,7 @@
 #'
 #' @export
 dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
-                           new_obj = NULL) {
+                           new_obj = NULL, checks = FALSE, newobj = NULL) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -52,6 +53,11 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
   if(checks == TRUE){
   dh.doesDfExist(conns = conns, df = df)
 }
+
+  if (!missing(newobj)) {
+        warning("Please use `new_obj` instead of `newobj`")
+        new_obj <- newobj
+    }
 
   ## ---- Convert to numeric -----------------------------------------------------
   vars %>%

@@ -15,7 +15,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @noRd
-dh.doesDfExist <- function(df = NULL, conns = NULL, ) {
+dh.doesDfExist <- function(df = NULL, conns = NULL) {
   
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
