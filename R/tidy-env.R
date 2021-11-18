@@ -27,7 +27,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
      stop("`type` must not be NULL.", call. = FALSE)
   }
 
-  type <- arg_match(c("remove", "keep"))
+  type <- arg_match(type, c("remove", "keep"))
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
