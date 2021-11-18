@@ -43,8 +43,10 @@
 #' @param mult_vals Numeric vector specifying the value in each age band to chose values
 #'                  closest to. Required only if mult_action = "nearest". The order and length of the vector
 #'                  should correspond to the order and number of the bands.
-#' @param df_name String providing name of data frame to be created on the DataSHIELD backend
+#' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
 #' @param conns Connections object for DataSHIELD backends.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two
 #'         variables will be returned: (i) var_to_subset and (ii) age_var. The suffix
@@ -65,7 +67,7 @@
 #' @export
 # nolint
 dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
-                          mult_vals = NULL, df_name = NULL, conns = NULL, band_action = NULL) {
+                          mult_vals = NULL, new_obj = NULL, conns = NULL, band_action = NULL, checks = TRUE, df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -80,6 +82,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)
 
+  if(checks == TRUE){
+
   .checkInputs(
     df = df,
     var_to_subset = var_to_subset,
@@ -88,8 +92,12 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     band_action = band_action,
     mult_action = mult_action,
     mult_vals = mult_vals,
-    conns = conns
+    conns = conns, 
+    new_obj = new_obj,
+    df_name = df_name
   )
+
+}
 
   available_var <- .checkDataAvailable(
     df = df,
@@ -286,7 +294,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     id_var = id_var,
     var_to_subset = var_to_subset,
     conns = conns[valid_coh],
-    finalobj = df_name
+    finalobj = new_obj
   )
 
   merge_ref <- reshape_ref %>%
@@ -295,13 +303,13 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   merge_ref %>%
     pmap(function(cohort, wide_name) {
       ds.merge(
-        x.name = df_name,
+        x.name = new_obj,
         y.name = wide_name,
         by.x.names = id_var,
         by.y.names = id_var,
         all.x = TRUE,
         all.y = FALSE,
-        newobj = df_name,
+        newobj = new_obj,
         datasources = conns[cohort]
       )
     })
@@ -312,7 +320,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   .removeTempObjs(
     start_objs = start_objs,
-    others_to_keep = df_name,
+    others_to_keep = new_obj,
     conns = conns
   )
 
@@ -323,12 +331,12 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   message("DONE", appendLF = TRUE)
 
   cat(
-    "\nDataframe ", "'", df_name, "'",
+    "\nDataframe ", "'", new_obj, "'",
     " has been created containing ", "'", var_to_subset, "'", " variables derived at the following ages:\n\n",
     sep = ""
   )
 
-  message(created)
+  print(created)
 }
 
 #' Perform various checks on the availability and class of input objects
@@ -337,47 +345,55 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @importFrom rlang arg_match
 #'
 #' @noRd
-.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns) {
+.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns, new_obj, df_name) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+      stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(var_to_subset)) {
-    stop("Please specify an variable to create subsets for")
+      stop("`var_to_subset` must not be NULL.", call. = FALSE)
+  }
+
+  if (is.null(new_obj)) {
+    stop("`new_obj` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(age_var)) {
-    stop("Please specify an age variable")
+    stop("`age_var` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(bands)) {
-    stop("Please specify age bands which will be used to create the subset(s)")
+    stop("`bands` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(band_action)) {
-    stop("Please specify how you want to evaluate the age bands using argument 'band_action'")
+    stop("`band_action` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(mult_action)) {
-    stop("Please specify how you want to deal with multiple observations within an age
-         bracket using the argument 'mult_action")
+    stop("`mult_action` must not be NULL.", call. = FALSE)
   }
 
+     if (!missing(df_name)) {
+        warning("Please use `new_obj` instead of `df_name`")
+        new_obj <- df_name
+    }
+
   if ((length(bands) %% 2 == 0) == FALSE) {
-    stop("The length of the vector provided to the 'bands' argument is not an even number",
+    stop("The length of the vector specified in `bands` is not an even number.",
       call. = FALSE
     )
   }
 
   if (mult_action == "nearest" & is.null(mult_vals)) {
-    stop("You must provide value(s) to argument mult_vals when mult_action is set to 'nearest'")
+    stop("`mult_vals` must not be NULL when `mult_action` is 'nearest'.", call. = FALSE)
   }
 
   mult_action <- arg_match(mult_action, c("earliest", "latest", "nearest"))
   band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
 
   if (mult_action == "nearest" & (length(mult_vals) != length(bands) / 2)) {
-    stop("Length of argument 'mult_vals' must be half the length of argument 'bands'")
+    stop("Length of `mult_vals` must be half the length of `bands`.", call. = FALSE)
   }
 
   dh.doVarsExist(df = df, vars = var_to_subset, conns = conns)
@@ -388,18 +404,18 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   var_class <- DSI::datashield.aggregate(conns, cally)
 
   if (length(unique(var_class)) > 1) {
-    stop("The variable to subset does not have the same class in all studies")
+    stop("`var_to_subset` does not have the same class in all studies.", call. = FALSE)
   } else if (any(!var_class %in% c("numeric", "integer"))) {
-    stop("The class of the variable to subset needs to be either numeric or integer.")
+    stop("`var_to_subset` must be class numeric or integer.", call. = FALSE)
   }
 
   cally <- call("classDS", paste0(df, "$", age_var))
   age_var_class <- DSI::datashield.aggregate(conns, cally)
 
   if (length(unique(age_var_class)) > 1) {
-    stop("The age variable does not have the same class in all studies.")
+    stop("`age_var` does not have the same class in all studies.", call. = FALSE)
   } else if (any(!age_var_class %in% c("numeric", "integer"))) {
-    stop("The class of the age variable needs to be either numeric or integer.")
+    stop("`age_var` must be class numeric or integer.", call. = FALSE)
   }
 }
 
@@ -463,9 +479,10 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   dh.dropCols(
     df = df,
     vars = c(id_var, age_var, var_to_subset),
-    new_df_name = "df_slim",
+    new_obj = "df_slim",
     type = "keep",
-    conns = conns
+    conns = conns, 
+    checks = FALSE
   )
 
   ds.completeCases(
@@ -699,7 +716,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     df = "df_minimal",
     vars = "id",
     type = "keep",
-    new_df_name = finalobj,
-    conns = conns
+    new_obj = finalobj,
+    conns = conns, 
+    checks = FALSE
   )
 }
