@@ -336,7 +336,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     sep = ""
   )
 
-  print(created)
+  message(created)
 }
 
 #' Perform various checks on the availability and class of input objects
