@@ -24,6 +24,7 @@ dh.makeOutcome <- function(
     }
 
   .Deprecated("dh.makeStrata")
+  message("dh.makeOutcome will be defunct from version 0.7.0 onwards")
 
   dh.makeStrata(
     df = df,
