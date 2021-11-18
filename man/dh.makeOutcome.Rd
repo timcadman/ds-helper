@@ -11,12 +11,36 @@ dh.makeOutcome(
   bands = NULL,
   mult_action = NULL,
   mult_vals = NULL,
-  keep_original = FALSE,
+  v = FALSE,
   df_name = NULL,
   conns = NULL,
   id_var = "child_id",
-  band_action = NULL
+  band_action = NULL,
+  keep_original = NULL
 )
+}
+\arguments{
+\item{df}{see argument `df` in `dh.makeStrata`}
+
+\item{outcome}{Renamed to `var_to_subset` in `dh.makeStrata`}
+
+\item{age_var}{see argument `age_var` in `dh.makeStrata`}
+
+\item{bands}{see argument `df` in `dh.makeStrata`}
+
+\item{mult_action}{see argument `mult_action` in `dh.makeStrata`}
+
+\item{mult_vals}{see argument `mult_vals` in `dh.makeStrata`}
+
+\item{df_name}{Renamed to `new_obj` in `dh.makeStrata`}
+
+\item{conns}{see argument `conns` in `dh.makeStrata`}
+
+\item{id_var}{see argument `id_var` in `dh.makeStrata`}
+
+\item{band_action}{see argument `band_action` in `dh.makeStrata`}
+
+\item{keep_original}{Argument no longer in use in `dh.makeStrata`}
 }
 \description{
 This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded.

@@ -15,7 +15,7 @@
 #' @export
 dh.makeOutcome <- function(
 	df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
-       mult_action = NULL, mult_vals = NULL, v = FALSE,
+       mult_action = NULL, mult_vals = NULL,
        df_name = NULL, conns = NULL, id_var = "child_id",
        band_action = NULL, keep_original = NULL) {
 
