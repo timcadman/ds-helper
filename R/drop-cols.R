@@ -24,6 +24,10 @@
 dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove", "keep"), conns = NULL, checks = TRUE, new_df_name = NULL) {
   . <- NULL
 
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
   if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)
   }
@@ -42,10 +46,6 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove",
   }
 
   type <- match.arg(type)
-
-  if (is.null(conns)) {
-    conns <- datashield.connections_find()
-  }
 
   if (type == "keep") {
     ds.dataFrame(

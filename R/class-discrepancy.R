@@ -34,9 +34,10 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
 
   if (is.null(vars)) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
+  } else{
 
-    fun_vars <- vars
-  }
+fun_vars <- vars
+}
 
   if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)

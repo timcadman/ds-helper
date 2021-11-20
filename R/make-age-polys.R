@@ -45,12 +45,12 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
     age_var <- agevars
   }
 
-  if (checks == TRUE) {
-    .isDefined(df = df, vars = vars, conns = conns)
-  }
-
   if (is.null(conns)) {
     conns <- datashield.connections_find()
+  }
+
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
   }
 
   ## We have to do log a bit more differently
