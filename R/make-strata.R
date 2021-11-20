@@ -397,7 +397,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   }
 
   dh.doVarsExist(df = df, vars = var_to_subset, conns = conns)
-  dh.doesDfExist(df = df, conns = conns)
+  .isDefined(obj = df, datasources = conns)
 
 
   cally <- call("classDS", paste0(df, "$", var_to_subset))

@@ -11,7 +11,6 @@ dh.makeOutcome(
   bands = NULL,
   mult_action = NULL,
   mult_vals = NULL,
-  v = FALSE,
   df_name = NULL,
   conns = NULL,
   id_var = "child_id",

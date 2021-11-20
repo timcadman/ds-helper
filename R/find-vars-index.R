@@ -32,7 +32,7 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE
 
   if(checks == TRUE){
   dh.doVarsExist(df = df, vars = vars, conns = conns)
-  dh.doesDfExist(df = df, conns = conns)
+  .isDefined(obj = df, datasources = conns)
 }
 
   ## -- Make reference table of vars and cohorts -------------------------------

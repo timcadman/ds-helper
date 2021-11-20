@@ -32,7 +32,7 @@ dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(conns = conns, df = df)
+ .isDefined(obj = df, datasources = conns)
 }
 
   if (is.null(conns)) {

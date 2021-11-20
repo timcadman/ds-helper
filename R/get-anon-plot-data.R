@@ -36,7 +36,7 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(conns = conns, df = df)
+  .isDefined(obj = df, datasources = conns)
   dh.doVarsExist(conns = conns, vars = c(v1, v2), df = df)
 }
 

@@ -33,7 +33,7 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(conns, df)
+  .isDefined(obj = df, datasources = conns)
 }
  
   if (is.null(vars)) {

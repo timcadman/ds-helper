@@ -51,7 +51,7 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(conns = conns, df = df)
+  .isDefined(obj = df, datasources = conns)
 }
 
   if (!missing(newobj)) {

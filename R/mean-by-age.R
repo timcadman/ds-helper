@@ -36,7 +36,7 @@ dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(conns = conns, df = df)
+  .isDefined(obj = df, datasources = conns)
   dh.doVarsExist(conns = conns, vars = c(outcome, age_var), df = df)
 }
 

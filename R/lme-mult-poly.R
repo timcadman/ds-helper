@@ -38,7 +38,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   }
 
   if(checks == TRUE){
-      dh.doesDfExist(conns = conns, df = df)
+     .isDefined(obj = df, datasources = conns)
     }
 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL

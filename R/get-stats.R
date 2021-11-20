@@ -72,7 +72,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(df, conns = conns)
+ .isDefined(obj = df, datasources = conns)
 }
   # Not checking whether variable exists because function will show NA if it
   # doesnt

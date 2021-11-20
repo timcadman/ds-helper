@@ -47,7 +47,7 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
 
   if(checks == TRUE){
   dh.doVarsExist(df = df, vars = age_var, conns = conns)
-  dh.doesDfExist(df = df, conns = conns)
+  .isDefined(obj = df, datasources = conns)
 }    
 
   if (is.null(conns)) {

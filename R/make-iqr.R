@@ -45,6 +45,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     }
 
     if(checks == TRUE){
+   .isDefined(obj = df, datasources = conns)
    dh.doVarsExist(df = df, vars = vars, conns = conns)
 }
 

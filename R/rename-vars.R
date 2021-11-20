@@ -40,7 +40,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   names <- NULL
 
   if(checks == TRUE){
-  dh.doesDfExist(df = df, conns = conns)
+  .isDefined(obj = df, datasources = conns)
   dh.doVarsExist(df = df, vars = current_names, conns = conns)
 }
 

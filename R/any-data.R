@@ -42,7 +42,7 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   }
 
   if(checks == TRUE){
-  dh.doesDfExist(conns, df)
+  .isDefined(obj = df, datasources = conns)
 }
 
   if (is.null(vars)) {
