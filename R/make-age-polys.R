@@ -24,16 +24,16 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.makeAgePolys <- function(df = NULL, age_vars = NULL, conns = NULL,
+dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-                            poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"), 
+                            poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"), 
                             checks = TRUE, agevars = NULL) {
   if (is.null(df)) {
       stop("`df` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(vars)) {
-      stop("`vars` must not be NULL.", call. = FALSE)
+  if (is.null(age_var)) {
+      stop("`age_var` must not be NULL.", call. = FALSE)
   }
 
   if (length(poly_names) != length(poly_form)) {
@@ -41,12 +41,12 @@ dh.makeAgePolys <- function(df = NULL, age_vars = NULL, conns = NULL,
   }
 
     if (!missing(agevars)) {
-        warning("Please use `age_vars` instead of `agevars`")
-        age_vars <- agevars
+        warning("Please use `age_var` instead of `agevars`")
+        age_var <- agevars
     }
 
   if(checks == TRUE){
-  dh.doVarsExist(df = df, vars = vars, conns = conns)
+  dh.doVarsExist(df = df, vars = age_var, conns = conns)
   dh.doesDfExist(df = df, conns = conns)
 }    
 
@@ -61,17 +61,17 @@ dh.makeAgePolys <- function(df = NULL, age_vars = NULL, conns = NULL,
     poly_names <- poly_names[str_detect(poly_names, "log") == FALSE]
     poly_form <- poly_form[str_detect(poly_form, "log") == FALSE]
   }
-  df_age <- c(paste0(df, "$", vars))
+  df_age <- c(paste0(df, "$", age_var))
 
   polys <- tibble(
-    poly = cross2(vars, poly_names) %>% map_chr(paste, sep = "", collapse = ""),
+    poly = cross2(age_var, poly_names) %>% map_chr(paste, sep = "", collapse = ""),
     form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = "")
   )
 
   if (log_yn == TRUE) {
     polys <- add_row(
       polys,
-      poly = paste0("log", vars),
+      poly = paste0(age_var, "_log"),
       form = paste0("log(", df_age, ")")
     )
   }
