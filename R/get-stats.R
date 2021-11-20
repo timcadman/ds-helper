@@ -60,20 +60,20 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
   # 1. First checks
   ################################################################################
   if (is.null(df)) {
-     stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-      stop("`vars` must not be NULL.", call. = FALSE)
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
- .isDefined(df = df, conns = conns)
-}
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
+  }
   # Not checking whether variable exists because function will show NA if it
   # doesnt
 
@@ -117,7 +117,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
     stop(
       "\nThe following variables specified in `vars` do not have the same class in all cohorts. Please
 check with ds.class \n\n",
-      real_disc %>% pull(variable) %>% paste(collapse = "\n"), call. = FALSE
+      real_disc %>% pull(variable) %>% paste(collapse = "\n"),
+      call. = FALSE
     )
   }
 
@@ -169,7 +170,8 @@ Please check using ds.levels:\n\n",
         level_ref %>%
           dplyr::filter(same_levels == "no") %>%
           pull(variable) %>%
-          paste(., collapse = "\n"), call. = FALSE
+          paste(., collapse = "\n"),
+        call. = FALSE
       )
     }
   }

@@ -21,15 +21,15 @@
 dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random = NULL,
                             fixed = NULL, age_interactions = NULL) {
   if (is.null(outcome)) {
-     stop("`outcome` must not be NULL.", call. = FALSE)
+    stop("`outcome` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(idvar)) {
-      stop("`idvar` must not be NULL.", call. = FALSE)
+    stop("`idvar` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(agevars)) {
-     stop("`agevars` must not be NULL.", call. = FALSE)
+    stop("`agevars` must not be NULL.", call. = FALSE)
   }
 
   random <- arg_match(random, c("intercept", "slope"))

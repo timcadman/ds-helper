@@ -19,7 +19,7 @@
 #' @export
 dh.metaManual <- function(model = NULL, method = "ML") {
   if (is.null(model)) {
-     stop("`model` must not be NULL.", call. = FALSE)
+    stop("`model` must not be NULL.", call. = FALSE)
   }
 
   nvar <- seq(1, nrow(model$betamatrix.valid), 1)

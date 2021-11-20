@@ -22,24 +22,24 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   sum_log <- NULL
 
   if (is.null(df)) {
-     stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(formulae)) {
-     stop("`formulae` must not be NULL.", call. = FALSE)
+    stop("`formulae` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(poly_names)) {
-     stop("`poly_names` must not be NULL.", call. = FALSE)
+    stop("`poly_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
-     .isDefined(df = df, conns = conns)
-    }
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
+  }
 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
 

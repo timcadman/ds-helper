@@ -14,7 +14,6 @@
 #'
 #' @noRd
 .removeTempObjs <- function(start_objs, others_to_keep, conns) {
-
   end_objs <- ds.ls(datasources = conns)
 
   remove_ref <- tibble(

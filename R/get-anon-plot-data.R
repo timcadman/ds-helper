@@ -24,7 +24,7 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
   . <- value <- x <- y <- NULL
 
   if (is.null(df)) {
-     stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(v1)) {
@@ -35,9 +35,9 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
+  if (checks == TRUE) {
     .isDefined(df = df, vars = v1, conns = conns)
-}
+  }
 
   ## ---- Where only one variable is provided ------------------------------------------------
   if (is.null(v2)) {

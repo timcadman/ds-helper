@@ -82,22 +82,20 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)
 
-  if(checks == TRUE){
-
-  .checkInputs(
-    df = df,
-    var_to_subset = var_to_subset,
-    age_var = age_var,
-    bands = bands,
-    band_action = band_action,
-    mult_action = mult_action,
-    mult_vals = mult_vals,
-    conns = conns, 
-    new_obj = new_obj,
-    df_name = df_name
-  )
-
-}
+  if (checks == TRUE) {
+    .checkInputs(
+      df = df,
+      var_to_subset = var_to_subset,
+      age_var = age_var,
+      bands = bands,
+      band_action = band_action,
+      mult_action = mult_action,
+      mult_vals = mult_vals,
+      conns = conns,
+      new_obj = new_obj,
+      df_name = df_name
+    )
+  }
 
   available_var <- .checkDataAvailable(
     df = df,
@@ -347,11 +345,11 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @noRd
 .checkInputs <- function(df, id_var, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns, new_obj, df_name) {
   if (is.null(df)) {
-      stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(var_to_subset)) {
-      stop("`var_to_subset` must not be NULL.", call. = FALSE)
+    stop("`var_to_subset` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(new_obj)) {
@@ -374,10 +372,10 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     stop("`mult_action` must not be NULL.", call. = FALSE)
   }
 
-     if (!missing(df_name)) {
-        warning("Please use `new_obj` instead of `df_name`")
-        new_obj <- df_name
-    }
+  if (!missing(df_name)) {
+    warning("Please use `new_obj` instead of `df_name`")
+    new_obj <- df_name
+  }
 
   if ((length(bands) %% 2 == 0) == FALSE) {
     stop("The length of the vector specified in `bands` is not an even number.",
@@ -396,7 +394,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     stop("Length of `mult_vals` must be half the length of `bands`.", call. = FALSE)
   }
 
-    .isDefined(df = df, vars = c(id_var, var_to_subset, age_var), conns = conns)
+  .isDefined(df = df, vars = c(id_var, var_to_subset, age_var), conns = conns)
 
   cally <- call("classDS", paste0(df, "$", var_to_subset))
   var_class <- DSI::datashield.aggregate(conns, cally)
@@ -479,7 +477,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     vars = c(id_var, age_var, var_to_subset),
     new_obj = "df_slim",
     type = "keep",
-    conns = conns, 
+    conns = conns,
     checks = FALSE
   )
 
@@ -715,7 +713,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     vars = "id",
     type = "keep",
     new_obj = finalobj,
-    conns = conns, 
+    conns = conns,
     checks = FALSE
   )
 }

@@ -29,10 +29,10 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL, newd
     stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
-   if (!missing(newdata)) {
-        warning("Please use `new_data` instead of `newdata`")
-        new_data <- newdata
-    }
+  if (!missing(newdata)) {
+    warning("Please use `new_data` instead of `newdata`")
+    new_data <- newdata
+  }
 
   ## ---- First we add a column to the new data for the intercept ----------------
   new_data <- new_data %>%

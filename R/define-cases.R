@@ -50,14 +50,14 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
-  .isDefined(df = df, vars = vars, conns = conns)
-}
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
 
   if (!missing(newobj)) {
-        warning("Please use `new_obj` instead of `newobj`")
-        new_obj <- newobj
-    }
+    warning("Please use `new_obj` instead of `newobj`")
+    new_obj <- newobj
+  }
 
   ## ---- Convert to numeric -----------------------------------------------------
   vars %>%
@@ -115,8 +115,9 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
     conns = conns
   )
 
-  cat("\n Vector ", "'", new_obj, "'", " has been created indicating whether ", type, 
-    " data is available on the following variables: \n\n ", 
+  cat("\n Vector ", "'", new_obj, "'", " has been created indicating whether ", type,
+    " data is available on the following variables: \n\n ",
     paste0(vars, sep = ", "),
-    sep = "")
+    sep = ""
+  )
 }

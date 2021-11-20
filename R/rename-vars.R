@@ -22,11 +22,11 @@
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
                           conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-     stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(current_names)) {
-     stop("`current_names` must not be NULL.", call. = FALSE)
+    stop("`current_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(new_names)) {
@@ -39,9 +39,9 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
 
   names <- NULL
 
-  if(checks == TRUE){
+  if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)
-}
+  }
 
   if (length(current_names) != length(new_names)) {
     stop("Length of `current_names` must equal length of `new_names`.
@@ -69,7 +69,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
     df = df,
     vars = current_names,
     new_df_name = df,
-    conns = conns, 
+    conns = conns,
     checks = FALSE
   )
 

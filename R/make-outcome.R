@@ -11,17 +11,15 @@
 #' @param conns see argument `conns` in `dh.makeStrata`
 #' @param id_var see argument `id_var` in `dh.makeStrata`
 #' @param band_action see argument `band_action` in `dh.makeStrata`
-#' 
+#'
 #' @export
-dh.makeOutcome <- function(
-	df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
-       mult_action = NULL, mult_vals = NULL,
-       df_name = NULL, conns = NULL, id_var = "child_id",
-       band_action = NULL, keep_original = NULL) {
-
-   if (!missing(keep_original)) {
-        warning("`keep_original` is no longer in use and has been ignored")
-    }
+dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
+                           mult_action = NULL, mult_vals = NULL,
+                           df_name = NULL, conns = NULL, id_var = "child_id",
+                           band_action = NULL, keep_original = NULL) {
+  if (!missing(keep_original)) {
+    warning("`keep_original` is no longer in use and has been ignored")
+  }
 
   .Deprecated("dh.makeStrata")
   message("dh.makeOutcome will be defunct from version 1.0.0 onwards")
@@ -36,5 +34,6 @@ dh.makeOutcome <- function(
     new_obj = df_name,
     conns = conns,
     id_var = id_var,
-    band_action = band_action)
+    band_action = band_action
+  )
 }

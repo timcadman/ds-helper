@@ -24,22 +24,22 @@
 dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove", "keep"), conns = NULL, checks = TRUE, new_df_name = NULL) {
   . <- NULL
 
-  if(checks == TRUE){
+  if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)
-}
+  }
 
   if (is.null(df)) {
-      stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-     stop("`vars` must not be NULL.", call. = FALSE)
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   if (!missing(new_df_name)) {
-        warning("Please use `new_obj` instead of `new_df_name`")
-        new_obj <- new_df_name
-    }
+    warning("Please use `new_obj` instead of `new_df_name`")
+    new_obj <- new_df_name
+  }
 
   type <- match.arg(type)
 

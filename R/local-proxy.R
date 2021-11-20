@@ -28,12 +28,12 @@
 #' @export
 dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-      stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
-  if(checks == TRUE){
- .isDefined(df = df, conns = conns)
-}
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
+  }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

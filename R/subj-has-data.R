@@ -2,5 +2,5 @@
 #'
 #' @export
 dh.subjHasData <- function() {
-  .Defunct("dh.defineCases") 
+  .Defunct("dh.defineCases")
 }

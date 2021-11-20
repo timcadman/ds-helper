@@ -26,28 +26,28 @@
 #' @export
 dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-                            poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"), 
+                            poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
                             checks = TRUE, agevars = NULL) {
   if (is.null(df)) {
-      stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(age_var)) {
-      stop("`age_var` must not be NULL.", call. = FALSE)
+    stop("`age_var` must not be NULL.", call. = FALSE)
   }
 
   if (length(poly_names) != length(poly_form)) {
     stop("The vectors supplied to `poly_names` and `poly_form` are not the same length", call. = FALSE)
   }
 
-    if (!missing(agevars)) {
-        warning("Please use `age_var` instead of `agevars`")
-        age_var <- agevars
-    }
+  if (!missing(agevars)) {
+    warning("Please use `age_var` instead of `agevars`")
+    age_var <- agevars
+  }
 
-  if(checks == TRUE){
+  if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)
-}    
+  }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

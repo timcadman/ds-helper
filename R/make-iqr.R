@@ -32,21 +32,21 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
   . <- variable <- cohort <- formula <- NULL
 
   if (is.null(df)) {
-      stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-     stop("`vars` must not be NULL.", call. = FALSE)
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
-    if (!missing(new_df_name)) {
-        warning("Please use `new_obj` instead of `new_df_name`")
-        new_obj <- new_df_name
-    }
+  if (!missing(new_df_name)) {
+    warning("Please use `new_obj` instead of `new_df_name`")
+    new_obj <- new_df_name
+  }
 
-    if(checks == TRUE){
-     .isDefined(df = df, vars = vars, conns = conns)
-}
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
 
   type <- match.arg(type)
 
@@ -179,11 +179,9 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
-
   }
   cat("\nThe following IQR transformations have been created in dataframe ", "'", new_obj, "':", "\n\n", sep = "")
-iqr_to_make %>%
-dplyr::select(variable, cohort) %>%
-print()
-
+  iqr_to_make %>%
+    dplyr::select(variable, cohort) %>%
+    print()
 }

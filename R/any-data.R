@@ -47,9 +47,9 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
     fun_vars <- vars
   }
 
-  if(checks == TRUE){
-  .isDefined(df = df, vars = vars, conns = conns)
-}
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
 
   # get the lengths
   lengths <- unlist(ds.length(paste0(df, "$", fun_vars[1]), type = "s", datasources = conns))

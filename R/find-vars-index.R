@@ -19,7 +19,7 @@
 #' @export
 dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-     stop("`df` must not be NULL.", call. = FALSE)
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
@@ -30,9 +30,9 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
+  if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)
-}
+  }
 
   ## -- Make reference table of vars and cohorts -------------------------------
   ref_tab <- tibble(
