@@ -32,18 +32,16 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-}
- 
-  if (is.null(vars)) {
+ if (is.null(vars)) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
-  } else {
-    paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
-    
+
     fun_vars <- vars
   }
 
+  if(checks == TRUE){
+  .isDefined(df = df, vars = vars, conns = conns)
+}
+ 
   ## ---- Get variable classes -------------------------------------------------
   classes <- paste0(df, "$", fun_vars) %>%
     map_df(function(x) {

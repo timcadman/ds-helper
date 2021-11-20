@@ -32,7 +32,7 @@ dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   }
 
   if(checks == TRUE){
- .isDefined(obj = df, datasources = conns)
+ .isDefined(df = df, conns = conns)
 }
 
   if (is.null(conns)) {
@@ -44,6 +44,7 @@ dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
     warning("All columns not found in all cohorts, please see tibble returned and correct this", call. = FALSE)
     return(discrep)
   }
+
   tempDF <- data.frame(matrix(paste0("D$", discrep$variable), ncol = length(discrep$variable), nrow = 1))
   colnames(tempDF) <- discrep$variable
   assign(df, tempDF, envir = parent.frame())

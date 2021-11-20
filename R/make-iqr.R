@@ -45,8 +45,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     }
 
     if(checks == TRUE){
-   .isDefined(obj = df, datasources = conns)
-   paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+     .isDefined(df = df, vars = vars, conns = conns)
 }
 
   type <- match.arg(type)

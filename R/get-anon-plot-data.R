@@ -36,8 +36,7 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
   }
 
   if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-    paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+    .isDefined(df = df, vars = v1, conns = conns)
 }
 
   ## ---- Where only one variable is provided ------------------------------------------------

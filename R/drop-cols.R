@@ -25,8 +25,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove",
   . <- NULL
 
   if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-    paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+    .isDefined(df = df, vars = vars, conns = conns)
 }
 
   if (is.null(df)) {

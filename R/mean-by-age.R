@@ -36,8 +36,7 @@ dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL
   }
 
   if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+    .isDefined(df = df, vars = vars, conns = conns)
 }
 
   ## There is an easy way and a hard way. If we bin based on integer units of the

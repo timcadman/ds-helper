@@ -51,8 +51,7 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
   }
 
   if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-    paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+  .isDefined(df = df, vars = vars, conns = conns)
 }
 
   if (!missing(newobj)) {

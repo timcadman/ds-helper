@@ -41,10 +41,6 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
     conns <- datashield.connections_find()
   }
 
-  if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-}
-
   if (is.null(vars)) {
     fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
   } else {
@@ -52,7 +48,7 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   }
 
   if(checks == TRUE){
-  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+  .isDefined(df = df, vars = vars, conns = conns)
 }
 
   # get the lengths

@@ -8,7 +8,7 @@
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
-#' @param age_vars the age variable to transform
+#' @param age_var the age variable to transform
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length
 #' and order as poly_form
@@ -46,8 +46,7 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
     }
 
   if(checks == TRUE){
-  .isDefined(obj = df, datasources = conns)
-  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+    .isDefined(df = df, vars = vars, conns = conns)
 }    
 
   if (is.null(conns)) {

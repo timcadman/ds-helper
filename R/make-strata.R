@@ -345,7 +345,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @importFrom rlang arg_match
 #'
 #' @noRd
-.checkInputs <- function(df, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns, new_obj, df_name) {
+.checkInputs <- function(df, id_var, var_to_subset, age_var, bands, band_action, mult_action, mult_vals, conns, new_obj, df_name) {
   if (is.null(df)) {
       stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -396,8 +396,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     stop("Length of `mult_vals` must be half the length of `bands`.", call. = FALSE)
   }
 
-  .isDefined(obj = df, datasources = conns)
-  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+    .isDefined(df = df, vars = c(id_var, var_to_subset, age_var), conns = conns)
 
   cally <- call("classDS", paste0(df, "$", var_to_subset))
   var_class <- DSI::datashield.aggregate(conns, cally)
