@@ -396,9 +396,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     stop("Length of `mult_vals` must be half the length of `bands`.", call. = FALSE)
   }
 
-  dh.doVarsExist(df = df, vars = var_to_subset, conns = conns)
   .isDefined(obj = df, datasources = conns)
-
+  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
 
   cally <- call("classDS", paste0(df, "$", var_to_subset))
   var_class <- DSI::datashield.aggregate(conns, cally)

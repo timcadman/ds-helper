@@ -39,7 +39,8 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
   if (is.null(vars)) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
   } else {
-    dh.doVarsExist(df, vars, conns)
+    paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
+    
     fun_vars <- vars
   }
 

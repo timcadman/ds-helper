@@ -46,8 +46,8 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
     }
 
   if(checks == TRUE){
-  dh.doVarsExist(df = df, vars = age_var, conns = conns)
   .isDefined(obj = df, datasources = conns)
+  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
 }    
 
   if (is.null(conns)) {

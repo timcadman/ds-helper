@@ -41,7 +41,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
 
   if(checks == TRUE){
   .isDefined(obj = df, datasources = conns)
-  dh.doVarsExist(df = df, vars = current_names, conns = conns)
+  paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
 }
 
   if (length(current_names) != length(new_names)) {
