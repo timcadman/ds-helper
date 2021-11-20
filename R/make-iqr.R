@@ -44,15 +44,15 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     new_obj <- new_df_name
   }
 
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
+  }
+
   if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)
   }
 
   type <- match.arg(type)
-
-  if (is.null(conns)) {
-    conns <- datashield.connections_find()
-  }
 
   df_vars <- paste0(df, "$", vars)
 
