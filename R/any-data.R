@@ -55,8 +55,6 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   paste0(df, "$", vars) %>% map(~.isDefined(obj = .x, datasources = conns))
 }
 
-  dh.doVarsExist(df = df, vars = vars, conns = conns)
-
   # get the lengths
   lengths <- unlist(ds.length(paste0(df, "$", fun_vars[1]), type = "s", datasources = conns))
 
