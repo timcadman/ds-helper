@@ -9,16 +9,20 @@
 #' @param conns datashield connections object
 #'
 #' @importFrom utils getFromNamespace
-#'
+#' 
 #' @noRd
-.isDefined <- function(df = NULL, vars = NULL, conns = NULL) {
-  extract <- utils::getFromNamespace("extract", "dsBaseClient")
-  isDefined <- utils::getFromNamespace("isDefined", "dsBaseClient")
+.isDefined <- function(df = NULL, vars = NULL, conns = NULL){
 
-  isDefined(obj = df, datasources = conns)
+extract <- utils::getFromNamespace("extract", "dsBaseClient")
+isDefined <- utils::getFromNamespace("isDefined", "dsBaseClient")
 
-  if (!is.null(vars)) {
-    paste0(df, "$", vars) %>%
-      map(~ isDefined(obj = df, datasources = conns))
-  }
+isDefined(obj = df, datasources = conns)
+
+if(!is.null(vars)){
+
+paste0(df, "$", vars) %>%
+map(~isDefined(obj = df, datasources = conns))
+
+}
+
 }
