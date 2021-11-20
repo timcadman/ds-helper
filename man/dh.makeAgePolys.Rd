@@ -18,6 +18,8 @@ dh.makeAgePolys(
 \arguments{
 \item{df}{opal dataframe}
 
+\item{age_var}{the age variable to transform}
+
 \item{conns}{connections object for DataSHIELD backends}
 
 \item{poly_form}{a vector of powers by which to transform the age variable}
@@ -28,8 +30,6 @@ and order as poly_form}
 \item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 
 \item{agevars}{Retired argument name. Please use `new_obj' instead.}
-
-\item{age_vars}{the age variable to transform}
 }
 \value{
 transformations of age created in df
