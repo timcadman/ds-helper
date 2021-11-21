@@ -10,7 +10,7 @@
 #' @param df opal dataframe
 #' @param v1 variable in df to get plotdata for
 #' @param v2 optional second variable if you want to get scatterplot data
-#' @param conns connection object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return A list of the length of the number of variables provided containing

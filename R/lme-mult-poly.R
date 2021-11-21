@@ -13,7 +13,7 @@
 #' @importFrom tibble tibble
 #' @importFrom DSI datashield.connections_find
 #'
-#' @param conns connection objects for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df name of dataFrame
 #' @param formulae a vector of model formulae to fit
 #' @param poly_names a vector of names for your models

@@ -19,7 +19,7 @@
 #'
 #' `ds.summary(D$LAB_TSC)` - no quotation marks needed either!
 #'
-#' @param conns connections object to DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df datashield dataframe
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'

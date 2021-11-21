@@ -3,7 +3,7 @@
 #' This is a wrapper around ds.rm to allow you to remove multiple objects 
 #' in one call.
 #'
-#' @param conns connections object to DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param obj objects that you want to either keep or remove
 #' @param type either "remove" to remove the listed objects of "keep" to keep
 #'             the listed objects and remove everything else.

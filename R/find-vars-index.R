@@ -5,7 +5,7 @@
 #' variables. This function allows you to specify the names of columns and
 #' returns their indices. 
 #'
-#' @param conns connections object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.

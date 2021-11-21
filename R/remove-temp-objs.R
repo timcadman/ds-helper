@@ -6,8 +6,9 @@
 #' the second set which were not present in the first. 
 #'
 #' @param start_objs output from ds.ls run at the start of a function
-#' @param others_to_keep optional. Additional variables not to remove,
-#' e.g. you might not want to remove an output object you have created.
+#' @param others_to_keep optional. Additional variables not to remove, e.g. you 
+#' might not want to remove an output object you have created.
+#' @param conns DataSHIELD connections object.
 #'
 #' @importFrom dsBaseClient ds.ls
 #' @importFrom tibble tibble

@@ -8,7 +8,7 @@
 #'
 #' This function replaces the deprecated dh.subjHasData.
 #'
-#' @param conns connection object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df datashield dataframe
 #' @param vars vector of variable names in dataframe
 #' @param type whther to define cases based on any or all provided variables

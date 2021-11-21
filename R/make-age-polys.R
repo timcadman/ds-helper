@@ -6,7 +6,7 @@
 #' creates multiple transformations of an age terms and adds the transformed
 #' variables to the original dataframe.
 #'
-#' @param conns connections object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df opal dataframe
 #' @param age_var the age variable to transform
 #' @param poly_form a vector of powers by which to transform the age variable

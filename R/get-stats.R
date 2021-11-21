@@ -7,7 +7,7 @@
 #' if the variable is missing in one or more study. By contrast, getStats will
 #' return the variable for that cohort with all NAs. 
 #'
-#' @param conns connection object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe
 #' @param digits number of decimal places to round continuous stats to. Default

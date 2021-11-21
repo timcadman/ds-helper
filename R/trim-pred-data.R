@@ -1,4 +1,4 @@
-#' Trims predicted values based on min and max values provided. 
+#' Trims predicted values based on min and max values provided
 #'
 #' This can be used in conjuncture with `ds.predictLmer`. The new data frame
 #' used for prediction may contain age or time values not present in the 

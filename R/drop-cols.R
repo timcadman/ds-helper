@@ -4,7 +4,7 @@
 #' This function allows you to specify the variables you either want to
 #' keep or drop, and creates a new dataframe with only the required variables.
 #'
-#' @param conns connections object to DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df datashield dataframe
 #' @param vars variables to keep or remove
 #' @param new_obj name for the new dataframe

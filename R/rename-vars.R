@@ -3,7 +3,7 @@
 #' This function is an analogue of `dplyr::rename` which allows you to rename 
 #' columns of a serverside data frame.
 #'
-#' @param conns connections object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df dataframe
 #' @param current_names a vector with names of existing DataSHIELD variables to
 #'        rename

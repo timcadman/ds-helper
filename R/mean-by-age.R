@@ -12,7 +12,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows %>% slice
 #'
-#' @param conns connection object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df datashield dataframe
 #' @param outcome outcome variable in long format
 #' @param age_var age in years

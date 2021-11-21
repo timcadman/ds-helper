@@ -7,7 +7,7 @@
 #' have the same class in all studies. This function produces a tibble showing 
 #' the class of each variable.
 #'
-#' @param conns connections object for DataSHIELD backends
+#' @param conns DataSHIELD connections object.
 #' @param df opal dataframe
 #' @param vars vector of variable names in dataframe (optional). If vars is not
 #'      provided all variables will be included.

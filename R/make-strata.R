@@ -44,7 +44,7 @@
 #'                  closest to. Required only if mult_action = "nearest". The order and length of the vector
 #'                  should correspond to the order and number of the bands.
 #' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
-#' @param conns Connections object for DataSHIELD backends.
+#' @param conns DataSHIELD connections object.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
