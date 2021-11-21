@@ -2,7 +2,7 @@
 % Please edit documentation in R/find-vars-index.R
 \name{dh.findVarsIndex}
 \alias{dh.findVarsIndex}
-\title{Return return indices of columns in serverside dataframe from variable names}
+\title{Return return indices of column names in server-side dataframe}
 \usage{
 dh.findVarsIndex(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
@@ -22,8 +22,8 @@ Client-side list of indices corresponding to `vars`, where the length
 of the list corresponds to the number of cohorts included in `conns`.
 }
 \description{
-Some DataSHIELD functions require column indices as parameters. This is h
-ighly susceptable to breaking as changes in code will change the order of 
+Some DataSHIELD functions require column indices as parameters. This is 
+hqighly susceptable to breaking as changes in code will change the order of 
 variables. This function allows you to specify the names of columns and
 returns their indices.
 }
