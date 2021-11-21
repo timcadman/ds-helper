@@ -143,7 +143,7 @@ check with ds.class \n\n",
       group_split() %>%
       map(
         .,
-        ~ pmap(., function(variable, cohort) {
+        ~ pmap(., function(variable, cohort, ...) {
           cally <- paste0("levelsDS(", df, "$", variable, ")")
           datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
         })
