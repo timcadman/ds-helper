@@ -20,11 +20,10 @@ dh.getAnonPlotData(
 extract anonymised data.}
 
 \item{var_2}{Optionally, character specifying a second column within `df`. 
-If a column is specified then scatter-plot data will be returned with `var_1` as 
-the explanatory variable and `var_2` as the outcome variable. Default is NULL 
-which returns anonymised data only for `var_1`.}
-
-\item{conns}{DataSHIELD connections object.}
+If a column is specified then scatter plot data will be returned with `var_1`
+as the explanatory variable and `var_2` as the outcome variable. Default is 
+NULL which returns anonymised data only for `var_1`.
+q @template conns}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
@@ -37,7 +36,7 @@ data points.
 \description{
 Whilst DataSHIELD has basic plotting functionality, for publications you may 
 need more flexiblity in creating plots. This function calls server-side 
-functions which create an anonymised copy of the data, and returns the values 
+functions which create an anonymised copy of the data, and returns this data 
 in a client-side object. These values can then be used to create plots (e.g
 with ggplot2).
 }
