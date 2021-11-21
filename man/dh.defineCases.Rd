@@ -52,6 +52,7 @@ Other descriptive functions:
 \code{\link{dh.anyData}()},
 \code{\link{dh.classDiscrepancy}()},
 \code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()}
+\code{\link{dh.lmTab}()},
+\code{\link{dh.meanByGroup}()}
 }
 \concept{descriptive functions}
