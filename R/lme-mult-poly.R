@@ -15,13 +15,25 @@
 #'
 #' @template conns
 #' @template df
-#' @param formulae a vector of model formulae to fit
-#' @param poly_names a vector of names for your models
+#' @param formulae Character vector containing model formulae to fit.
+#' @param poly_names Character vector of names for the models specified in
+#' `formulae`
 #' @template checks
-#' @author Tim Cadman
+#'
+#' @return List containing three elements:
+#' * models = List of objects returned by ds.lmerSLMA for each model fitted.
+#' * convergence = Tibble providing information on convergence problems or 
+#' error for each model fitted.
+#' * fit = Tibble with columns containing negative loglikehood statistic for each 
+#' cohort and rows for each model fitted. An additional column provides the sum
+#' of the loglikelihoods across cohorts. 
+#'
+#' @md
 #'
 #' @export
-dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL, checks = TRUE) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, 
+  conns = NULL, checks = TRUE) {
+
   sum_log <- NULL
 
   if (is.null(df)) {
@@ -44,7 +56,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
     .isDefined(df = df, conns = conns)
   }
 
-  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
+  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- 
+  loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   suppressWarnings(
@@ -106,7 +119,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   }
 
   if (all(problems$completed != FALSE) & any(problems$completed == FALSE)) {
-    warning("Some models threw an error message. Check 'convergence' table for more details")
+    warning("Some models threw an error message. Check 'convergence' table for 
+      more details")
   }
 
   if (any(!is.na(problems$all_converged) & problems$all_converged == FALSE)) {
