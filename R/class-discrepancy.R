@@ -9,12 +9,15 @@
 #'
 #' @template conns
 #' @template df
-#' @param vars An optional character vector of columns within `df` to describe. 
-#' If NULL all variables will be included.
+#' @param vars Optionally, a character vector specifying columns within `df` to 
+#' describe. If NULL all variables will be included.
 #' @template checks
 #'
-#' @return a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
-#'        columns for each cohort indicating the class of the variable
+#' @return A tibble with columns for each variable and rows for each cohort 
+#' describing the class of the variable, with an additional column 'discrepancy'
+#' summarising whether there are differences between cohorts.
+#'
+#' @family descriptive functions
 #'
 #' @importFrom purrr map_df
 #' @importFrom dplyr %>% mutate select everything
