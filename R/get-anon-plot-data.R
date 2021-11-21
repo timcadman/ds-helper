@@ -7,7 +7,7 @@
 #' a local object. You can then use these values (e.g. with ggplot2) to create
 #' plots. 
 #'
-#' @param df opal dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param v1 variable in df to get plotdata for
 #' @param v2 optional second variable if you want to get scatterplot data
 #' @param conns DataSHIELD connections object.

@@ -4,7 +4,7 @@
 #' columns of a serverside data frame.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param current_names a vector with names of existing DataSHIELD variables to
 #'        rename
 #' @param new_names a vector corresponding to the vector provided to current_names

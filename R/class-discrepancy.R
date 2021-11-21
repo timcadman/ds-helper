@@ -8,7 +8,7 @@
 #' the class of each variable.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df opal dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param vars vector of variable names in dataframe (optional). If vars is not
 #'      provided all variables will be included.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.

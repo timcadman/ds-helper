@@ -4,7 +4,7 @@
 #' calulcated either within cohort or using the pooled IQR across cohorts.
 #' The formula is: value(subject) / (75th percentile - 25th percentile).
 #' 
-#  @param df datashield dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param vars variables to transform
 #' @param type either "separate" to transform the variable based on the IQR
 #'             calculated within cohort, or "pooled" to transform based on the

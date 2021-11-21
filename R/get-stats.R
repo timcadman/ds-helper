@@ -8,7 +8,7 @@
 #' return the variable for that cohort with all NAs. 
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df opal dataframe
+#' @param df A server side data frame.
 #' @param vars vector of variable names in dataframe
 #' @param digits number of decimal places to round continuous stats to. Default
 #'               is 2.

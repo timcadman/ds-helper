@@ -5,7 +5,7 @@
 #' keep or drop, and creates a new dataframe with only the required variables.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df datashield dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param vars variables to keep or remove
 #' @param new_obj name for the new dataframe
 #' @param type whether to remove or keep specified variables

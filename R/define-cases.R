@@ -9,7 +9,7 @@
 #' This function replaces the deprecated dh.subjHasData.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df datashield dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param vars vector of variable names in dataframe
 #' @param type whther to define cases based on any or all provided variables
 #' @param new_obj optional name for outputted object. Defaults to "dc_data_avail"

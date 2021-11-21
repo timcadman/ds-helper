@@ -13,7 +13,7 @@
 #' @importFrom dplyr bind_rows %>% slice
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df datashield dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param outcome outcome variable in long format
 #' @param age_var age in years
 #' @param intervals table defining our age bands

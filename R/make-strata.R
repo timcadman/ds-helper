@@ -21,7 +21,7 @@
 #'
 #' Note that for big datasets this will take a long time to run.
 #'
-#' @param df String providing name of opal/armadillo dataframe in long format.
+#' @param df A character giving the name of a server-side data frame.
 #' @param id_var String providing name of subject id variable in df.
 #' @param var_to_subset String providing name of the variable in df
 #'                      to stratify according to bands.

@@ -6,7 +6,7 @@
 #' returns their indices. 
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df datashield dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param vars vector of variable names in dataframe
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'

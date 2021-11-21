@@ -7,7 +7,7 @@
 #' look-up table with this information.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df server side dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param vars vector of server side variable names within df
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'

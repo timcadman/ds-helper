@@ -7,7 +7,7 @@
 #' variables to the original dataframe.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df opal dataframe
+#' @param df A character giving the name of a server-side data frame.
 #' @param age_var the age variable to transform
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length

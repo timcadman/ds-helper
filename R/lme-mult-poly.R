@@ -14,7 +14,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @param conns DataSHIELD connections object.
-#' @param df name of dataFrame
+#' @param df A character giving the name of a server-side data frame.
 #' @param formulae a vector of model formulae to fit
 #' @param poly_names a vector of names for your models
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
