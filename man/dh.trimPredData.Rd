@@ -31,10 +31,10 @@ cohorts in `pred`.}
 `min` and `max` removed.
 }
 \description{
-This can be used in conjuncture with `ds.predictLmer`. The new data frame
+This is to be used in conjuncture with `ds.predictLmer`. The new data frame
 used for prediction may contain age or time values not present in the 
-original data. This allows you to remove all predicted values beyong a min
-or max age specified. This can ensure that plots only show predict values 
+original data. This allows you to remove all predicted values beyond a 
+minimum and maximum age. This ensures that plots only show predict values 
 over a range where there was actually data.
 }
 \seealso{

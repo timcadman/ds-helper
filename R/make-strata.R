@@ -56,7 +56,7 @@
 #' For each band specified two variables will be returned:
 #' * var_to_subset
 #' * age_var. 
-#' The suffix .[lower_band] identifies the band for that variable.
+#' The suffix .lower_band identifies the band for that variable.
 #'
 #' @family data manipulation functions
 #'
@@ -76,8 +76,10 @@
 #'
 #' @export
 # nolint
-dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, mult_action = NULL, # nolint
-                          mult_vals = NULL, new_obj = NULL, conns = NULL, band_action = NULL, checks = TRUE, df_name = NULL) {
+dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, 
+  var_to_subset = NULL, bands = NULL, mult_action = NULL, mult_vals = NULL, 
+  new_obj = NULL, band_action = NULL, conns = NULL, checks = TRUE, 
+  df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL

@@ -8,8 +8,8 @@ dh.meanByGroup(
   df = NULL,
   outcome = NULL,
   group_var = NULL,
-  conns = NULL,
   intervals = NULL,
+  conns = NULL,
   checks = FALSE
 )
 }
@@ -20,12 +20,12 @@ dh.meanByGroup(
 
 \item{group_var}{String specifying grouping variable within 'df'.}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{intervals}{Optionally, numeric vector defining how to stratify 
 `group_var`. Values should specify alternately lower and upper values for 
 each strata. If NULL, `outcome` is summarised by every unique value of 
 `group_var`.}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}

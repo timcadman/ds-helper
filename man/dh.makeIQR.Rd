@@ -8,8 +8,8 @@ dh.makeIQR(
   df = NULL,
   vars = NULL,
   type = c("separate", "pooled"),
-  conns = NULL,
   new_obj = df,
+  conns = NULL,
   checks = TRUE,
   new_df_name = NULL
 )
@@ -23,9 +23,9 @@ dh.makeIQR(
 within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts 
 specified in `conns`.}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{new_obj}{Character specifying name for created serverside object.}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}

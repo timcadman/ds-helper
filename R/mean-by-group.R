@@ -27,7 +27,7 @@
 #'
 #' @export
 dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL, 
-  conns = NULL, intervals = NULL, checks = FALSE) {
+  intervals = NULL, conns = NULL, checks = FALSE) {
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <- 
   . <- NULL
 

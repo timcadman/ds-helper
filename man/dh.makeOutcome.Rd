@@ -12,10 +12,10 @@ dh.makeOutcome(
   mult_action = NULL,
   mult_vals = NULL,
   df_name = NULL,
-  conns = NULL,
   id_var = "child_id",
   band_action = NULL,
-  keep_original = NULL
+  keep_original = NULL,
+  conns = NULL
 )
 }
 \arguments{
@@ -33,13 +33,13 @@ dh.makeOutcome(
 
 \item{df_name}{Renamed to `new_obj` in `dh.makeStrata`}
 
-\item{conns}{See argument `conns` in `dh.makeStrata`}
-
 \item{id_var}{See argument `id_var` in `dh.makeStrata`}
 
 \item{band_action}{See argument `band_action` in `dh.makeStrata`}
 
 \item{keep_original}{Argument no longer in use in `dh.makeStrata`}
+
+\item{conns}{See argument `conns` in `dh.makeStrata`}
 }
 \description{
 dh.makeStrata contains a number of improvements: it is computationally more

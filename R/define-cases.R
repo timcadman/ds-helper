@@ -31,8 +31,8 @@
 #' @importFrom rlang arg_match
 #'
 #' @export
-dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, conns = NULL,
-                           new_obj = NULL, checks = FALSE, newobj = NULL) {
+dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, new_obj = NULL, 
+  conns = NULL, checks = FALSE, newobj = NULL) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

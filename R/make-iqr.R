@@ -30,7 +30,8 @@
 #'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
-                       conns = NULL, new_obj = df, checks = TRUE, new_df_name = NULL) {
+                       new_obj = df, conns = NULL, checks = TRUE, 
+                       new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
 
   if (is.null(df)) {

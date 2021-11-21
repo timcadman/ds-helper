@@ -8,9 +8,9 @@ analyses}
 dh.makeAgePolys(
   df = NULL,
   age_var = NULL,
-  conns = NULL,
   poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
   poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
+  conns = NULL,
   checks = TRUE,
   agevars = NULL
 )
@@ -20,12 +20,12 @@ dh.makeAgePolys(
 
 \item{age_var}{Character specifying age variable within `df` to transform.}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{poly_form}{Character vector of powers by which to transform `age_var`.}
 
 \item{poly_names}{Character vector of names for the created variables. Must
 the same length and order as `poly_form`.}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}

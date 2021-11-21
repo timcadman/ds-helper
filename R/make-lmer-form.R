@@ -31,8 +31,8 @@
 #' @md
 #'
 #' @export
-dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL, random = NULL,
-                            fixed = NULL, age_interactions = FALSE) {
+dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL, 
+  random = NULL, fixed = NULL, age_interactions = FALSE) {
   if (is.null(outcome)) {
     stop("`outcome` must not be NULL.", call. = FALSE)
   }

@@ -4,17 +4,17 @@
 \alias{dh.getStats}
 \title{Produces a rance of descriptive statistics in a useful format}
 \usage{
-dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
+dh.getStats(df = NULL, vars = NULL, digits = 2, conns = NULL, checks = TRUE)
 }
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
 \item{vars}{Character vector of columns within \code{df} to summarise.}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{digits}{Optionally, the number of decimal places to round output to. 
 Default is 2.}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}

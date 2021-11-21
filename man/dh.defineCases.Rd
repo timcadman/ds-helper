@@ -9,8 +9,8 @@ dh.defineCases(
   df = NULL,
   vars = NULL,
   type = NULL,
-  conns = NULL,
   new_obj = NULL,
+  conns = NULL,
   checks = FALSE,
   newobj = NULL
 )
@@ -24,9 +24,9 @@ dh.defineCases(
 subjects with data on any of `vars`, and "all" to describe subjects with data 
 on all of `vars.}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{new_obj}{Character specifying name for created serverside object.}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}

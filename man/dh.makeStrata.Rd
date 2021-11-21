@@ -14,8 +14,8 @@ dh.makeStrata(
   mult_action = NULL,
   mult_vals = NULL,
   new_obj = NULL,
-  conns = NULL,
   band_action = NULL,
+  conns = NULL,
   checks = TRUE,
   df_name = NULL
 )
@@ -48,8 +48,6 @@ should correspond to the order and number of the bands.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{band_action}{Character specifying how the values provided in \code{bands}
 are evaluated in creating the strata:
 \itemize{
@@ -62,6 +60,8 @@ band
 band
 }}
 
+\item{conns}{DataSHIELD connections object.}
+
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
 
@@ -73,7 +73,7 @@ For each band specified two variables will be returned:
 \itemize{
 \item var_to_subset
 \item age_var.
-The suffix .\link{lower_band} identifies the band for that variable.
+The suffix .lower_band identifies the band for that variable.
 }
 }
 \description{

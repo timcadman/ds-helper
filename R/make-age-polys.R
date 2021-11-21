@@ -27,10 +27,10 @@
 #' @family data manipulation functions
 #'
 #' @export
-dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
+dh.makeAgePolys <- function(df = NULL, age_var = NULL, 
   poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
   poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
-  checks = TRUE, agevars = NULL) {
+  conns = NULL, checks = TRUE, agevars = NULL) {
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)

@@ -8,8 +8,8 @@ dh.meanByAge(
   df = NULL,
   outcome = NULL,
   age_var = NULL,
-  conns = NULL,
   intervals = NULL,
+  conns = NULL,
   checks = FALSE
 )
 }
@@ -20,9 +20,9 @@ dh.meanByAge(
 
 \item{age_var}{age in years}
 
-\item{conns}{DataSHIELD connections object.}
-
 \item{intervals}{table defining our age bands}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}

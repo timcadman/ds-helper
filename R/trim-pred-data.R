@@ -26,7 +26,8 @@
 #' @family trajectory functions
 #'
 #' @export
-dh.trimPredData <- function(pred = NULL, coh_names = NULL, age = "age", min = NULL, max = NULL) {
+dh.trimPredData <- function(pred = NULL, coh_names = NULL, age = "age", 
+  min = NULL, max = NULL) {
   cohort <- NULL
 
   if (is.null(pred)) {

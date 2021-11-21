@@ -17,7 +17,7 @@
 #' If a column is specified then scatter plot data will be returned with `var_1`
 #' as the explanatory variable and `var_2` as the outcome variable. Default is 
 #' NULL which returns anonymised data only for `var_1`.
-#'q @template conns
+#' @template conns
 #' @template checks
 #
 #' @family functions to assist plot-making
@@ -34,7 +34,8 @@
 #' @importFrom rlang quo_name
 #'
 #' @export
-dh.getAnonPlotData <- function(df = NULL, var_1 = NULL, var_2 = NULL, conns = NULL, checks = TRUE) {
+dh.getAnonPlotData <- function(df = NULL, var_1 = NULL, var_2 = NULL, 
+  conns = NULL, checks = TRUE) {
   . <- value <- x <- y <- NULL
 
   if (is.null(df)) {

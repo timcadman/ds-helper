@@ -22,8 +22,9 @@ extract anonymised data.}
 \item{var_2}{Optionally, character specifying a second column within `df`. 
 If a column is specified then scatter plot data will be returned with `var_1`
 as the explanatory variable and `var_2` as the outcome variable. Default is 
-NULL which returns anonymised data only for `var_1`.
-q @template conns}
+NULL which returns anonymised data only for `var_1`.}
+
+\item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
