@@ -30,4 +30,10 @@ create problems as many DataSHIELD functions require the input variable to
 have the same class in all studies. This function produces a tibble showing 
 the class of each variable.
 }
+\seealso{
+Other descriptive functions: 
+\code{\link{dh.anyData}()},
+\code{\link{dh.defineCases}()},
+\code{\link{dh.getStats}()}
+}
 \concept{descriptive functions}

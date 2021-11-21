@@ -28,7 +28,9 @@ variables is time-consuming and at risk of error. This function automatically
 generates a look-up table with this information.
 }
 \seealso{
-Other describing functions: 
-\code{\link{dh.defineCases}()}
+Other descriptive functions: 
+\code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.defineCases}()},
+\code{\link{dh.getStats}()}
 }
-\concept{describing functions}
+\concept{descriptive functions}

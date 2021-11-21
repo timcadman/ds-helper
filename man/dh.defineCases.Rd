@@ -48,7 +48,9 @@ subject has non-missing values for any or all of a set of given variables.
 This function replaces the deprecated dh.subjHasData.
 }
 \seealso{
-Other describing functions: 
-\code{\link{dh.anyData}()}
+Other descriptive functions: 
+\code{\link{dh.anyData}()},
+\code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.getStats}()}
 }
-\concept{describing functions}
+\concept{descriptive functions}
