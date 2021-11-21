@@ -27,4 +27,8 @@ model. Manually identifying which cohorts have some data on required
 variables is time-consuming and at risk of error. This function automatically 
 generates a look-up table with this information.
 }
+\seealso{
+Other describing functions: 
+\code{\link{dh.defineCases}()}
+}
 \concept{describing functions}
