@@ -2,8 +2,7 @@
 % Please edit documentation in R/mean-by-age.R
 \name{dh.meanByAge}
 \alias{dh.meanByAge}
-\title{Calculate mean values of one continuous variable stratified by a second
-continuous variable.}
+\title{This was the original version of dh.meanByGroup. It has now been deprecated.}
 \usage{
 dh.meanByAge(
   df = NULL,
@@ -32,9 +31,7 @@ function. Default is TRUE.}
 Mean values for each unit of your age variable are returned
 }
 \description{
-This has similar functionality to `tapply` or the dplyr chain `group_by` %>%
-`summarise`. It offers additional flexilibity over `ds.tapply` in that it 
-allows you to specify upper and lower values for each strata. By contrast,
-ds.tapply will produce a summary based on every unique value of the grouping
-variable, which may not always be what is required.
+Whilst I always use this with 'age' as a grouping variable, it is a more
+general function than that. I have thus renamed it to reflect that any
+continuous grouping variable can be used.
 }
