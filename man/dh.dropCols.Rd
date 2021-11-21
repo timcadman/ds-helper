@@ -42,4 +42,8 @@ Often we want to remove variables from a dataframe. This function
 allows you to specify the variables you either want to remove or keep and  
 and creates a new dataframe with only the required variables.
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.makeAgePolys}()}
+}
 \concept{data manipulation functions}

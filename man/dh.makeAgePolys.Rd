@@ -33,7 +33,7 @@ function. Default is TRUE.}
 \item{agevars}{Retired argument name. Please use `age_var' instead.}
 }
 \value{
-Transformations of age are added as columbs to server-side object 
+Transformations of age are added as columns to server-side object 
 specified in `df`.
 }
 \description{
@@ -44,5 +44,9 @@ creates multiple transformations of an age variable to different powers.
 \seealso{
 Other trajectory functions: 
 \code{\link{dh.lmeMultPoly}()}
+
+Other data manipulation functions: 
+\code{\link{dh.dropCols}()}
 }
+\concept{data manipulation functions}
 \concept{trajectory functions}

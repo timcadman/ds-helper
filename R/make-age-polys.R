@@ -24,6 +24,7 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @family trajectory functions
+#' @family data manipulation functions
 #'
 #' @export
 dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
