@@ -25,19 +25,19 @@ dh.makeOutcome(
 
 \item{age_var}{See argument `age_var` in `dh.makeStrata`.}
 
-\item{bands}{see argument `df` in `dh.makeStrata`}
+\item{bands}{See argument `df` in `dh.makeStrata`}
 
-\item{mult_action}{see argument `mult_action` in `dh.makeStrata`}
+\item{mult_action}{See argument `mult_action` in `dh.makeStrata`}
 
-\item{mult_vals}{see argument `mult_vals` in `dh.makeStrata`}
+\item{mult_vals}{See argument `mult_vals` in `dh.makeStrata`}
 
 \item{df_name}{Renamed to `new_obj` in `dh.makeStrata`}
 
-\item{conns}{see argument `conns` in `dh.makeStrata`}
+\item{conns}{See argument `conns` in `dh.makeStrata`}
 
-\item{id_var}{see argument `id_var` in `dh.makeStrata`}
+\item{id_var}{See argument `id_var` in `dh.makeStrata`}
 
-\item{band_action}{see argument `band_action` in `dh.makeStrata`}
+\item{band_action}{See argument `band_action` in `dh.makeStrata`}
 
 \item{keep_original}{Argument no longer in use in `dh.makeStrata`}
 }

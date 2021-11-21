@@ -6,14 +6,14 @@
 #' @param df See argument `df` in `dh.makeStrata`.
 #' @param outcome Renamed to `var_to_subset` in `dh.makeStrata`
 #' @param age_var See argument `age_var` in `dh.makeStrata`.
-#' @param bands see argument `df` in `dh.makeStrata`
-#' @param mult_action see argument `mult_action` in `dh.makeStrata`
-#' @param mult_vals see argument `mult_vals` in `dh.makeStrata`
+#' @param bands See argument `df` in `dh.makeStrata`
+#' @param mult_action See argument `mult_action` in `dh.makeStrata`
+#' @param mult_vals See argument `mult_vals` in `dh.makeStrata`
 #' @param keep_original Argument no longer in use in `dh.makeStrata`
 #' @param df_name Renamed to `new_obj` in `dh.makeStrata`
-#' @param conns see argument `conns` in `dh.makeStrata`
-#' @param id_var see argument `id_var` in `dh.makeStrata`
-#' @param band_action see argument `band_action` in `dh.makeStrata`
+#' @param conns See argument `conns` in `dh.makeStrata`
+#' @param id_var See argument `id_var` in `dh.makeStrata`
+#' @param band_action See argument `band_action` in `dh.makeStrata`
 #'
 #' @export
 dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
