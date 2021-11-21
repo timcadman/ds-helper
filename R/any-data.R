@@ -6,11 +6,10 @@
 #' variables is time-consuming and at risk of error. This function automatically 
 #' generates a look-up table with this information.
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df Character giving the name of a server-side data frame.
+#' @template df
 #' @param vars Character vector of columns within `df`.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
+#' @template conns
 #'
 #' @return Client-side tibble containing columns for each variable and rows 
 #' for each cohort indicating if the variable is not completely missing.

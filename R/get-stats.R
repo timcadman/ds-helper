@@ -7,13 +7,12 @@
 #' if the variable is missing in one or more study. By contrast, getStats will
 #' return the variable for that cohort with all NAs. 
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A server side data frame.
+#' @template conns
+#' @template df
 #' @param vars A character vector of columns within `df` to describe.
 #' @param digits number of decimal places to round continuous stats to. Default
 #'               is 2.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #'
 #' @return The function returns a list with two elements containing dataframes
 #' with summary statistics for (i) categorical and (ii) continuous variables.

@@ -5,12 +5,11 @@
 #' variables. This function allows you to specify the names of columns and
 #' returns their indices. 
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param vars A character vector of columns within `df` for which to return the
 #' indices.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #'
 #' @return list of indices where length of list is number of cohorts provided
 #'

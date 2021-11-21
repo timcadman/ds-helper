@@ -3,13 +3,12 @@
 #' This function is an analogue of `dplyr::rename` which allows you to rename 
 #' columns of a serverside data frame.
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param current_names A character vector of columns within `df` to rename.
 #' @param new_names A character vector giving the new names for the columns 
 #' described in `current_names`.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #' @return None. The new variables are added to the df specified
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame

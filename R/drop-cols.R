@@ -4,13 +4,12 @@
 #' This function allows you to specify the variables you either want to
 #' keep or drop, and creates a new dataframe with only the required variables.
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df 
 #' @param vars A character vector of columns within `df` to be removed or kept.
 #' @param new_obj name for the new dataframe
 #' @param type whether to remove or keep specified variables
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #' @param new_df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return a new dataframe is created containing the specified subset of columns

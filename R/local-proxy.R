@@ -19,10 +19,9 @@
 #'
 #' `ds.summary(D$LAB_TSC)` - no quotation marks needed either!
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template conns
+#' @template df
+#' @template checks
 #'
 #' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
 #' of more cohorts.

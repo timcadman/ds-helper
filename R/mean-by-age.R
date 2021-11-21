@@ -12,13 +12,12 @@
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows %>% slice
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param outcome outcome variable in long format
 #' @param age_var age in years
 #' @param intervals table defining our age bands
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'

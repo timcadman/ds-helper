@@ -21,7 +21,7 @@
 #'
 #' Note that for big datasets this will take a long time to run.
 #'
-#' @param df A character giving the name of a server-side data frame.
+#' @template df
 #' @param id_var A character giving the name of the column within `df` which 
 #' uniquely identifies each subject. 
 #' @param var_to_subset String providing name of the variable in df
@@ -45,8 +45,8 @@
 #'                  closest to. Required only if mult_action = "nearest". The order and length of the vector
 #'                  should correspond to the order and number of the bands.
 #' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
-#' @param conns DataSHIELD connections object.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' @template conns
+#' @template checks
 #' function. Default is TRUE.
 #' @param df_name Retired argument name. Please use `new_obj' instead.
 #'

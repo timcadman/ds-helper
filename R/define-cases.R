@@ -8,16 +8,15 @@
 #'
 #' This function replaces the deprecated dh.subjHasData.
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param vars A character vector of columns within `df` to form definition set.
 #' @param type whther to define cases based on any or all provided variables
 #' @param new_obj optional name for outputted object. Defaults to "dc_data_avail"
 #' @return None. A new variable is created within the opal environment. If the option
 #'         "any" is selected for argument "type", the new variable is called "dc_any_data".
 #'         If the option "all" is selected, the new variable is called "dc_all_data"
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #' @param newobj Retired argument name. Please use `new_obj' instead.
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric ds.replaceNA

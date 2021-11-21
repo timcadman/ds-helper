@@ -7,12 +7,11 @@
 #' have the same class in all studies. This function produces a tibble showing 
 #' the class of each variable.
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param vars An optional character vector of columns within `df` to describe. 
 #' If NULL all variables will be included.
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #'
 #' @return a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
 #'        columns for each cohort indicating the class of the variable

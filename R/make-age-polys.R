@@ -6,14 +6,13 @@
 #' creates multiple transformations of an age terms and adds the transformed
 #' variables to the original dataframe.
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param age_var A character giving the age variable within `df` to transform.
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length
 #' and order as poly_form
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #' @param agevars Retired argument name. Please use `new_obj' instead.
 #'
 #' @return transformations of age created in df

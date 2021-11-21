@@ -13,12 +13,11 @@
 #' @importFrom tibble tibble
 #' @importFrom DSI datashield.connections_find
 #'
-#' @param conns DataSHIELD connections object.
-#' @param df A character giving the name of a server-side data frame.
+#' @template conns
+#' @template df
 #' @param formulae a vector of model formulae to fit
 #' @param poly_names a vector of names for your models
-#' @param checks Logical; if TRUE checks are performed prior to running the 
-#' function. Default is TRUE.
+#' @template checks
 #' @author Tim Cadman
 #'
 #' @export
