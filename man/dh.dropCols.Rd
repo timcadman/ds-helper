@@ -8,7 +8,7 @@ dh.dropCols(
   df = NULL,
   vars = NULL,
   new_obj = df,
-  type = c("remove", "keep"),
+  type = NULL,
   conns = NULL,
   checks = TRUE,
   new_df_name = NULL
@@ -17,11 +17,15 @@ dh.dropCols(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{A character vector of columns within `df` to be removed or kept.}
+\item{vars}{Character vector specifying columns within `df` to be removed or 
+kept.}
 
-\item{new_obj}{name for the new dataframe}
+\item{new_obj}{Optionally, character specifying name for new server-side 
+data frame. Default is to return original data frame with columns removed.}
 
-\item{type}{whether to remove or keep specified variables}
+\item{type}{Character specifying how to treat `vars`. If "remove" these 
+variables are removed from the data frame, if "keep" these variables are 
+kept in the data frame and all others are removed.}
 
 \item{conns}{DataSHIELD connections object.}
 
@@ -31,10 +35,11 @@ function. Default is TRUE.}
 \item{new_df_name}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
-a new dataframe is created containing the specified subset of columns
+Server-side data frame the specified subset of columns.
 }
 \description{
-Often we was to remove variables from a dataframe that we no longer need. 
-This function allows you to specify the variables you either want to
-keep or drop, and creates a new dataframe with only the required variables.
+Often we want to remove variables from a dataframe. This function 
+allows you to specify the variables you either want to remove or keep and  
+and creates a new dataframe with only the required variables.
 }
+\concept{data manipulation functions}
