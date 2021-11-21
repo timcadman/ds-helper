@@ -48,7 +48,8 @@ Other trajectory functions:
 
 Other data manipulation functions: 
 \code{\link{dh.dropCols}()},
-\code{\link{dh.makeIQR}()}
+\code{\link{dh.makeIQR}()},
+\code{\link{dh.makeStrata}()}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}

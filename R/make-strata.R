@@ -22,36 +22,43 @@
 #' Note that for big datasets this will take a long time to run.
 #'
 #' @template df
-#' @param id_var A character giving the name of the column within `df` which 
-#' uniquely identifies each subject. 
-#' @param var_to_subset String providing name of the variable in df
-#'                      to stratify according to bands.
-#' @param age_var String providing name of age or time variable in df.
-#' @param bands A numeric vector of alternating lower and upper values to specify
-#'              the bands in which to derive strata of var_to_subset. This vector should
-#'              be an even number and twice the length of the number of bands required.
-#' @param band_action String specifying how the values provided in 'bands' arguments are
-#'                    evaluated in creating the strata:
-#' "g_l" = greater than the lowest band and less than the highest band;
-#' "ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
-#' "g_le" = greater than the lowest band and less than or equal to the highest band;
-#' "ge_l" = greater than or equal to the lowest band and less than the highest band;
-#' @param mult_action String specifying how to handle cases where a subject has more
-#'                    than one measurement within a specified band. Use 'earliest' to
-#'                    take the earliest measurement, 'latest' to take the
-#'                    latest measurement and 'nearest' to take the measurement nearest to
-#'                    the value(s) specified in mult_vals.
-#' @param mult_vals Numeric vector specifying the value in each age band to chose values
-#'                  closest to. Required only if mult_action = "nearest". The order and length of the vector
-#'                  should correspond to the order and number of the bands.
-#' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
+#' @template id_var
+#' @param var_to_subset Character specifying variable in `df` to stratify 
+#' according to bands.
+#' @param age_var Character specifying age or time variable in `df`.
+#' @param bands Numeric vector of alternating lower and upper values specifying
+#' the bands in which to derive strata of `var_to_subset`. This vector should
+#' be an even number and twice the length of the number of bands required.
+#' @param band_action Character specifying how the values provided in `bands` 
+#' are evaluated in creating the strata:
+#' * "g_l" = greater than the lowest band and less than the highest band
+#' * "ge_le" = greater or equal to the lowest band and less than or equal to the 
+#' highest band
+#' * "g_le" = greater than the lowest band and less than or equal to the highest 
+#' band
+#' * "ge_l" = greater than or equal to the lowest band and less than the highest 
+#' band
+#' @param mult_action Character specifying how to handle cases where a subject 
+#' has more than one measurement within a specified band. Use "earliest" to 
+#' take the earliest measurement, "latest" to take the latest measurement and 
+#' "nearest" to take the measurement nearest to the value(s) specified in 
+#' `mult_vals`.
+#' @param mult_vals Numeric vector specifying the value in each age band to 
+#' chose values closest to if subjects have more than one value per band. 
+#' Required only if mult_action is "nearest". The order and length of the vector
+#' should correspond to the order and number of the bands.
+#' @template new_obj
 #' @template conns
 #' @template checks
 #' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
-#' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two
-#'         variables will be returned: (i) var_to_subset and (ii) age_var. The suffix
-#'          .[lower_band] identifies the band for that variable.
+#' @return Servside dataframe in wide format containing the derived variables. 
+#' For each band specified two variables will be returned:
+#' * var_to_subset
+#' * age_var. 
+#' The suffix .[lower_band] identifies the band for that variable.
+#'
+#' @family data manipulation functions
 #'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
@@ -64,6 +71,8 @@
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find
 #' @importFrom rlang :=
+#'
+#' @md
 #'
 #' @export
 # nolint
