@@ -18,13 +18,15 @@ dh.defineCases(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{A character vector of columns within `df` to form definition set.}
+\item{vars}{Character vector of columns within `df` to form definition set.}
 
-\item{type}{whther to define cases based on any or all provided variables}
+\item{type}{Character specifying how to define cases. Use "any" to describe
+subjects with data on any of `vars`, and "all" to describe subjects with data 
+on all of `vars.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{new_obj}{optional name for outputted object. Defaults to "dc_data_avail"}
+\item{new_obj}{Character specifying name for created serverside object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
@@ -32,9 +34,9 @@ function. Default is TRUE.}
 \item{newobj}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
-None. A new variable is created within the opal environment. If the option
-        "any" is selected for argument "type", the new variable is called "dc_any_data".
-        If the option "all" is selected, the new variable is called "dc_all_data"
+Server-side vector defining whether subject meets criteria defined by
+`vars` and `type`. 1 indicates that criteria were met, 0 indicates that 
+criteria weren't met.
 }
 \description{
 In an analysis you may want to subset your dataset to contain only subjects 
@@ -45,3 +47,8 @@ subject has non-missing values for any or all of a set of given variables.
 \details{
 This function replaces the deprecated dh.subjHasData.
 }
+\seealso{
+Other describing functions: 
+\code{\link{dh.anyData}()}
+}
+\concept{describing functions}
