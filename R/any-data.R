@@ -8,7 +8,7 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A character giving the name of a server-side data frame.
-#' @param vars vector of server side variable names within df
+#' @param vars A character vector of columns within `df`.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return a local dataframe with columns for each variable and rows for each 

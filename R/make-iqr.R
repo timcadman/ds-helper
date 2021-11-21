@@ -5,7 +5,7 @@
 #' The formula is: value(subject) / (75th percentile - 25th percentile).
 #' 
 #' @param df A character giving the name of a server-side data frame.
-#' @param vars variables to transform
+#' @param vars A character vector of columns within `df` to transform.
 #' @param type either "separate" to transform the variable based on the IQR
 #'             calculated within cohort, or "pooled" to transform based on the
 #'             pooled IQR across all cohorts provided in the 'conns' argument.

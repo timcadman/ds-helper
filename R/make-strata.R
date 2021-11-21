@@ -22,7 +22,8 @@
 #' Note that for big datasets this will take a long time to run.
 #'
 #' @param df A character giving the name of a server-side data frame.
-#' @param id_var String providing name of subject id variable in df.
+#' @param id_var A character giving the name of the column within `df` which 
+#' uniquely identifies each subject. 
 #' @param var_to_subset String providing name of the variable in df
 #'                      to stratify according to bands.
 #' @param age_var String providing name of age or time variable in df.

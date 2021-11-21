@@ -10,7 +10,7 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A character giving the name of a server-side data frame.
-#' @param vars vector of variable names in dataframe
+#' @param vars A character vector of columns within `df` to form definition set.
 #' @param type whther to define cases based on any or all provided variables
 #' @param new_obj optional name for outputted object. Defaults to "dc_data_avail"
 #' @return None. A new variable is created within the opal environment. If the option

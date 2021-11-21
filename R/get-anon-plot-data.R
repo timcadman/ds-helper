@@ -8,8 +8,10 @@
 #' plots. 
 #'
 #' @param df A character giving the name of a server-side data frame.
-#' @param v1 variable in df to get plotdata for
-#' @param v2 optional second variable if you want to get scatterplot data
+#' @param v1 A character giving the name of a column within `df` for which to 
+#' extract anonymised data.
+#' @param v2 An optional second character giving the name of a column within 
+#' `df`. This is only required if you want scatter plot data.
 #' @param conns DataSHIELD connections object.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'

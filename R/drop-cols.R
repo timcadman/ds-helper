@@ -6,7 +6,7 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A character giving the name of a server-side data frame.
-#' @param vars variables to keep or remove
+#' @param vars A character vector of columns within `df` to be removed or kept.
 #' @param new_obj name for the new dataframe
 #' @param type whether to remove or keep specified variables
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.

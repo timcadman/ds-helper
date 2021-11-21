@@ -5,10 +5,9 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A character giving the name of a server-side data frame.
-#' @param current_names a vector with names of existing DataSHIELD variables to
-#'        rename
-#' @param new_names a vector corresponding to the vector provided to current_names
-#'        with the new variable names.
+#' @param current_names A character vector of columns within `df` to rename.
+#' @param new_names A character vector giving the new names for the columns 
+#' described in `current_names`.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #' @return None. The new variables are added to the df specified
 #'

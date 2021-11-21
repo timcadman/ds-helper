@@ -3,9 +3,9 @@
 #' dh.makeStrata contains a number of improvements: it is computationally more
 #' efficient, it is more clearly coded, and it has been more thoroughly tested.
 #'
-#' @param df see argument `df` in `dh.makeStrata`
+#' @param df See argument `df` in `dh.makeStrata`.
 #' @param outcome Renamed to `var_to_subset` in `dh.makeStrata`
-#' @param age_var see argument `age_var` in `dh.makeStrata`
+#' @param age_var See argument `age_var` in `dh.makeStrata`.
 #' @param bands see argument `df` in `dh.makeStrata`
 #' @param mult_action see argument `mult_action` in `dh.makeStrata`
 #' @param mult_vals see argument `mult_vals` in `dh.makeStrata`

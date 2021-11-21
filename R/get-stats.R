@@ -9,7 +9,7 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A server side data frame.
-#' @param vars vector of variable names in dataframe
+#' @param vars A character vector of columns within `df` to describe.
 #' @param digits number of decimal places to round continuous stats to. Default
 #'               is 2.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.

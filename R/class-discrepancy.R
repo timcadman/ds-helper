@@ -9,8 +9,8 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A character giving the name of a server-side data frame.
-#' @param vars vector of variable names in dataframe (optional). If vars is not
-#'      provided all variables will be included.
+#' @param vars An optional character vector of columns within `df` to describe. 
+#' If NULL all variables will be included.
 #' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
