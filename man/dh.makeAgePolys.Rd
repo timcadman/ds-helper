@@ -18,26 +18,31 @@ dh.makeAgePolys(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{age_var}{A character giving the age variable within `df` to transform.}
+\item{age_var}{Character specifying age variable within `df` to transform.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{poly_form}{a vector of powers by which to transform the age variable}
+\item{poly_form}{Character vector of powers by which to transform `age_var`.}
 
-\item{poly_names}{a vector of names for the created variables, the same length
-and order as poly_form}
+\item{poly_names}{Character vector of names for the created variables. Must
+the same length and order as `poly_form`.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
 
-\item{agevars}{Retired argument name. Please use `new_obj' instead.}
+\item{agevars}{Retired argument name. Please use `age_var' instead.}
 }
 \value{
-transformations of age created in df
+Transformations of age are added as columbs to server-side object 
+specified in `df`.
 }
 \description{
 When we do trajectory analyses using fractional polynomials we often want
 to try models with different combinations of age polynomials. This function
-creates multiple transformations of an age terms and adds the transformed
-variables to the original dataframe.
+creates multiple transformations of an age variable to different powers.
 }
+\seealso{
+Other trajectory functions: 
+\code{\link{dh.lmeMultPoly}()}
+}
+\concept{trajectory functions}

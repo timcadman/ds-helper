@@ -41,4 +41,8 @@ of the loglikelihoods across cohorts.
 This function enables you to fit multiple models with different combinations
 of polynomial terms and compares the fit.
 }
+\seealso{
+Other trajectory functions: 
+\code{\link{dh.makeAgePolys}()}
+}
 \concept{trajectory functions}
