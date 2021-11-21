@@ -13,8 +13,7 @@
 #' @template conns
 #' @template df
 #' @param vars Character vector of columns within `df` to summarise.
-#' @param digits Optionally, the number of decimal places to round descriptives 
-#' to. Default is 2.
+#' @template digits 
 #' @template checks
 #'
 #' @family descriptive functions

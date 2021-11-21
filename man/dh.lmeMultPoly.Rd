@@ -2,7 +2,7 @@
 % Please edit documentation in R/lme-mult-poly.R
 \name{dh.lmeMultPoly}
 \alias{dh.lmeMultPoly}
-\title{Fit multiple mixed effects models containing different combination of 
+\title{Fit multiple mixed effects models containing different combination of
 fractional polynomials}
 \usage{
 dh.lmeMultPoly(
@@ -16,19 +16,28 @@ dh.lmeMultPoly(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{formulae}{a vector of model formulae to fit}
+\item{formulae}{Character vector containing model formulae to fit.}
 
-\item{poly_names}{a vector of names for your models}
+\item{poly_names}{Character vector of names for the models specified in
+\code{formulae}}
 
 \item{conns}{DataSHIELD connections object.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
 }
-\description{
-This function enables you to fit multiple models with different combinations 
-of polynomial terms and compares the fit.
+\value{
+List containing three elements:
+\itemize{
+\item models = List of objects returned by ds.lmerSLMA for each model fitted.
+\item convergence = Tibble providing information on convergence problems or
+error for each model fitted.
+\item fit = Tibble with columns containing negative loglikehood statistic for each
+cohort and rows for each model fitted. An additional column provides the sum
+of the loglikelihoods across cohorts.
 }
-\author{
-Tim Cadman
+}
+\description{
+This function enables you to fit multiple models with different combinations
+of polynomial terms and compares the fit.
 }
