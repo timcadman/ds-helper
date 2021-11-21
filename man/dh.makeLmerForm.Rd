@@ -48,6 +48,7 @@ input to the \code{formulae} argument in \code{dh.lmeMultPoly}.
 \seealso{
 Other trajectory functions: 
 \code{\link{dh.lmeMultPoly}()},
-\code{\link{dh.makeAgePolys}()}
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.predictLmer}()}
 }
 \concept{trajectory functions}

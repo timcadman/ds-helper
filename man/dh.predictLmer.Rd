@@ -7,19 +7,21 @@
 dh.predictLmer(model = NULL, new_data = NULL, coh_names = NULL, newdata = NULL)
 }
 \arguments{
-\item{model}{output model from ds.lmerSLMA function}
+\item{model}{Model object returned by ds.lmerSLMA.}
 
-\item{new_data}{a dataframe or tibble with the values of the model variables
-at which you want to get predicted values. All variables from the model must
-be in the new data frame}
+\item{new_data}{Tibble or data frame containing values for variables in 
+`model` at which to predict values of the outcome. The column names in 
+`new_data` must be identical to those in `model`, and all variables included 
+in `model` must be present in `new_data`.}
 
-\item{coh_names}{a vector of cohort names, in the order that these were provided
-in the original lmer model.}
+\item{coh_names}{Vector of cohort names. These must be in the order that 
+cohorts were specified in `model`.}
 
 \item{newdata}{Retired argument name. Please use `new_data' instead.}
 }
 \value{
-A tibble of predicted outcome values based on provide variable values.
+Tibble of predicted outcome values based on values provided in 
+`new_data`.
 }
 \description{
 Currently there is no `predict` method for lmer models within DataSHIELD. 
@@ -27,3 +29,10 @@ This function replicates this, by calculating predicted values for fixed
 effects based on the model coefficients. Standard errors are returned for 
 individual cohorts but yet for pooled models.
 }
+\seealso{
+Other trajectory functions: 
+\code{\link{dh.lmeMultPoly}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeLmerForm}()}
+}
+\concept{trajectory functions}

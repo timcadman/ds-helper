@@ -5,21 +5,28 @@
 #' effects based on the model coefficients. Standard errors are returned for 
 #' individual cohorts but yet for pooled models.
 
-#' @param model output model from ds.lmerSLMA function
-#' @param new_data a dataframe or tibble with the values of the model variables
-#' at which you want to get predicted values. All variables from the model must
-#' be in the new data frame
-#' @param coh_names a vector of cohort names, in the order that these were provided
-#' in the original lmer model.
+#' @param model Model object returned by ds.lmerSLMA.
+#' @param new_data Tibble or data frame containing values for variables in 
+#' `model` at which to predict values of the outcome. The column names in 
+#' `new_data` must be identical to those in `model`, and all variables included 
+#' in `model` must be present in `new_data`.
+#' @param coh_names Vector of cohort names. These must be in the order that 
+#' cohorts were specified in `model`.
 #' @param newdata Retired argument name. Please use `new_data' instead.
-#' @return A tibble of predicted outcome values based on provide variable values.
+#' @return Tibble of predicted outcome values based on values provided in 
+#' `new_data`.
 #'
-#' @importFrom dplyr pull filter select group_by group_keys all_of group_split rename bind_cols bind_rows mutate
+#' @importFrom dplyr pull filter select group_by group_keys all_of group_split 
+#' rename bind_cols bind_rows mutate
 #' @importFrom tidyr pivot_wider
 #' @importFrom purrr set_names map pmap_df pmap_dbl
 #' @importFrom tibble tibble
+#'
+#' @family trajectory functions
+#'
 #' @export
-dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL, newdata = NULL) {
+dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL, 
+  newdata = NULL) {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
