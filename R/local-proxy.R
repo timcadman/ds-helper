@@ -7,7 +7,7 @@
 #' remote data frame and enables the use of autocomplete when writing DataSHIELD 
 #' code.
 #'
-#' For example, if you have a dataframe "D" with columns LAB_TSC, DIS_CVA and 
+#' If you have a dataframe "D" with columns LAB_TSC, DIS_CVA and 
 #' DIS_DIAB, normally you would need to write:
 #'
 #' `ds.summary("D$LAB_TSC")` with the variable name spelled correctly 
@@ -23,8 +23,8 @@
 #' @template df
 #' @template checks
 #'
-#' @return Creates a local proxy dataframe. Stops function if df doesn't exist 
-#' or is inconsistent in one or more cohorts.
+#' @return Creates a local proxy dataframe. Stops function if `df` doesn't exist 
+#' or contains variables with inconsistent class across cohorts.
 #'
 #' @importFrom DSI datashield.connections_find
 #'

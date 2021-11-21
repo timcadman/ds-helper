@@ -15,8 +15,8 @@ dh.localProxy(df = NULL, conns = NULL, checks = TRUE)
 function. Default is TRUE.}
 }
 \value{
-Creates a local proxy dataframe. Stops function if df doesn't exist 
-or is inconsistent in one or more cohorts.
+Creates a local proxy dataframe. Stops function if `df` doesn't exist 
+or contains variables with inconsistent class across cohorts.
 }
 \description{
 If you have a remote dataframe on the servers, it can be challenging to 
@@ -27,7 +27,7 @@ remote data frame and enables the use of autocomplete when writing DataSHIELD
 code.
 }
 \details{
-For example, if you have a dataframe "D" with columns LAB_TSC, DIS_CVA and 
+If you have a dataframe "D" with columns LAB_TSC, DIS_CVA and 
 DIS_DIAB, normally you would need to write:
 
 `ds.summary("D$LAB_TSC")` with the variable name spelled correctly 
