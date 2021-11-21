@@ -9,7 +9,8 @@
 #' @param vars A character vector of columns within `df` to be removed or kept.
 #' @param new_obj name for the new dataframe
 #' @param type whether to remove or keep specified variables
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @param new_df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return a new dataframe is created containing the specified subset of columns

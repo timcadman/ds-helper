@@ -9,7 +9,8 @@
 #' @param df A character giving the name of a server-side data frame.
 #' @param vars A character vector of columns within `df` for which to return the
 #' indices.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #'
 #' @return list of indices where length of list is number of cohorts provided
 #'

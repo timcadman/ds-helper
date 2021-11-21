@@ -8,7 +8,8 @@
 #' @param current_names A character vector of columns within `df` to rename.
 #' @param new_names A character vector giving the new names for the columns 
 #' described in `current_names`.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @return None. The new variables are added to the df specified
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame

@@ -13,7 +13,8 @@
 #' @param v2 An optional second character giving the name of a column within 
 #' `df`. This is only required if you want scatter plot data.
 #' @param conns DataSHIELD connections object.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #'
 #' @return A list of the length of the number of variables provided containing
 #'         anonymised values for each subject of each cohort provided.

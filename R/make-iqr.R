@@ -11,7 +11,8 @@
 #'             pooled IQR across all cohorts provided in the 'conns' argument.
 #' @param conns connections object to DataSHIELD backends
 #' @param new_obj name for new dataframe with original vars and iqr versions.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @param new_df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return the original dataframe with transformed variables added with the

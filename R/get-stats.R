@@ -12,7 +12,8 @@
 #' @param vars A character vector of columns within `df` to describe.
 #' @param digits number of decimal places to round continuous stats to. Default
 #'               is 2.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #'
 #' @return The function returns a list with two elements containing dataframes
 #' with summary statistics for (i) categorical and (ii) continuous variables.

@@ -21,7 +21,8 @@
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df A character giving the name of a server-side data frame.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #'
 #' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
 #' of more cohorts.

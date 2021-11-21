@@ -16,7 +16,8 @@
 #' @return None. A new variable is created within the opal environment. If the option
 #'         "any" is selected for argument "type", the new variable is called "dc_any_data".
 #'         If the option "all" is selected, the new variable is called "dc_all_data"
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @param newobj Retired argument name. Please use `new_obj' instead.
 #'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric ds.replaceNA

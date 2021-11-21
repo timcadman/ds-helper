@@ -12,7 +12,8 @@
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length
 #' and order as poly_form
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @param agevars Retired argument name. Please use `new_obj' instead.
 #'
 #' @return transformations of age created in df

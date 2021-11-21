@@ -46,7 +46,8 @@
 #'                  should correspond to the order and number of the bands.
 #' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
 #' @param conns DataSHIELD connections object.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two

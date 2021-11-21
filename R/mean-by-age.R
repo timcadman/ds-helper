@@ -17,7 +17,8 @@
 #' @param outcome outcome variable in long format
 #' @param age_var age in years
 #' @param intervals table defining our age bands
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'

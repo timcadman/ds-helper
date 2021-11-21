@@ -17,8 +17,8 @@
 #' @param df A character giving the name of a server-side data frame.
 #' @param formulae a vector of model formulae to fit
 #' @param poly_names a vector of names for your models
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
-#'
+#' @param checks Logical; if TRUE checks are performed prior to running the 
+#' function. Default is TRUE.
 #' @author Tim Cadman
 #'
 #' @export
