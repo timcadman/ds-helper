@@ -14,8 +14,7 @@
 #' @return Client-side tibble containing columns for each variable and rows 
 #' for each cohort indicating if the variable is not completely missing.
 #'
-#' @family describe
-#' @seealso [dh.defineCases()] [dh.classDiscrepancy()]
+#' @family describing functions
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length
