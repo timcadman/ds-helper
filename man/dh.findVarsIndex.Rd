@@ -2,25 +2,27 @@
 % Please edit documentation in R/find-vars-index.R
 \name{dh.findVarsIndex}
 \alias{dh.findVarsIndex}
-\title{Return return indices of columns in opal dataframe}
+\title{Return return indices of columns in serverside dataframe from variable names}
 \usage{
 dh.findVarsIndex(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{vars}{vector of variable names in dataframe}
+\item{vars}{A character vector of columns within `df` for which to return the
+indices.}
 
-\item{conns}{connections object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
 list of indices where length of list is number of cohorts provided
 }
 \description{
-Some ds functions ask you to provide the index of variables as arguments.
-This is highly susceptable to breaking! This is a simple function that will
-return the index of variables for a given cohort. It is usefully used in
-combination the "keep.cols" argument of ds.dataFrameSubset.
+Some DataSHIELD functions reuire column indices as parameters. This is highly 
+susceptable to breaking as changes in code will change the order of 
+variables. This function allows you to specify the names of columns and
+returns their indices.
 }

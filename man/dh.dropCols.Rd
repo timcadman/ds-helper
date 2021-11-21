@@ -2,7 +2,7 @@
 % Please edit documentation in R/drop-cols.R
 \name{dh.dropCols}
 \alias{dh.dropCols}
-\title{Subsets a dataframe using column names.}
+\title{Removes columns from a serverside data frame}
 \usage{
 dh.dropCols(
   df = NULL,
@@ -15,17 +15,18 @@ dh.dropCols(
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{vars}{variables to keep or remove}
+\item{vars}{A character vector of columns within `df` to be removed or kept.}
 
 \item{new_obj}{name for the new dataframe}
 
 \item{type}{whether to remove or keep specified variables}
 
-\item{conns}{connections object to DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 
 \item{new_df_name}{Retired argument name. Please use `new_obj' instead.}
 }
@@ -33,7 +34,7 @@ dh.dropCols(
 a new dataframe is created containing the specified subset of columns
 }
 \description{
-Often we may have created variables within a dataframe that we no longer
-need. This function allows you to specify either the variables you want to
-keep or drop and create a new dataframe with only the variables you need.
+Often we was to remove variables from a dataframe that we no longer need. 
+This function allows you to specify the variables you either want to
+keep or drop, and creates a new dataframe with only the required variables.
 }

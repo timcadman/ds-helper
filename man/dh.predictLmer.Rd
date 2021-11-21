@@ -2,8 +2,7 @@
 % Please edit documentation in R/predict-lmer.R
 \name{dh.predictLmer}
 \alias{dh.predictLmer}
-\title{Gets predicted values based on a new dataframe for lmer models. Calculates
-standard errors for individual cohorts but not pooled at this point.}
+\title{Gets predicted values based on a new dataframe for lmer models}
 \usage{
 dh.predictLmer(model = NULL, new_data = NULL, coh_names = NULL, newdata = NULL)
 }
@@ -23,6 +22,8 @@ in the original lmer model.}
 A tibble of predicted outcome values based on provide variable values.
 }
 \description{
-Gets predicted values based on a new dataframe for lmer models. Calculates
-standard errors for individual cohorts but not pooled at this point.
+Currently there is no `predict` method for lmer models within DataSHIELD. 
+This function replicates this, by calculating predicted values for fixed 
+effects based on the model coefficients. Standard errors are returned for 
+individual cohorts but yet for pooled models.
 }

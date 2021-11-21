@@ -2,8 +2,8 @@
 % Please edit documentation in R/make-age-polys.R
 \name{dh.makeAgePolys}
 \alias{dh.makeAgePolys}
-\title{Produces multiple transformations of age term for fractional polynomial
-analysis.}
+\title{Produces multiple transformations of the age term for fractional polynomial
+analyses}
 \usage{
 dh.makeAgePolys(
   df = NULL,
@@ -16,18 +16,19 @@ dh.makeAgePolys(
 )
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{age_var}{the age variable to transform}
+\item{age_var}{A character giving the age variable within `df` to transform.}
 
-\item{conns}{connections object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
 \item{poly_form}{a vector of powers by which to transform the age variable}
 
 \item{poly_names}{a vector of names for the created variables, the same length
 and order as poly_form}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 
 \item{agevars}{Retired argument name. Please use `new_obj' instead.}
 }
@@ -37,6 +38,6 @@ transformations of age created in df
 \description{
 When we do trajectory analyses using fractional polynomials we often want
 to try models with different combinations of age polynomials. This function
-creates the following age transformations in datashield: age^-2, age^-1,
-age^-0.5, log(age), age^0.5, age^2, age^3.
+creates multiple transformations of an age terms and adds the transformed
+variables to the original dataframe.
 }

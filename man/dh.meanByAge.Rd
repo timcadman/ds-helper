@@ -2,7 +2,8 @@
 % Please edit documentation in R/mean-by-age.R
 \name{dh.meanByAge}
 \alias{dh.meanByAge}
-\title{Calculate mean values of one repeated measures variable by an age variable}
+\title{Calculate mean values of one continuous variable stratified by a second
+continuous variable.}
 \usage{
 dh.meanByAge(
   df = NULL,
@@ -14,21 +15,26 @@ dh.meanByAge(
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
 \item{outcome}{outcome variable in long format}
 
 \item{age_var}{age in years}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
 \item{intervals}{table defining our age bands}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
 Mean values for each unit of your age variable are returned
 }
 \description{
-Calculate mean values of one repeated measures variable by an age variable
+This has similar functionality to `tapply` or the dplyr chain `group_by` %>%
+`summarise`. It offers additional flexilibity over `ds.tapply` in that it 
+allows you to specify upper and lower values for each strata. By contrast,
+ds.tapply will produce a summary based on every unique value of the grouping
+variable, which may not always be what is required.
 }

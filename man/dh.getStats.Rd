@@ -2,21 +2,22 @@
 % Please edit documentation in R/get-stats.R
 \name{dh.getStats}
 \alias{dh.getStats}
-\title{Produces descriptive statistics in useful format}
+\title{Produces a rance of descriptive statistics in a useful format}
 \usage{
 dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{df}{A server side data frame.}
 
-\item{vars}{vector of variable names in dataframe}
+\item{vars}{A character vector of columns within `df` to describe.}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
 \item{digits}{number of decimal places to round continuous stats to. Default
 is 2.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
 The function returns a list with two elements containing dataframes
@@ -46,13 +47,10 @@ Continuous:
  missing_perc = as above
 }
 \description{
-This function extracts descriptive statistics from variables held in opal
-tables via DS. It mainly uses "ds.summary", but it also extracts extra
-info not given by default. It also avoids a problem encountered with
-ds.summary where it gets upset if the variable you request isn't present
-within a cohort. Instead this function just returns NA for that variable and
-for that cohort. This is more useful, e.g. if you want to make descriptive
-tables for papers and show that a certain cohort is lacking some information.
-Although, this may be less important if using ds.dataFrameFill throughout
-your scripts.
+Whilst dsBaseClient provides the functions 'ds.table' and 'ds.summary' to
+extract descriptive statistics, their output is not in a very useable format.
+This function extracts key descriptive statistics and returns them in a 
+tibble. It also overcomes an issue with ds.summary, where it throws an error
+if the variable is missing in one or more study. By contrast, getStats will
+return the variable for that cohort with all NAs.
 }

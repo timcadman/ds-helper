@@ -2,7 +2,7 @@
 % Please edit documentation in R/make-outcome.R
 \name{dh.makeOutcome}
 \alias{dh.makeOutcome}
-\title{This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded.}
+\title{This was the original version of dh.makeStrata. It has now been deprecated.}
 \usage{
 dh.makeOutcome(
   df = NULL,
@@ -19,11 +19,11 @@ dh.makeOutcome(
 )
 }
 \arguments{
-\item{df}{see argument `df` in `dh.makeStrata`}
+\item{df}{See argument `df` in `dh.makeStrata`.}
 
 \item{outcome}{Renamed to `var_to_subset` in `dh.makeStrata`}
 
-\item{age_var}{see argument `age_var` in `dh.makeStrata`}
+\item{age_var}{See argument `age_var` in `dh.makeStrata`.}
 
 \item{bands}{see argument `df` in `dh.makeStrata`}
 
@@ -42,5 +42,6 @@ dh.makeOutcome(
 \item{keep_original}{Argument no longer in use in `dh.makeStrata`}
 }
 \description{
-This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded.
+dh.makeStrata contains a number of improvements: it is computationally more
+efficient, it is more clearly coded, and it has been more thoroughly tested.
 }

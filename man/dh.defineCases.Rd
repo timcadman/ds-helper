@@ -16,17 +16,18 @@ dh.defineCases(
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{vars}{vector of variable names in dataframe}
+\item{vars}{A character vector of columns within `df` to form definition set.}
 
 \item{type}{whther to define cases based on any or all provided variables}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
 \item{new_obj}{optional name for outputted object. Defaults to "dc_data_avail"}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 
 \item{newobj}{Retired argument name. Please use `new_obj' instead.}
 }
@@ -36,11 +37,11 @@ None. A new variable is created within the opal environment. If the option
         If the option "all" is selected, the new variable is called "dc_all_data"
 }
 \description{
-At some point in the analysis you will want to subset your dataset to contain
-only subjects meeting some criteria, e.g. data on at least one outcome or
-data on all exposures. This function speeds things up by indicating whether a subject
-has non-missing values for any or all of a set of given variables.
+In an analysis you may want to subset your dataset to contain only subjects 
+meeting a specific criteria, e.g. data on at least one outcome or data on all 
+exposures. This function automates this operation by describing whether a 
+subject has non-missing values for any or all of a set of given variables.
 }
 \details{
-Note this function replaces the deprecated dh.subjHasData.
+This function replaces the deprecated dh.subjHasData.
 }

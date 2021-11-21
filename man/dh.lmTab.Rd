@@ -2,8 +2,7 @@
 % Please edit documentation in R/lm-tab.R
 \name{dh.lmTab}
 \alias{dh.lmTab}
-\title{Extracts the coefficients and confidence intervals from a ds.glm or
-ds.glmSLMA model.}
+\title{Extracts the coefficients and confidence intervals from linear models}
 \usage{
 dh.lmTab(
   model = NULL,
@@ -40,6 +39,8 @@ order as the cohorts provided to the model.}
 A tibble containing the estimate with lower and upper confidence intervals
 }
 \description{
-Extracts the coefficients and confidence intervals from a ds.glm or
-ds.glmSLMA model.
+To convenient view model results or make tables, it is useful to extract
+the coefficients from models in a useable format. This function currently
+extracts coefficients for ds.glm, ds.glmSLMA and ds.lmerSLMA objects, and
+returns them in a tibble.
 }

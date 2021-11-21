@@ -2,10 +2,8 @@
 % Please edit documentation in R/get-anon-plot-data.R
 \name{dh.getAnonPlotData}
 \alias{dh.getAnonPlotData}
-\title{Extracts an anonymised version of the dataset which can be used
-to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-function but stores the data produced this function. Note you need to make
-sure your plot window is large enough to produce the plot.}
+\title{Extracts an anonymised version of serverside data which can be used to create 
+bespoke plots}
 \usage{
 dh.getAnonPlotData(
   df = NULL,
@@ -16,23 +14,27 @@ dh.getAnonPlotData(
 )
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{v1}{variable in df to get plotdata for}
+\item{v1}{A character giving the name of a column within `df` for which to 
+extract anonymised data.}
 
-\item{v2}{optional second variable if you want to get scatterplot data}
+\item{v2}{An optional second character giving the name of a column within 
+`df`. This is only required if you want scatter plot data.}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
 A list of the length of the number of variables provided containing
         anonymised values for each subject of each cohort provided.
 }
 \description{
-Extracts an anonymised version of the dataset which can be used
-to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-function but stores the data produced this function. Note you need to make
-sure your plot window is large enough to produce the plot.
+Whilst DataSHIELD has plotting functionality, for publications we may need 
+more flexiblity in creating plots. This function calls the serverside 
+functions which create an anonymised copy of data, and returns the values in
+a local object. You can then use these values (e.g. with ggplot2) to create
+plots.
 }

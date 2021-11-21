@@ -2,7 +2,8 @@
 % Please edit documentation in R/make-strata.R
 \name{dh.makeStrata}
 \alias{dh.makeStrata}
-\title{Creates strata of a repeated measures variable within specified age or time bands}
+\title{Creates strata of a repeated measures variable within specified age or time 
+bands}
 \usage{
 dh.makeStrata(
   df = NULL,
@@ -20,9 +21,10 @@ dh.makeStrata(
 )
 }
 \arguments{
-\item{df}{String providing name of opal/armadillo dataframe in long format.}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{id_var}{String providing name of subject id variable in df.}
+\item{id_var}{A character giving the name of the column within `df` which 
+uniquely identifies each subject.}
 
 \item{age_var}{String providing name of age or time variable in df.}
 
@@ -45,7 +47,7 @@ should correspond to the order and number of the bands.}
 
 \item{new_obj}{String providing name of data frame to be created on the DataSHIELD backend}
 
-\item{conns}{Connections object for DataSHIELD backends.}
+\item{conns}{DataSHIELD connections object.}
 
 \item{band_action}{String specifying how the values provided in 'bands' arguments are
                    evaluated in creating the strata:
@@ -54,7 +56,8 @@ should correspond to the order and number of the bands.}
 "g_le" = greater than the lowest band and less than or equal to the highest band;
 "ge_l" = greater than or equal to the lowest band and less than the highest band;}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 
 \item{df_name}{Retired argument name. Please use `new_obj' instead.}
 }
@@ -64,10 +67,10 @@ A serverside dataframe in wide format containing the newly derived variables. Fo
          .[lower_band] identifies the band for that variable.
 }
 \description{
-For many analyses you will want to use values from repeated measures data within
-specified bands. For example, you may have BMI measures between ages 0-18, but want
-to create a variable for each subject which is their BMI between ages 9-11.
-This is quite complicated to do in DataSHIELD so this function automates the process.
+For many analyses you may want to create strata of repeated measures data 
+within specified bands. For example, you may have BMI measures between ages 
+0-18, but want to create a variable for each subject which is their BMI 
+between ages 9-11. This function automates this process.
 }
 \details{
 The steps here are equivalent to the following dplyr chain:
@@ -77,12 +80,11 @@ group_by(band, id) %>%
 arrange() %<%
 slice(1)
 
-
 One of the complexities of this operation is how to deal with cases where
 subjects have multiple observations within a specified band. This is handled
-by first sorting the group so that the required value is first. When we reshape
-the data all but the first value for subjects with multiple observations within a band
-are dropped.
+by first sorting the group so that the required value is first. When the  
+data is reshaped to wide format all but the first value for subjects with 
+multiple observations within a band are dropped.
 
 Note that for big datasets this will take a long time to run.
 }

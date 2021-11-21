@@ -2,9 +2,7 @@
 % Please edit documentation in R/trim-pred-data.R
 \name{dh.trimPredData}
 \alias{dh.trimPredData}
-\title{Trims predicted values based on min and max values provided. Useful
-where you want to ensure that predicted values are limited at the range
-of observed values.}
+\title{Trims predicted values based on min and max values provided}
 \usage{
 dh.trimPredData(
   pred = NULL,
@@ -19,7 +17,7 @@ dh.trimPredData(
 
 \item{coh_names}{a vector of cohort names corresponding to the cohort names in pred}
 
-\item{age}{name of the variable corresponding to age in the predicted values}
+\item{age}{name of the var'iable corresponding to age in the predicted values}
 
 \item{min}{a vector of minimum values of age, length equal to number of cohorts}
 
@@ -29,7 +27,9 @@ dh.trimPredData(
 The original tibble of predicted values, trimmed by the min and max ages
 }
 \description{
-Trims predicted values based on min and max values provided. Useful
-where you want to ensure that predicted values are limited at the range
-of observed values.
+This can be used in conjuncture with `ds.predictLmer`. The new data frame
+used for prediction may contain age or time values not present in the 
+original data. This allows you to remove all predicted values beyong a min
+or max age specified. This can ensure that plots only show predict values 
+over a range where there was actually data.
 }

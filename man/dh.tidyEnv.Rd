@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidy-env.R
 \name{dh.tidyEnv}
 \alias{dh.tidyEnv}
-\title{Tidy up the server environment}
+\title{Remove multiple objects from the serverside environment}
 \usage{
 dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 }
@@ -12,12 +12,12 @@ dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 \item{type}{either "remove" to remove the listed objects of "keep" to keep
 the listed objects and remove everything else.}
 
-\item{conns}{connections object to DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 }
 \value{
 None. Objects removed from ds environment
 }
 \description{
-This is a very simple wrapper around ds.rm to allow you to remove more than
-one object at a time.
+This is a wrapper around ds.rm to allow you to remove multiple objects 
+in one call.
 }

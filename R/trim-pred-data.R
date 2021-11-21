@@ -13,7 +13,7 @@
 #'
 #' @param pred a tibble of predicted values
 #' @param coh_names a vector of cohort names corresponding to the cohort names in pred
-#' @param age name of the variable corresponding to age in the predicted values
+#' @param age name of the var'iable corresponding to age in the predicted values
 #' @param min a vector of minimum values of age, length equal to number of cohorts
 #' @param max a vector of maximum values of age, length equal to number of cohorts
 #'

@@ -2,27 +2,30 @@
 % Please edit documentation in R/class-discrepancy.R
 \name{dh.classDiscrepancy}
 \alias{dh.classDiscrepancy}
-\title{Class discrepancy}
+\title{Describes the class of one or more variables across cohorts and indicates 
+differences}
 \usage{
 dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{df}{A character giving the name of a server-side data frame.}
 
-\item{vars}{vector of variable names in dataframe (optional). If vars is not
-provided all variables will be included.}
+\item{vars}{An optional character vector of columns within `df` to describe. 
+If NULL all variables will be included.}
 
-\item{conns}{connections object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
 a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
        columns for each cohort indicating the class of the variable
 }
 \description{
-Either due to using ds.dataFrameFill, or because of mistakes in uploading
-data, some cohorts may have variables uploaded as a different class to other
-cohorts. This can create problems, e.g. when using ds.summary. This function
-produces a table comparing the class of multiple variables.
+Either through using ds.dataFrameFill, or due to mistakes in uploading
+data, the same variable may have a different class across cohorts. This can 
+create problems as many DataSHIELD functions require the input variable to 
+have the same class in all studies. This function produces a tibble showing 
+the class of each variable.
 }

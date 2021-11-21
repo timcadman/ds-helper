@@ -1,10 +1,10 @@
-#' Describe whether variables are completely missing for cohort(s)
+#' Describe whether variables are completely missing for each cohort
 #'
-#' When performing a Study Level Meta Analysis of coefficients, it is usually 
-#' necessary that all cohorts have some data on all variables in the model. 
-#' Manually identifying which cohorts have some data on required variables is 
-#' time-consuming and at risk of error. This function automatically generates a 
-#' look-up table with this information.
+#' @description When performing a Study Level Meta Analysis of coefficients, it 
+#' is usually necessary that all cohorts have some data on all variables in the 
+#' model. Manually identifying which cohorts have some data on required 
+#' variables is time-consuming and at risk of error. This function automatically 
+#' generates a look-up table with this information.
 #'
 #' @param conns DataSHIELD connections object.
 #' @param df Character giving the name of a server-side data frame.
@@ -12,9 +12,10 @@
 #' @param checks Logical; if TRUE checks are performed prior to running the 
 #' function. Default is TRUE.
 #'
-#' @return a local dataframe with columns for each variable and rows for each 
-#' cohort
-#' indicating if the variable is not completely missing
+#' @return Client-side tibble containing columns for each variable and rows 
+#' for each cohort indicating if the variable is not completely missing.
+#'
+#' @seealso [dh.defineCases()}] [dh.classDiscrepancy()]
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length

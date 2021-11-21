@@ -6,8 +6,8 @@
 \usage{
 dh.makeLmerForm(
   outcome = NULL,
-  idvar = NULL,
-  agevars = NULL,
+  id_var = NULL,
+  age_vars = NULL,
   random = NULL,
   fixed = NULL,
   age_interactions = NULL
@@ -16,9 +16,10 @@ dh.makeLmerForm(
 \arguments{
 \item{outcome}{outcome for the models}
 
-\item{idvar}{unique identifier for subject}
+\item{id_var}{A character giving the name of the column within `df` which 
+uniquely identifies each subject.}
 
-\item{agevars}{vector of names of age polynomials in dataset that you will use in your models}
+\item{age_vars}{vector of names of age polynomials in dataset that you will use in your models}
 
 \item{random}{either "intercept" or "slope" to specify random effects}
 
@@ -31,7 +32,7 @@ terms and fixed effects}
 a tibble containing the created formulae
 }
 \description{
-To identify the combination of fractional polynomials which give the best
-fit often we will fit models with lots of different combinations. This
-function builds formulae for that purpose.
+This function is designed to be used with `dh.lmeMultPoly`. It generates 
+formulae for multiple fractional polynomial models, which can be used as 
+input to the `formula` argument in `dh.lmeMultPoly`.
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/lme-mult-poly.R
 \name{dh.lmeMultPoly}
 \alias{dh.lmeMultPoly}
-\title{Function to perform every combination of MLM fractional polynomials}
+\title{Fit multiple mixed effects models containing different combination of 
+fractional polynomials}
 \usage{
 dh.lmeMultPoly(
   df = NULL,
@@ -13,18 +14,20 @@ dh.lmeMultPoly(
 )
 }
 \arguments{
-\item{df}{name of dataFrame}
+\item{df}{A character giving the name of a server-side data frame.}
 
 \item{formulae}{a vector of model formulae to fit}
 
 \item{poly_names}{a vector of names for your models}
 
-\item{conns}{connection objects for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \description{
-Function to perform every combination of MLM fractional polynomials
+This function enables you to fit multiple models with different combinations 
+of polynomial terms and compares the fit.
 }
 \author{
 Tim Cadman
