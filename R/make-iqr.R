@@ -1,20 +1,20 @@
 #' Transforms variables based on their interquartile range
 #'
-#' This function scales variables by their interquartile range. IQR is 
+#' This function scales variables by their interquartile range. IQR is
 #' calulcated either within cohort or using the pooled IQR across cohorts.
 #' The formula used is: value[subject] / (75th percentile - 25th percentile).
-#' 
+#'
 #' @template df
 #' @param vars Character vector of columns within `df` to transform.
-#' @param type Use "separate" to transform the variable based on the 
-#' within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts 
+#' @param type Use "separate" to transform the variable based on the
+#' within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts
 #' specified in `conns`.
 #' @template conns
 #' @template new_obj
 #' @template checks
 #' @param new_df_name Retired argument. Please use `new_obj' instead.
 #'
-#' @return Server-side object specified in `df` with transformed variables added 
+#' @return Server-side object specified in `df` with transformed variables added
 #' as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
 #' "iqr_p" if pooled is type is "pooled".
 #'
@@ -30,7 +30,7 @@
 #'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
-                       new_obj = df, conns = NULL, checks = TRUE, 
+                       new_obj = df, conns = NULL, checks = TRUE,
                        new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
 

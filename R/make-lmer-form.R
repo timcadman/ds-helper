@@ -1,21 +1,21 @@
 #' Make formulae for fitting multiple fractional polynomial models
 #'
-#' This function is designed to be used with `dh.lmeMultPoly`. It generates 
-#' formulae for multiple fractional polynomial models which can be used as 
+#' This function is designed to be used with `dh.lmeMultPoly`. It generates
+#' formulae for multiple fractional polynomial models which can be used as
 #' input to the `formulae` argument in `dh.lmeMultPoly`.
 #'
-#' @param outcome Outcome variable within data frame to be specified in `df` 
+#' @param outcome Outcome variable within data frame to be specified in `df`
 #' argument in `dh.lmeMultPoly`.
-#' @param id_var Character specifying the name of the column which uniquely 
-#' identifies each subject within data frame to be specified in `df` 
+#' @param id_var Character specifying the name of the column which uniquely
+#' identifies each subject within data frame to be specified in `df`
 #' argument in `dh.lmeMultPoly`.
 #' @param age_vars Character vector specifying names of age polynomials present
 #' in data frame specified in `df` argument in `dh.lmeMultPoly`.
-#' @param random Specifies random effects to include in formulae. Use either 
+#' @param random Specifies random effects to include in formulae. Use either
 #' "intercept" for random intercept model or "slope" for random slope model.
-#' @param fixed Optionally, character vector specifying fixed effects to be 
+#' @param fixed Optionally, character vector specifying fixed effects to be
 #' included in model.
-#' @param age_interactions Logical; if TRUE, interactions terms are created 
+#' @param age_interactions Logical; if TRUE, interactions terms are created
 #' between `age_vars` and `fixed`. Default is FALSE.
 #'
 #' @return Tibble containing two columns:
@@ -31,8 +31,8 @@
 #' @md
 #'
 #' @export
-dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL, 
-  random = NULL, fixed = NULL, age_interactions = FALSE) {
+dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
+                            random = NULL, fixed = NULL, age_interactions = FALSE) {
   if (is.null(outcome)) {
     stop("`outcome` must not be NULL.", call. = FALSE)
   }

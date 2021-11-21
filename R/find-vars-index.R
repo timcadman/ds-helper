@@ -1,9 +1,9 @@
 #' Return return indices of column names in server-side dataframe
 #'
-#' Some DataSHIELD functions require column indices as parameters. This is 
-#' hqighly susceptable to breaking as changes in code will change the order of 
+#' Some DataSHIELD functions require column indices as parameters. This is
+#' hqighly susceptable to breaking as changes in code will change the order of
 #' variables. This function allows you to specify the names of columns and
-#' returns their indices. 
+#' returns their indices.
 #'
 #' @template conns
 #' @template df
@@ -19,8 +19,8 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, 
-  checks = TRUE) {
+dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL,
+                             checks = TRUE) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

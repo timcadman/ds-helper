@@ -1,7 +1,7 @@
 #' Describes a numeric variable by strata of another numeric grouping variable.
 #'
 #' This has similar functionality to `tapply` or the dplyr chain `group_by` %>%
-#' `summarise`. It offers additional flexilibity over `ds.tapply` in that it 
+#' `summarise`. It offers additional flexilibity over `ds.tapply` in that it
 #' allows you to specify upper and lower values for each strata. By contrast,
 #' ds.tapply will produce a summary based on every unique value of the grouping
 #' variable, which may not always be what is required.
@@ -15,10 +15,10 @@
 #' @template df
 #' @param outcome String specifying outcome variable within `df`.
 #' @param group_var String specifying grouping variable within 'df'.
-#' @param intervals Optionally, numeric vector defining how to stratify 
-#' `group_var`. Values should specify alternately lower and upper values for 
-#' each strata. If NULL, `outcome` is summarised by every unique value of 
-#' `group_var`. 
+#' @param intervals Optionally, numeric vector defining how to stratify
+#' `group_var`. Values should specify alternately lower and upper values for
+#' each strata. If NULL, `outcome` is summarised by every unique value of
+#' `group_var`.
 #' @template checks
 #'
 #' @return Tibble containing mean values for each strata of `group_var`.
@@ -26,10 +26,10 @@
 #' @family descriptive functions
 #'
 #' @export
-dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL, 
-  intervals = NULL, conns = NULL, checks = FALSE) {
-  value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <- 
-  . <- NULL
+dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
+                           intervals = NULL, conns = NULL, checks = FALSE) {
+  value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <-
+    . <- NULL
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
@@ -51,7 +51,7 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
     .isDefined(df = df, vars = vars, conns = conns)
   }
 
-  ## There is an easy way and a hard way. If we bin based on integer units of 
+  ## There is an easy way and a hard way. If we bin based on integer units of
   ## the binning variable it is quite quick
 
   if (is.null(intervals)) {
@@ -59,14 +59,17 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
 
     ## ---- First we round up the age variable -----------------------------------------------
     DSI::datashield.assign(
-      conns, "age_tmp", as.symbol(paste0(df, "$", group_var, "+0.5")))
+      conns, "age_tmp", as.symbol(paste0(df, "$", group_var, "+0.5"))
+    )
 
     calltext <- call("asIntegerDS", "age_tmp")
     DSI::datashield.assign(conns, "age_round", calltext)
 
     ## ---- Now we get the mean values for the outcome by age --------------------------------
-    calltext <- paste0("meanSdGpDS(", paste0(df, "$", outcome), ",", 
-      "age_round", ")")
+    calltext <- paste0(
+      "meanSdGpDS(", paste0(df, "$", outcome), ",",
+      "age_round", ")"
+    )
     mean_tmp <- DSI::datashield.aggregate(conns, as.symbol(calltext))
 
     ## ---- Now put into neat long format -------------------------------------------------------
@@ -105,7 +108,7 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
     )
 
 
-    ## Now we create vectors of 1s and 0s indicating whether the above criteria 
+    ## Now we create vectors of 1s and 0s indicating whether the above criteria
     ## are met for each subject.
     cats %>%
       pmap(function(value, op, new_df_name, ...) {
@@ -129,7 +132,7 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
         DSI::datashield.assign(conns, varname, as.symbol(condition))
       })
 
-    ## We then use these vectors to summarise mean observed height at the age 
+    ## We then use these vectors to summarise mean observed height at the age
     ## periods we are interested in.
     obs_by_agecat_comb <- assign_conditions %>%
       pull(varname) %>%

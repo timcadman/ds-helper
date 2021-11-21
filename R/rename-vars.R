@@ -1,12 +1,12 @@
 #' Rename one or more columns within a serverside data frame
 #'
-#' This function is an analogue of `dplyr::rename` which allows you to rename 
+#' This function is an analogue of `dplyr::rename` which allows you to rename
 #' columns of a serverside data frame.
 #'
 #' @template conns
 #' @template df
 #' @param current_names Character vector of columns within `df` to rename.
-#' @param new_names Character vector giving the new names for the columns 
+#' @param new_names Character vector giving the new names for the columns
 #' specified in `current_names`.
 #' @template checks
 #' @return Data frame specified in `df` is returned server-side with variables

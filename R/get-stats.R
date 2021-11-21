@@ -1,19 +1,19 @@
 #' Produces a rance of descriptive statistics in a useful format
 #'
 #' Whilst dsBaseClient provides the functions 'ds.table' and 'ds.summary' to
-#' calculate descriptive statistics, their output is not in a very useable 
-#' format. This function extracts key descriptive statistics and returns them in 
-#' tibble. 
+#' calculate descriptive statistics, their output is not in a very useable
+#' format. This function extracts key descriptive statistics and returns them in
+#' tibble.
 #'
-#' This function also overcomes an issue with ds.summary, where it throws an 
-#' error if the variable is missing in one or more study. By contrast, 
-#' dh.getStats will return the variable for that cohort with all NAs. See 
+#' This function also overcomes an issue with ds.summary, where it throws an
+#' error if the variable is missing in one or more study. By contrast,
+#' dh.getStats will return the variable for that cohort with all NAs. See
 #' 'value' for details of returned statistics.
 #'
 #' @template conns
 #' @template df
 #' @param vars Character vector of columns within `df` to summarise.
-#' @template digits 
+#' @template digits
 #' @template checks
 #'
 #' @family descriptive functions
@@ -21,36 +21,36 @@
 #' @return A client-side list with two elements: "categorical" and "continuous".
 #' Each element contains a tibble with descriptive statistics as follows.
 #'
-#' Categorical: \cr 
+#' Categorical: \cr
 #' * "variable" = Variable name.
 #' * cohort = Cohort name, where "combined" refers to pooled statistics.
-#' * category = Level of variable, including 'missing' as a category. 
-#' * value = Number of observations within category. 
-#' * cohort_n = Total number of observations per cohort within `df`. 
+#' * category = Level of variable, including 'missing' as a category.
+#' * value = Number of observations within category.
+#' * cohort_n = Total number of observations per cohort within `df`.
 #' * valid_n = Number of valid observations for variable (sum of ns for all
-#'            categories excluding missing). 
-#' * missing_n = Number of missing observations. 
-#' * perc_valid = Numnber of observations within a category as percentage of 
-#' valid_n. 
-#' * perc_total = Number of observations within a category as percentage of 
-#' cohort_n. 
-#'  
+#'            categories excluding missing).
+#' * missing_n = Number of missing observations.
+#' * perc_valid = Numnber of observations within a category as percentage of
+#' valid_n.
+#' * perc_total = Number of observations within a category as percentage of
+#' cohort_n.
+#'
 #' Continuous: \cr
 #'
 #' * variable = As above.
-#' * cohort = As above. 
-#' * mean = Mean. The pooled value calculated by fixed-effect meta-analysis. 
+#' * cohort = As above.
+#' * mean = Mean. The pooled value calculated by fixed-effect meta-analysis.
 #' * std.dev = Standard deviation. The pooled value is also calculate by fixed-
-#' * effect meta-analysis. 
+#' * effect meta-analysis.
 #' * perc_5, perc_10, perc_25, perc_50, perc_75, perc_90, perc_95 = 5th to 95th
-#' * percentile values. 
-#' * valid_n = As above. 
-#' * cohort_n = As above. 
-#' * missing_n = As above. 
-#' * missing_perc = As above. 
+#' * percentile values.
+#' * valid_n = As above.
+#' * cohort_n = As above.
+#' * missing_n = As above.
+#' * missing_perc = As above.
 #'
 #' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup 
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows rename filter mutate_at vars distinct add_row
 #' @importFrom purrr map flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
@@ -63,8 +63,8 @@
 #' @md
 #'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL, 
-  checks = TRUE) { # nolint
+dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
+                        checks = TRUE) { # nolint
 
   ################################################################################
   # 1. First checks

@@ -14,18 +14,17 @@
 #' @return Mean values for each unit of your age variable are returned
 #'
 #' @export
-dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, 
-  intervals = NULL, conns = NULL, checks = FALSE) {
-  
-   .Deprecated("dh.meanByAge")
+dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL,
+                         intervals = NULL, conns = NULL, checks = FALSE) {
+  .Deprecated("dh.meanByAge")
   message("dh.meanByAge will be defunct from version 1.0.0 onwards")
 
-dh.meanByGroup(
-  df = df, 
-  outcome = outcome, 
-  group_var = age_var, 
-  conns = conns, 
-  intervals = intervals, 
-  checks = checks)
-
+  dh.meanByGroup(
+    df = df,
+    outcome = outcome,
+    group_var = age_var,
+    conns = conns,
+    intervals = intervals,
+    checks = checks
+  )
 }

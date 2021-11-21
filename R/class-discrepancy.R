@@ -1,19 +1,19 @@
-#' Describes the class of one or more variables across cohorts and indicates 
+#' Describes the class of one or more variables across cohorts and indicates
 #' differences
 #'
 #' Either through using ds.dataFrameFill, or due to mistakes in uploading
-#' data, the same variable may have a different class across cohorts. This can 
-#' create problems as many DataSHIELD functions require the input variable to 
-#' have the same class in all studies. This function produces a tibble showing 
+#' data, the same variable may have a different class across cohorts. This can
+#' create problems as many DataSHIELD functions require the input variable to
+#' have the same class in all studies. This function produces a tibble showing
 #' the class of each variable.
 #'
 #' @template conns
 #' @template df
-#' @param vars Optionally, a character vector specifying columns within `df` to 
+#' @param vars Optionally, a character vector specifying columns within `df` to
 #' describe. If NULL all variables will be included.
 #' @template checks
 #'
-#' @return A tibble with columns for each variable and rows for each cohort 
+#' @return A tibble with columns for each variable and rows for each cohort
 #' describing the class of the variable, with an additional column 'discrepancy'
 #' summarising whether there are differences between cohorts.
 #'
@@ -39,10 +39,9 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
 
   if (is.null(vars)) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
-  } else{
-
-fun_vars <- vars
-}
+  } else {
+    fun_vars <- vars
+  }
 
   if (checks == TRUE) {
     .isDefined(df = df, vars = vars, conns = conns)

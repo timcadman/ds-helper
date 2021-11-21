@@ -1,29 +1,29 @@
-#' Extracts an anonymised version of serverside data which can be used to create 
+#' Extracts an anonymised version of serverside data which can be used to create
 #' bespoke plots
 #'
-#' Whilst DataSHIELD has basic plotting functionality, for publications you may 
-#' need more flexiblity in creating plots. This function calls server-side 
-#' functions which create an anonymised copy of the data, and returns this data 
+#' Whilst DataSHIELD has basic plotting functionality, for publications you may
+#' need more flexiblity in creating plots. This function calls server-side
+#' functions which create an anonymised copy of the data, and returns this data
 #' in a client-side object. These values can then be used to create plots (e.g
-#' with ggplot2). 
+#' with ggplot2).
 #'
 #' This function can return two types of anonymised data: either anonymised
 #' data for a single variable, or scatter-plot data for two variables.
 #'
 #' @template df
-#' @param var_1 Character giving the name of a column within `df` for which to 
+#' @param var_1 Character giving the name of a column within `df` for which to
 #' extract anonymised data.
-#' @param var_2 Optionally, character specifying a second column within `df`. 
+#' @param var_2 Optionally, character specifying a second column within `df`.
 #' If a column is specified then scatter plot data will be returned with `var_1`
-#' as the explanatory variable and `var_2` as the outcome variable. Default is 
+#' as the explanatory variable and `var_2` as the outcome variable. Default is
 #' NULL which returns anonymised data only for `var_1`.
 #' @template conns
 #' @template checks
 #
 #' @family functions to assist plot-making
 #'
-#' @return A tibble in long format containing columns 'cohort', 'var_1' and 
-#' optionally `var_2`. The values for `var1` and `var_2` are the anonymised 
+#' @return A tibble in long format containing columns 'cohort', 'var_1' and
+#' optionally `var_2`. The values for `var1` and `var_2` are the anonymised
 #' data points.
 #'
 #' @importFrom DSI datashield.connections_find
@@ -34,8 +34,8 @@
 #' @importFrom rlang quo_name
 #'
 #' @export
-dh.getAnonPlotData <- function(df = NULL, var_1 = NULL, var_2 = NULL, 
-  conns = NULL, checks = TRUE) {
+dh.getAnonPlotData <- function(df = NULL, var_1 = NULL, var_2 = NULL,
+                               conns = NULL, checks = TRUE) {
   . <- value <- x <- y <- NULL
 
   if (is.null(df)) {

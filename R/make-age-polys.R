@@ -14,7 +14,7 @@
 #' @template checks
 #' @param agevars Retired argument name. Please use `age_var' instead.
 #'
-#' @return Transformations of age are added as columns to server-side object 
+#' @return Transformations of age are added as columns to server-side object
 #' specified in `df`.
 #'
 #' @importFrom tibble tibble
@@ -27,11 +27,10 @@
 #' @family data manipulation functions
 #'
 #' @export
-dh.makeAgePolys <- function(df = NULL, age_var = NULL, 
-  poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-  poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
-  conns = NULL, checks = TRUE, agevars = NULL) {
-
+dh.makeAgePolys <- function(df = NULL, age_var = NULL,
+                            poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
+                            poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
+                            conns = NULL, checks = TRUE, agevars = NULL) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

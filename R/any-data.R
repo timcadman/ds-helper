@@ -1,9 +1,9 @@
 #' Describe whether variables are completely missing for each cohort
 #'
-#' When performing a Study Level Meta Analysis of coefficients, it 
-#' is usually necessary that all cohorts have some data on all variables in the 
-#' model. Manually identifying which cohorts have some data on required 
-#' variables is time-consuming and at risk of error. This function automatically 
+#' When performing a Study Level Meta Analysis of coefficients, it
+#' is usually necessary that all cohorts have some data on all variables in the
+#' model. Manually identifying which cohorts have some data on required
+#' variables is time-consuming and at risk of error. This function automatically
 #' generates a look-up table with this information.
 #'
 #' @template df
@@ -11,7 +11,7 @@
 #' @template checks
 #' @template conns
 #'
-#' @return Client-side tibble containing columns for each variable and rows 
+#' @return Client-side tibble containing columns for each variable and rows
 #' for each cohort indicating if the variable is not completely missing.
 #'
 #' @family descriptive functions

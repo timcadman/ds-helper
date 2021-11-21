@@ -1,12 +1,12 @@
 #' Wrapper to manaully perform two-stage meta-analysis using `metafor`
 #'
-#' DataSHIELD SLMA functions automatically perform two-stage meta-analysis using 
-#' the metafor package. However in some circumstances you might want to chose 
-#' different options in metafor than those provided within DataSHIELD. This 
-#' function takes the output from ds.glmSLMA and manually performs the 
-#' meta-analysis. 
-#' 
-#' You could also modify this function to use different 
+#' DataSHIELD SLMA functions automatically perform two-stage meta-analysis using
+#' the metafor package. However in some circumstances you might want to chose
+#' different options in metafor than those provided within DataSHIELD. This
+#' function takes the output from ds.glmSLMA and manually performs the
+#' meta-analysis.
+#'
+#' You could also modify this function to use different
 #' meta-analysis packages.
 #'
 #' @param model Model object returned by ds.glmSLMA or ds.lmerSLMA.
@@ -14,7 +14,7 @@
 #'               metafor package. Default is "ML".
 #'
 #' @return List containing two elements:
-#' * metafor output 
+#' * metafor output
 #' * summary tibble of containing columns "term", "coefficient" and "se".
 #'
 #' @importFrom purrr map map_dbl

@@ -1,9 +1,9 @@
 #' Indicates whether each subject has any or all of the variables contained
 #' within a set
 #'
-#' In an analysis you may want to subset your dataset to contain only subjects 
-#' meeting a specific criteria, e.g. data on at least one outcome or data on all 
-#' exposures. This function automates this operation by describing whether a 
+#' In an analysis you may want to subset your dataset to contain only subjects
+#' meeting a specific criteria, e.g. data on at least one outcome or data on all
+#' exposures. This function automates this operation by describing whether a
 #' subject has non-missing values for any or all of a set of given variables.
 #'
 #' This function replaces the deprecated dh.subjHasData.
@@ -12,14 +12,14 @@
 #' @template df
 #' @param vars Character vector of columns within `df` to form definition set.
 #' @param type Character specifying how to define cases. Use "any" to describe
-#' subjects with data on any of `vars`, and "all" to describe subjects with data 
+#' subjects with data on any of `vars`, and "all" to describe subjects with data
 #' on all of `vars.
 #' @template new_obj
 #' @template checks
 #' @param newobj Retired argument name. Please use `new_obj' instead.
-#' 
+#'
 #' @return Server-side vector defining whether subject meets criteria defined by
-#' `vars` and `type`. 1 indicates that criteria were met, 0 indicates that 
+#' `vars` and `type`. 1 indicates that criteria were met, 0 indicates that
 #' criteria weren't met.
 #'
 #' @family descriptive functions
@@ -31,8 +31,8 @@
 #' @importFrom rlang arg_match
 #'
 #' @export
-dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, new_obj = NULL, 
-  conns = NULL, checks = FALSE, newobj = NULL) {
+dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, new_obj = NULL,
+                           conns = NULL, checks = FALSE, newobj = NULL) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

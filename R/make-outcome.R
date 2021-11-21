@@ -1,5 +1,5 @@
 #' This was the original version of dh.makeStrata. It has now been deprecated.
-#' 
+#'
 #' dh.makeStrata contains a number of improvements: it is computationally more
 #' efficient, it is more clearly coded, and it has been more thoroughly tested.
 #'
@@ -17,8 +17,8 @@
 #'
 #' @export
 dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
-  mult_action = NULL, mult_vals = NULL, df_name = NULL, id_var = "child_id", 
-  band_action = NULL, keep_original = NULL, conns = NULL) {
+                           mult_action = NULL, mult_vals = NULL, df_name = NULL, id_var = "child_id",
+                           band_action = NULL, keep_original = NULL, conns = NULL) {
   if (!missing(keep_original)) {
     warning("`keep_original` is no longer in use and has been ignored")
   }

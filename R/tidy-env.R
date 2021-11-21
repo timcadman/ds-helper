@@ -1,11 +1,11 @@
 #' Remove multiple objects from the serverside environment
 #'
-#' This is a wrapper around ds.rm to allow you to remove multiple objects 
+#' This is a wrapper around ds.rm to allow you to remove multiple objects
 #' in one call.
 #'
 #' @param conns DataSHIELD connections object.
 #' @param obj Server-side objects that you want to either keep or remove.
-#' @param type Either "remove" to remove objects specified in `obj` or "keep" to 
+#' @param type Either "remove" to remove objects specified in `obj` or "keep" to
 #' keep objects specified in `obj` and remove everything else.
 #'
 #' @return None. Objects are removed from the server-side environnment.

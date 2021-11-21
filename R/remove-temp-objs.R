@@ -1,12 +1,12 @@
 #' Checks the server environment for new objects generated and removes them
 #'
-#' Often with dsHelper functions we will create temporary objects which we want 
+#' Often with dsHelper functions we will create temporary objects which we want
 #' to remove. This function checks the difference between the output of `ds.ls`
-#' called at different points in the analysis. It removes objects present in 
-#' the second set which were not present in the first. 
+#' called at different points in the analysis. It removes objects present in
+#' the second set which were not present in the first.
 #'
 #' @param start_objs Output from ds.ls run at the start of a function
-#' @param others_to_keep Optionally, additional variables not to remove, e.g. 
+#' @param others_to_keep Optionally, additional variables not to remove, e.g.
 #' you might not want to remove an output object you have created.
 #' @template conns
 #'

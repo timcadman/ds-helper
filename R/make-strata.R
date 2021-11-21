@@ -1,9 +1,9 @@
-#' Creates strata of a repeated measures variable within specified age or time 
+#' Creates strata of a repeated measures variable within specified age or time
 #' bands
 #'
-#' For many analyses you may want to create strata of repeated measures data 
-#' within specified bands. For example, you may have BMI measures between ages 
-#' 0-18, but want to create a variable for each subject which is their BMI 
+#' For many analyses you may want to create strata of repeated measures data
+#' within specified bands. For example, you may have BMI measures between ages
+#' 0-18, but want to create a variable for each subject which is their BMI
 #' between ages 9-11. This function automates this process.
 #'
 #' The steps here are equivalent to the following dplyr chain:
@@ -15,36 +15,36 @@
 #'
 #' One of the complexities of this operation is how to deal with cases where
 #' subjects have multiple observations within a specified band. This is handled
-#' by first sorting the group so that the required value is first. When the  
-#' data is reshaped to wide format all but the first value for subjects with 
+#' by first sorting the group so that the required value is first. When the
+#' data is reshaped to wide format all but the first value for subjects with
 #' multiple observations within a band are dropped.
 #'
 #' Note that for big datasets this will take a long time to run.
 #'
 #' @template df
 #' @template id_var
-#' @param var_to_subset Character specifying variable in `df` to stratify 
+#' @param var_to_subset Character specifying variable in `df` to stratify
 #' according to bands.
 #' @param age_var Character specifying age or time variable in `df`.
 #' @param bands Numeric vector of alternating lower and upper values specifying
 #' the bands in which to derive strata of `var_to_subset`. This vector should
 #' be an even number and twice the length of the number of bands required.
-#' @param band_action Character specifying how the values provided in `bands` 
+#' @param band_action Character specifying how the values provided in `bands`
 #' are evaluated in creating the strata:
 #' * "g_l" = greater than the lowest band and less than the highest band
-#' * "ge_le" = greater or equal to the lowest band and less than or equal to the 
+#' * "ge_le" = greater or equal to the lowest band and less than or equal to the
 #' highest band
-#' * "g_le" = greater than the lowest band and less than or equal to the highest 
+#' * "g_le" = greater than the lowest band and less than or equal to the highest
 #' band
-#' * "ge_l" = greater than or equal to the lowest band and less than the highest 
+#' * "ge_l" = greater than or equal to the lowest band and less than the highest
 #' band
-#' @param mult_action Character specifying how to handle cases where a subject 
-#' has more than one measurement within a specified band. Use "earliest" to 
-#' take the earliest measurement, "latest" to take the latest measurement and 
-#' "nearest" to take the measurement nearest to the value(s) specified in 
+#' @param mult_action Character specifying how to handle cases where a subject
+#' has more than one measurement within a specified band. Use "earliest" to
+#' take the earliest measurement, "latest" to take the latest measurement and
+#' "nearest" to take the measurement nearest to the value(s) specified in
 #' `mult_vals`.
-#' @param mult_vals Numeric vector specifying the value in each age band to 
-#' chose values closest to if subjects have more than one value per band. 
+#' @param mult_vals Numeric vector specifying the value in each age band to
+#' chose values closest to if subjects have more than one value per band.
 #' Required only if mult_action is "nearest". The order and length of the vector
 #' should correspond to the order and number of the bands.
 #' @template new_obj
@@ -52,10 +52,10 @@
 #' @template checks
 #' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
-#' @return Servside dataframe in wide format containing the derived variables. 
+#' @return Servside dataframe in wide format containing the derived variables.
 #' For each band specified two variables will be returned:
 #' * var_to_subset
-#' * age_var. 
+#' * age_var.
 #' The suffix .lower_band identifies the band for that variable.
 #'
 #' @family data manipulation functions
@@ -76,10 +76,10 @@
 #'
 #' @export
 # nolint
-dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, 
-  var_to_subset = NULL, bands = NULL, mult_action = NULL, mult_vals = NULL, 
-  new_obj = NULL, band_action = NULL, conns = NULL, checks = TRUE, 
-  df_name = NULL) {
+dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL,
+                          var_to_subset = NULL, bands = NULL, mult_action = NULL, mult_vals = NULL,
+                          new_obj = NULL, band_action = NULL, conns = NULL, checks = TRUE,
+                          df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL

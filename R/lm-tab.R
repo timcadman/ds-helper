@@ -1,28 +1,28 @@
 #' Extracts coefficients and confidence intervals from linear models
 #'
 #' To conveniently view model results or make tables, it is useful to extract
-#' the coefficients in a useable format. This function extracts coefficients for 
+#' the coefficients in a useable format. This function extracts coefficients for
 #' ds.glm, ds.glmSLMA and ds.lmerSLMA objects.
 #'
-#' @param model Object returned from either ds.glm, ds.glmSLMA or ds.lmerSLMA 
+#' @param model Object returned from either ds.glm, ds.glmSLMA or ds.lmerSLMA
 #' functions.
-#' @param type Character specifying type of object provided in `model`. Can be 
+#' @param type Character specifying type of object provided in `model`. Can be
 #' either "glm_ipd", "glm_slma" or "lmer_slma".
-#' @param coh_names Character vector of cohorts included in `model`. Note this 
+#' @param coh_names Character vector of cohorts included in `model`. Note this
 #' must be in the same order as the cohorts were included in the model.
 #' @param direction Character specifying the output format. Can be either "wide"
-#' or "long". See "Value" for more details. 
+#' or "long". See "Value" for more details.
 #' @param ci_format format for the confidence intervals when direction is "wide".
 #' If "separate", upper and lower confidence intervals are displayed as columns.
-#' If "paste", confidence intervals are returned in the same column as the 
+#' If "paste", confidence intervals are returned in the same column as the
 #' coefficient within brackets.
 #' @template digits
 #' @param round_digits Deprecated argument name: please use `digits` instead.
-#' @param family Specifies the family used in the analysis where type is 
+#' @param family Specifies the family used in the analysis where type is
 #' "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
 #' "gaussian".
 #' @param exp Optionally, specify whether estimates from binomial models should
-#' be exponentiated, ie returned as odds ratios. This argument is ignored if 
+#' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
 #'
 #' @importFrom tibble tibble
@@ -40,7 +40,7 @@
 #' When `direction` is "long", a tibble with three columns is returned:
 #' * variable
 #' * coefficient (containing values "est", "lowci", "uppci", "pvalue")
-#' * value 
+#' * value
 #'
 #' @md
 #' @family descriptive functions
@@ -50,8 +50,8 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
                      direction = NULL, ci_format = NULL,
                      family = "gaussian", digits = 2, round_digits = 2,
                      exp = FALSE) {
-  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- 
-  variable <- est <- uppci <- pvalue <- NULL
+  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
+    variable <- est <- uppci <- pvalue <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
@@ -64,28 +64,27 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
     stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
-  if(!missing(round_digits)){
-  warning("Please use `digits` instead of `round_digits`. This option will be 
+  if (!missing(round_digits)) {
+    warning("Please use `digits` instead of `round_digits`. This option will be
     removed from version 1.0.0")
 
-  digits <- round_digits
-
+    digits <- round_digits
   }
 
   if (type == "ipd") {
-    warning("Please use 'glm_ipd' instead of 'ipd'. This option will be removed 
+    warning("Please use 'glm_ipd' instead of 'ipd'. This option will be removed
       from version 1.0.0")
     type <- "glm_ipd"
   }
 
   if (type == "slma") {
-    warning("Please use 'glm_slma' instead of 'slma' This option will be removed 
+    warning("Please use 'glm_slma' instead of 'slma' This option will be removed
       from version 1.0.0")
     type <- "glm_slma"
   }
 
   if (type == "lmer") {
-    warning("Please use 'lmer_slma' instead of 'lmer'. This option will be removed 
+    warning("Please use 'lmer_slma' instead of 'lmer'. This option will be removed
       from version 1.0.0")
     type <- "lmer_slma"
   }

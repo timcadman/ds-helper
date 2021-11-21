@@ -1,7 +1,7 @@
-#' Fit multiple mixed effects models containing different combination of 
+#' Fit multiple mixed effects models containing different combination of
 #' fractional polynomials
 #'
-#' This function enables you to fit multiple models with different combinations 
+#' This function enables you to fit multiple models with different combinations
 #' of polynomial terms and compares the fit.
 #'
 #' @importFrom dsBaseClient ds.lmerSLMA
@@ -22,20 +22,19 @@
 #'
 #' @return List containing three elements:
 #' * models = List of objects returned by ds.lmerSLMA for each model fitted.
-#' * convergence = Tibble providing information on convergence problems or 
+#' * convergence = Tibble providing information on convergence problems or
 #' error for each model fitted.
-#' * fit = Tibble with columns containing negative loglikehood statistic for each 
+#' * fit = Tibble with columns containing negative loglikehood statistic for each
 #' cohort and rows for each model fitted. An additional column provides the sum
-#' of the loglikelihoods across cohorts. 
+#' of the loglikelihoods across cohorts.
 #'
 #'
 #' @family trajectory functions
 #' @md
 #'
 #' @export
-dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, 
-  conns = NULL, checks = TRUE) {
-
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
+                           conns = NULL, checks = TRUE) {
   sum_log <- NULL
 
   if (is.null(df)) {
@@ -58,8 +57,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
     .isDefined(df = df, conns = conns)
   }
 
-  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- 
-  loglik_study2 <- NULL
+  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <-
+    loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   suppressWarnings(
@@ -121,7 +120,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
   }
 
   if (all(problems$completed != FALSE) & any(problems$completed == FALSE)) {
-    warning("Some models threw an error message. Check 'convergence' table for 
+    warning("Some models threw an error message. Check 'convergence' table for
       more details")
   }
 

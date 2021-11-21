@@ -1,17 +1,17 @@
 #' Removes columns from a serverside data frame
 #'
-#' Often we want to remove variables from a dataframe. This function 
-#' allows you to specify the variables you either want to remove or keep and  
+#' Often we want to remove variables from a dataframe. This function
+#' allows you to specify the variables you either want to remove or keep and
 #' and creates a new dataframe with only the required variables.
 #'
 #' @template conns
-#' @template df 
-#' @param vars Character vector specifying columns within `df` to be removed or 
+#' @template df
+#' @param vars Character vector specifying columns within `df` to be removed or
 #' kept.
-#' @param new_obj Optionally, character specifying name for new server-side 
+#' @param new_obj Optionally, character specifying name for new server-side
 #' data frame. Default is to return original data frame with columns removed.
-#' @param type Character specifying how to treat `vars`. If "remove" these 
-#' variables are removed from the data frame, if "keep" these variables are 
+#' @param type Character specifying how to treat `vars`. If "remove" these
+#' variables are removed from the data frame, if "keep" these variables are
 #' kept in the data frame and all others are removed.
 #' @template checks
 #' @param new_df_name Retired argument name. Please use `new_obj' instead.
@@ -27,8 +27,8 @@
 #' @importFrom stringr str_subset
 #'
 #' @export
-dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL, 
-  conns = NULL, checks = TRUE, new_df_name = NULL) {
+dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
+                        conns = NULL, checks = TRUE, new_df_name = NULL) {
   . <- NULL
 
   if (is.null(conns)) {

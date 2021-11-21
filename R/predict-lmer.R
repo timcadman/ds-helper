@@ -1,22 +1,22 @@
 #' Gets predicted values based on a new dataframe for lmer models
 #'
-#' Currently there is no `predict` method for lmer models within DataSHIELD. 
-#' This function replicates this, by calculating predicted values for fixed 
-#' effects based on the model coefficients. Standard errors are returned for 
+#' Currently there is no `predict` method for lmer models within DataSHIELD.
+#' This function replicates this, by calculating predicted values for fixed
+#' effects based on the model coefficients. Standard errors are returned for
 #' individual cohorts but yet for pooled models.
 
 #' @param model Model object returned by ds.lmerSLMA.
-#' @param new_data Tibble or data frame containing values for variables in 
-#' `model` at which to predict values of the outcome. The column names in 
-#' `new_data` must be identical to those in `model`, and all variables included 
+#' @param new_data Tibble or data frame containing values for variables in
+#' `model` at which to predict values of the outcome. The column names in
+#' `new_data` must be identical to those in `model`, and all variables included
 #' in `model` must be present in `new_data`.
-#' @param coh_names Vector of cohort names. These must be in the order that 
+#' @param coh_names Vector of cohort names. These must be in the order that
 #' cohorts were specified in `model`.
 #' @param newdata Retired argument name. Please use `new_data' instead.
-#' @return Tibble of predicted outcome values based on values provided in 
+#' @return Tibble of predicted outcome values based on values provided in
 #' `new_data`.
 #'
-#' @importFrom dplyr pull filter select group_by group_keys all_of group_split 
+#' @importFrom dplyr pull filter select group_by group_keys all_of group_split
 #' rename bind_cols bind_rows mutate
 #' @importFrom tidyr pivot_wider
 #' @importFrom purrr set_names map pmap_df pmap_dbl
@@ -25,8 +25,8 @@
 #' @family trajectory functions
 #'
 #' @export
-dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL, 
-  newdata = NULL) {
+dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
+                           newdata = NULL) {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
