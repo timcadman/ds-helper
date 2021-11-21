@@ -5,8 +5,9 @@
 #' input to the `formula` argument in `dh.lmeMultPoly`.
 #'
 #' @param outcome outcome for the models
-#' @param idvar unique identifier for subject
-#' @param agevars vector of names of age polynomials in dataset that you will use in your models
+#' @param idvar A character giving the name of the column within `df` which 
+#' uniquely identifies each subject. 
+#' @param age_vars vector of names of age polynomials in dataset that you will use in your models
 #' @param random either "intercept" or "slope" to specify random effects
 #' @param fixed optional vector of fixed effects
 #' @param age_interactions if TRUE also create interaction terms between age
@@ -18,7 +19,7 @@
 #' @importFrom utils combn
 #'
 #' @export
-dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random = NULL,
+dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, age_vars = NULL, random = NULL,
                             fixed = NULL, age_interactions = NULL) {
   if (is.null(outcome)) {
     stop("`outcome` must not be NULL.", call. = FALSE)
@@ -28,14 +29,14 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
     stop("`idvar` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(agevars)) {
-    stop("`agevars` must not be NULL.", call. = FALSE)
+  if (is.null(age_vars)) {
+    stop("`age_vars` must not be NULL.", call. = FALSE)
   }
 
   random <- arg_match(random, c("intercept", "slope"))
 
   ## ---- Make all combinations of polynomials ---------------------------------------------------
-  poly_fixed <- combn(agevars, 2, paste, collapse = "+")
+  poly_fixed <- combn(age_vars, 2, paste, collapse = "+")
 
 
   ## ---- Define our random effects --------------------------------------------------------------
@@ -55,7 +56,7 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
   } else if (!is.null(fixed) & is.null(age_interactions)) {
     forms <- paste0(outcome, "~1+", poly_fixed, "+", fixed, "+", random_eff)
   } else if (!is.null(fixed) & !is.null(age_interactions)) {
-    fixed_tmp <- paste0(fixed, "*", agevars)
+    fixed_tmp <- paste0(fixed, "*", age_vars)
     fixed_int <- combn(fixed_tmp, 2, paste, collapse = "+")
 
     forms <- paste0(outcome, "~1+", poly_fixed, "+", fixed, "+", fixed_int, "+", random_eff)
@@ -63,7 +64,7 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
 
   ## ---- Output -------------------------------------------------------------------
   out <- tibble(
-    polys = combn(agevars, 2, paste, collapse = ","),
+    polys = combn(age_vars, 2, paste, collapse = ","),
     formulae = forms
   )
 
