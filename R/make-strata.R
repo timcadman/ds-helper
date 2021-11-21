@@ -47,7 +47,6 @@
 #' @param new_obj String providing name of data frame to be created on the DataSHIELD backend
 #' @template conns
 #' @template checks
-#' function. Default is TRUE.
 #' @param df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return A serverside dataframe in wide format containing the newly derived variables. For each band specified two
