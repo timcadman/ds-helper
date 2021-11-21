@@ -43,10 +43,12 @@ creates multiple transformations of an age variable to different powers.
 }
 \seealso{
 Other trajectory functions: 
-\code{\link{dh.lmeMultPoly}()}
+\code{\link{dh.lmeMultPoly}()},
+\code{\link{dh.makeLmerForm}()}
 
 Other data manipulation functions: 
-\code{\link{dh.dropCols}()}
+\code{\link{dh.dropCols}()},
+\code{\link{dh.makeIQR}()}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}

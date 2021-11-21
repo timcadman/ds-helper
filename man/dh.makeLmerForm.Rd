@@ -10,29 +10,44 @@ dh.makeLmerForm(
   age_vars = NULL,
   random = NULL,
   fixed = NULL,
-  age_interactions = NULL
+  age_interactions = FALSE
 )
 }
 \arguments{
-\item{outcome}{outcome for the models}
+\item{outcome}{Outcome variable within data frame to be specified in \code{df}
+argument in \code{dh.lmeMultPoly}.}
 
-\item{id_var}{A character giving the name of the column within `df` which 
-uniquely identifies each subject.}
+\item{id_var}{Character specifying the name of the column which uniquely
+identifies each subject within data frame to be specified in \code{df}
+argument in \code{dh.lmeMultPoly}.}
 
-\item{age_vars}{vector of names of age polynomials in dataset that you will use in your models}
+\item{age_vars}{Character vector specifying names of age polynomials present
+in data frame specified in \code{df} argument in \code{dh.lmeMultPoly}.}
 
-\item{random}{either "intercept" or "slope" to specify random effects}
+\item{random}{Specifies random effects to include in formulae. Use either
+"intercept" for random intercept model or "slope" for random slope model.}
 
-\item{fixed}{optional vector of fixed effects}
+\item{fixed}{Optionally, character vector specifying fixed effects to be
+included in model.}
 
-\item{age_interactions}{if TRUE also create interaction terms between age
-terms and fixed effects}
+\item{age_interactions}{Logical; if TRUE, interactions terms are created
+between \code{age_vars} and \code{fixed}. Default is FALSE.}
 }
 \value{
-a tibble containing the created formulae
+Tibble containing two columns:
+\itemize{
+\item polys = Transformations of \code{age_var}
+\item formula = Formula to be used as input to ds.lmerSLMA or dh.lmeMultPoly.
+}
 }
 \description{
-This function is designed to be used with `dh.lmeMultPoly`. It generates 
-formulae for multiple fractional polynomial models, which can be used as 
-input to the `formula` argument in `dh.lmeMultPoly`.
+This function is designed to be used with \code{dh.lmeMultPoly}. It generates
+formulae for multiple fractional polynomial models which can be used as
+input to the \code{formulae} argument in \code{dh.lmeMultPoly}.
 }
+\seealso{
+Other trajectory functions: 
+\code{\link{dh.lmeMultPoly}()},
+\code{\link{dh.makeAgePolys}()}
+}
+\concept{trajectory functions}

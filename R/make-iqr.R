@@ -1,22 +1,22 @@
 #' Transforms variables based on their interquartile range
 #'
-#' This function is used to scale variables by the interquartile range
+#' This function scales variables by their interquartile range. IQR is 
 #' calulcated either within cohort or using the pooled IQR across cohorts.
-#' The formula is: value(subject) / (75th percentile - 25th percentile).
+#' The formula used is: value[subject] / (75th percentile - 25th percentile).
 #' 
 #' @template df
-#' @param vars A character vector of columns within `df` to transform.
-#' @param type either "separate" to transform the variable based on the IQR
-#'             calculated within cohort, or "pooled" to transform based on the
-#'             pooled IQR across all cohorts provided in the 'conns' argument.
+#' @param vars Character vector of columns within `df` to transform.
+#' @param type Use "separate" to transform the variable based on the 
+#' within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts 
+#' specified in `conns`.
 #' @template conns
-#' @param new_obj name for new dataframe with original vars and iqr versions.
+#' @template new_obj
 #' @template checks
-#' @param new_df_name Retired argument name. Please use `new_obj' instead.
+#' @param new_df_name Retired argument. Please use `new_obj' instead.
 #'
-#' @return the original dataframe with transformed variables added with the
-#'         suffix "_iqr_c" (if cohort range was used) or "iqr_p" if pooled
-#'         range was used.
+#' @return Server-side object specified in `df` with transformed variables added 
+#' as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
+#' "iqr_p" if pooled is type is "pooled".
 #'
 #' @importFrom dsBaseClient ds.colnames ds.dataFrame ds.make ds.class ds.mean
 #'             ds.quantileMean
@@ -25,6 +25,8 @@
 #' @importFrom DSI datashield.connections_find
 #' @importFrom stringr str_detect
 #' @importFrom tibble as_tibble tibble
+#'
+#' @family data manipulation functions
 #'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),

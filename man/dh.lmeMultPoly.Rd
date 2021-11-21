@@ -43,6 +43,7 @@ of polynomial terms and compares the fit.
 }
 \seealso{
 Other trajectory functions: 
-\code{\link{dh.makeAgePolys}()}
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeLmerForm}()}
 }
 \concept{trajectory functions}

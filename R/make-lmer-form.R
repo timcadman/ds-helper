@@ -1,26 +1,38 @@
 #' Make formulae for fitting multiple fractional polynomial models
 #'
 #' This function is designed to be used with `dh.lmeMultPoly`. It generates 
-#' formulae for multiple fractional polynomial models, which can be used as 
-#' input to the `formula` argument in `dh.lmeMultPoly`.
+#' formulae for multiple fractional polynomial models which can be used as 
+#' input to the `formulae` argument in `dh.lmeMultPoly`.
 #'
-#' @param outcome outcome for the models
-#' @param id_var A character giving the name of the column within `df` which 
-#' uniquely identifies each subject. 
-#' @param age_vars vector of names of age polynomials in dataset that you will use in your models
-#' @param random either "intercept" or "slope" to specify random effects
-#' @param fixed optional vector of fixed effects
-#' @param age_interactions if TRUE also create interaction terms between age
-#'                         terms and fixed effects
+#' @param outcome Outcome variable within data frame to be specified in `df` 
+#' argument in `dh.lmeMultPoly`.
+#' @param id_var Character specifying the name of the column which uniquely 
+#' identifies each subject within data frame to be specified in `df` 
+#' argument in `dh.lmeMultPoly`.
+#' @param age_vars Character vector specifying names of age polynomials present
+#' in data frame specified in `df` argument in `dh.lmeMultPoly`.
+#' @param random Specifies random effects to include in formulae. Use either 
+#' "intercept" for random intercept model or "slope" for random slope model.
+#' @param fixed Optionally, character vector specifying fixed effects to be 
+#' included in model.
+#' @param age_interactions Logical; if TRUE, interactions terms are created 
+#' between `age_vars` and `fixed`. Default is FALSE.
 #'
-#' @return a tibble containing the created formulae
+#' @return Tibble containing two columns:
+#'
+#' * polys = Transformations of `age_var`
+#' * formula = Formula to be used as input to ds.lmerSLMA or dh.lmeMultPoly.
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
 #'
+#' @family trajectory functions
+#'
+#' @md
+#'
 #' @export
 dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL, random = NULL,
-                            fixed = NULL, age_interactions = NULL) {
+                            fixed = NULL, age_interactions = FALSE) {
   if (is.null(outcome)) {
     stop("`outcome` must not be NULL.", call. = FALSE)
   }
@@ -65,7 +77,7 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL, rand
   ## ---- Output -------------------------------------------------------------------
   out <- tibble(
     polys = combn(age_vars, 2, paste, collapse = ","),
-    formulae = forms
+    formula = forms
   )
 
   return(out)
