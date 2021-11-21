@@ -28,5 +28,6 @@ variables is time-consuming and at risk of error. This function automatically
 generates a look-up table with this information.
 }
 \seealso{
-
+[define-cases()] [class-discrepancy()]
 }
+\concept{Describe}
