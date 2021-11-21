@@ -1,7 +1,7 @@
-#' Tidy up the server environment
+#' Remove multiple objects from the serverside environment
 #'
-#' This is a very simple wrapper around ds.rm to allow you to remove more than
-#' one object at a time.
+#' This is a wrapper around ds.rm to allow you to remove multiple objects 
+#' in one call.
 #'
 #' @param conns connections object to DataSHIELD backends
 #' @param obj objects that you want to either keep or remove

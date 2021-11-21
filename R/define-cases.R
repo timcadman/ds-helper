@@ -1,5 +1,5 @@
 #' Indicates whether each subject has any or all of the variables contained
-#' within a set.
+#' within a set
 #'
 #' In an analysis you may want to subset your dataset to contain only subjects 
 #' meeting a specific criteria, e.g. data on at least one outcome or data on all 

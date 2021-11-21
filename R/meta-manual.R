@@ -1,9 +1,11 @@
-#' Wrapper to manaully perform two-stage meta-analysis using metafor
+#' Wrapper to manaully perform two-stage meta-analysis using `metafor`
 #'
 #' ds.SLMA functions automatically perform two-stage meta-analysis using the
-#' metafor package. However in some circumstances you might want to use a
-#' different package or chose different options in metaphor. This allows you
-#' to meta-analyse multiple coefficients in one function call.
+#' metafor package. However in some circumstances you might want to chose 
+#' different options in metafor than those provided within DataSHIELD. This 
+#' function takes the output from ds.glmSLMA and manually performs the 
+#' meta-analysis. You could also modify this function to use different 
+#' meta-analysis packages.
 #'
 #' @param model output from ds.glmSLMA
 #' @param method method of meta-analyis which can be any valid method for the

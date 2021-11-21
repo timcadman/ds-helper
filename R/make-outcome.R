@@ -1,4 +1,7 @@
-#' This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded.
+#' This was the original version of dh.makeStrata. It has now been deprecated.
+#' 
+#' dh.makeStrata contains a number of improvements: it is computationally more
+#' efficient, it is more clearly coded, and it has been more thoroughly tested.
 #'
 #' @param df see argument `df` in `dh.makeStrata`
 #' @param outcome Renamed to `var_to_subset` in `dh.makeStrata`

@@ -1,4 +1,8 @@
-#' Function to perform every combination of MLM fractional polynomials
+#' Fit multiple mixed effects models containing different combination of 
+#' fractional polynomials
+#'
+#' This function enables you to fit multiple models with different combinations 
+#' of polynomial terms and compares the fit.
 #'
 #' @importFrom dsBaseClient ds.lmerSLMA
 #' @importFrom purrr map flatten_chr map set_names map_lgl

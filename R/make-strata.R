@@ -1,9 +1,10 @@
-#' Creates strata of a repeated measures variable within specified age or time bands
+#' Creates strata of a repeated measures variable within specified age or time 
+#' bands
 #'
-#' For many analyses you will want to use values from repeated measures data within
-#' specified bands. For example, you may have BMI measures between ages 0-18, but want
-#' to create a variable for each subject which is their BMI between ages 9-11.
-#' This is quite complicated to do in DataSHIELD so this function automates the process.
+#' For many analyses you may want to create strata of repeated measures data 
+#' within specified bands. For example, you may have BMI measures between ages 
+#' 0-18, but want to create a variable for each subject which is their BMI 
+#' between ages 9-11. This function automates this process.
 #'
 #' The steps here are equivalent to the following dplyr chain:
 #'
@@ -12,12 +13,11 @@
 #' arrange() %<%
 #' slice(1)
 #'
-#'
 #' One of the complexities of this operation is how to deal with cases where
 #' subjects have multiple observations within a specified band. This is handled
-#' by first sorting the group so that the required value is first. When we reshape
-#' the data all but the first value for subjects with multiple observations within a band
-#' are dropped.
+#' by first sorting the group so that the required value is first. When the  
+#' data is reshaped to wide format all but the first value for subjects with 
+#' multiple observations within a band are dropped.
 #'
 #' Note that for big datasets this will take a long time to run.
 #'

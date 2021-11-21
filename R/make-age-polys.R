@@ -1,10 +1,10 @@
-#' Produces multiple transformations of age term for fractional polynomial
-#' analysis.
+#' Produces multiple transformations of the age term for fractional polynomial
+#' analyses
 #'
 #' When we do trajectory analyses using fractional polynomials we often want
 #' to try models with different combinations of age polynomials. This function
-#' creates the following age transformations in datashield: age^-2, age^-1,
-#' age^-0.5, log(age), age^0.5, age^2, age^3.
+#' creates multiple transformations of an age terms and adds the transformed
+#' variables to the original dataframe.
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe

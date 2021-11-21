@@ -1,9 +1,7 @@
-#' Rename multiple variables at once
+#' Rename one or more columns within a serverside data frame
 #'
-#' This function allows you to rename multiple variable from a dataframe. At the
-#' moment it doesn't "rename" as such, it creates duplicate variables with the
-#' new names. I've left it like this to keep in the spirit of ds/opal set up
-#' by not automating the deletion of variables.
+#' This function is an analogue of `dplyr::rename` which allows you to rename 
+#' columns of a serverside data frame.
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df dataframe

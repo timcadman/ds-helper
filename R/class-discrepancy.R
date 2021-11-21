@@ -1,5 +1,5 @@
 #' Describes the class of one or more variables across cohorts and indicates 
-#' differences.
+#' differences
 #'
 #' Either through using ds.dataFrameFill, or due to mistakes in uploading
 #' data, the same variable may have a different class across cohorts. This can 

@@ -1,8 +1,8 @@
 #' Make formulae for fitting multiple fractional polynomial models
 #'
-#' To identify the combination of fractional polynomials which give the best
-#' fit often we will fit models with lots of different combinations. This
-#' function builds formulae for that purpose.
+#' This function is designed to be used with `dh.lmeMultPoly`. It generates 
+#' formulae for multiple fractional polynomial models, which can be used as 
+#' input to the `formula` argument in `dh.lmeMultPoly`.
 #'
 #' @param outcome outcome for the models
 #' @param idvar unique identifier for subject

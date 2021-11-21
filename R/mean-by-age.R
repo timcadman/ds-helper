@@ -1,4 +1,11 @@
-#' Calculate mean values of one repeated measures variable by an age variable
+#' Calculate mean values of one continuous variable stratified by a second
+#' continuous variable.
+#'
+#' This has similar functionality to `tapply` or the dplyr chain `group_by` %>%
+#' `summarise`. It offers additional flexilibity over `ds.tapply` in that it 
+#' allows you to specify upper and lower values for each strata. By contrast,
+#' ds.tapply will produce a summary based on every unique value of the grouping
+#' variable, which may not always be what is required.
 #'
 #' @importFrom DSI datashield.connections_find datashield.assign
 #' @importFrom purrr map

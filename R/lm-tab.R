@@ -1,5 +1,9 @@
-#' Extracts the coefficients and confidence intervals from a ds.glm or
-#' ds.glmSLMA model.
+#' Extracts the coefficients and confidence intervals from linear models
+#'
+#' To convenient view model results or make tables, it is useful to extract
+#' the coefficients from models in a useable format. This function currently
+#' extracts coefficients for ds.glm, ds.glmSLMA and ds.lmerSLMA objects, and
+#' returns them in a tibble.
 #'
 #' @param model saved output from either ds.glm,  ds.glmSLMA or ds.lmerSLMA
 #' @param type either "ipd", "slma" or "lmer"

@@ -1,9 +1,9 @@
-#' Return return indices of columns in opal dataframe
+#' Return return indices of columns in serverside dataframe from variable names
 #'
-#' Some ds functions ask you to provide the index of variables as arguments.
-#' This is highly susceptable to breaking! This is a simple function that will
-#' return the index of variables for a given cohort. It is usefully used in
-#' combination the "keep.cols" argument of ds.dataFrameSubset.
+#' Some DataSHIELD functions reuire column indices as parameters. This is highly 
+#' susceptable to breaking as changes in code will change the order of 
+#' variables. This function allows you to specify the names of columns and
+#' returns their indices. 
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df datashield dataframe

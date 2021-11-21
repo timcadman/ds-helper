@@ -1,5 +1,10 @@
-#' Gets predicted values based on a new dataframe for lmer models. Calculates
-#' standard errors for individual cohorts but not pooled at this point.
+#' Gets predicted values based on a new dataframe for lmer models
+#'
+#' Currently there is no `predict` method for lmer models within DataSHIELD. 
+#' This function replicates this, by calculating predicted values for fixed 
+#' effects based on the model coefficients. Standard errors are returned for 
+#' individual cohorts but yet for pooled models.
+
 #' @param model output model from ds.lmerSLMA function
 #' @param new_data a dataframe or tibble with the values of the model variables
 #' at which you want to get predicted values. All variables from the model must

@@ -1,8 +1,8 @@
-#' Subsets a dataframe using column names.
+#' Removes columns from a serverside data frame
 #'
-#' Often we may have created variables within a dataframe that we no longer
-#' need. This function allows you to specify either the variables you want to
-#' keep or drop and create a new dataframe with only the variables you need.
+#' Often we was to remove variables from a dataframe that we no longer need. 
+#' This function allows you to specify the variables you either want to
+#' keep or drop, and creates a new dataframe with only the required variables.
 #'
 #' @param conns connections object to DataSHIELD backends
 #' @param df datashield dataframe

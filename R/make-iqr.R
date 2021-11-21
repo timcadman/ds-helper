@@ -3,8 +3,8 @@
 #' This function is used to scale variables by the interquartile range
 #' calulcated either within cohort or using the pooled IQR across cohorts.
 #' The formula is: value(subject) / (75th percentile - 25th percentile).
-#' #'
-##' @param df datashield dataframe
+#' 
+#  @param df datashield dataframe
 #' @param vars variables to transform
 #' @param type either "separate" to transform the variable based on the IQR
 #'             calculated within cohort, or "pooled" to transform based on the

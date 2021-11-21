@@ -1,7 +1,11 @@
-#' Extracts an anonymised version of the dataset which can be used
-#' to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-#' function but stores the data produced this function. Note you need to make
-#' sure your plot window is large enough to produce the plot.
+#' Extracts an anonymised version of serverside data which can be used to create 
+#' bespoke plots
+#'
+#' Whilst DataSHIELD has plotting functionality, for publications we may need 
+#' more flexiblity in creating plots. This function calls the serverside 
+#' functions which create an anonymised copy of data, and returns the values in
+#' a local object. You can then use these values (e.g. with ggplot2) to create
+#' plots. 
 #'
 #' @param df opal dataframe
 #' @param v1 variable in df to get plotdata for

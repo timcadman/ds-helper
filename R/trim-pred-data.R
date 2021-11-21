@@ -1,6 +1,10 @@
-#' Trims predicted values based on min and max values provided. Useful
-#' where you want to ensure that predicted values are limited at the range
-#' of observed values.
+#' Trims predicted values based on min and max values provided. 
+#'
+#' This can be used in conjuncture with `ds.predictLmer`. The new data frame
+#' used for prediction may contain age or time values not present in the 
+#' original data. This allows you to remove all predicted values beyong a min
+#' or max age specified. This can ensure that plots only show predict values 
+#' over a range where there was actually data. 
 #'
 #' @importFrom tibble tibble
 #' @importFrom purrr pmap

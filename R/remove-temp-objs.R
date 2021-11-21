@@ -1,7 +1,9 @@
-#' Often with dsHelper functions we will create temporary objects
-#' on the server which we want to remove. This function
-#' checks the difference between two sets of objects and removes
-#' those not present in the first
+#' Checks the server environment for new objects generated and removes them
+#'
+#' Often with dsHelper functions we will create temporary objects which we want 
+#' to remove. This function checks the difference between the output of `ds.ls`
+#' called at different points in the analysis. It removes objects present in 
+#' the second set which were not present in the first. 
 #'
 #' @param start_objs output from ds.ls run at the start of a function
 #' @param others_to_keep optional. Additional variables not to remove,
