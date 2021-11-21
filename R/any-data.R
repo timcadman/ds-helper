@@ -14,7 +14,7 @@
 #' @return Client-side tibble containing columns for each variable and rows 
 #' for each cohort indicating if the variable is not completely missing.
 #'
-#' @family describing functions
+#' @family descriptive functions
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length
