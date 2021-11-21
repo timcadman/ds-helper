@@ -41,3 +41,4 @@ of the loglikelihoods across cohorts.
 This function enables you to fit multiple models with different combinations
 of polynomial terms and compares the fit.
 }
+\concept{trajectory functions}

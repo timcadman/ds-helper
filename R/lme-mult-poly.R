@@ -28,6 +28,8 @@
 #' cohort and rows for each model fitted. An additional column provides the sum
 #' of the loglikelihoods across cohorts. 
 #'
+#'
+#' @family trajectory functions
 #' @md
 #'
 #' @export

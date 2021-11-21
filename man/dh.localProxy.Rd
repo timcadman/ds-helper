@@ -15,8 +15,8 @@ dh.localProxy(df = NULL, conns = NULL, checks = TRUE)
 function. Default is TRUE.}
 }
 \value{
-Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
-of more cohorts.
+Creates a local proxy dataframe. Stops function if df doesn't exist 
+or is inconsistent in one or more cohorts.
 }
 \description{
 If you have a remote dataframe on the servers, it can be challenging to 

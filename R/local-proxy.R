@@ -23,8 +23,8 @@
 #' @template df
 #' @template checks
 #'
-#' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
-#' of more cohorts.
+#' @return Creates a local proxy dataframe. Stops function if df doesn't exist 
+#' or is inconsistent in one or more cohorts.
 #'
 #' @importFrom DSI datashield.connections_find
 #'
