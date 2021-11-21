@@ -1,12 +1,12 @@
 #' Indicates whether each subject has any or all of the variables contained
-#' within a set
+#' within a set.
 #'
-#' At some point in the analysis you will want to subset your dataset to contain
-#' only subjects meeting some criteria, e.g. data on at least one outcome or
-#' data on all exposures. This function speeds things up by indicating whether a subject
-#' has non-missing values for any or all of a set of given variables.
+#' In an analysis you may want to subset your dataset to contain only subjects 
+#' meeting a specific criteria, e.g. data on at least one outcome or data on all 
+#' exposures. This function automates this operation by describing whether a 
+#' subject has non-missing values for any or all of a set of given variables.
 #'
-#' Note this function replaces the deprecated dh.subjHasData.
+#' This function replaces the deprecated dh.subjHasData.
 #'
 #' @param conns connection object for DataSHIELD backends
 #' @param df datashield dataframe
