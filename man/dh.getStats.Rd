@@ -9,48 +9,67 @@ dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{A character vector of columns within `df` to describe.}
+\item{vars}{Character vector of columns within \code{df} to summarise.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{digits}{number of decimal places to round continuous stats to. Default
-is 2.}
+\item{digits}{Optionally, the number of decimal places to round descriptives
+to. Default is 2.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
 }
 \value{
-The function returns a list with two elements containing dataframes
-with summary statistics for (i) categorical and (ii) continuous variables.
-These data frames are in longform and contain the following variables.
+A client-side list with two elements: "categorical" and "continuous".
+Each element contains a tibble with descriptive statistics as follows.
 
-Categorical:
-variable = variable
- category = level of variable, including missing as a category
- value = number of observations
- cohort = name of cohort, including combined values for all cohorts
- cohort_n = total number of observations for cohort in dataset
- valid_n = number of valid observations for variable (sum of ns for each
-           categories)
- valid_perc = observations within a category as percentage of valid_n
+Categorical: \cr
+\itemize{
+\item "variable" = Variable name.
+\item cohort = Cohort name, where "combined" refers to pooled statistics.
+\item category = Level of variable, including 'missing' as a category.
+\item value = Number of observations within category.
+\item cohort_n = Total number of observations per cohort within \code{df}.
+\item valid_n = Number of valid observations for variable (sum of ns for all
+categories excluding missing).
+\item missing_n = Number of missing observations.
+\item perc_valid = Numnber of observations within a category as percentage of
+valid_n.
+\item perc_total = Number of observations within a category as percentage of
+cohort_n.
+}
 
-Continuous:
-
- cohort = cohort, including combined values for all cohorts
- variable = variable
- mean = mean (for combined value for all cohorts this is calculated by meta-
-       analysis using fixed-effects)
- std.dev = standard deviation (again calculated by MA for cohorts combined)
- valid_n = as above
- cohort_n = as above
- missing_n = as above
- missing_perc = as above
+Continuous: \cr
+\itemize{
+\item variable = As above.
+\item cohort = As above.
+\item mean = Mean. The pooled value calculated by fixed-effect meta-analysis.
+\item std.dev = Standard deviation. The pooled value is also calculate by fixed-
+\item effect meta-analysis.
+\item perc_5, perc_10, perc_25, perc_50, perc_75, perc_90, perc_95 = 5th to 95th
+\item percentile values.
+\item valid_n = As above.
+\item cohort_n = As above.
+\item missing_n = As above.
+\item missing_perc = As above.
+}
 }
 \description{
 Whilst dsBaseClient provides the functions 'ds.table' and 'ds.summary' to
-extract descriptive statistics, their output is not in a very useable format.
-This function extracts key descriptive statistics and returns them in a 
-tibble. It also overcomes an issue with ds.summary, where it throws an error
-if the variable is missing in one or more study. By contrast, getStats will
-return the variable for that cohort with all NAs.
+calculate descriptive statistics, their output is not in a very useable
+format. This function extracts key descriptive statistics and returns them in
+tibble.
 }
+\details{
+This function also overcomes an issue with ds.summary, where it throws an
+error if the variable is missing in one or more study. By contrast,
+dh.getStats will return the variable for that cohort with all NAs. See
+'value' for details of returned statistics.
+}
+\seealso{
+Other descriptive functions: 
+\code{\link{dh.anyData}()},
+\code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.defineCases}()}
+}
+\concept{descriptive functions}
