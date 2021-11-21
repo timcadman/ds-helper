@@ -31,6 +31,7 @@ generates a look-up table with this information.
 Other descriptive functions: 
 \code{\link{dh.classDiscrepancy}()},
 \code{\link{dh.defineCases}()},
-\code{\link{dh.getStats}()}
+\code{\link{dh.getStats}()},
+\code{\link{dh.lmTab}()}
 }
 \concept{descriptive functions}

@@ -51,6 +51,7 @@ This function replaces the deprecated dh.subjHasData.
 Other descriptive functions: 
 \code{\link{dh.anyData}()},
 \code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.getStats}()}
+\code{\link{dh.getStats}()},
+\code{\link{dh.lmTab}()}
 }
 \concept{descriptive functions}

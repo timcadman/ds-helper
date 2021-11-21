@@ -13,8 +13,8 @@ dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{digits}{Optionally, the number of decimal places to round descriptives
-to. Default is 2.}
+\item{digits}{Optionally, the number of decimal places to round output to. 
+Default is 2.}
 
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
@@ -70,6 +70,7 @@ dh.getStats will return the variable for that cohort with all NAs. See
 Other descriptive functions: 
 \code{\link{dh.anyData}()},
 \code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.defineCases}()}
+\code{\link{dh.defineCases}()},
+\code{\link{dh.lmTab}()}
 }
 \concept{descriptive functions}
