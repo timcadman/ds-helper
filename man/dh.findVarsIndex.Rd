@@ -9,7 +9,7 @@ dh.findVarsIndex(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{A character vector of columns within `df` for which to return the
+\item{vars}{Character vector of columns within `df` for which to return the
 indices.}
 
 \item{conns}{DataSHIELD connections object.}
@@ -18,11 +18,12 @@ indices.}
 function. Default is TRUE.}
 }
 \value{
-list of indices where length of list is number of cohorts provided
+Client-side list of indices corresponding to `vars`, where the length
+of the list corresponds to the number of cohorts included in `conns`.
 }
 \description{
-Some DataSHIELD functions reuire column indices as parameters. This is highly 
-susceptable to breaking as changes in code will change the order of 
+Some DataSHIELD functions require column indices as parameters. This is h
+ighly susceptable to breaking as changes in code will change the order of 
 variables. This function allows you to specify the names of columns and
 returns their indices.
 }
