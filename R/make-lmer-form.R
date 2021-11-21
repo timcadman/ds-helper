@@ -5,7 +5,7 @@
 #' input to the `formula` argument in `dh.lmeMultPoly`.
 #'
 #' @param outcome outcome for the models
-#' @param idvar A character giving the name of the column within `df` which 
+#' @param id_var A character giving the name of the column within `df` which 
 #' uniquely identifies each subject. 
 #' @param age_vars vector of names of age polynomials in dataset that you will use in your models
 #' @param random either "intercept" or "slope" to specify random effects
@@ -19,14 +19,14 @@
 #' @importFrom utils combn
 #'
 #' @export
-dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, age_vars = NULL, random = NULL,
+dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL, random = NULL,
                             fixed = NULL, age_interactions = NULL) {
   if (is.null(outcome)) {
     stop("`outcome` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(idvar)) {
-    stop("`idvar` must not be NULL.", call. = FALSE)
+  if (is.null(id_var)) {
+    stop("`id_var` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(age_vars)) {
@@ -42,9 +42,9 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, age_vars = NULL, rando
   ## ---- Define our random effects --------------------------------------------------------------
 
   if (random == "intercept") {
-    random_eff <- paste0("(1|", idvar, ")")
+    random_eff <- paste0("(1|", id_var, ")")
   } else if (random == "slope") {
-    random_eff <- paste0("(1+", poly_fixed, "|", idvar, ")")
+    random_eff <- paste0("(1+", poly_fixed, "|", id_var, ")")
   }
 
   ## ---- Do the business -----------------------------------------------------------------
