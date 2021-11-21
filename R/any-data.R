@@ -9,6 +9,7 @@
 #' @param conns DataSHIELD connections object.
 #' @param df server side dataframe
 #' @param vars vector of server side variable names within df
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return a local dataframe with columns for each variable and rows for each 
 #' cohort
@@ -20,20 +21,18 @@
 #' @importFrom tibble as_tibble
 #'
 #' @export
-dh.anyData <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.")
   }
 
   if (is.null(vars)) {
-    stop("Please specify variables")
+    stop("`vars` must not be NULL.")
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
-  dh.doesDfExist(conns, df)
 
   if (is.null(vars)) {
     fun_vars <- unique(unlist(ds.colnames(df, datasources = conns)))
@@ -41,7 +40,9 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL) {
     fun_vars <- vars
   }
 
-  dh.doVarsExist(df = df, vars = vars, conns = conns)
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
 
   # get the lengths
   lengths <- unlist(ds.length(paste0(df, "$", fun_vars[1]), type = "s", datasources = conns))

@@ -10,7 +10,9 @@
 #'             calculated within cohort, or "pooled" to transform based on the
 #'             pooled IQR across all cohorts provided in the 'conns' argument.
 #' @param conns connections object to DataSHIELD backends
-#' @param new_df_name name for new dataframe with original vars and iqr versions.
+#' @param new_obj name for new dataframe with original vars and iqr versions.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param new_df_name Retired argument name. Please use `new_obj' instead.
 #'
 #' @return the original dataframe with transformed variables added with the
 #'         suffix "_iqr_c" (if cohort range was used) or "iqr_p" if pooled
@@ -26,24 +28,31 @@
 #'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
-                       conns = NULL, new_df_name = df) {
+                       conns = NULL, new_obj = df, checks = TRUE, new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
 
-  dh.doVarsExist(df = df, vars = vars, conns = conns)
-
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-    stop("Please specify variable(s) to transform")
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
-  type <- match.arg(type)
+  if (!missing(new_df_name)) {
+    warning("Please use `new_obj` instead of `new_df_name`")
+    new_obj <- new_df_name
+  }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
+
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
+
+  type <- match.arg(type)
 
   df_vars <- paste0(df, "$", vars)
 
@@ -55,8 +64,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     all(
       str_detect(unlist(check_cont), "numeric|integer")
     ) == FALSE) {
-    stop("Can only calculate IQR for continous variables: please check class of
-         provided vars")
+    stop("Can only calculate IQR for continous variables: please check class variables specified in `vars`", call. = FALSE)
   }
 
   ## ---- Calculate IQRs ---------------------------------------------------------
@@ -89,7 +97,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_c")),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
@@ -166,10 +174,14 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_p")),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
   }
+  cat("\nThe following IQR transformations have been created in dataframe ", "'", new_obj, "':", "\n\n", sep = "")
+  iqr_to_make %>%
+    dplyr::select(variable, cohort) %>%
+    print()
 }

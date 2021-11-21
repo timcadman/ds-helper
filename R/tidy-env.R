@@ -16,14 +16,18 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
+dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   . <- NULL
 
   if (is.null(obj)) {
-    stop("Please specify one or more objects to remove from environment")
+    stop("`obj` must not be NULL.", call. = FALSE)
   }
 
-  type <- arg_match(type)
+  if (is.null(type)) {
+    stop("`type` must not be NULL.", call. = FALSE)
+  }
+
+  type <- arg_match(type, c("remove", "keep"))
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

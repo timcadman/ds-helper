@@ -4,7 +4,7 @@
 \alias{dh.getStats}
 \title{Produces descriptive statistics in useful format}
 \usage{
-dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2)
+dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
 }
 \arguments{
 \item{df}{opal dataframe}
@@ -15,6 +15,8 @@ dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2)
 
 \item{digits}{number of decimal places to round continuous stats to. Default
 is 2.}
+
+\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
 }
 \value{
 The function returns a list with two elements containing dataframes

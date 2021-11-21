@@ -18,6 +18,7 @@
 #'
 #' @param conns connections object to DataSHIELD backends
 #' @param df datashield dataframe
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return Creates a local proxy dataframe. Stops function if df doesn't exist or is inconsistent in one
 #' of more cohorts.
@@ -25,20 +26,25 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.localProxy <- function(df = NULL, conns = NULL) {
+dh.localProxy <- function(df = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
+  }
+
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-  discrep <- dh.classDiscrepancy(conns = conns, df = df)
+  discrep <- dh.classDiscrepancy(conns = conns, df = df, checks = FALSE)
   if (any(discrep$discrepancy == "yes")) {
     warning("All columns not found in all cohorts, please see tibble returned and correct this", call. = FALSE)
     return(discrep)
   }
+
   tempDF <- data.frame(matrix(paste0("D$", discrep$variable), ncol = length(discrep$variable), nrow = 1))
   colnames(tempDF) <- discrep$variable
   assign(df, tempDF, envir = parent.frame())

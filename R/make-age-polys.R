@@ -8,10 +8,12 @@
 #'
 #' @param conns connections object for DataSHIELD backends
 #' @param df opal dataframe
-#' @param agevars the age variable to transform
+#' @param age_var the age variable to transform
 #' @param poly_form a vector of powers by which to transform the age variable
 #' @param poly_names a vector of names for the created variables, the same length
 #' and order as poly_form
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @param agevars Retired argument name. Please use `new_obj' instead.
 #'
 #' @return transformations of age created in df
 #'
@@ -22,24 +24,33 @@
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
+dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
-                            poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3")) {
+                            poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
+                            checks = TRUE, agevars = NULL) {
   if (is.null(df)) {
-    stop("Please specify a data frame which contains age variable(s)")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(agevars)) {
-    stop("Please specify one or more age variables to transform")
+  if (is.null(age_var)) {
+    stop("`age_var` must not be NULL.", call. = FALSE)
   }
 
   if (length(poly_names) != length(poly_form)) {
-    stop("The vectors supplied to arguments 'poly_names' and 'poly_form
-  are not the same length")
+    stop("The vectors supplied to `poly_names` and `poly_form` are not the same length", call. = FALSE)
+  }
+
+  if (!missing(agevars)) {
+    warning("Please use `age_var` instead of `agevars`")
+    age_var <- agevars
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
+  }
+
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
   }
 
   ## We have to do log a bit more differently
@@ -49,17 +60,17 @@ dh.makeAgePolys <- function(df = NULL, agevars = NULL, conns = NULL,
     poly_names <- poly_names[str_detect(poly_names, "log") == FALSE]
     poly_form <- poly_form[str_detect(poly_form, "log") == FALSE]
   }
-  df_age <- c(paste0(df, "$", agevars))
+  df_age <- c(paste0(df, "$", age_var))
 
   polys <- tibble(
-    poly = cross2(agevars, poly_names) %>% map_chr(paste, sep = "", collapse = ""),
+    poly = cross2(age_var, poly_names) %>% map_chr(paste, sep = "", collapse = ""),
     form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = "")
   )
 
   if (log_yn == TRUE) {
     polys <- add_row(
       polys,
-      poly = paste0("log", agevars),
+      poly = paste0(age_var, "_log"),
       form = paste0("log(", df_age, ")")
     )
   }

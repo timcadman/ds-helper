@@ -15,6 +15,7 @@
 #' @param vars vector of variable names in dataframe
 #' @param digits number of decimal places to round continuous stats to. Default
 #'               is 2.
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return The function returns a list with two elements containing dataframes
 #' with summary statistics for (i) categorical and (ii) continuous variables.
@@ -53,25 +54,26 @@
 #' @importFrom DSI datashield.connections_find datashield.aggregate
 #'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) { # nolint
+dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE) { # nolint
 
   ################################################################################
   # 1. First checks
   ################################################################################
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-    stop("Please specify variable(s) to summarise")
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-  dh.doesDfExist(df, conns = conns)
-
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
+  }
   # Not checking whether variable exists because function will show NA if it
   # doesnt
 
@@ -89,7 +91,8 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) { # no
   check_class <- dh.classDiscrepancy(
     df = df,
     vars = vars,
-    conns = conns
+    conns = conns,
+    checks = FALSE
   )
 
   ################################################################################
@@ -112,9 +115,10 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2) { # no
 
   if (nrow(real_disc) > 0) {
     stop(
-      "\nThe following variables do not have the same class in all cohorts. Please
+      "\nThe following variables specified in `vars` do not have the same class in all cohorts. Please
 check with ds.class \n\n",
-      real_disc %>% pull(variable) %>% paste(collapse = "\n")
+      real_disc %>% pull(variable) %>% paste(collapse = "\n"),
+      call. = FALSE
     )
   }
 
@@ -132,41 +136,44 @@ check with ds.class \n\n",
     ) %>%
     dplyr::filter(type == "factor")
 
-  ## ---- Get the levels of these factors ----------------------------------------
-  check_levels <- fact_exist %>%
-    group_by(variable) %>%
-    group_split() %>%
-    map(
-      .,
-      ~ pmap(., function(variable, cohort) {
-        cally <- paste0("levelsDS(", df, "$", variable, ")")
-        datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
-      })
-    ) %>%
-    set_names(sort(unique(fact_exist$variable)))
+  if (nrow(fact_exist) > 0) {
+    ## ---- Get the levels of these factors ----------------------------------------
+    check_levels <- fact_exist %>%
+      group_by(variable) %>%
+      group_split() %>%
+      map(
+        .,
+        ~ pmap(., function(variable, cohort) {
+          cally <- paste0("levelsDS(", df, "$", variable, ")")
+          datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
+        })
+      ) %>%
+      set_names(sort(unique(fact_exist$variable)))
 
-  ## ---- Check whether these levels are identical for all cohorts ---------------
-  level_ref <- check_levels %>%
-    map(unique) %>%
-    map(length) %>%
-    bind_rows() %>%
-    pivot_longer(
-      cols = everything(),
-      values_to = "length",
-      names_to = "variable"
-    ) %>%
-    mutate(same_levels = ifelse(length == 1, "yes", "no")) %>%
-    select(-length)
+    ## ---- Check whether these levels are identical for all cohorts ---------------
+    level_ref <- check_levels %>%
+      map(unique) %>%
+      map(length) %>%
+      bind_rows() %>%
+      pivot_longer(
+        cols = everything(),
+        values_to = "length",
+        names_to = "variable"
+      ) %>%
+      mutate(same_levels = ifelse(length == 1, "yes", "no")) %>%
+      select(-length)
 
-  if (any(level_ref$same_levels == "no") == TRUE) {
-    stop(
-      "The following categorical variables do not have the same levels.
+    if (any(level_ref$same_levels == "no") == TRUE) {
+      stop(
+        "The following categorical variables specified in `vars` do not have the same levels in all cohorts.
 Please check using ds.levels:\n\n",
-      level_ref %>%
-        dplyr::filter(same_levels == "no") %>%
-        pull(variable) %>%
-        paste(., collapse = "\n")
-    )
+        level_ref %>%
+          dplyr::filter(same_levels == "no") %>%
+          pull(variable) %>%
+          paste(., collapse = "\n"),
+        call. = FALSE
+      )
+    }
   }
 
 

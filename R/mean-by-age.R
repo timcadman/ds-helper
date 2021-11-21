@@ -10,33 +10,34 @@
 #' @param outcome outcome variable in long format
 #' @param age_var age in years
 #' @param intervals table defining our age bands
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'
 #' @export
 dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL, conns = NULL,
-                         intervals = NULL) {
+                         intervals = NULL, checks = FALSE) {
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <- . <- NULL
 
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(outcome)) {
-    stop("Please specify an outcome variable")
+    stop("`outcome` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(age_var)) {
-    stop("Please specify a grouping age/time variable")
+    stop("`age_var` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-  dh.doesDfExist(conns = conns, df = df)
-  dh.doVarsExist(conns = conns, vars = c(outcome, age_var), df = df)
-
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
 
   ## There is an easy way and a hard way. If we bin based on integer units of the
   ## binning variable it is quite quick

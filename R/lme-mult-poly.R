@@ -13,29 +13,33 @@
 #' @param df name of dataFrame
 #' @param formulae a vector of model formulae to fit
 #' @param poly_names a vector of names for your models
+#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
 #'
 #' @author Tim Cadman
 #'
 #' @export
-dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL, checks = TRUE) {
   sum_log <- NULL
 
   if (is.null(df)) {
-    stop("Please specify dataframe to use for polynomial models")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(formulae)) {
-    stop("Please specify a vector of model formulae")
+    stop("`formulae` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(poly_names)) {
-    stop("Please specify a vector of names for your models")
+    stop("`poly_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
+  }
 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
 
