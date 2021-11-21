@@ -33,6 +33,7 @@ individual cohorts but yet for pooled models.
 Other trajectory functions: 
 \code{\link{dh.lmeMultPoly}()},
 \code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeLmerForm}()}
+\code{\link{dh.makeLmerForm}()},
+\code{\link{dh.trimPredData}()}
 }
 \concept{trajectory functions}

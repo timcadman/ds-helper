@@ -45,6 +45,7 @@ of polynomial terms and compares the fit.
 Other trajectory functions: 
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()}
+\code{\link{dh.predictLmer}()},
+\code{\link{dh.trimPredData}()}
 }
 \concept{trajectory functions}

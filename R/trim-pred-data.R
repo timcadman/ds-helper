@@ -1,9 +1,9 @@
 #' Trims predicted values based on min and max values provided
 #'
-#' This can be used in conjuncture with `ds.predictLmer`. The new data frame
+#' This is to be used in conjuncture with `ds.predictLmer`. The new data frame
 #' used for prediction may contain age or time values not present in the 
-#' original data. This allows you to remove all predicted values beyong a min
-#' or max age specified. This can ensure that plots only show predict values 
+#' original data. This allows you to remove all predicted values beyond a 
+#' minimum and maximum age. This ensures that plots only show predict values 
 #' over a range where there was actually data. 
 #'
 #' @importFrom tibble tibble
@@ -11,13 +11,19 @@
 #' @importFrom dplyr bind_rows filter between
 #' @importFrom rlang sym
 #'
-#' @param pred a tibble of predicted values
-#' @param coh_names a vector of cohort names corresponding to the cohort names in pred
-#' @param age name of the var'iable corresponding to age in the predicted values
-#' @param min a vector of minimum values of age, length equal to number of cohorts
-#' @param max a vector of maximum values of age, length equal to number of cohorts
+#' @param pred Tibble of predicted values returned by dh.predictLmer.
+#' @param coh_names Character Vector of cohort names corresponding to cohorts 
+#' included in `pred`.
+#' @param age Character specifying name of the age variable in `pred`.
+#' @param min Vector of minimum values of age with length equal to number of 
+#' cohorts in `pred`.
+#' @param max Vector of maximum values of age with length equal to number of 
+#' cohorts in `pred`.
 #'
-#' @return The original tibble of predicted values, trimmed by the min and max ages
+#' @return `pred` is returned as a tibble with predicted values outside of 
+#' `min` and `max` removed.
+#
+#' @family trajectory functions
 #'
 #' @export
 dh.trimPredData <- function(pred = NULL, coh_names = NULL, age = "age", min = NULL, max = NULL) {

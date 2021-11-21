@@ -45,7 +45,8 @@ creates multiple transformations of an age variable to different powers.
 Other trajectory functions: 
 \code{\link{dh.lmeMultPoly}()},
 \code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()}
+\code{\link{dh.predictLmer}()},
+\code{\link{dh.trimPredData}()}
 
 Other data manipulation functions: 
 \code{\link{dh.dropCols}()},
