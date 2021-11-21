@@ -13,7 +13,7 @@ dh.renameVars(
 )
 }
 \arguments{
-\item{df}{A character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{current_names}{A character vector of columns within `df` to rename.}
 

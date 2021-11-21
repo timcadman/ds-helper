@@ -15,7 +15,7 @@ dh.meanByAge(
 )
 }
 \arguments{
-\item{df}{A character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{outcome}{outcome variable in long format}
 

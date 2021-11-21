@@ -14,7 +14,7 @@ dh.getAnonPlotData(
 )
 }
 \arguments{
-\item{df}{A character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{v1}{A character giving the name of a column within `df` for which to 
 extract anonymised data.}

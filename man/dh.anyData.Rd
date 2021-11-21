@@ -7,7 +7,7 @@
 dh.anyData(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
-\item{df}{Character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{vars}{Character vector of columns within `df`.}
 
@@ -27,7 +27,4 @@ model. Manually identifying which cohorts have some data on required
 variables is time-consuming and at risk of error. This function automatically 
 generates a look-up table with this information.
 }
-\seealso{
-[dh.defineCases()] [dh.classDiscrepancy()]
-}
-\concept{describe}
+\concept{describing functions}

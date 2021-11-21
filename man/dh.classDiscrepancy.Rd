@@ -8,10 +8,10 @@ differences}
 dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 }
 \arguments{
-\item{df}{A character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{An optional character vector of columns within `df` to describe. 
-If NULL all variables will be included.}
+\item{vars}{Optionally, a character vector specifying columns within `df` to 
+describe. If NULL all variables will be included.}
 
 \item{conns}{DataSHIELD connections object.}
 
@@ -19,8 +19,9 @@ If NULL all variables will be included.}
 function. Default is TRUE.}
 }
 \value{
-a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
-       columns for each cohort indicating the class of the variable
+A tibble with columns for each variable and rows for each cohort 
+describing the class of the variable, with an additional column 'discrepancy'
+summarising whether there are differences between cohorts.
 }
 \description{
 Either through using ds.dataFrameFill, or due to mistakes in uploading
@@ -29,3 +30,4 @@ create problems as many DataSHIELD functions require the input variable to
 have the same class in all studies. This function produces a tibble showing 
 the class of each variable.
 }
+\concept{descriptive functions}

@@ -7,7 +7,7 @@
 dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
 }
 \arguments{
-\item{df}{A server side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{vars}{A character vector of columns within `df` to describe.}
 

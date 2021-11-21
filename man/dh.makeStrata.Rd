@@ -21,7 +21,7 @@ dh.makeStrata(
 )
 }
 \arguments{
-\item{df}{A character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{id_var}{A character giving the name of the column within `df` which 
 uniquely identifies each subject.}

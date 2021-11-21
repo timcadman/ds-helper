@@ -15,7 +15,7 @@ dh.makeIQR(
 )
 }
 \arguments{
-\item{df}{A character giving the name of a server-side data frame.}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{vars}{A character vector of columns within `df` to transform.}
 
@@ -23,7 +23,7 @@ dh.makeIQR(
 calculated within cohort, or "pooled" to transform based on the
 pooled IQR across all cohorts provided in the 'conns' argument.}
 
-\item{conns}{connections object to DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
 \item{new_obj}{name for new dataframe with original vars and iqr versions.}
 
