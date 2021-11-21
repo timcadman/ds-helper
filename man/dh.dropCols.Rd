@@ -46,6 +46,7 @@ and creates a new dataframe with only the required variables.
 Other data manipulation functions: 
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeIQR}()},
-\code{\link{dh.makeStrata}()}
+\code{\link{dh.makeStrata}()},
+\code{\link{dh.renameVars}()}
 }
 \concept{data manipulation functions}

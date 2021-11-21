@@ -5,15 +5,18 @@
 #'
 #' @template conns
 #' @template df
-#' @param current_names A character vector of columns within `df` to rename.
-#' @param new_names A character vector giving the new names for the columns 
-#' described in `current_names`.
+#' @param current_names Character vector of columns within `df` to rename.
+#' @param new_names Character vector giving the new names for the columns 
+#' specified in `current_names`.
 #' @template checks
-#' @return None. The new variables are added to the df specified
+#' @return Data frame specified in `df` is returned server-side with variables
+#' renamed.
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' @importFrom DSI datashield.connections_find
+#'
+#' @family data manipulation functions
 #'
 #' @export
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,

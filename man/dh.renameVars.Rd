@@ -15,10 +15,10 @@ dh.renameVars(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{current_names}{A character vector of columns within `df` to rename.}
+\item{current_names}{Character vector of columns within `df` to rename.}
 
-\item{new_names}{A character vector giving the new names for the columns 
-described in `current_names`.}
+\item{new_names}{Character vector giving the new names for the columns 
+in `current_names`.}
 
 \item{conns}{DataSHIELD connections object.}
 
@@ -26,9 +26,18 @@ described in `current_names`.}
 function. Default is TRUE.}
 }
 \value{
-None. The new variables are added to the df specified
+Data frame specified in `df` is returned server-side with renamed 
+variables.
 }
 \description{
 This function is an analogue of `dplyr::rename` which allows you to rename 
 columns of a serverside data frame.
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.dropCols}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeIQR}()},
+\code{\link{dh.makeStrata}()}
+}
+\concept{data manipulation functions}
