@@ -1,22 +1,30 @@
 #' Extracts an anonymised version of serverside data which can be used to create 
 #' bespoke plots
 #'
-#' Whilst DataSHIELD has plotting functionality, for publications we may need 
-#' more flexiblity in creating plots. This function calls the serverside 
-#' functions which create an anonymised copy of data, and returns the values in
-#' a local object. You can then use these values (e.g. with ggplot2) to create
-#' plots. 
+#' Whilst DataSHIELD has basic plotting functionality, for publications you may 
+#' need more flexiblity in creating plots. This function calls server-side 
+#' functions which create an anonymised copy of the data, and returns this data 
+#' in a client-side object. These values can then be used to create plots (e.g
+#' with ggplot2). 
+#'
+#' This function can return two types of anonymised data: either anonymised
+#' data for a single variable, or scatter-plot data for two variables.
 #'
 #' @template df
-#' @param v1 A character giving the name of a column within `df` for which to 
+#' @param var_1 Character giving the name of a column within `df` for which to 
 #' extract anonymised data.
-#' @param v2 An optional second character giving the name of a column within 
-#' `df`. This is only required if you want scatter plot data.
-#' @param conns DataSHIELD connections object.
+#' @param var_2 Optionally, character specifying a second column within `df`. 
+#' If a column is specified then scatter plot data will be returned with `var_1`
+#' as the explanatory variable and `var_2` as the outcome variable. Default is 
+#' NULL which returns anonymised data only for `var_1`.
+#'q @template conns
 #' @template checks
+#
+#' @family functions to assist plot-making
 #'
-#' @return A list of the length of the number of variables provided containing
-#'         anonymised values for each subject of each cohort provided.
+#' @return A tibble in long format containing columns 'cohort', 'var_1' and 
+#' optionally `var_2`. The values for `var1` and `var_2` are the anonymised 
+#' data points.
 #'
 #' @importFrom DSI datashield.connections_find
 #' @importFrom dsBaseClient ds.scatterPlot
@@ -26,15 +34,15 @@
 #' @importFrom rlang quo_name
 #'
 #' @export
-dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, checks = TRUE) {
+dh.getAnonPlotData <- function(df = NULL, var_1 = NULL, var_2 = NULL, conns = NULL, checks = TRUE) {
   . <- value <- x <- y <- NULL
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(v1)) {
-    stop("`v1` must not be NULL. Please specify at least one variable to get plot data for.", call. = FALSE)
+  if (is.null(var_1)) {
+    stop("`var_1` must not be NULL. Please specify at least one variable to get plot data for.", call. = FALSE)
   }
 
   if (is.null(conns)) {
@@ -42,15 +50,15 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
   }
 
   if (checks == TRUE) {
-    .isDefined(df = df, vars = v1, conns = conns)
+    .isDefined(df = df, vars = var_1, conns = conns)
   }
 
   ## ---- Where only one variable is provided ------------------------------------------------
-  if (is.null(v2)) {
+  if (is.null(var_2)) {
     call <- paste0(
       "scatterPlotDS(",
-      paste0(df, "$", v1), ",",
-      paste0(df, "$", v1),
+      paste0(df, "$", var_1), ",",
+      paste0(df, "$", var_1),
       ",method.indicator = 1, k=3, noise=0.25)"
     )
 
@@ -60,14 +68,14 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
       map(~ .[[1]]) %>%
       map(as_tibble) %>%
       bind_rows(.id = "cohort") %>%
-      dplyr::rename(!!quo_name(v1) := value)
+      dplyr::rename(!!quo_name(var_1) := value)
 
     ## ---- Where two variables are provided -------------------------------------------------------------------
-  } else if (!is.null(v2)) {
+  } else if (!is.null(var_2)) {
     call <- paste0(
       "scatterPlotDS(",
-      paste0(df, "$", v1), ",",
-      paste0(df, "$", v2),
+      paste0(df, "$", var_1), ",",
+      paste0(df, "$", var_2),
       ",method.indicator = 1, k=3, noise=0.25)"
     )
 
@@ -81,8 +89,8 @@ dh.getAnonPlotData <- function(df = NULL, v1 = NULL, v2 = NULL, conns = NULL, ch
       )) %>%
       bind_rows(.id = "cohort") %>%
       dplyr::rename(
-        !!quo_name(v1) := x,
-        !!quo_name(v2) := y
+        !!quo_name(var_1) := x,
+        !!quo_name(var_2) := y
       )
   }
 
