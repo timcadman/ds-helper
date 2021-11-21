@@ -18,7 +18,7 @@ dh.renameVars(
 \item{current_names}{Character vector of columns within `df` to rename.}
 
 \item{new_names}{Character vector giving the new names for the columns 
-in `current_names`.}
+specified in `current_names`.}
 
 \item{conns}{DataSHIELD connections object.}
 
@@ -26,8 +26,8 @@ in `current_names`.}
 function. Default is TRUE.}
 }
 \value{
-Data frame specified in `df` is returned server-side with renamed 
-variables.
+Data frame specified in `df` is returned server-side with variables
+renamed.
 }
 \description{
 This function is an analogue of `dplyr::rename` which allows you to rename 

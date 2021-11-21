@@ -7,15 +7,15 @@
 dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 }
 \arguments{
-\item{obj}{objects that you want to either keep or remove}
+\item{obj}{Server-side objects that you want to either keep or remove.}
 
-\item{type}{either "remove" to remove the listed objects of "keep" to keep
-the listed objects and remove everything else.}
+\item{type}{Either "remove" to remove objects specified in `obj` or "keep" to 
+keep objects specified in `obj` and remove everything else.}
 
 \item{conns}{DataSHIELD connections object.}
 }
 \value{
-None. Objects removed from ds environment
+None. Objects are removed from the server-side environnment.
 }
 \description{
 This is a wrapper around ds.rm to allow you to remove multiple objects 

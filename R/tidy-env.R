@@ -4,11 +4,11 @@
 #' in one call.
 #'
 #' @param conns DataSHIELD connections object.
-#' @param obj objects that you want to either keep or remove
-#' @param type either "remove" to remove the listed objects of "keep" to keep
-#'             the listed objects and remove everything else.
+#' @param obj Server-side objects that you want to either keep or remove.
+#' @param type Either "remove" to remove objects specified in `obj` or "keep" to 
+#' keep objects specified in `obj` and remove everything else.
 #'
-#' @return None. Objects removed from ds environment
+#' @return None. Objects are removed from the server-side environnment.
 #'
 #' @importFrom purrr map imap
 #' @importFrom dsBaseClient ds.rm ds.ls
