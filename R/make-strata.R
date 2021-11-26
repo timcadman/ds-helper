@@ -97,6 +97,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL,
   if (checks == TRUE) {
     .checkInputs(
       df = df,
+      id_var = id_var,
       var_to_subset = var_to_subset,
       age_var = age_var,
       bands = bands,
@@ -384,7 +385,11 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL,
     stop("`mult_action` must not be NULL.", call. = FALSE)
   }
 
-  if (!missing(df_name)) {
+  if (is.null(id_var)) {
+    stop("`id_var` must not be NULL.", call. = FALSE)
+  }
+
+  if (!is.null(df_name)) {
     warning("Please use `new_obj` instead of `df_name`")
     new_obj <- df_name
   }
