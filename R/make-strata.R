@@ -430,7 +430,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL,
 #' Check that there is some non-missing data on provided variable.
 #' This is needed so we don't try to create empty subsets later
 #'
-#' @param df
+#' @param df Opal/armadillo data frame
 #' @param var variable in df to check
 #' @param conns datashield connections object
 #'
