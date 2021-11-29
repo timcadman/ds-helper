@@ -68,14 +68,16 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   dh.dropCols(
     df = df,
     vars = current_names,
-    new_df_name = df,
+    type = "remove",
+    new_obj = df,
     conns = conns,
     checks = FALSE
   )
 
   dh.tidyEnv(
     obj = new_names,
-    conns = conns
+    conns = conns,
+    type = "remove"
   ) %>%
     invisible()
 }
