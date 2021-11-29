@@ -40,7 +40,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   names <- NULL
 
   if (checks == TRUE) {
-    .isDefined(df = df, vars = vars, conns = conns)
+    .isDefined(df = df, vars = current_names, conns = conns)
   }
 
   if (length(current_names) != length(new_names)) {
