@@ -52,6 +52,10 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
     new_obj <- new_df_name
   }
 
+  if (is.null(type)) {
+    stop("`type` must not be NULL.", call. = FALSE)
+  }
+
   type <- match.arg(type, c("remove", "keep"))
 
   if (type == "keep") {
