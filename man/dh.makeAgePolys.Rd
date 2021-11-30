@@ -33,7 +33,7 @@ function. Default is TRUE.}
 \item{agevars}{Retired argument name. Please use `age_var' instead.}
 }
 \value{
-Transformations of age are added as columns to server-side object 
+Transformations of age are added as columns to server-side object
 specified in `df`.
 }
 \description{
@@ -52,7 +52,8 @@ Other data manipulation functions:
 \code{\link{dh.dropCols}()},
 \code{\link{dh.makeIQR}()},
 \code{\link{dh.makeStrata}()},
-\code{\link{dh.renameVars}()}
+\code{\link{dh.renameVars}()},
+\code{\link{dh.tidyEnv}()}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}

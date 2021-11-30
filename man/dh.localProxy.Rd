@@ -15,26 +15,26 @@ dh.localProxy(df = NULL, conns = NULL, checks = TRUE)
 function. Default is TRUE.}
 }
 \value{
-Creates a local proxy dataframe. Stops function if `df` doesn't exist 
+Creates a local proxy dataframe. Stops function if `df` doesn't exist
 or contains variables with inconsistent class across cohorts.
 }
 \description{
-If you have a remote dataframe on the servers, it can be challenging to 
-remember variable names when writing code. Because the dataframes are on 
-remote servers, auto-complete won't work in RStudio. The purpose of this 
-function is to create a local object that has the same structure as the 
-remote data frame and enables the use of autocomplete when writing DataSHIELD 
+If you have a remote dataframe on the servers, it can be challenging to
+remember variable names when writing code. Because the dataframes are on
+remote servers, auto-complete won't work in RStudio. The purpose of this
+function is to create a local object that has the same structure as the
+remote data frame and enables the use of autocomplete when writing DataSHIELD
 code.
 }
 \details{
-If you have a dataframe "D" with columns LAB_TSC, DIS_CVA and 
+If you have a dataframe "D" with columns LAB_TSC, DIS_CVA and
 DIS_DIAB, normally you would need to write:
 
-`ds.summary("D$LAB_TSC")` with the variable name spelled correctly 
-(no autocomplete!) and remember quotation marks. However after running this 
+`ds.summary("D$LAB_TSC")` with the variable name spelled correctly
+(no autocomplete!) and remember quotation marks. However after running this
 function you can type:
 
-`ds.summary(D$` and hit tab, and the list of variables will be displayed. 
+`ds.summary(D$` and hit tab, and the list of variables will be displayed.
 Choose one and hit enter to finish up with:
 
 `ds.summary(D$LAB_TSC)` - no quotation marks needed either!

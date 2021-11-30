@@ -9,24 +9,24 @@ dh.predictLmer(model = NULL, new_data = NULL, coh_names = NULL, newdata = NULL)
 \arguments{
 \item{model}{Model object returned by ds.lmerSLMA.}
 
-\item{new_data}{Tibble or data frame containing values for variables in 
-`model` at which to predict values of the outcome. The column names in 
-`new_data` must be identical to those in `model`, and all variables included 
+\item{new_data}{Tibble or data frame containing values for variables in
+`model` at which to predict values of the outcome. The column names in
+`new_data` must be identical to those in `model`, and all variables included
 in `model` must be present in `new_data`.}
 
-\item{coh_names}{Vector of cohort names. These must be in the order that 
+\item{coh_names}{Vector of cohort names. These must be in the order that
 cohorts were specified in `model`.}
 
 \item{newdata}{Retired argument name. Please use `new_data' instead.}
 }
 \value{
-Tibble of predicted outcome values based on values provided in 
+Tibble of predicted outcome values based on values provided in
 `new_data`.
 }
 \description{
-Currently there is no `predict` method for lmer models within DataSHIELD. 
-This function replicates this, by calculating predicted values for fixed 
-effects based on the model coefficients. Standard errors are returned for 
+Currently there is no `predict` method for lmer models within DataSHIELD.
+This function replicates this, by calculating predicted values for fixed
+effects based on the model coefficients. Standard errors are returned for
 individual cohorts but yet for pooled models.
 }
 \seealso{

@@ -17,14 +17,14 @@ dh.anyData(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 function. Default is TRUE.}
 }
 \value{
-Client-side tibble containing columns for each variable and rows 
+Client-side tibble containing columns for each variable and rows
 for each cohort indicating if the variable is not completely missing.
 }
 \description{
-When performing a Study Level Meta Analysis of coefficients, it 
-is usually necessary that all cohorts have some data on all variables in the 
-model. Manually identifying which cohorts have some data on required 
-variables is time-consuming and at risk of error. This function automatically 
+When performing a Study Level Meta Analysis of coefficients, it
+is usually necessary that all cohorts have some data on all variables in the
+model. Manually identifying which cohorts have some data on required
+variables is time-consuming and at risk of error. This function automatically
 generates a look-up table with this information.
 }
 \seealso{

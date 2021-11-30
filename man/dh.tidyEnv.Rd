@@ -9,7 +9,7 @@ dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 \arguments{
 \item{obj}{Server-side objects that you want to either keep or remove.}
 
-\item{type}{Either "remove" to remove objects specified in `obj` or "keep" to 
+\item{type}{Either "remove" to remove objects specified in `obj` or "keep" to
 keep objects specified in `obj` and remove everything else.}
 
 \item{conns}{DataSHIELD connections object.}
@@ -18,6 +18,15 @@ keep objects specified in `obj` and remove everything else.}
 None. Objects are removed from the server-side environnment.
 }
 \description{
-This is a wrapper around ds.rm to allow you to remove multiple objects 
+This is a wrapper around ds.rm to allow you to remove multiple objects
 in one call.
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.dropCols}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeIQR}()},
+\code{\link{dh.makeStrata}()},
+\code{\link{dh.renameVars}()}
+}
+\concept{data manipulation functions}

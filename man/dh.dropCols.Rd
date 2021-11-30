@@ -17,14 +17,14 @@ dh.dropCols(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector specifying columns within `df` to be removed or 
+\item{vars}{Character vector specifying columns within `df` to be removed or
 kept.}
 
-\item{new_obj}{Optionally, character specifying name for new server-side 
+\item{new_obj}{Optionally, character specifying name for new server-side
 data frame. Default is to return original data frame with columns removed.}
 
-\item{type}{Character specifying how to treat `vars`. If "remove" these 
-variables are removed from the data frame, if "keep" these variables are 
+\item{type}{Character specifying how to treat `vars`. If "remove" these
+variables are removed from the data frame, if "keep" these variables are
 kept in the data frame and all others are removed.}
 
 \item{conns}{DataSHIELD connections object.}
@@ -38,8 +38,8 @@ function. Default is TRUE.}
 Server-side data frame the specified subset of columns.
 }
 \description{
-Often we want to remove variables from a dataframe. This function 
-allows you to specify the variables you either want to remove or keep and  
+Often we want to remove variables from a dataframe. This function
+allows you to specify the variables you either want to remove or keep and
 and creates a new dataframe with only the required variables.
 }
 \seealso{
@@ -47,6 +47,7 @@ Other data manipulation functions:
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeIQR}()},
 \code{\link{dh.makeStrata}()},
-\code{\link{dh.renameVars}()}
+\code{\link{dh.renameVars}()},
+\code{\link{dh.tidyEnv}()}
 }
 \concept{data manipulation functions}

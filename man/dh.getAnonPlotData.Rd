@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-anon-plot-data.R
 \name{dh.getAnonPlotData}
 \alias{dh.getAnonPlotData}
-\title{Extracts an anonymised version of serverside data which can be used to create 
+\title{Extracts an anonymised version of serverside data which can be used to create
 bespoke plots}
 \usage{
 dh.getAnonPlotData(
@@ -16,12 +16,12 @@ dh.getAnonPlotData(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{var_1}{Character giving the name of a column within `df` for which to 
+\item{var_1}{Character giving the name of a column within `df` for which to
 extract anonymised data.}
 
-\item{var_2}{Optionally, character specifying a second column within `df`. 
+\item{var_2}{Optionally, character specifying a second column within `df`.
 If a column is specified then scatter plot data will be returned with `var_1`
-as the explanatory variable and `var_2` as the outcome variable. Default is 
+as the explanatory variable and `var_2` as the outcome variable. Default is
 NULL which returns anonymised data only for `var_1`.}
 
 \item{conns}{DataSHIELD connections object.}
@@ -30,14 +30,14 @@ NULL which returns anonymised data only for `var_1`.}
 function. Default is TRUE.}
 }
 \value{
-A tibble in long format containing columns 'cohort', 'var_1' and 
-optionally `var_2`. The values for `var1` and `var_2` are the anonymised 
+A tibble in long format containing columns 'cohort', 'var_1' and
+optionally `var_2`. The values for `var1` and `var_2` are the anonymised
 data points.
 }
 \description{
-Whilst DataSHIELD has basic plotting functionality, for publications you may 
-need more flexiblity in creating plots. This function calls server-side 
-functions which create an anonymised copy of the data, and returns this data 
+Whilst DataSHIELD has basic plotting functionality, for publications you may
+need more flexiblity in creating plots. This function calls server-side
+functions which create an anonymised copy of the data, and returns this data
 in a client-side object. These values can then be used to create plots (e.g
 with ggplot2).
 }

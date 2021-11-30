@@ -20,9 +20,9 @@ dh.meanByGroup(
 
 \item{group_var}{String specifying grouping variable within 'df'.}
 
-\item{intervals}{Optionally, numeric vector defining how to stratify 
-`group_var`. Values should specify alternately lower and upper values for 
-each strata. If NULL, `outcome` is summarised by every unique value of 
+\item{intervals}{Optionally, numeric vector defining how to stratify
+`group_var`. Values should specify alternately lower and upper values for
+each strata. If NULL, `outcome` is summarised by every unique value of
 `group_var`.}
 
 \item{conns}{DataSHIELD connections object.}
@@ -35,7 +35,7 @@ Tibble containing mean values for each strata of `group_var`.
 }
 \description{
 This has similar functionality to `tapply` or the dplyr chain `group_by` %>%
-`summarise`. It offers additional flexilibity over `ds.tapply` in that it 
+`summarise`. It offers additional flexilibity over `ds.tapply` in that it
 allows you to specify upper and lower values for each strata. By contrast,
 ds.tapply will produce a summary based on every unique value of the grouping
 variable, which may not always be what is required.

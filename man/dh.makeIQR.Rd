@@ -19,8 +19,8 @@ dh.makeIQR(
 
 \item{vars}{Character vector of columns within `df` to transform.}
 
-\item{type}{Use "separate" to transform the variable based on the 
-within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts 
+\item{type}{Use "separate" to transform the variable based on the
+within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts
 specified in `conns`.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
@@ -33,12 +33,12 @@ function. Default is TRUE.}
 \item{new_df_name}{Retired argument. Please use `new_obj' instead.}
 }
 \value{
-Server-side object specified in `df` with transformed variables added 
+Server-side object specified in `df` with transformed variables added
 as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
 "iqr_p" if pooled is type is "pooled".
 }
 \description{
-This function scales variables by their interquartile range. IQR is 
+This function scales variables by their interquartile range. IQR is
 calulcated either within cohort or using the pooled IQR across cohorts.
 The formula used is: value[subject] / (75th percentile - 25th percentile).
 }
@@ -47,6 +47,7 @@ Other data manipulation functions:
 \code{\link{dh.dropCols}()},
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeStrata}()},
-\code{\link{dh.renameVars}()}
+\code{\link{dh.renameVars}()},
+\code{\link{dh.tidyEnv}()}
 }
 \concept{data manipulation functions}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/class-discrepancy.R
 \name{dh.classDiscrepancy}
 \alias{dh.classDiscrepancy}
-\title{Describes the class of one or more variables across cohorts and indicates 
+\title{Describes the class of one or more variables across cohorts and indicates
 differences}
 \usage{
 dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
@@ -10,7 +10,7 @@ dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Optionally, a character vector specifying columns within `df` to 
+\item{vars}{Optionally, a character vector specifying columns within `df` to
 describe. If NULL all variables will be included.}
 
 \item{conns}{DataSHIELD connections object.}
@@ -19,15 +19,15 @@ describe. If NULL all variables will be included.}
 function. Default is TRUE.}
 }
 \value{
-A tibble with columns for each variable and rows for each cohort 
+A tibble with columns for each variable and rows for each cohort
 describing the class of the variable, with an additional column 'discrepancy'
 summarising whether there are differences between cohorts.
 }
 \description{
 Either through using ds.dataFrameFill, or due to mistakes in uploading
-data, the same variable may have a different class across cohorts. This can 
-create problems as many DataSHIELD functions require the input variable to 
-have the same class in all studies. This function produces a tibble showing 
+data, the same variable may have a different class across cohorts. This can
+create problems as many DataSHIELD functions require the input variable to
+have the same class in all studies. This function produces a tibble showing
 the class of each variable.
 }
 \seealso{

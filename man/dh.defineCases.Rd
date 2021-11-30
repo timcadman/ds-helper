@@ -21,7 +21,7 @@ dh.defineCases(
 \item{vars}{Character vector of columns within `df` to form definition set.}
 
 \item{type}{Character specifying how to define cases. Use "any" to describe
-subjects with data on any of `vars`, and "all" to describe subjects with data 
+subjects with data on any of `vars`, and "all" to describe subjects with data
 on all of `vars.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
@@ -35,13 +35,13 @@ function. Default is TRUE.}
 }
 \value{
 Server-side vector defining whether subject meets criteria defined by
-`vars` and `type`. 1 indicates that criteria were met, 0 indicates that 
+`vars` and `type`. 1 indicates that criteria were met, 0 indicates that
 criteria weren't met.
 }
 \description{
-In an analysis you may want to subset your dataset to contain only subjects 
-meeting a specific criteria, e.g. data on at least one outcome or data on all 
-exposures. This function automates this operation by describing whether a 
+In an analysis you may want to subset your dataset to contain only subjects
+meeting a specific criteria, e.g. data on at least one outcome or data on all
+exposures. This function automates this operation by describing whether a
 subject has non-missing values for any or all of a set of given variables.
 }
 \details{
