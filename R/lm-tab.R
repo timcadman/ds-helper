@@ -173,8 +173,7 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
     mutate(
       variable = ifelse(variable == "(Intercept)", "intercept", variable),
       value = round(value, digits)
-    ) %>%
-    dplyr::filter(coefficient != "se")
+    )
 
 
   ## ---- Convert to odds ratios where specified -------------------------------
