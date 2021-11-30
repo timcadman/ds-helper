@@ -134,14 +134,14 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
       bind_rows(.id = "cohort") %>%
       rename(est = Estimate) %>%
       rename(se = "Std. Error") %>%
-      select(cohort, variable, est, se)
+      dplyr::select(cohort, variable, est, se)
 
     glm_slma <- model$SLMA.pooled.ests.matrix %>%
       as_tibble(rownames = "variable") %>%
       rename(est = pooled.ML) %>%
       rename(se = se.ML) %>%
       mutate(cohort = "combined") %>%
-      select(cohort, variable, est, se)
+      dplyr::select(cohort, variable, est, se)
 
     ## Fix a problem where variables are not named correctly
     if (length(nstudy) == 1) {
@@ -212,7 +212,7 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
-      select(variable, est, pvalue)
+      dplyr::select(variable, est, pvalue)
   }
 
   if (type == "lmer") {
