@@ -51,7 +51,7 @@
 #'
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
-#' left_join bind_rows rename filter mutate_at vars distinct add_row
+#' left_join bind_rows rename filter mutate_at vars distinct add_row n_distinct
 #' @importFrom purrr map flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
@@ -91,7 +91,7 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     variance <- variable <- category <- value <- cohort_n <- valid_n <-
     missing_n <- perc_missing <- EstimatedVar <- Nvalid <- any_obs <-
     bind_cols <- cohort <- combined <- disc <- discrepancy <- key_stats <-
-    n_distinct <- out_cont <- outcome <- same_levels <- se <- stat <-
+    out_cont <- outcome <- same_levels <- se <- stat <-
     stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
     perc_valid <- perc_total <- Ntotal <- NULL
 
