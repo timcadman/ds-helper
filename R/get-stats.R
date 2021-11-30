@@ -132,41 +132,43 @@ check with ds.class \n\n",
     ) %>%
     dplyr::filter(type == "factor")
 
-  ## ---- Get the levels of these factors ----------------------------------------
-  check_levels <- fact_exist %>%
-    group_by(variable) %>%
-    group_split() %>%
-    map(
-      .,
-      ~ pmap(., function(variable, cohort) {
-        cally <- paste0("levelsDS(", df, "$", variable, ")")
-        datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
-      })
-    ) %>%
-    set_names(sort(unique(fact_exist$variable)))
+  if (nrow(fact_exist) > 0) {
+    ## ---- Get the levels of these factors ----------------------------------------
+    check_levels <- fact_exist %>%
+      group_by(variable) %>%
+      group_split() %>%
+      map(
+        .,
+        ~ pmap(., function(variable, cohort) {
+          cally <- paste0("levelsDS(", df, "$", variable, ")")
+          datashield.aggregate(conns, as.symbol(cally))[[1]]$Levels
+        })
+      ) %>%
+      set_names(sort(unique(fact_exist$variable)))
 
-  ## ---- Check whether these levels are identical for all cohorts ---------------
-  level_ref <- check_levels %>%
-    map(unique) %>%
-    map(length) %>%
-    bind_rows() %>%
-    pivot_longer(
-      cols = everything(),
-      values_to = "length",
-      names_to = "variable"
-    ) %>%
-    mutate(same_levels = ifelse(length == 1, "yes", "no")) %>%
-    select(-length)
+    ## ---- Check whether these levels are identical for all cohorts ---------------
+    level_ref <- check_levels %>%
+      map(unique) %>%
+      map(length) %>%
+      bind_rows() %>%
+      pivot_longer(
+        cols = everything(),
+        values_to = "length",
+        names_to = "variable"
+      ) %>%
+      mutate(same_levels = ifelse(length == 1, "yes", "no")) %>%
+      select(-length)
 
-  if (any(level_ref$same_levels == "no") == TRUE) {
-    stop(
-      "The following categorical variables do not have the same levels.
+    if (any(level_ref$same_levels == "no") == TRUE) {
+      stop(
+        "The following categorical variables do not have the same levels.
 Please check using ds.levels:\n\n",
-      level_ref %>%
-        dplyr::filter(same_levels == "no") %>%
-        pull(variable) %>%
-        paste(., collapse = "\n")
-    )
+        level_ref %>%
+          dplyr::filter(same_levels == "no") %>%
+          pull(variable) %>%
+          paste(., collapse = "\n")
+      )
+    }
   }
 
 
