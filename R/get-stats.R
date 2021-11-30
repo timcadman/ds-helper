@@ -47,7 +47,7 @@
 #' * valid_n = As above.
 #' * cohort_n = As above.
 #' * missing_n = As above.
-#' * missing_perc = As above.
+#' * missing_perc = Percentage of observations missing.
 #'
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
