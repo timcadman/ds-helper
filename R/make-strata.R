@@ -48,7 +48,7 @@
 #' Required only if mult_action is "nearest". The order and length of the vector
 #' should correspond to the order and number of the bands.
 #' @param keep_vars Optionally, a vector of variable names within df to include
-#' within each strata created. 
+#' within each strata created.
 #' @template new_obj
 #' @template conns
 #' @template checks
@@ -60,7 +60,7 @@
 #' * age_var.
 #' The suffix .lower_band identifies the band for that variable.
 #'
-#' If argument `keep_vars` is not NULL, then additional variables will be 
+#' If argument `keep_vars` is not NULL, then additional variables will be
 #' added to the data frame representing these variables within the strata
 #' created.
 #'
@@ -82,10 +82,9 @@
 #'
 #' @export
 # nolint
-dh.makeStrata <- function(
-  df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, 
-  mult_action = NULL, mult_vals = NULL, keep_vars = NULL, new_obj = NULL, 
-  band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
+dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL,
+                          mult_action = NULL, mult_vals = NULL, keep_vars = NULL, new_obj = NULL,
+                          band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -365,9 +364,8 @@ dh.makeStrata <- function(
 #' @importFrom rlang arg_match
 #'
 #' @noRd
-.checkInputs <- function(
-  df, id_var, var_to_subset, age_var, bands, band_action, mult_action, 
-  mult_vals, conns, new_obj, df_name, keep_vars) {
+.checkInputs <- function(df, id_var, var_to_subset, age_var, bands, band_action, mult_action,
+                         mult_vals, conns, new_obj, df_name, keep_vars) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -422,15 +420,11 @@ dh.makeStrata <- function(
     stop("Length of `mult_vals` must be half the length of `bands`.", call. = FALSE)
   }
 
-if(is.null(keep_vars)){
-
-  .isDefined(df = df, vars = c(id_var, var_to_subset, age_var), conns = conns)
-
-} else{
-
-.isDefined(df = df, vars = c(id_var, var_to_subset, age_var, keep_vars), conns = conns)
-
-}
+  if (is.null(keep_vars)) {
+    .isDefined(df = df, vars = c(id_var, var_to_subset, age_var), conns = conns)
+  } else {
+    .isDefined(df = df, vars = c(id_var, var_to_subset, age_var, keep_vars), conns = conns)
+  }
   cally <- call("classDS", paste0(df, "$", var_to_subset))
   var_class <- DSI::datashield.aggregate(conns, cally)
 
@@ -507,14 +501,11 @@ if(is.null(keep_vars)){
 #'
 #' @noRd
 .makeSlim <- function(df, id_var, age_var, var_to_subset, conns, keep_vars) {
-  
-vars_to_include <- c(id_var, age_var, var_to_subset)
+  vars_to_include <- c(id_var, age_var, var_to_subset)
 
-if(!is.null(keep_vars)){
-
-vars_to_include <- c(vars_to_include, keep_vars)
-
-}
+  if (!is.null(keep_vars)) {
+    vars_to_include <- c(vars_to_include, keep_vars)
+  }
 
   dh.dropCols(
     df = df,
@@ -687,13 +678,11 @@ vars_to_include <- c(vars_to_include, keep_vars)
     datasources = conns
   )
 
-vars_to_reshape <- c(var_to_subset, age_var)
+  vars_to_reshape <- c(var_to_subset, age_var)
 
-if(!is.null(keep_vars)){
-
-vars_to_reshape <- c(vars_to_reshape, keep_vars)
-
-}
+  if (!is.null(keep_vars)) {
+    vars_to_reshape <- c(vars_to_reshape, keep_vars)
+  }
   # Now we convert to wide format
   ds.reShape(
     data.name = "subset_w_suffix",
