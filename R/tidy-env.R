@@ -15,6 +15,8 @@
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
 #'
+#' @family data manipulation functions
+#'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   . <- NULL
