@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Derives one or more outcome variable(s) from repeated measures data — dh.makeOutcome • dsHelper</title>
+<title>This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded. — dh.makeOutcome • dsHelper</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,8 @@
 
 
 
-<meta property="og:title" content="Derives one or more outcome variable(s) from repeated measures data — dh.makeOutcome" />
-<meta property="og:description" content="Many analyses will want to use outcomes derived at a single time point,
-e.g. BMI between ages 10-14. This function automates the process to do this
-which is quite complex in DataSHIELD. Note that for big datasets this takes
-a long time to run." />
+<meta property="og:title" content="This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded. — dh.makeOutcome" />
+<meta property="og:description" content="This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded." />
 
 
 
@@ -75,7 +72,7 @@ a long time to run." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -126,16 +123,13 @@ a long time to run." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Derives one or more outcome variable(s) from repeated measures data</h1>
+    <h1>This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded.</h1>
     <small class="dont-index">Source: <a href='https://github.com/lifecycle-project/ds-helper/blob/master/R/make-outcome.R'><code>R/make-outcome.R</code></a></small>
     <div class="hidden name"><code>dh.makeOutcome.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Many analyses will want to use outcomes derived at a single time point,
-e.g. BMI between ages 10-14. This function automates the process to do this
-which is quite complex in DataSHIELD. Note that for big datasets this takes
-a long time to run.</p>
+    <p>This was the original version of dh.makeStrata. It was been improved to be much more efficient and clearly coded.</p>
     </div>
 
     <pre class="usage"><span class='fu'>dh.makeOutcome</span><span class='op'>(</span>
@@ -145,11 +139,11 @@ a long time to run.</p>
   bands <span class='op'>=</span> <span class='cn'>NULL</span>,
   mult_action <span class='op'>=</span> <span class='cn'>NULL</span>,
   mult_vals <span class='op'>=</span> <span class='cn'>NULL</span>,
-  keep_original <span class='op'>=</span> <span class='cn'>FALSE</span>,
   df_name <span class='op'>=</span> <span class='cn'>NULL</span>,
   conns <span class='op'>=</span> <span class='cn'>NULL</span>,
   id_var <span class='op'>=</span> <span class='st'>"child_id"</span>,
-  band_action <span class='op'>=</span> <span class='cn'>NULL</span>
+  band_action <span class='op'>=</span> <span class='cn'>NULL</span>,
+  keep_original <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -157,64 +151,50 @@ a long time to run.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>df</th>
-      <td><p>opal dataframe</p></td>
+      <td><p>see argument `df` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>outcome</th>
-      <td><p>name of repeated measures outcome variable</p></td>
+      <td><p>Renamed to `var_to_subset` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>age_var</th>
-      <td><p>Vector of values indicating pairs of low and high values
-for which to derive outcome variables for. Must be even length</p></td>
+      <td><p>see argument `age_var` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>bands</th>
-      <td><p>vector of alternating lower and upper age bands for variable(s)
-you want to create. Variables will be derived for the age range
-&gt; lowest value and &lt;= highest value for each band.</p></td>
+      <td><p>see argument `df` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>mult_action</th>
-      <td><p>if a subject has more than one value within the time
-period do we keep the earliest or latest? Default =
-"earliest"</p></td>
+      <td><p>see argument `mult_action` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>mult_vals</th>
-      <td><p>if "mult_action = nearest", this argument specifies which
-which value in each age band to chose values closest to
-in case of multiple values</p></td>
-    </tr>
-    <tr>
-      <th>keep_original</th>
-      <td><p>keep original data frame in the DataSHIELD backend</p></td>
+      <td><p>see argument `mult_vals` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>df_name</th>
-      <td><p>specify data frame name on the DataSHIELD backend</p></td>
+      <td><p>Renamed to `new_obj` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>conns</th>
-      <td><p>connections object for DataSHIELD backends</p></td>
+      <td><p>see argument `conns` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>id_var</th>
-      <td><p>specify id variable (default assumes LifeCycle name 'child_id')</p></td>
+      <td><p>see argument `id_var` in `dh.makeStrata`</p></td>
     </tr>
     <tr>
       <th>band_action</th>
-      <td><p>specify how the values of bands are evaluated in making the subsets.
-"g_l" = greater than the lowest band and less than the highest band;
-"ge_le" = greater or equal to the lowest band and less than or equal to the highest band;
-"g_le" = greater than the lowest band and less than or equal to the highest band;
-"ge_l" = greater than or equal to the lowest band and less than the highest band;</p></td>
+      <td><p>see argument `band_action` in `dh.makeStrata`</p></td>
+    </tr>
+    <tr>
+      <th>keep_original</th>
+      <td><p>Argument no longer in use in `dh.makeStrata`</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>a dataset containing the newly derived variables</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
