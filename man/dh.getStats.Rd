@@ -51,7 +51,7 @@ Continuous: \cr
 \item valid_n = As above.
 \item cohort_n = As above.
 \item missing_n = As above.
-\item missing_perc = As above.
+\item missing_perc = Percentage of observations missing.
 }
 }
 \description{

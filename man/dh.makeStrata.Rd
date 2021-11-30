@@ -13,6 +13,7 @@ dh.makeStrata(
   bands = NULL,
   mult_action = NULL,
   mult_vals = NULL,
+  keep_vars = NULL,
   new_obj = NULL,
   band_action = NULL,
   conns = NULL,
@@ -46,6 +47,9 @@ chose values closest to if subjects have more than one value per band.
 Required only if mult_action is "nearest". The order and length of the vector
 should correspond to the order and number of the bands.}
 
+\item{keep_vars}{Optionally, a vector of variable names within df to include
+within each strata created.}
+
 \item{new_obj}{Character specifying name for created serverside object.}
 
 \item{band_action}{Character specifying how the values provided in \code{bands}
@@ -69,12 +73,16 @@ function. Default is TRUE.}
 }
 \value{
 Servside dataframe in wide format containing the derived variables.
-For each band specified two variables will be returned:
+For each band specified at least two variables will be returned:
 \itemize{
 \item var_to_subset
 \item age_var.
 The suffix .lower_band identifies the band for that variable.
 }
+
+If argument \code{keep_vars} is not NULL, then additional variables will be
+added to the data frame representing these variables within the strata
+created.
 }
 \description{
 For many analyses you may want to create strata of repeated measures data
