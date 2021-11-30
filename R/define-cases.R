@@ -106,6 +106,15 @@ dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, new_obj = NULL,
         calltext <- call("BooleDS", x, -999999, 6, 0, TRUE)
         DSI::datashield.assign(conns, paste0(x, "_dc_1"), calltext)
       })
+
+    ## Add up these vectors. Value >= 1 means there is data on at least one.
+    cally <- as.symbol(paste0(paste0(vars, "_dc_1"), collapse = "+"))      
+    
+    DSI::datashield.assign(conns, "dc_any_data", cally)
+      
+    calltext <- call("BooleDS", "dc_any_data", 1, 6, 0, TRUE)
+    DSI::datashield.assign(conns, new_obj, calltext)
+      
   }
 
   if (type == "all") {
