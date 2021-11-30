@@ -1,7 +1,7 @@
 Package: dsHelper
 Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
-Version: 0.3.1
+Version: 0.3.1.9000
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
 Authors@R: 
   c(person(given= "Tim", 
