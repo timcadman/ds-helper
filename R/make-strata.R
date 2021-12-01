@@ -170,7 +170,12 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     op_2 = op_symbol[2],
     boole_name = pairs %>% map_chr(~ paste0("boole", "_", paste0(., collapse = "_"))),
     subset_name = pairs %>% map_chr(~ paste0("subset", "_", paste0(., collapse = "_")))
-  )
+  ) %>%
+  mutate(across(c(boole_name, subset_name), 
+    ~str_replace_all(
+      string = ., 
+      pattern = "-", 
+      replacement = "m")))
 
   boole_ref %>%
     pmap(function(value_1, op_1, value_2, op_2, boole_name, ...) {
