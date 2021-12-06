@@ -1,4 +1,4 @@
-#' Internal function  to check whether object exists.
+#' Internal function to check whether object exists.
 #'
 #' This is a wrapper around isDefined with more flexibility.
 #' It always checks if the object exist, and optionally checks if variables
