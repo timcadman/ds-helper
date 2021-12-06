@@ -1,4 +1,4 @@
-#' Produces a rance of descriptive statistics in a useful format
+#' Produces a range of descriptive statistics in a useful format
 #'
 #' Whilst dsBaseClient provides the functions 'ds.table' and 'ds.summary' to
 #' calculate descriptive statistics, their output is not in a very useable
