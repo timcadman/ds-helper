@@ -74,7 +74,7 @@ keep or drop and create a new dataframe with only the variables you need." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
       </span>
     </div>
 
@@ -139,9 +139,11 @@ keep or drop and create a new dataframe with only the variables you need.</p>
     <pre class="usage"><span class='fu'>dh.dropCols</span><span class='op'>(</span>
   df <span class='op'>=</span> <span class='cn'>NULL</span>,
   vars <span class='op'>=</span> <span class='cn'>NULL</span>,
-  new_df_name <span class='op'>=</span> <span class='va'>df</span>,
+  new_obj <span class='op'>=</span> <span class='va'>df</span>,
   type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"remove"</span>, <span class='st'>"keep"</span><span class='op'>)</span>,
-  conns <span class='op'>=</span> <span class='cn'>NULL</span>
+  conns <span class='op'>=</span> <span class='cn'>NULL</span>,
+  checks <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  new_df_name <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -156,7 +158,7 @@ keep or drop and create a new dataframe with only the variables you need.</p>
       <td><p>variables to keep or remove</p></td>
     </tr>
     <tr>
-      <th>new_df_name</th>
+      <th>new_obj</th>
       <td><p>name for the new dataframe</p></td>
     </tr>
     <tr>
@@ -166,6 +168,14 @@ keep or drop and create a new dataframe with only the variables you need.</p>
     <tr>
       <th>conns</th>
       <td><p>connections object to DataSHIELD backends</p></td>
+    </tr>
+    <tr>
+      <th>checks</th>
+      <td><p>Boolean. Whether or not to perform checks prior to running function. Default is TRUE.</p></td>
+    </tr>
+    <tr>
+      <th>new_df_name</th>
+      <td><p>Retired argument name. Please use `new_obj' instead.</p></td>
     </tr>
     </table>
 

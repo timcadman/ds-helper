@@ -175,8 +175,7 @@ check with ds.class \n\n",
 
     if (any(level_ref$same_levels == "no") == TRUE) {
       stop(
-        "The following categorical variables specified in `vars` do not have the same levels in all cohorts.
-Please check using ds.levels:\n\n",
+        "The following categorical variables specified in `vars` do not have the same levels in all cohorts. Please check using ds.levels:\n\n",
         level_ref %>%
           dplyr::filter(same_levels == "no") %>%
           pull(variable) %>%

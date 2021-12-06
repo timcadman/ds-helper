@@ -81,10 +81,10 @@
 #' @md
 #'
 #' @export
-# nolint
-dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL,
+dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, #nolint
                           mult_action = NULL, mult_vals = NULL, keep_vars = NULL, new_obj = NULL,
                           band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
+
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -176,6 +176,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
       string = ., 
       pattern = "-", 
       replacement = "m")))
+
 
   boole_ref %>%
     pmap(function(value_1, op_1, value_2, op_2, boole_name, ...) {
@@ -360,7 +361,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     sep = ""
   )
 
-  print(created)
+  message(created)
 }
 
 #' Perform various checks on the availability and class of input objects
@@ -430,6 +431,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   } else {
     .isDefined(df = df, vars = c(id_var, var_to_subset, age_var, keep_vars), conns = conns)
   }
+  
   cally <- call("classDS", paste0(df, "$", var_to_subset))
   var_class <- DSI::datashield.aggregate(conns, cally)
 
@@ -688,6 +690,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   if (!is.null(keep_vars)) {
     vars_to_reshape <- c(vars_to_reshape, keep_vars)
   }
+  
   # Now we convert to wide format
   ds.reShape(
     data.name = "subset_w_suffix",
@@ -699,7 +702,6 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     datasources = conns
   )
 }
-
 
 #' We want to return final dataframes with length equal to number of
 #' unique subjects in long format. This creates a wide format data
@@ -758,7 +760,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     vars = "id",
     type = "keep",
     new_obj = finalobj,
-    conns = conns,
+    conns = conns, 
     checks = FALSE
   )
 }
