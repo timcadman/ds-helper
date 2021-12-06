@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -64,7 +60,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/lifecycle-project/ds-helper/">
+  <a href="https://github.com/lifecycle-project/ds-helper/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -79,25 +75,25 @@
 
       
 
-      </header><script src="TROUBLESHOOTING_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Troubeshooting</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/lifecycle-project/ds-helper/blob/master/vignettes/TROUBLESHOOTING.Rmd"><code>vignettes/TROUBLESHOOTING.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/lifecycle-project/ds-helper/blob/HEAD/vignettes/TROUBLESHOOTING.Rmd" class="external-link"><code>vignettes/TROUBLESHOOTING.Rmd</code></a></small>
       <div class="hidden name"><code>TROUBLESHOOTING.Rmd</code></div>
 
     </div>
 
     
     
-<div id="installing-the-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installing-the-package" class="anchor"></a>Installing the package</h2>
-<div id="dependencies" class="section level3">
-<h3 class="hasAnchor">
-<a href="#dependencies" class="anchor"></a>Dependencies</h3>
+<div class="section level2">
+<h2 id="installing-the-package">Installing the package<a class="anchor" aria-label="anchor" href="#installing-the-package"></a>
+</h2>
+<div class="section level3">
+<h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h3>
 <p>If the <code>nloptr</code> dependency does not install and your working on a linux-based system please install <code>nlopt</code>.</p>
 <p>For CentOS</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">yum</span> install nlopt nlopt-devel</span></code></pre></div>
@@ -106,16 +102,16 @@
 <p>For Mac</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install nlopt</span></code></pre></div>
 </div>
-<div id="tidyrcpp-11-install-error" class="section level3">
-<h3 class="hasAnchor">
-<a href="#tidyrcpp-11-install-error" class="anchor"></a>Tidyr/CPP 11 install error</h3>
+<div class="section level3">
+<h3 id="tidyrcpp-11-install-error">Tidyr/CPP 11 install error<a class="anchor" aria-label="anchor" href="#tidyrcpp-11-install-error"></a>
+</h3>
 <p>If you get an error when trying to install tidyr, run the following lines of code:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages</a></span><span class="op">(</span><span class="st">"tidyr"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html">remove.packages</a></span><span class="op">(</span><span class="st">"cpp11"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org">remotes</a></span><span class="op">)</span>
-<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'r-lib/cpp11'</span>, ref <span class="op">=</span> <span class="st">'v0.1.0'</span><span class="op">)</span>
-<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">'tidyverse/tidyr'</span>, ref <span class="op">=</span> <span class="st">'v1.1.0'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html" class="external-link">remove.packages</a></span><span class="op">(</span><span class="st">"tidyr"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html" class="external-link">remove.packages</a></span><span class="op">(</span><span class="st">"cpp11"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://remotes.r-lib.org" class="external-link">remotes</a></span><span class="op">)</span>
+<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'r-lib/cpp11'</span>, ref <span class="op">=</span> <span class="st">'v0.1.0'</span><span class="op">)</span>
+<span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">'tidyverse/tidyr'</span>, ref <span class="op">=</span> <span class="st">'v1.1.0'</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>
@@ -131,11 +127,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Tim Cadman.</p>
+  <p></p>
+<p>Developed by Tim Cadman.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -143,6 +141,8 @@
 
   
 
+
+  
 
   </body>
 </html>
