@@ -1,20 +1,22 @@
 #' Transforms variables based on their interquartile range
 #'
-#' This function is used to scale variables by the interquartile range
+#' This function scales variables by their interquartile range. IQR is
 #' calulcated either within cohort or using the pooled IQR across cohorts.
-#' The formula is: value(subject) / (75th percentile - 25th percentile).
-#' #'
-##' @param df datashield dataframe
-#' @param vars variables to transform
-#' @param type either "separate" to transform the variable based on the IQR
-#'             calculated within cohort, or "pooled" to transform based on the
-#'             pooled IQR across all cohorts provided in the 'conns' argument.
-#' @param conns connections object to DataSHIELD backends
-#' @param new_df_name name for new dataframe with original vars and iqr versions.
+#' The formula used is: value[subject] / (75th percentile - 25th percentile).
 #'
-#' @return the original dataframe with transformed variables added with the
-#'         suffix "_iqr_c" (if cohort range was used) or "iqr_p" if pooled
-#'         range was used.
+#' @template df
+#' @param vars Character vector of columns within `df` to transform.
+#' @param type Use "separate" to transform the variable based on the
+#' within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts
+#' specified in `conns`.
+#' @template conns
+#' @template new_obj
+#' @template checks
+#' @param new_df_name Retired argument. Please use `new_obj' instead.
+#'
+#' @return Server-side object specified in `df` with transformed variables added
+#' as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
+#' "iqr_p" if pooled is type is "pooled".
 #'
 #' @importFrom dsBaseClient ds.colnames ds.dataFrame ds.make ds.class ds.mean
 #'             ds.quantileMean
@@ -24,26 +26,36 @@
 #' @importFrom stringr str_detect
 #' @importFrom tibble as_tibble tibble
 #'
+#' @family data manipulation functions
+#'
 #' @export
 dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
-                       conns = NULL, new_df_name = df) {
+                       new_obj = df, conns = NULL, checks = TRUE,
+                       new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
 
-  dh.doVarsExist(df = df, vars = vars, conns = conns)
-
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(vars)) {
-    stop("Please specify variable(s) to transform")
+    stop("`vars` must not be NULL.", call. = FALSE)
   }
 
-  type <- match.arg(type)
+  if (!missing(new_df_name)) {
+    warning("Please use `new_obj` instead of `new_df_name`")
+    new_obj <- new_df_name
+  }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
+
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
+  }
+
+  type <- match.arg(type)
 
   df_vars <- paste0(df, "$", vars)
 
@@ -55,8 +67,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     all(
       str_detect(unlist(check_cont), "numeric|integer")
     ) == FALSE) {
-    stop("Can only calculate IQR for continous variables: please check class of
-         provided vars")
+    stop("Can only calculate IQR for continous variables: please check class variables specified in `vars`", call. = FALSE)
   }
 
   ## ---- Calculate IQRs ---------------------------------------------------------
@@ -89,7 +100,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_c")),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
@@ -166,10 +177,14 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     ds.dataFrame(
       x = c(df, paste0(vars, "_iqr_p")),
-      newobj = new_df_name,
+      newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
   }
+  cat("\nThe following IQR transformations have been created in dataframe ", "'", new_obj, "':", "\n\n", sep = "")
+  iqr_to_make %>%
+    dplyr::select(variable, cohort) %>%
+    print()
 }

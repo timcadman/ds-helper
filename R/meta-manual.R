@@ -1,25 +1,32 @@
-#' Wrapper to manaully perform two-stage meta-analysis using metafor
+#' Wrapper to manaully perform two-stage meta-analysis using `metafor`
 #'
-#' ds.SLMA functions automatically perform two-stage meta-analysis using the
-#' metafor package. However in some circumstances you might want to use a
-#' different package or chose different options in metaphor. This allows you
-#' to meta-analyse multiple coefficients in one function call.
+#' DataSHIELD SLMA functions automatically perform two-stage meta-analysis using
+#' the metafor package. However in some circumstances you might want to chose
+#' different options in metafor than those provided within DataSHIELD. This
+#' function takes the output from ds.glmSLMA and manually performs the
+#' meta-analysis.
 #'
-#' @param model output from ds.glmSLMA
-#' @param method method of meta-analyis which can be any valid method for the
-#'               metafor package
+#' You could also modify this function to use different
+#' meta-analysis packages.
 #'
-#' @return list containing (i) metafor output and (ii) summary tibble of
-#'         statistics
+#' @param model Model object returned by ds.glmSLMA or ds.lmerSLMA.
+#' @param method Method of meta-analyis which can be any valid method for the
+#'               metafor package. Default is "ML".
+#'
+#' @return List containing two elements:
+#' * metafor output
+#' * summary tibble of containing columns "term", "coefficient" and "se".
 #'
 #' @importFrom purrr map map_dbl
 #' @importFrom tibble tibble
 #' @importFrom metafor rma
 #'
+#' @md
+#'
 #' @export
 dh.metaManual <- function(model = NULL, method = "ML") {
   if (is.null(model)) {
-    stop("Please specify a model with coefficients to meta-analyse")
+    stop("`model` must not be NULL.", call. = FALSE)
   }
 
   nvar <- seq(1, nrow(model$betamatrix.valid), 1)

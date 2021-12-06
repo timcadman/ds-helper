@@ -2,27 +2,43 @@
 % Please edit documentation in R/rename-vars.R
 \name{dh.renameVars}
 \alias{dh.renameVars}
-\title{Rename multiple variables at once}
+\title{Rename one or more columns within a serverside data frame}
 \usage{
-dh.renameVars(df = NULL, current_names = NULL, new_names, conns = NULL)
+dh.renameVars(
+  df = NULL,
+  current_names = NULL,
+  new_names,
+  conns = NULL,
+  checks = TRUE
+)
 }
 \arguments{
-\item{df}{dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{current_names}{a vector with names of existing DataSHIELD variables to
-rename}
+\item{current_names}{Character vector of columns within `df` to rename.}
 
-\item{new_names}{a vector corresponding to the vector provided to current_names
-with the new variable names.}
+\item{new_names}{Character vector giving the new names for the columns
+specified in `current_names`.}
 
-\item{conns}{connections object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
+
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
-None. The new variables are added to the df specified
+Data frame specified in `df` is returned server-side with variables
+renamed.
 }
 \description{
-This function allows you to rename multiple variable from a dataframe. At the
-moment it doesn't "rename" as such, it creates duplicate variables with the
-new names. I've left it like this to keep in the spirit of ds/opal set up
-by not automating the deletion of variables.
+This function is an analogue of `dplyr::rename` which allows you to rename
+columns of a serverside data frame.
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.dropCols}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeIQR}()},
+\code{\link{dh.makeStrata}()},
+\code{\link{dh.tidyEnv}()}
+}
+\concept{data manipulation functions}

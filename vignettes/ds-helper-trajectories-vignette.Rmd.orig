@@ -1,0 +1,923 @@
+---
+title: "Conducting mixed effect/trajectory analysis using DataSHIELD"
+author: Tim Cadman
+date: 27th October 2021
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+editor_options:
+  chunk_output_type: console
+---
+```{r settings, echo = FALSE}
+options(datashield.progress = FALSE)
+options(datashield.progress.clear = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(results = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+options(knitr.duplicate.label = "allow")
+```
+# Introduction
+
+## Overview
+This tutorial will demonstrate how to model trajectories in DataSHIELD using 
+repeated measures data from multiple cohorts. 
+
+This tutorial draws on the following papers/tutorials:
+
+1. Hughes, R., Tilling, K. & Lawlor, D. Combining longitudinal data from 
+different cohorts to examine the life-course trajectory. Preprint available on 
+medrxiv: https://doi.org/10.1101/2020.11.24.20237669 
+
+2. Tilling K, Macdonald-Wallis C, Lawlor DA, Hughes RA, Howe LD. Modelling 
+childhood growth using fractional polynomials and linear splines. Ann Nutr 
+Metab. 2014;65(2-3):129-38. https://doi.org/10.1159/000362695. 
+
+3. Centre for Multilevel Modelling online course. 
+http://www.bristol.ac.uk/cmm/learning/online-course/
+
+You will use simulated data to replicate part of the analysis from Hughes et al.
+cited above. It would be helpful to read this tutorial in conjuncture with this 
+paper.
+
+Please note that not all the methods used in Hughes et al. are available in 
+DataSHIELD. Currently it is not possible to use (i) multiple imputation, (ii)
+spline models, or (iii) 1-stage meta-analysis of mixed effects models. 
+All of these are in the pipeline and this tutorial will be extended when these 
+methods become available.
+
+
+## Data
+We will be working with simulated repeated measures data for four cohorts:
+(i) Alspac, (ii) BCG, (iii) Born in Bradford & (iv) Probit.
+
+
+## Aims of the analysis
+Our research aims for today are:
+
+1. To model child weight trajectories over time for four cohorts
+2. To model sex differences in weight trajectories
+2. To combine these trajectories by 2-stage meta-analysis
+
+Let's get started.
+
+# Installing and loading packages
+First you need to install some packages are used in tutorial. Even if
+you have previously installed them it is worth doing this again to ensure
+that you have the latest versions.
+
+If prompted to update packages, select option 'none'.
+
+First install the package 'remotes' which contains the function 'install_github'.
+```{r}
+install.packages("remotes")
+library(remotes)
+```
+
+```{r install-packages, eval = FALSE}
+install_github("datashield/DSI")
+install_github("datashield/dsBaseClient", ref = "v6.2-dev")
+install_github("lifecycle-project/ds-helper", ref = "traj-fun")
+install.packages("DSMolgenisArmadillo")
+install.packages("tidyverse")
+```
+
+Now we load these packages.
+```{r load-packages}
+library(dsBaseClient)
+library(DSI)
+library(DSMolgenisArmadillo)
+library(dsHelper)
+library(tidyverse)
+```
+
+A couple of things to note:
+
+1. I use a lot of the tidyverse packages as I find them very efficient
+and they make the code more readable. If any syntax is unclear just ask!
+
+2. I also use a number of functions from a package called dsHelper. This was written
+by me and Sido Haakma to make analysis in DataSHIELD more straightforward. Any
+problems with these functions just let us know.
+
+# Logging in and assigning data
+
+The simulated data is held on a remote server. To access it, you first 
+request a 'token' which contains the login details. You then use this to login 
+and assign the data.
+```{r login}
+token <- armadillo.get_token("https://armadillo.test.molgenis.org")
+
+builder <- DSI::newDSLoginBuilder()
+
+builder$append(
+server = "alspac",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmalspac/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+builder$append(
+server = "bcg",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmbcg/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+builder$append(
+server = "bib",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmbib/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+builder$append(
+server = "probit",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmprobit/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+logindata <- builder$build()
+
+conns <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "data")
+```
+  
+We can check that this has worked. You should see that each cohort has one 
+dataframe called "data", which contains 7 variables.
+```{r summarise}
+ds.summary("data", datasources = conns)
+```
+We wont be using all of the variables today, however if you want to come back 
+and use this data to try out more complicated models we'll keep it online.
+  
+# PART 1: VISUALISING THE DATA
+
+## Scatter plots of child weight by age
+Let's start off by looking at our repeated measures weight data for each cohort.
+We can make scatter plots with age on the x-axis and weight on the y-axis. 
+
+Note that the values that you see are anonymised - they are a non-disclosive
+approximation of the original values.
+```{r scatter}
+ds.scatterPlot(x = "data$age", y = "data$weight", datasources = conns)
+```
+
+What are you initial thoughts about the data?
+
+## Mean observed weight by age
+Another way to visualise the weight data is to split child age into yearly 
+intervals, and plot the mean on the y-axis with age on the x-axis (see Figure 2 
+from Hughes et al.).
+
+First of all we need to calculate the mean values for weight at each yearly age 
+band:
+```{r prep-weight-age}
+meanage <- dh.meanByAge(
+	df = "data", 
+	outcome = "weight", 
+	age_var = "age", 
+	conns = conns)
+
+meanage %>% print(n = Inf)
+```
+
+Now we have the values locally, we can use any r package to plot these. I
+like to use ggplot:
+```{r plot-weight-age}
+palette <- c("#264653", "#2a9d8f", "#E9C46A", "#F4A261", "#E76F51")
+
+meanage.plot <- ggplot() + 
+  geom_line(data = meanage, aes(x = age, y = mean, colour = cohort), size = 0.8) +
+  scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
+  xlab("Child age") +
+  ylab("Observed weight (KG)") +
+  scale_colour_manual(values = palette)
+
+meanage.plot
+```
+Q: Looking at these two plots, What are your initial thoughts about the pattern of 
+weight change over time?
+
+## Describing the exposures
+DataSHIELD contains the functions ds.summary and ds.table which can be used to 
+describe continuous and categorical variables. However, the output of these is 
+a little tricky to work with. Instead we can use the function 'dh.getStats' to 
+extract descriptives in a more usable format.
+
+```{r extract-stats}
+stats <- dh.getStats(
+	df = "data", 
+	vars = "sex", 
+	conns = conns)
+
+stats
+```
+This gives us a list with two elements corresponding to the continuous and categorical
+variables. As we didn't request stats for any continuous variables, the first list is 
+empty.
+
+## Some more descriptives that are useful to have
+There are other bits of information it is useful to report:
+
+- Total number of observations
+- Total number of participants
+- Min and max age of participants
+- Median number of measurements per individual
+
+We can use the function dh.getRmStats to extract this info. Note that the min and max
+ages are based on the 5th and 95th percentiles as DataSHIELD doesn't will not return
+true minimum and maximums due to disclosure issues.
+```{r rm-stats}
+rm_stats <- dh.getRmStats(
+	df = "data",
+	outcome = "weight",
+	id_var = "id", 
+	age_var = "age", 
+	conns = conns
+)
+
+rm_stats
+```
+
+# PART 2: FITTING A SIMPLE LINEAR TRAJECTORY
+
+## Trajectory models: prep
+Before we can get started, we need to make sure that our id variable is an 
+integer. If we don't, it breaks. First we create a new object which is an 
+integer version of our ID. We then join this back to our main dataframe.
+```{r id-integer}
+ds.asInteger(
+	x.name = "data$id", 
+	newobj = "id_int", 
+  datasources	= conns)
+
+ds.cbind(
+	x = c("data", "id_int"),
+	newobj = "data", 
+  datasources	= conns)
+```
+
+## Specifying the model
+First we fit a model with weight predicted by four terms: an intercept (1), 
+age, sex and the interaction between age and sex. These terms are our 'fixed effects', 
+and comprise the first half of the formula below. They are specified in the same way as 
+you would write a formula in a standard regression model.
+
+In the second half of the formula below we specify our random effects. This is
+where we provide information about how we believe the data to be clustered. 
+
+The variable to the right of the vertical line is our ID variable. This specifies
+that we want to treat each invidual as a separate cluster, because we believe 
+their measurements will be correlated. This is a plausible hypothesis:
+for example if my height is a lot higher than average at age 5,
+it is likely to also be higher than average at age 10. We can describe this as 
+a 2-level clustering, with weight measurements (level 1) clustered within individuals (level 2).
+
+The variables to the left of the vertical line specify which extra parameters
+we want to estimate for each individual. Or to put it another way, it specifies
+which parameters we allow to vary for each individual.
+
+If we just specify "1", then in addition to calculating an overall
+intercept, we also calculate an intercept for each individual. This provides
+us with information about the variability between individuals in their starting
+weight. This is called a random intercept model.
+
+If we specifed "1 + age", then in addition we would calculate a separate slope
+for each individual. This would provide us with information about how the gradient
+of the trajectory varies between individuals. This is called a random slope model.
+
+Here we start with a random intercept model. Understand what you are doing is
+the difficult bit; fitting the model is straightfoward:
+```{r model-1}
+model1.fit <- ds.lmerSLMA(
+	dataName = "data",
+  formula = "weight ~ 1 + age + sex + age*sex + (1|id_int)", 
+  datasources = conns)
+
+model1.fit$output.summary
+```
+
+## Exploring the output
+We can see the coefficients for the fixed and random parts of our model
+directly from the model object.
+
+Fixed effects coefficients for each cohort are here:
+```{r model1-fixed-coh}
+model1.fit$betamatrix.valid
+```
+The pooled estimates are here:
+```{r model1-pooled-coh}
+model1.fit$SLMA.pooled.ests.matrix
+```
+And the details of the random effects are here:
+```{r model1-random-coh}
+model1.fit$output.summary$study1$varcor
+```
+
+## A neater way
+I find these objects a little fiddly to work with (you may not). You can also 
+use the dsHelper function to extract the coefficients. 
+```{r model1-tab}
+model1.coef <- dh.lmTab(
+	model = model1.fit, 
+	type = "lmer", 
+	coh_names = names(conns), 
+	ci_format = "separate", 
+	direction = "wide"
+)
+```
+
+Let's explore there in more detail
+
+### Fixed effects
+The fixed effects are analogous to your coefficients from a linear regression
+model.
+```{r model1-tab-fixed}
+model1.coef$fixed
+```
+If we use dh.lmTab it allows us to manipulate our output more easily. For 
+example you might want to split the fixed effects by cohort:
+```{r}
+model1.coef$fixed %>% group_by(cohort) %>%
+group_split()
+```
+
+Or you might want to just select the pooled results:
+```{r}
+model1.coef$fixed %>% dplyr::filter(cohort == "combined")
+```
+
+### Random effects
+When the model if fit, group (level 2) residuals are calculated for each subject.
+These represent the difference between interecept of each subject and the 
+mean intercept for the sample.
+
+However, there are not returned by DataSHIELD as they could be disclosive. 
+Instead we can view the standard deviation of these residuals:
+```{r model1-tab-random}
+model1.coef$random_sd
+```
+
+If we take ALSPAC as an example, we have an overall (mean) intercept of 3.87,
+and a standard deviation of 3.84. This indicates considerable variability
+between individual intercepts. If you had specified more than one random effect 
+(e.g. slope) this would also be displayed here. You could also view the 
+correlation between your random effects (output$random_cor).
+
+We can also see the standard deviation of the residual error, ie the difference 
+between observed values and predicted values within subject.
+```{r}
+model1.coef$resid_sd
+```
+
+
+## Plotting the trajectories
+In order to plot trajectories, we first need to get model predicted values of weight. In 
+order to do this, we need to create a dataframe with the values of the fixed effects
+at which we want to predict values of weight. The names of the columns of this
+new dataframe need to correspond to the names of the coefficients in the output
+above.
+
+We want to visualise the trajectories for both males and females between ages
+0 and 25. In our reference dataframe, we therefore create values for age between
+0 and 25 at 0.1 intervals, repeated for sex == 0 (males) and sex == 1 (females).
+```{r}
+new_data_m <- tibble(
+	age = seq(0, 25, by = 0.1), 
+	"age:sex1" = age*0,
+	sex1 = 0)
+
+new_data_f <- tibble(
+	age = seq(0, 25, by = 0.11), 
+	"age:sex1" = age*1,
+	sex1 = 1)
+
+pred_data <- bind_rows(new_data_m, new_data_f)
+```
+
+If we look at this object we have created, it has all the values of the 
+model variables at which we want to predict weight:
+```{r}
+pred_data
+```
+
+We can then use this reference data and our model object to get predicted values.
+Note that we now have four more columns appended to our reference data containing
+predicted values, standard error of predictions and confidence intervals.
+```{r}
+plotdata <- dh.predictLmer(
+	model = model1.fit,
+	newdata = pred_data,
+	coh_names = names(conns)
+)
+
+plotdata
+```
+
+Nice, we're getting there. One thing to address is that currently we have
+predicted values for all cohorts between ages 0 and 25. However many of the cohorts
+don't have data between those ages, so we might not want to plot beyond
+where there is data. We can trim our predicted data to the available ages.
+```{r}
+plot_trim <- dh.trimPredData(
+	pred = plotdata,
+	coh_names = c("alspac", "bcg", "bib", "probit", "combined"),
+	min = rep(0, 5), 
+	max = c(20, 5, 5, 20, 20)
+)
+```
+
+Next we set sex as a factor to make the plot clearer:
+```{r}
+plot_trim <- plot_trim %>%
+mutate(sex = factor(sex1, levels = c(0, 1), labels = c("Male", "Female")))
+```
+
+It would also be nice to be able to overlay the predicted trajectory with 
+the observed values. Remember earlier we made a scatter plot using DataSHIELD? 
+We can extract the anonymised values which were used in that plot and store them 
+as a local object. This allows us to build more flexible plots.
+
+Each row of the created object represents the anomyised values of a subject.
+```{r}
+observed <- dh.getAnonPlotData(
+	df = "data",
+	v1 = "age", 
+	v2 = "weight", 
+	conns = conns
+)
+
+observed
+```
+
+Now we are ready to plot the pooled trajectories. We use the function
+"sample_frac" to only take 1% of the observed values. You can play around with
+this value, but if you use too many the graph becomes unreadable.
+```{r}
+ggplot() + 
+  geom_point(
+  	data = sample_frac(observed, .01) %>% filter(cohort == "combined"), 
+  	aes(x = age, y = weight), 
+  	alpha = 0.4, 
+  	size = 0.1) +
+  geom_line(
+  	data = plot_trim %>% filter(cohort == "combined"), 
+  	aes(x = age, y = predicted, colour = sex), size = 0.8) +
+  geom_ribbon(
+  	data = plot_trim %>% filter(cohort == "combined" & sex == "Male"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  geom_ribbon(
+  	data = plot_trim %>% filter(cohort == "combined" & sex == "Female"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
+  scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
+  xlab("Child age") +
+  ylab("Predicted weight (KG)") +
+  labs(colour = "Sex")
+```
+
+We can also plot the trajectories for each cohort separately:
+```{r}
+ggplot() + 
+  geom_point(
+  	data = sample_frac(observed, .01) %>% filter(cohort != "combined"), 
+  	aes(x = age, y = weight), 
+  	alpha = 0.4, 
+  	size = 0.1) +
+  geom_line(
+  	data = plot_trim %>% filter(cohort != "combined"), 
+  	aes(x = age, y = predicted, colour = sex), size = 0.8) +
+  geom_ribbon(
+  	data = plot_trim %>% filter(cohort != "combined" & sex == "Male"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  geom_ribbon(
+  	data = plot_trim %>% filter(cohort != "combined" & sex == "Female"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  facet_wrap(~cohort) +
+  scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
+  scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
+  xlab("Child age") +
+  ylab("Predicted weight (KG)") +
+  labs(colour = "Sex")
+```
+
+Q: Looking at the plots, how well do you think our model fits the data?
+
+# PART 3: FITTING A NON-LINEAR TRAJECTORY USING A TRANSFORMATION OF THE AGE TERM
+The previous model doesn't look great to me, especially around age 5 where 
+there looks to be a distinct non-linearity in the trajectory which we are not 
+capturing.
+
+One way to address this is to model weight not as a function of age, but as a
+function of a transformation of age.
+
+Let's start by creating a new variable which is age^2, and see if this provides
+a better fit. We create the variable, and join it back in our main data frame.
+```{r}
+ds.make(
+	toAssign = "data$age^2", 
+	newobj = "age_2", 
+	datasources = conns
+)
+
+ds.dataFrame(
+	x = c("data", "age_2"), 
+	newobj = "data", 
+	datasources = conns
+)
+```
+Now we are going to simply repeat the steps before, but using this transformed
+variable instead of the original age variable.
+
+First we run the model:
+```{r}
+age_2.fit <- ds.lmerSLMA(
+	dataName = "data",
+  formula = "weight ~ 1 + age_2 + sex + age_2*sex + (1|id_int)", 
+  datasources = conns)
+```
+
+Now we create a dataframe of the values of the fixed effects at which we want
+to predict weight. Note that as we have transformed our age term, we need to add 
+this transformed version of the variable to our reference data.
+```{r}
+pred_ref_2a <- tibble(
+	age = seq(0, 25, by = 0.1), 
+	age_2 = age^2,
+	"age_2:sex1" = age_2*0,
+	sex1 = 0)
+
+pred_ref_2b <- tibble(
+	age = seq(0, 25, by = 0.11), 
+	age_2 = age^2,
+	"age_2:sex1" = age_2*1,
+	sex1 = 1)
+
+pred_ref_2 <- bind_rows(pred_ref_2a, pred_ref_2b)
+```
+
+Again we get the predicted values, trim them at the ages of the observed
+data and set sex as a factor.
+```{r}
+pred_data_2 <- dh.predictLmer(
+	model = age_2.fit,
+	newdata = pred_ref_2,
+	coh_names = names(conns)
+)
+
+pred_data_2_trim <- dh.trimPredData(
+	pred = pred_data_2,
+	coh_names = c("alspac", "bcg", "bib", "probit", "combined"),
+	min = rep(0, 5), 
+	max = c(20, 5, 5, 20, 20)
+)
+
+pred_data_2_trim <- pred_data_2_trim %>%
+mutate(sex = factor(sex1, levels = c(0, 1), labels = c("Male", "Female")))
+```
+
+Let's plot this against the observed data and see if it fits any better:
+```{r}
+ggplot() + 
+  geom_point(
+  	data = sample_frac(observed, .01) %>% filter(cohort == "combined"), 
+  	aes(x = age, y = weight), 
+  	alpha = 0.4, 
+  	size = 0.1) +
+  geom_line(
+  	data = pred_data_2_trim %>% filter(cohort == "combined"), 
+  	aes(x = age, y = predicted, colour = sex), size = 0.8) +
+  scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
+  scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
+  xlab("Child age") +
+  ylab("Predicted weight") +
+  labs(colour = "Sex")
+```
+Hmmm. We now have a non-linear trajectory, but it still doesn't look a great fit.
+We haven't looked at any fit statistics or residuals yet, but from the eye it 
+clearly doesn't fit the data. It also doesn't seem to capture the sex differences
+we would expect. We can do better than this.
+
+# PART 4: FRACTIONAL POLYNOMIALS
+Using one transformation of age allowed one 'bend' in the trajectory. However,
+the problem we saw with the previous model is that natural growth 
+trajectories often have multiple bends. 
+
+One way to model this is to use two transformations of age (e.g. age^2 and age^0.5).
+These are called fractional polynomials (powers which involve fractions). You could
+use more than 2 transformations: this would give you a better model fit, but with
+greater risk of overfitting your model. Here we will stick two. 
+
+Even with only two transformations of age, there are infinite number of 
+possible combinations. How do we chose which to use?
+
+You may have a good a priori reason to chose a combination of terms. If you
+don't, one reasonable approach is to select a certain set of transformations,
+and fit every combination of those. We can then see which combination of age
+terms provides the best model fit.
+
+## Preparing the data for modelling
+
+### Remove values of zero
+Transforming values of zero will create infinite values which will break our 
+models. We add a small quantity to our age variable to avoid this.
+
+```{r add-small-value-to-age}
+ds.assign(
+	toAssign = "data$age+0.01", 
+	newobj = "age", 
+  datasources = conns)
+
+dh.dropCols(
+	df = "data", 
+	vars = "age", 
+	type = "remove", 
+	new_df_name = "data", 
+  conns = conns)
+
+ds.cbind(
+	x = c("data", "age"), 
+	newobj = "data", 
+  datasources = conns)
+```
+
+### Create transformations of age term
+
+We could do the transformations manually, but this would be a bit cumbersome. 
+We can insted use the function ds.makeAgePolys to create transformations of age.
+Here we use the following powers: -2, -1, -0.5, log, 0.5, 2, 3. 
+```{r make-polys}
+dh.makeAgePolys(
+	df = "data", 
+	agevars = "age", 
+	poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"), 
+	poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"))
+```
+
+We can check this has worked, and see the mean values for these new variables.
+```{r check-polys}
+poly_summary <- dh.getStats(
+	df = "data", 
+	vars = c("agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3")) 
+
+poly_summary$continuous %>%
+select(cohort, variable, mean, std.dev) %>%
+print(n = Inf)
+```
+
+## Identifying the best fitting model
+Ok, so now we have a load of transformations of our age in term in the dataframe
+"data". Next we want to fit models for each paired combination of these terms.
+Again, we could do this by writing out ds.lmerSLMA 28 times, but this brings 
+a fair chance that you make an error in the code.
+
+I've written a couple more functions to streamline the process. 
+
+### Create model formulae
+'dh.makeLmerForm' creates the model formulae based on the age terms you have created. 
+The argument to "agevars" is a vector of variable names corresponding to the age 
+transformations we created above.
+
+First we try to find the best shape of trajectory, so we create model formulae
+just with the age terms.
+```{r make-formula, results = TRUE}
+weight_form <- dh.makeLmerForm(
+  outcome = "weight", 
+  idvar = "id_int", 
+  agevars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"), 
+  random = "intercept")
+
+weight_form %>% 
+head(10)
+```
+
+This has created a table where each row (a total of 28) contains the 
+formula for a mixed effects model with a different combination of the 
+fractional polynomials. 
+
+## Fit all combinations of polynomials
+The function dh.lmeMultPoly takes as an input to the argument "formulae" a 
+vector of formulae. Here we use the formulae created above. You could also create
+your own vector of formulae and supply it to the same argument. 
+
+If you've read Rachel Hughes' paper, you'll notice that she first fits models on a
+discovery sample, and then checks the fit on the remaining sample. I've 
+skipped this here for simplicity but it is possible to do this in DS.
+
+This will take a few minutes as we are fitting 28 different models.
+```{r sample-a-fit}
+poly.fit <- dh.lmeMultPoly(
+	df = "data",
+	formulae = weight_form$formulae, 
+  poly_names = weight_form$polys)
+```
+
+There are some converegence warnings. We can see details here:
+```{r}
+poly.fit$convergence
+```
+
+The output contains a table with the negative log likelihood for each model in
+each study, the average rank of that model across all studies and
+the summed negative log likelihood. The model with the lowest summed 
+log-likelhood across studies contains two powers: age^0.5 & age^2.
+```{r show-sample-a-fit, results = TRUE}
+poly.fit$fit
+```
+
+In this scenario we are trying to fit the same model to all cohorts. In other scenarioes
+you might want to fit a different model to different cohorts. You could still
+use this table as a reference for the best fitting model, for example for
+alspac:
+
+```{r}
+poly.fit$fit %>%
+select(model, alspac) %>%
+arrange(desc(alspac))
+```
+
+## Final model
+Ok, so we've got an idea what the best fitting combination of age terms will be.
+Now we can fit our final model, including sex and the interaction with the age
+terms. We aren't worrying about other covariates in this example, but of course
+you could include them.
+```{r}
+final.fit <- ds.lmerSLMA(
+	dataName = "data",
+  formula = "weight ~ 1 + age0_5 + age2 + sex + age0_5*sex + age2*sex + (1|id_int)")
+```
+
+## Making plots
+Now we can go through the same process as above to make our plot. Again, we 
+need to create our age transformations in the new data to get the predicted
+values for weight at each age.
+
+```{r}
+pred_ref_final_m <- tibble(
+	age = seq(0, 25, by = 0.1), 
+	age0_5 = age^0.5,
+	age2 = age^2, 
+	sex1 = 0,
+	"age0_5:sex1" = age0_5*sex1, 
+  "age2:sex1" = age2*sex1)
+
+pred_ref_final_f <- tibble(
+	age = seq(0, 25, by = 0.1), 
+	age0_5 = age^0.5,
+	age2 = age^2, 
+	sex1 = 1,
+	"age0_5:sex1" = age0_5*sex1, 
+  "age2:sex1" = age2*sex1)
+
+pred_ref_final <- bind_rows(pred_ref_final_m, pred_ref_final_f)
+```
+
+Again we get the predicted values, trim them at the ages of the observed
+data and set sex as a factor.
+```{r}
+pred_ref_final <- dh.predictLmer(
+	model = final.fit,
+	newdata = pred_ref_final,
+	coh_names = names(conns)
+)
+
+pred_ref_final_trim <- dh.trimPredData(
+	pred = pred_ref_final,
+	coh_names = c("alspac", "bcg", "bib", "probit", "combined"),
+	min = rep(0, 5), 
+	max = c(20, 5, 5, 20, 20)
+)
+
+pred_ref_final_trim <- pred_ref_final_trim %>%
+mutate(sex = factor(sex1, levels = c(0, 1), labels = c("Male", "Female")))
+```
+
+And now we can make some plots
+```{r}
+ggplot() + 
+  geom_point(
+  	data = sample_frac(observed, .01) %>% filter(cohort == "combined"), 
+  	aes(x = age, y = weight), 
+  	alpha = 0.4, 
+  	size = 0.1) +
+  geom_line(
+  	data = pred_ref_final_trim %>% filter(cohort == "combined"), 
+  	aes(x = age, y = predicted, colour = sex), size = 0.8) +
+  geom_ribbon(
+  	data = pred_ref_final_trim %>% filter(cohort == "combined" & sex == "Male"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  geom_ribbon(
+  	data = pred_ref_final_trim %>% filter(cohort == "combined" & sex == "Female"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
+  scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
+  xlab("Child age") +
+  ylab("Predicted weight (KG)") +
+  labs(colour = "Sex")
+ ```
+
+We can also plot the trajectories by cohort
+```{r}
+ggplot() + 
+  geom_point(
+  	data = sample_frac(observed, .01) %>% filter(cohort != "combined"), 
+  	aes(x = age, y = weight), 
+  	alpha = 0.4, 
+  	size = 0.1) +
+  geom_line(
+  	data = pred_ref_final_trim %>% filter(cohort != "combined"), 
+  	aes(x = age, y = predicted, colour = sex), size = 0.8) +
+  geom_ribbon(
+  	data = pred_ref_final_trim %>% filter(cohort != "combined" & sex == "Male"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  geom_ribbon(
+  	data = pred_ref_final_trim %>% filter(cohort != "combined" & sex == "Female"), 
+  	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
+  facet_wrap(~cohort) +
+  scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
+  scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
+  xlab("Child age") +
+  ylab("Predicted weight (KG)") +
+  labs(colour = "Sex")
+```
+
+Great, this looks like a much better fit. We have captured the initial growth,
+followed by a reduction in growth rate at age 5 followed by an increase into
+adolescence.
+
+This model still isn't perfect - looking at the graph what problem can you see?
+
+# Checking model fit
+The final step is to check how well the model fits at different age points. Here 
+we can approximate Table 2 from Tilling et al. (2014) "Modelling Childhood 
+Growth ...". 
+
+First we get mean observed values for weight between different age bands.
+The 'intervals' argument specifies how we want to bin our age variable. Again 
+this takes a few minutes to run.
+```{r}
+observed_by_age <- dh.meanByAge(
+	df = "data", 
+	outcome = "weight", 
+	age_var = "age", 
+	intervals = c(0, 1, 1, 2, 3, 5, 6, 10, 11, 15, 16, 18)
+)
+
+observed_by_age
+```
+
+We rename our column to 'observed':
+```{r}
+obs <- observed_by_age %>%
+dplyr::rename(observed = mean)
+```
+
+Now we get the average predicted values between the same age bands
+```{r}
+pred_by_age <- pred_ref_final_trim %>%
+mutate(
+	group = case_when(
+		age > 0 & age <= 1 ~ "0_1", 
+		age >= 1 & age <= 2 ~ "1_2", 
+		age >= 3 & age <= 5 ~ "3_5", 
+		age >= 6 & age <= 10 ~ "6_10", 
+		age >= 11 & age <= 15 ~ "11_15", 
+		age >= 16 & age <= 18 ~ "16_18")
+		) %>%
+dplyr::filter(!is.na(group)) %>%
+group_by(group, cohort) %>%
+summarise(
+	predicted = round(mean(predicted), 2),
+	low_ci = round(mean(low_ci), 2),
+	upper_ci = round(mean(upper_ci), 2))
+
+pred_by_age
+```
+
+Finally we join the observed and predicted values into one table, and calculate
+the difference between the two. We can also use the confidence intervals to
+calculate upper and lower bounds of the residual. You can see that model fit 
+isn't great for PROBIT towards the extremes. For other cohorts, the looks pretty
+good.
+```{r residuals-e}
+res_tab <- left_join(obs, pred_by_age, by = c("group", "cohort")) %>%
+mutate(
+	difference = round(observed - predicted, 2),
+	lower_res = round(observed - upper_ci, 2),
+	higher_res = round(observed - low_ci, 2),
+	group = factor(
+		group, 
+		levels = c("0_1", "1_2", "3_5", "6_10", "11_15", "16_18"),
+		ordered = TRUE), 
+	limits = paste0(lower_res, " to ", higher_res)) %>%
+filter(!is.na(predicted)) %>%
+dplyr::select(group, cohort, observed, predicted, difference, limits) %>%
+arrange(group) %>%
+group_by(cohort) %>%
+group_split %>%
+set_names(names(conns))
+
+res_tab
+```

@@ -1,29 +1,35 @@
-#' Tidy up the server environment
+#' Remove multiple objects from the serverside environment
 #'
-#' This is a very simple wrapper around ds.rm to allow you to remove more than
-#' one object at a time.
+#' This is a wrapper around ds.rm to allow you to remove multiple objects
+#' in one call.
 #'
-#' @param conns connections object to DataSHIELD backends
-#' @param obj objects that you want to either keep or remove
-#' @param type either "remove" to remove the listed objects of "keep" to keep
-#'             the listed objects and remove everything else.
+#' @param conns DataSHIELD connections object.
+#' @param obj Server-side objects that you want to either keep or remove.
+#' @param type Either "remove" to remove objects specified in `obj` or "keep" to
+#' keep objects specified in `obj` and remove everything else.
 #'
-#' @return None. Objects removed from ds environment
+#' @return None. Objects are removed from the server-side environnment.
 #'
 #' @importFrom purrr map imap
 #' @importFrom dsBaseClient ds.rm ds.ls
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
 #'
+#' @family data manipulation functions
+#'
 #' @export
-dh.tidyEnv <- function(obj = NULL, type = c("remove", "keep"), conns = NULL) {
+dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   . <- NULL
 
   if (is.null(obj)) {
-    stop("Please specify one or more objects to remove from environment")
+    stop("`obj` must not be NULL.", call. = FALSE)
   }
 
-  type <- arg_match(type)
+  if (is.null(type)) {
+    stop("`type` must not be NULL.", call. = FALSE)
+  }
+
+  type <- arg_match(type, c("remove", "keep"))
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

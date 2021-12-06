@@ -1,4 +1,8 @@
-#' Function to perform every combination of MLM fractional polynomials
+#' Fit multiple mixed effects models containing different combination of
+#' fractional polynomials
+#'
+#' This function enables you to fit multiple models with different combinations
+#' of polynomial terms and compares the fit.
 #'
 #' @importFrom dsBaseClient ds.lmerSLMA
 #' @importFrom purrr map flatten_chr map set_names map_lgl
@@ -9,35 +13,52 @@
 #' @importFrom tibble tibble
 #' @importFrom DSI datashield.connections_find
 #'
-#' @param conns connection objects for DataSHIELD backends
-#' @param df name of dataFrame
-#' @param formulae a vector of model formulae to fit
-#' @param poly_names a vector of names for your models
+#' @template conns
+#' @template df
+#' @param formulae Character vector containing model formulae to fit.
+#' @param poly_names Character vector of names for the models specified in
+#' `formulae`
+#' @template checks
 #'
-#' @author Tim Cadman
+#' @return List containing three elements:
+#' * models = List of objects returned by ds.lmerSLMA for each model fitted.
+#' * convergence = Tibble providing information on convergence problems or
+#' error for each model fitted.
+#' * fit = Tibble with columns containing negative loglikehood statistic for each
+#' cohort and rows for each model fitted. An additional column provides the sum
+#' of the loglikelihoods across cohorts.
+#'
+#'
+#' @family trajectory functions
+#' @md
 #'
 #' @export
-dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL) {
+dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
+                           conns = NULL, checks = TRUE) {
   sum_log <- NULL
 
   if (is.null(df)) {
-    stop("Please specify dataframe to use for polynomial models")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(formulae)) {
-    stop("Please specify a vector of model formulae")
+    stop("`formulae` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(poly_names)) {
-    stop("Please specify a vector of names for your models")
+    stop("`poly_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
+  if (checks == TRUE) {
+    .isDefined(df = df, conns = conns)
+  }
 
-  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <- loglik_study2 <- NULL
+  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <-
+    loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   suppressWarnings(
@@ -99,7 +120,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL, conns 
   }
 
   if (all(problems$completed != FALSE) & any(problems$completed == FALSE)) {
-    warning("Some models threw an error message. Check 'convergence' table for more details")
+    warning("Some models threw an error message. Check 'convergence' table for
+      more details")
   }
 
   if (any(!is.na(problems$all_converged) & problems$all_converged == FALSE)) {

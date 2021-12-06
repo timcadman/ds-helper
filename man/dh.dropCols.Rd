@@ -2,38 +2,52 @@
 % Please edit documentation in R/drop-cols.R
 \name{dh.dropCols}
 \alias{dh.dropCols}
-\title{Subsets a dataframe using column names.}
+\title{Removes columns from a serverside data frame}
 \usage{
 dh.dropCols(
   df = NULL,
   vars = NULL,
   new_obj = df,
-  type = c("remove", "keep"),
+  type = NULL,
   conns = NULL,
   checks = TRUE,
   new_df_name = NULL
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{variables to keep or remove}
+\item{vars}{Character vector specifying columns within `df` to be removed or
+kept.}
 
-\item{new_obj}{name for the new dataframe}
+\item{new_obj}{Optionally, character specifying name for new server-side
+data frame. Default is to return original data frame with columns removed.}
 
-\item{type}{whether to remove or keep specified variables}
+\item{type}{Character specifying how to treat `vars`. If "remove" these
+variables are removed from the data frame, if "keep" these variables are
+kept in the data frame and all others are removed.}
 
-\item{conns}{connections object to DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 
 \item{new_df_name}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
-a new dataframe is created containing the specified subset of columns
+Server-side data frame the specified subset of columns.
 }
 \description{
-Often we may have created variables within a dataframe that we no longer
-need. This function allows you to specify either the variables you want to
-keep or drop and create a new dataframe with only the variables you need.
+Often we want to remove variables from a dataframe. This function
+allows you to specify the variables you either want to remove or keep and
+and creates a new dataframe with only the required variables.
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeIQR}()},
+\code{\link{dh.makeStrata}()},
+\code{\link{dh.renameVars}()},
+\code{\link{dh.tidyEnv}()}
+}
+\concept{data manipulation functions}

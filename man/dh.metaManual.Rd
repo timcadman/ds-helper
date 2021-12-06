@@ -2,23 +2,31 @@
 % Please edit documentation in R/meta-manual.R
 \name{dh.metaManual}
 \alias{dh.metaManual}
-\title{Wrapper to manaully perform two-stage meta-analysis using metafor}
+\title{Wrapper to manaully perform two-stage meta-analysis using \code{metafor}}
 \usage{
 dh.metaManual(model = NULL, method = "ML")
 }
 \arguments{
-\item{model}{output from ds.glmSLMA}
+\item{model}{Model object returned by ds.glmSLMA or ds.lmerSLMA.}
 
-\item{method}{method of meta-analyis which can be any valid method for the
-metafor package}
+\item{method}{Method of meta-analyis which can be any valid method for the
+metafor package. Default is "ML".}
 }
 \value{
-list containing (i) metafor output and (ii) summary tibble of
-        statistics
+List containing two elements:
+\itemize{
+\item metafor output
+\item summary tibble of containing columns "term", "coefficient" and "se".
+}
 }
 \description{
-ds.SLMA functions automatically perform two-stage meta-analysis using the
-metafor package. However in some circumstances you might want to use a
-different package or chose different options in metaphor. This allows you
-to meta-analyse multiple coefficients in one function call.
+DataSHIELD SLMA functions automatically perform two-stage meta-analysis using
+the metafor package. However in some circumstances you might want to chose
+different options in metafor than those provided within DataSHIELD. This
+function takes the output from ds.glmSLMA and manually performs the
+meta-analysis.
+}
+\details{
+You could also modify this function to use different
+meta-analysis packages.
 }

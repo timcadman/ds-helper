@@ -1,45 +1,96 @@
-#' Extracts the coefficients and confidence intervals from a ds.glm or
-#' ds.glmSLMA model.
+#' Extracts coefficients and confidence intervals from linear models
 #'
-#' @param model saved output from either ds.glm,  ds.glmSLMA or ds.lmerSLMA
-#' @param type either "ipd", "slma" or "lmer"
-#' @param coh_names a vector of cohort names. Note this needs to be in the same
-#'                  order as the cohorts provided to the model.
-#' @param direction either "long" or "wide"
-#' @param ci_format format for the confidence intervals when direction == "wide".
-#'                  "separate" outputs separate columns with upper and lower CIs.
-#'                  "paste" adds these in brackets to the coefficient.'
-#' @param round_digits Number of decimal places to use in table. Default is 2.
-#' @param family where type is ipd or slma, specify the family used in the model
-#' @param exp specify whether you want odds ratios to be exponentiated
+#' To conveniently view model results or make tables, it is useful to extract
+#' the coefficients in a useable format. This function extracts coefficients for
+#' ds.glm, ds.glmSLMA and ds.lmerSLMA objects.
+#'
+#' @param model Object returned from either ds.glm, ds.glmSLMA or ds.lmerSLMA
+#' functions.
+#' @param type Character specifying type of object provided in `model`. Can be
+#' either "glm_ipd", "glm_slma" or "lmer_slma".
+#' @param coh_names Character vector of cohorts included in `model`. Note this
+#' must be in the same order as the cohorts were included in the model.
+#' @param direction Character specifying the output format. Can be either "wide"
+#' or "long". See "Value" for more details.
+#' @param ci_format format for the confidence intervals when direction is "wide".
+#' If "separate", upper and lower confidence intervals are displayed as columns.
+#' If "paste", confidence intervals are returned in the same column as the
+#' coefficient within brackets.
+#' @template digits
+#' @param round_digits Deprecated argument name: please use `digits` instead.
+#' @param family Specifies the family used in the analysis where type is
+#' "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
+#' "gaussian".
+#' @param exp Optionally, specify whether estimates from binomial models should
+#' be exponentiated, ie returned as odds ratios. This argument is ignored if
+#' `type` is "gaussian".
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match
 #'
-#' @return A tibble containing the estimate with lower and upper confidence intervals
+#' @return A tibble. When `direction` is "wide" & `ci_format` is "paste", this
+#' contains five columns:
+#' * variable
+#' * est
+#' * lowci
+#' * uppci
+#' * pvalue
+#'
+#' When `direction` is "long", a tibble with three columns is returned:
+#' * variable
+#' * coefficient (containing values "est", "lowci", "uppci", "pvalue")
+#' * value
+#'
+#' @md
+#' @family descriptive functions
 #'
 #' @export
-dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
-                     direction = c("long", "wide"), ci_format = NULL,
-                     family = "gaussian", round_digits = 2,
+dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
+                     direction = NULL, ci_format = NULL,
+                     family = "gaussian", digits = 2, round_digits = 2,
                      exp = FALSE) {
-  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <- variable <- est <-
-    uppci <- pvalue <- NULL
+  Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
+    variable <- est <- uppci <- pvalue <- NULL
 
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
-    stop("Please specify a model from which to extract coefficients")
+    stop("`model` must not be NULL.", call. = FALSE)
   }
   if (is.null(type)) {
-    stop("Please specify which type of model was fit")
+    stop("`type` must not be NULL.", call. = FALSE)
   }
-  if (is.null(coh_names) & type %in% c("lmer", "slma")) {
-    stop("Please provide a vector of cohort names")
+  if (is.null(coh_names) & type %in% c("glm_slma", "lmer_slma")) {
+    stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
-  type <- arg_match(type, c("ipd", "slma", "lmer"))
-  direction <- arg_match(direction)
+  if (!missing(round_digits)) {
+    warning("Please use `digits` instead of `round_digits`. This option will be
+    removed from version 1.0.0")
+
+    digits <- round_digits
+  }
+
+  if (type == "ipd") {
+    warning("Please use 'glm_ipd' instead of 'ipd'. This option will be removed
+      from version 1.0.0")
+    type <- "glm_ipd"
+  }
+
+  if (type == "slma") {
+    warning("Please use 'glm_slma' instead of 'slma' This option will be removed
+      from version 1.0.0")
+    type <- "glm_slma"
+  }
+
+  if (type == "lmer") {
+    warning("Please use 'lmer_slma' instead of 'lmer'. This option will be removed
+      from version 1.0.0")
+    type <- "lmer_slma"
+  }
+
+  type <- arg_match(type, c("glm_ipd", "glm_slma", "lmer_slma"))
+  direction <- arg_match(direction, c("long", "wide"))
   ci_format <- arg_match(ci_format, c("paste", "separate"))
   family <- arg_match(family, c("gaussian", "binomial"))
 
@@ -58,20 +109,20 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
 
   ## ---- Extract coefficients -------------------------------------------------
-  if (type == "ipd") {
+  if (type == "glm_ipd") {
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
-      est = round(model$coefficients[, "Estimate"], round_digits),
-      lowci = round(model$coefficients[, lowci], round_digits),
-      uppci = round(model$coefficients[, highci], round_digits),
-      pvalue = round(model$coefficients[, "p-value"], round_digits)
+      est = round(model$coefficients[, "Estimate"], digits),
+      lowci = round(model$coefficients[, lowci], digits),
+      uppci = round(model$coefficients[, highci], digits),
+      pvalue = round(model$coefficients[, "p-value"], digits)
     ) %>%
       pivot_longer(
         cols = -variable,
         names_to = "coefficient",
         values_to = "value"
       )
-  } else if (type == "slma" | type == "lmer") {
+  } else if (type == "glm_slma" | type == "lmer_slma") {
     nstudy <- model$num.valid.studies
 
     separate <- paste0("study", seq(1, nstudy, 1)) %>%
@@ -83,21 +134,21 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       bind_rows(.id = "cohort") %>%
       rename(est = Estimate) %>%
       rename(se = "Std. Error") %>%
-      select(cohort, variable, est, se)
+      dplyr::select(cohort, variable, est, se)
 
-    slma <- model$SLMA.pooled.ests.matrix %>%
+    glm_slma <- model$SLMA.pooled.ests.matrix %>%
       as_tibble(rownames = "variable") %>%
       rename(est = pooled.ML) %>%
       rename(se = se.ML) %>%
       mutate(cohort = "combined") %>%
-      select(cohort, variable, est, se)
+      dplyr::select(cohort, variable, est, se)
 
     ## Fix a problem where variables are not named correctly
     if (length(nstudy) == 1) {
-      slma$variable <- unique(separate$variable)
+      glm_slma$variable <- unique(separate$variable)
     }
 
-    out <- bind_rows(separate, slma) %>%
+    out <- bind_rows(separate, glm_slma) %>%
       group_by(variable, cohort) %>%
       group_split() %>%
       map(
@@ -121,9 +172,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   out <- out %>%
     mutate(
       variable = ifelse(variable == "(Intercept)", "intercept", variable),
-      value = round(value, round_digits)
-    ) %>%
-    dplyr::filter(coefficient != "se")
+      value = round(value, digits)
+    )
 
 
   ## ---- Convert to odds ratios where specified -------------------------------
@@ -134,7 +184,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     out <- out %>%
       mutate(value = case_when(
         coefficient == "pvalue" ~ value,
-        coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), round_digits)
+        coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), digits)
       ))
   } else if (exp == TRUE & family == "binomial" & direction == "wide") {
     out <- out %>%
@@ -142,7 +192,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         names_from = c(coefficient),
         values_from = value
       ) %>%
-      mutate(across(est:uppci, ~ round(exp(.), round_digits)))
+      mutate(across(est:uppci, ~ round(exp(.), digits)))
   }
 
   ## ---- Put into final format ------------------------------------------------
@@ -161,7 +211,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
-      select(variable, est, pvalue)
+      dplyr::select(variable, est, pvalue)
   }
 
   if (type == "lmer") {

@@ -2,22 +2,50 @@
 % Please edit documentation in R/lme-mult-poly.R
 \name{dh.lmeMultPoly}
 \alias{dh.lmeMultPoly}
-\title{Function to perform every combination of MLM fractional polynomials}
+\title{Fit multiple mixed effects models containing different combination of
+fractional polynomials}
 \usage{
-dh.lmeMultPoly(df = NULL, formulae = NULL, poly_names = NULL, conns = NULL)
+dh.lmeMultPoly(
+  df = NULL,
+  formulae = NULL,
+  poly_names = NULL,
+  conns = NULL,
+  checks = TRUE
+)
 }
 \arguments{
-\item{df}{name of dataFrame}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{formulae}{a vector of model formulae to fit}
+\item{formulae}{Character vector containing model formulae to fit.}
 
-\item{poly_names}{a vector of names for your models}
+\item{poly_names}{Character vector of names for the models specified in
+\code{formulae}}
 
-\item{conns}{connection objects for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
+
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
+}
+\value{
+List containing three elements:
+\itemize{
+\item models = List of objects returned by ds.lmerSLMA for each model fitted.
+\item convergence = Tibble providing information on convergence problems or
+error for each model fitted.
+\item fit = Tibble with columns containing negative loglikehood statistic for each
+cohort and rows for each model fitted. An additional column provides the sum
+of the loglikelihoods across cohorts.
+}
 }
 \description{
-Function to perform every combination of MLM fractional polynomials
+This function enables you to fit multiple models with different combinations
+of polynomial terms and compares the fit.
 }
-\author{
-Tim Cadman
+\seealso{
+Other trajectory functions: 
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeLmerForm}()},
+\code{\link{dh.predictLmer}()},
+\code{\link{dh.trimPredData}()}
 }
+\concept{trajectory functions}

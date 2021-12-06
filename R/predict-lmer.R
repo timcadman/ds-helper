@@ -1,36 +1,53 @@
-#' Gets predicted values based on a new dataframe for lmer models. Calculates
-#' standard errors for individual cohorts but not pooled at this point.
-#' @param model output model from ds.lmerSLMA function
-#' @param newdata a dataframe or tibble with the values of the model variables
-#' at which you want to get predicted values. All variables from the model must
-#' be in the new data frame
-#' @param coh_names a vector of cohort names, in the order that these were provided
-#' in the original lmer model. #'
-#' @return A tibble of predicted outcome values based on provide variable values.
+#' Gets predicted values based on a new dataframe for lmer models
 #'
-#' @importFrom dplyr pull filter select group_by group_keys all_of group_split rename bind_cols bind_rows mutate
+#' Currently there is no `predict` method for lmer models within DataSHIELD.
+#' This function replicates this, by calculating predicted values for fixed
+#' effects based on the model coefficients. Standard errors are returned for
+#' individual cohorts but yet for pooled models.
+
+#' @param model Model object returned by ds.lmerSLMA.
+#' @param new_data Tibble or data frame containing values for variables in
+#' `model` at which to predict values of the outcome. The column names in
+#' `new_data` must be identical to those in `model`, and all variables included
+#' in `model` must be present in `new_data`.
+#' @param coh_names Vector of cohort names. These must be in the order that
+#' cohorts were specified in `model`.
+#' @param newdata Retired argument name. Please use `new_data' instead.
+#' @return Tibble of predicted outcome values based on values provided in
+#' `new_data`.
+#'
+#' @importFrom dplyr pull filter select group_by group_keys all_of group_split
+#' rename bind_cols bind_rows mutate
 #' @importFrom tidyr pivot_wider
 #' @importFrom purrr set_names map pmap_df pmap_dbl
 #' @importFrom tibble tibble
+#'
+#' @family trajectory functions
+#'
 #' @export
-dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
+dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
+                           newdata = NULL) {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
-    stop("Please provide a model from ds.lmerSLMA")
+    stop("`model` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(newdata)) {
-    stop("Please provide a tibble of new data corresponding to the variables in your model")
+  if (is.null(new_data)) {
+    stop("`new_data` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(coh_names)) {
-    stop("Please provide a vector of cohort names in the same order as the cohorts in your model")
+    stop("`coh_names` must not be NULL.", call. = FALSE)
   }
 
+  if (!missing(newdata)) {
+    warning("Please use `new_data` instead of `newdata`")
+    new_data <- newdata
+  }
 
   ## ---- First we add a column to the new data for the intercept ----------------
-  newdata <- newdata %>%
+  new_data <- new_data %>%
     mutate(intercept = 1) %>%
     select(intercept, everything())
 
@@ -63,7 +80,7 @@ dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
 
   ## ---- Make sure the columns are in the correct order -------------------------
   coefs_by_cohort %<>% select(cohort, all_of(coef_names))
-  newdata_min <- newdata %>% select(all_of(coef_names))
+  newdata_min <- new_data %>% select(all_of(coef_names))
 
   ## ---- Now we multiply the coefficients by new data ---------------------------
   coefs_split <- coefs_by_cohort %>%
@@ -82,7 +99,7 @@ dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
   ## ---- Now do the business ----------------------------------------------------
   pred <- fixed %>%
     map(function(x) {
-      newdata %>%
+      new_data %>%
         mutate(predicted = rowSums(x))
     })
 
@@ -100,7 +117,7 @@ dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
   ## term to have a less silly name. We rename it again, get the columns in the
   ## right order then put it back.
 
-  newdata <- newdata %>%
+  new_data <- new_data %>%
     dplyr::rename("(Intercept)" = intercept) %>%
     dplyr::select(colnames(vcov[[1]])) %>%
     dplyr::rename(intercept = "(Intercept)")
@@ -108,7 +125,7 @@ dh.predictLmer <- function(model = NULL, newdata = NULL, coh_names = NULL) {
   ## Feed in our newdata frame to get the SEs
   se <- vcov %>%
     map(function(x) {
-      newdata %>%
+      new_data %>%
         pmap_dbl(function(...) {
           C <- c(...)
           std.er <- sqrt(t(C) %*% x %*% C)

@@ -1,35 +1,36 @@
-#' Rename multiple variables at once
+#' Rename one or more columns within a serverside data frame
 #'
-#' This function allows you to rename multiple variable from a dataframe. At the
-#' moment it doesn't "rename" as such, it creates duplicate variables with the
-#' new names. I've left it like this to keep in the spirit of ds/opal set up
-#' by not automating the deletion of variables.
+#' This function is an analogue of `dplyr::rename` which allows you to rename
+#' columns of a serverside data frame.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df dataframe
-#' @param current_names a vector with names of existing DataSHIELD variables to
-#'        rename
-#' @param new_names a vector corresponding to the vector provided to current_names
-#'        with the new variable names.
-#' @return None. The new variables are added to the df specified
+#' @template conns
+#' @template df
+#' @param current_names Character vector of columns within `df` to rename.
+#' @param new_names Character vector giving the new names for the columns
+#' specified in `current_names`.
+#' @template checks
+#' @return Data frame specified in `df` is returned server-side with variables
+#' renamed.
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' @importFrom DSI datashield.connections_find
 #'
+#' @family data manipulation functions
+#'
 #' @export
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
-                          conns = NULL) {
+                          conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(current_names)) {
-    stop("Please specify a vector containing existing variable names")
+    stop("`current_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(new_names)) {
-    stop("Please specify a vector containing the new variable names")
+    stop("`new_names` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
@@ -38,12 +39,13 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
 
   names <- NULL
 
-  dh.doesDfExist(df = df, conns = conns)
-  dh.doVarsExist(df = df, vars = current_names, conns = conns)
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = current_names, conns = conns)
+  }
 
   if (length(current_names) != length(new_names)) {
-    stop("Length of current_names is different from the length of new_names.
-    Please check input vectors")
+    stop("Length of `current_names` must equal length of `new_names`.
+    Please check input vectors", call. = FALSE)
   }
 
   names <- list(oldvar = current_names, newvar = new_names)
@@ -66,13 +68,16 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   dh.dropCols(
     df = df,
     vars = current_names,
-    new_df_name = df,
-    conns = conns
+    type = "remove",
+    new_obj = df,
+    conns = conns,
+    checks = FALSE
   )
 
   dh.tidyEnv(
     obj = new_names,
-    conns = conns
+    conns = conns,
+    type = "remove"
   ) %>%
     invisible()
 }

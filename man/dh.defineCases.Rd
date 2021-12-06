@@ -9,32 +9,50 @@ dh.defineCases(
   df = NULL,
   vars = NULL,
   type = NULL,
+  new_obj = NULL,
   conns = NULL,
-  newobj = "dc_data_avail"
+  checks = FALSE,
+  newobj = NULL
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{vector of variable names in dataframe}
+\item{vars}{Character vector of columns within `df` to form definition set.}
 
-\item{type}{whther to define cases based on any or all provided variables}
+\item{type}{Character specifying how to define cases. Use "any" to describe
+subjects with data on any of `vars`, and "all" to describe subjects with data
+on all of `vars.}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{new_obj}{Character specifying name for created serverside object.}
 
-\item{newobj}{optional name for outputted object. Defaults to "dc_data_avail"}
+\item{conns}{DataSHIELD connections object.}
+
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
+
+\item{newobj}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
-None. A new variable is created within the opal environment. If the option
-        "any" is selected for argument "type", the new variable is called "dc_any_data".
-        If the option "all" is selected, the new variable is called "dc_all_data"
+Server-side vector defining whether subject meets criteria defined by
+`vars` and `type`. 1 indicates that criteria were met, 0 indicates that
+criteria weren't met.
 }
 \description{
-At some point in the analysis you will want to subset your dataset to contain
-only subjects meeting some criteria, e.g. data on at least one outcome or
-data on all exposures. This function speeds things up by indicating whether a subject
-has non-missing values for any or all of a set of given variables.
+In an analysis you may want to subset your dataset to contain only subjects
+meeting a specific criteria, e.g. data on at least one outcome or data on all
+exposures. This function automates this operation by describing whether a
+subject has non-missing values for any or all of a set of given variables.
 }
 \details{
-Note this function replaces the deprecated dh.subjHasData.
+This function replaces the deprecated dh.subjHasData.
 }
+\seealso{
+Other descriptive functions: 
+\code{\link{dh.anyData}()},
+\code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.getStats}()},
+\code{\link{dh.lmTab}()},
+\code{\link{dh.meanByGroup}()}
+}
+\concept{descriptive functions}

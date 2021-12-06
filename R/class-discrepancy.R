@@ -1,17 +1,23 @@
-#' Class discrepancy
+#' Describes the class of one or more variables across cohorts and indicates
+#' differences
 #'
-#' Either due to using ds.dataFrameFill, or because of mistakes in uploading
-#' data, some cohorts may have variables uploaded as a different class to other
-#' cohorts. This can create problems, e.g. when using ds.summary. This function
-#' produces a table comparing the class of multiple variables.
+#' Either through using ds.dataFrameFill, or due to mistakes in uploading
+#' data, the same variable may have a different class across cohorts. This can
+#' create problems as many DataSHIELD functions require the input variable to
+#' have the same class in all studies. This function produces a tibble showing
+#' the class of each variable.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df opal dataframe
-#' @param vars vector of variable names in dataframe (optional). If vars is not
-#'      provided all variables will be included.
+#' @template conns
+#' @template df
+#' @param vars Optionally, a character vector specifying columns within `df` to
+#' describe. If NULL all variables will be included.
+#' @template checks
 #'
-#' @return a tibble with columns for (i) variable, (ii) discrepancy (y/n) and
-#'        columns for each cohort indicating the class of the variable
+#' @return A tibble with columns for each variable and rows for each cohort
+#' describing the class of the variable, with an additional column 'discrepancy'
+#' summarising whether there are differences between cohorts.
+#'
+#' @family descriptive functions
 #'
 #' @importFrom purrr map_df
 #' @importFrom dplyr %>% mutate select everything
@@ -20,24 +26,25 @@
 #'
 #' @export
 # nolint
-dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL) {
+dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   . <- variable <- discrepancy <- NULL
 
   if (is.null(df)) {
-    stop("Please specify a data frame")
+    stop("`df` must not be NULL.", call. = FALSE)
   }
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
 
-  dh.doesDfExist(conns, df)
-
   if (is.null(vars)) {
     fun_vars <- unique(unlist(datashield.aggregate(conns, call("colnamesDS", df))))
   } else {
-    dh.doVarsExist(df, vars, conns)
     fun_vars <- vars
+  }
+
+  if (checks == TRUE) {
+    .isDefined(df = df, vars = vars, conns = conns)
   }
 
   ## ---- Get variable classes -------------------------------------------------
