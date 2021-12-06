@@ -6,7 +6,7 @@ library(knitr)
 knitr::knit("vignettes/ds-helper-main-vignette.Rmd.orig",
             output = "vignettes/ds-helper-main-vignette.Rmd"
 )
-knitr::knit("vignettes/ds_traj_tutorial.Rmd.orig",
+knitr::knit("vignettes/ds-helper-trajectories-vignette.Rmd.orig",
             output = "vignettes/ds-helper-trajectories-vignette.Rmd"
 )
 knitr::knit("vignettes/Troubleshooting.Rmd.orig",

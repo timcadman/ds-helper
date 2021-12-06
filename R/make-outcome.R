@@ -14,7 +14,7 @@
 #' @param conns See argument `conns` in `dh.makeStrata`
 #' @param id_var See argument `id_var` in `dh.makeStrata`
 #' @param band_action See argument `band_action` in `dh.makeStrata`
-#' 
+#'
 #' @export
 dh.makeOutcome <- function(df = NULL, outcome = NULL, age_var = NULL, bands = NULL,
                            mult_action = NULL, mult_vals = NULL, df_name = NULL, id_var = "child_id",

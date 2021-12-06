@@ -6,6 +6,14 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+```{r settings, echo = FALSE}
+options(datashield.progress = FALSE)
+options(datashield.progress.clear = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(results = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+options(knitr.duplicate.label = "allow")
+```
 
 # Introducation
 dsHelper contains a number of client-side functions designed to simplify data 

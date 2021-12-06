@@ -81,10 +81,9 @@
 #' @md
 #'
 #' @export
-dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, #nolint
+dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, # nolint
                           mult_action = NULL, mult_vals = NULL, keep_vars = NULL, new_obj = NULL,
                           band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
-
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- NULL
@@ -171,11 +170,14 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     boole_name = pairs %>% map_chr(~ paste0("boole", "_", paste0(., collapse = "_"))),
     subset_name = pairs %>% map_chr(~ paste0("subset", "_", paste0(., collapse = "_")))
   ) %>%
-  mutate(across(c(boole_name, subset_name), 
-    ~str_replace_all(
-      string = ., 
-      pattern = "-", 
-      replacement = "m")))
+    mutate(across(
+      c(boole_name, subset_name),
+      ~ str_replace_all(
+        string = .,
+        pattern = "-",
+        replacement = "m"
+      )
+    ))
 
 
   boole_ref %>%
@@ -431,7 +433,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   } else {
     .isDefined(df = df, vars = c(id_var, var_to_subset, age_var, keep_vars), conns = conns)
   }
-  
+
   cally <- call("classDS", paste0(df, "$", var_to_subset))
   var_class <- DSI::datashield.aggregate(conns, cally)
 
@@ -690,7 +692,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   if (!is.null(keep_vars)) {
     vars_to_reshape <- c(vars_to_reshape, keep_vars)
   }
-  
+
   # Now we convert to wide format
   ds.reShape(
     data.name = "subset_w_suffix",
@@ -760,7 +762,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     vars = "id",
     type = "keep",
     new_obj = finalobj,
-    conns = conns, 
+    conns = conns,
     checks = FALSE
   )
 }
