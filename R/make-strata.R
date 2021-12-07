@@ -72,7 +72,7 @@
 #'             ds.replaceNA
 #' @importFrom purrr pmap map_dfr
 #' @importFrom tidyr pivot_longer tibble
-#' @importFrom dplyr pull %>% rename if_all
+#' @importFrom dplyr pull %>% rename all_vars
 #' @importFrom stringr str_extract
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find
