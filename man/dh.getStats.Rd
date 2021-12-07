@@ -2,7 +2,7 @@
 % Please edit documentation in R/get-stats.R
 \name{dh.getStats}
 \alias{dh.getStats}
-\title{Produces a rance of descriptive statistics in a useful format}
+\title{Produces a range of descriptive statistics in a useful format}
 \usage{
 dh.getStats(df = NULL, vars = NULL, digits = 2, conns = NULL, checks = TRUE)
 }
