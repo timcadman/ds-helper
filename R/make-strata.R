@@ -132,7 +132,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     y = available_age,
     by = "cohort"
   ) %>%
-    dplyr::filter(if_all(-cohort, ~ .x == FALSE))
+    dplyr::filter_at(vars(-cohort), all_vars(. == FALSE))
 
   valid_coh <- available$cohort
 
