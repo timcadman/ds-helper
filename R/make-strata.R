@@ -739,7 +739,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   df_dim <- ds.dim(df, type = "split", datasources = conns)
 
   rep_ref <- tibble(
-    cohort = str_remove(names(df_dim), "dimensions of data in "),
+    cohort = str_remove(names(df_dim), paste0("dimensions of ", df, " in ")),
     length = map_int(df_dim, ~ .x[[1]])
   )
 
@@ -773,7 +773,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   dh.dropCols(
     df = "df_minimal",
-    vars = "id",
+    vars = id_var,
     type = "keep",
     new_obj = finalobj,
     conns = conns,
