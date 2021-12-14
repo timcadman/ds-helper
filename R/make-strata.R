@@ -343,7 +343,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   message("DONE", appendLF = TRUE)
 
-  message("** Step 7 of 7: Removing temporary objects ... ", appendLF = FALSE)
+  message("** Step 9 of 9: Removing temporary objects ... ", appendLF = FALSE)
 
   .removeTempObjs(
     start_objs = start_objs,
@@ -363,7 +363,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     sep = ""
   )
 
-  message(created)
+  print(created)
 }
 
 #' Perform various checks on the availability and class of input objects
@@ -525,11 +525,25 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     checks = FALSE
   )
 
-  ds.completeCases(
-    x1 = "df_slim",
-    newobj = "df_slim",
-    datasources = conns
+  dh.defineCases(
+    df = df,
+    vars = c(age_var, var_to_subset),
+    type = "all",
+    new_obj = "subset_def", 
+    conns = conns,
+    checks = FALSE
   )
+
+  ds.dataFrameSubset(
+    df.name = "df_slim",
+    V1.name = "subset_def",
+    V2.name = "1",
+    Boolean.operator = "==",
+    keep.NAs = FALSE,
+    newobj = "df_slim", 
+    datasources = conns
+  )  
+
 }
 
 #' Create a variable indicating whether two conditions are met.
@@ -725,7 +739,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   df_dim <- ds.dim(df, type = "split", datasources = conns)
 
   rep_ref <- tibble(
-    cohort = str_remove(names(df_dim), "dimensions of data in "),
+    cohort = str_remove(names(df_dim), paste0("dimensions of ", df, " in ")),
     length = map_int(df_dim, ~ .x[[1]])
   )
 
@@ -759,7 +773,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   dh.dropCols(
     df = "df_minimal",
-    vars = "id",
+    vars = id_var,
     type = "keep",
     new_obj = finalobj,
     conns = conns,
