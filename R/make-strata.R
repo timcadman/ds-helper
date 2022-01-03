@@ -86,7 +86,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
                           band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
-    end_objs <- . <- nearest_value <- age <- NULL
+    end_objs <- . <- nearest_value <- age <- subset_short <- suffix <- value_1 <- value_2 <- Var1 <-
+    Var2 <- var <- value <- NULL
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()

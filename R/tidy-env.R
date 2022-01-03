@@ -19,7 +19,7 @@
 #'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
-  . <- NULL
+  . <- value <- NULL
 
   if (is.null(obj)) {
     stop("`obj` must not be NULL.", call. = FALSE)
