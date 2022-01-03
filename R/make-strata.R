@@ -209,7 +209,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     map(
       ~ .checkDisclosure(
         bin_vec = .x,
-        conns = conns[c("eden", "elfe")]
+        conns = conns[valid_coh]
       )
     ) %>%
     bind_rows()
