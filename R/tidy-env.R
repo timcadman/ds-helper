@@ -36,7 +36,26 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   }
 
   if (type == "remove") {
-    obj %>% map(ds.rm, datasources = conns)
+    
+    obj <- obj
+    
+    ## Check no objects to removed have character length >20
+    obj_lengths <- tibble(
+      obj = obj,
+      length = obj %>% map_int(nchar))
+    
+    obj_valid <- obj_lengths %>%  
+      dplyr::filter(length < 20) %>%
+      pull(obj)
+    
+    obj_not_valid <- obj_lengths %>%  
+      dplyr::filter(length >= 20) 
+    
+    if (nrow(obj_not_valid > 0)) {
+      warning(paste0("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
+           due to risk of malicious code. These objects have not been removed: \n\n", as.character(obj_not_valid$value)), call. = FALSE)
+    }
+    
   } else if (type == "keep") {
     objects <- names(conns) %>%
       map(
@@ -50,24 +69,24 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
 
     names(vars) <- names(conns)
 
-    ## Check no objects to removed have character length >20
-    obj_lengths <- vars %>%
-      map(~ nchar(.)) %>%
-      map(~ any(. > 20)) %>%
-      unlist() %>%
-      any(. > 20)
-
-    if (obj_lengths == TRUE) {
-      stop("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
-           due to risk of malicious code. Amend your script so that your objects have shorter names", call. = FALSE)
-    }
-
     vars_tibble <- vars %>%
       map(~ as_tibble(.)) %>%
       imap(~ mutate(., cohort = .y)) %>%
-      bind_rows()
+      bind_rows() %>%
+      mutate(length = value %>% map_int(nchar))
+    
+    obj_valid <- vars_tibble %>%  
+      dplyr::filter(length < 20) 
+    
+    obj_not_valid <- vars_tibble %>%  
+      dplyr::filter(length >= 20) 
+    
+    if (nrow(obj_not_valid > 0)) {
+      warning(paste0("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
+           due to risk of malicious code. These objects have not been removed.", as.character(obj_not_valid$value)), call. = FALSE)
+    }
 
-    vars_tibble %>% pmap(function(cohort, value) {
+    obj_valid %>% pmap(function(cohort, value, ...) {
       ds.rm(x.name = value, datasources = conns[cohort])
     })
   }
