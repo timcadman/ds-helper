@@ -352,31 +352,34 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   
   var_ref <- c(var_to_subset, age_var, keep_vars)
   
-  rename_ref <- expand.grid(suffix_ref$suffix, var_ref) %>%
+  rename_ref_coh <- suffix_ref %>%
+    group_by(cohort) 
+  
+  tmp_names <- group_keys(rename_ref_coh) %>%
+    unlist()
+  
+  rename_ref <- rename_ref_coh %>%
+    group_split %>%
+    map(~expand.grid(.$suffix, var_ref)) %>%
+    set_names(tmp_names) %>%
+    bind_rows(.id = "cohort") %>%
     dplyr::rename(suffix = Var1, var = Var2) %>%
-    left_join(., suffix_ref, by = "suffix") %>%
+    left_join(., suffix_ref, by = c("cohort", "suffix")) %>%
     mutate(
       old_name = paste0(var, suffix), 
       new_name = paste0(var, ".", value_2)) %>%
     group_by(cohort)
   
-  tmp_names <- group_keys(rename_ref) %>%
-    unlist()
-  
-  rename_list <- rename_ref %>%
-    group_split %>%
-    set_names(tmp_names)
-  
-  rename_list %>%
-    imap(
-      ~dh.renameVars(
+  rename_ref %>%
+    pmap(function(cohort, old_name, new_name, ...){
+       dh.renameVars(
         df = new_obj,
-        current_names = .x$old_name,
-        new_names = .x$new_name,
-        conns = conns[.y],
+        current_names = old_name,
+        new_names = new_name,
+        conns = conns[cohort],
         checks = FALSE
       )
-    )
+    })
 
   message("DONE", appendLF = TRUE)
 
