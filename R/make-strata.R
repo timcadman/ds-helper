@@ -86,7 +86,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
                           band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
-    end_objs <- . <- nearest_value <- age <- NULL
+    end_objs <- . <- nearest_value <- age <- subset_short <- suffix <- value_1 <- value_2 <- Var1 <-
+    Var2 <- var <- value <- NULL
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -177,11 +178,15 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
         pattern = "-",
         replacement = "m"
       )
-    ))
+    )) %>%
+    mutate(
+      boole_short = paste0("bl_", seq(1, length(boole_name))), 
+      subset_short = paste0("sb_", seq(1, length(subset_name)))
+    )
 
 
   boole_ref %>%
-    pmap(function(value_1, op_1, value_2, op_2, boole_name, ...) {
+    pmap(function(value_1, op_1, value_2, op_2, boole_short, ...) {
       .BooleTwoConditions(
         df = "df_slim",
         var = age_var,
@@ -189,7 +194,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
         op_1 = op_1,
         value_2 = value_2,
         op_2 = op_2,
-        newobj = boole_name,
+        newobj = boole_short,
         conns = conns[valid_coh]
       )
     })
@@ -200,7 +205,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   # We need to check that the subsets will have enough rows to avoid triggering
   # disclosure traps.
-  discloure_ref <- boole_ref$boole_name %>%
+  discloure_ref <- boole_ref$boole_short %>%
     map(
       ~ .checkDisclosure(
         bin_vec = .x,
@@ -214,7 +219,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   }
 
   failed_disclosure <- discloure_ref %>%
-    left_join(., boole_ref, by = "boole_name") %>%
+    left_join(., boole_ref, by = "boole_short") %>%
     dplyr::filter(enough_obs == FALSE)
 
   if (nrow(failed_disclosure) > 1) {
@@ -229,20 +234,19 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   message("** Step 5 of 9: Creating subsets ... ", appendLF = FALSE)
 
-  subset_ref <- left_join(boole_ref, discloure_ref, by = "boole_name") %>%
-    dplyr::filter(enough_obs == TRUE) %>%
-    select(cohort, boole_name, subset_name)
+  subset_ref <- left_join(boole_ref, discloure_ref, by = "boole_short") %>%
+    dplyr::filter(enough_obs == TRUE)
 
   subset_ref %>%
     pmap(
-      function(cohort, boole_name, subset_name) {
+      function(cohort, boole_short, subset_short, ...) {
         ds.dataFrameSubset(
           df.name = "df_slim",
-          V1.name = boole_name,
+          V1.name = boole_short,
           V2.name = "1",
           Boolean.operator = "==",
           keep.NAs = TRUE,
-          newobj = subset_name,
+          newobj = subset_short,
           datasources = conns[cohort]
         )
       }
@@ -260,25 +264,25 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   if (mult_action == "nearest") {
     nearest_ref <- tibble(
-      subset_name = unique(subset_ref$subset_name),
+      subset_short = unique(subset_ref$subset_short),
       nearest_value = mult_vals
     )
 
-    sort_ref <- left_join(subset_ref, nearest_ref, by = "subset_name")
+    sort_ref <- left_join(subset_ref, nearest_ref, by = "subset_short")
   } else if (mult_action %in% c("earliest", "latest")) {
     sort_ref <- subset_ref %>%
       mutate(nearest_value = NA)
   }
 
   sort_ref <- sort_ref %>%
-    mutate(sort_name = paste0(subset_name, "_s"))
+    mutate(sort_name = paste0(subset_short, "_s"))
 
   sort_ref %>%
-    pmap(function(cohort, subset_name, sort_name, nearest_value, ...) {
+    pmap(function(cohort, subset_short, sort_name, nearest_value, ...) {
       .sortSubset(
         mult_action = mult_action,
         nearest_value = nearest_value,
-        subset_name = subset_name,
+        subset_name = subset_short,
         age_var = age_var,
         newobj = sort_name,
         conns = conns[cohort]
@@ -291,8 +295,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   reshape_ref <- sort_ref %>%
     mutate(
-      suffix = str_extract(subset_name, "[^_]+$"),
-      wide_name = paste0(subset_name, "_w")
+      suffix = str_extract(subset_short, "[^_]+$"),
+      wide_name = paste0(subset_short, "_w")
     )
 
   reshape_ref %>%
@@ -340,6 +344,42 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
         datasources = conns[cohort]
       )
     })
+  
+  ## The last step is to rename created variables with correct suffix
+  suffix_ref <- reshape_ref %>%
+    dplyr::select(cohort, suffix, value_1, value_2) %>%
+    mutate(suffix = paste0(".", suffix))
+  
+  var_ref <- c(var_to_subset, age_var, keep_vars)
+  
+  rename_ref_coh <- suffix_ref %>%
+    group_by(cohort) 
+  
+  tmp_names <- group_keys(rename_ref_coh) %>%
+    unlist()
+  
+  rename_ref <- rename_ref_coh %>%
+    group_split %>%
+    map(~expand.grid(.$suffix, var_ref)) %>%
+    set_names(tmp_names) %>%
+    bind_rows(.id = "cohort") %>%
+    dplyr::rename(suffix = Var1, var = Var2) %>%
+    left_join(., suffix_ref, by = c("cohort", "suffix")) %>%
+    mutate(
+      old_name = paste0(var, suffix), 
+      new_name = paste0(var, ".", value_2)) %>%
+    group_by(cohort)
+  
+  rename_ref %>%
+    pmap(function(cohort, old_name, new_name, ...){
+       dh.renameVars(
+        df = new_obj,
+        current_names = old_name,
+        new_names = new_name,
+        conns = conns[cohort],
+        checks = FALSE
+      )
+    })
 
   message("DONE", appendLF = TRUE)
 
@@ -351,9 +391,13 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     conns = conns
   )
 
-  created <- subset_ref %>%
-    mutate(age = subset_name %>% str_remove("subset_")) %>%
-    dplyr::select(cohort, age)
+  created <- rename_ref %>%
+    ungroup %>%
+    distinct(cohort, value_1, value_2) %>%
+    dplyr::rename(
+      lower_band = value_1, 
+      upper_band = value_2) %>%
+    arrange(cohort)
 
   message("DONE", appendLF = TRUE)
 
@@ -605,16 +649,21 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 .checkDisclosure <- function(bin_vec, conns) {
   observations <- . <- NULL
 
+  coh_ref <- tibble(
+    coh_num = as.character(seq(1, length(names(conns)))),
+    cohort = names(conns)
+  )
+  
   n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
     as_tibble(rownames = "levels") %>%
-    dplyr::filter(levels == 1) %>%
     pivot_longer(
       cols = c(-levels),
-      names_to = "cohort",
+      names_to = "coh_num",
       values_to = "observations"
     ) %>%
-    dplyr::select(-levels) %>%
-    mutate(cohort = names(conns))
+    left_join(., coh_ref, by = "coh_num") %>%
+    dplyr::filter(levels == 1) %>%
+    dplyr::select(-levels)
 
   min_obs <- ds.listDisclosureSettings(datasources = conns)$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset) %>%
@@ -626,7 +675,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   disclosure_ref <- left_join(n_obs, min_obs, by = "cohort") %>%
     mutate(
-      boole_name = bin_vec,
+      boole_short = bin_vec,
       enough_obs = ifelse(observations > min_obs, TRUE, FALSE)
     )
 
