@@ -37,21 +37,10 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL,
     .isDefined(df = df, vars = vars, conns = conns)
   }
 
-  ## -- Make reference table of vars and cohorts -------------------------------
-  ref_tab <- tibble(
-    var = rep(vars, length(names(conns))),
-    cohort = rep(names(conns), each = length(vars))
-  )
-
-  ## ---- Get column names for each cohort -------------------------------------
   cols <- datashield.aggregate(conns, call("colnamesDS", df))
-
-  tmp <- ref_tab %>%
-    pmap(function(var, cohort) {
-      which(cols[[1]] %in% var == TRUE)
-    })
-
-  out <- split(unlist(tmp), ceiling(seq_along(unlist(tmp)) / length(vars)))
+  
+  out <- cols %>% map(~ which(.x %in% vars == TRUE))
+  
   names(out) <- names(conns)
 
   return(out)
