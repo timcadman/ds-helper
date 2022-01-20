@@ -24,7 +24,7 @@
 #' @export
 dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   if (is.null(df)) {
-    stop("`df` must not be NULL.")
+    stop("`df` must not be NULL.") 
   }
 
   if (is.null(vars)) {
