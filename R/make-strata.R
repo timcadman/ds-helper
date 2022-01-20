@@ -483,10 +483,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   if (length(unique(var_class)) > 1) {
     stop("`var_to_subset` does not have the same class in all studies.", call. = FALSE)
-  } else if (any(!var_class %in% c("numeric", "integer"))) {
-    stop("`var_to_subset` must be class numeric or integer.", call. = FALSE)
-  }
-
+  } 
+  
   cally <- call("classDS", paste0(df, "$", age_var))
   age_var_class <- DSI::datashield.aggregate(conns, cally)
 
