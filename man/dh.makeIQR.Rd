@@ -7,7 +7,7 @@
 dh.makeIQR(
   df = NULL,
   vars = NULL,
-  type = c("separate", "pooled"),
+  type = c("separate", "combined"),
   new_obj = df,
   conns = NULL,
   checks = TRUE,
@@ -20,7 +20,7 @@ dh.makeIQR(
 \item{vars}{Character vector of columns within `df` to transform.}
 
 \item{type}{Use "separate" to transform the variable based on the
-within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts
+within-cohort IQR, or "combined" to use the combined IQR across all cohorts
 specified in `conns`.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
@@ -34,12 +34,12 @@ function. Default is TRUE.}
 }
 \value{
 Server-side object specified in `df` with transformed variables added
-as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
-"iqr_p" if pooled is type is "pooled".
+as columns. Variables have suffic "_iqr_s" if type is "separate" and suffix
+"iqr_c" if type is "combined".
 }
 \description{
 This function scales variables by their interquartile range. IQR is
-calulcated either within cohort or using the pooled IQR across cohorts.
+calulcated either within cohort or using the combined IQR across cohorts.
 The formula used is: value[subject] / (75th percentile - 25th percentile).
 }
 \seealso{
