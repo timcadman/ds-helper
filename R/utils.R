@@ -187,7 +187,6 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
   
 }
 
-
 #' Create a variable indicating whether two conditions are met.
 #' ds.Boole only allows one condition to be specified.
 #'
@@ -231,10 +230,6 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
   DSI::datashield.assign(conns, newobj, as.symbol("boole_1*boole_2"))
   
 }
-
-
-
-
 
 #' Check whether a provided binary vector (output from ds.Boole) has
 #' a number of cases > minimum number of rows for subsets.
@@ -284,8 +279,6 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
   
   return(disclosure_ref)
 }
-
-
 
 #' Checks the server environment for new objects generated and removes them
 #'
