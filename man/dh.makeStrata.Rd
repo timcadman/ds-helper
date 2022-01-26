@@ -111,6 +111,7 @@ Other data manipulation functions:
 \code{\link{dh.dropCols}()},
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeIQR}()},
+\code{\link{dh.quantileSplit}()},
 \code{\link{dh.renameVars}()},
 \code{\link{dh.tidyEnv}()}
 }

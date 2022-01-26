@@ -47,6 +47,7 @@ Other data manipulation functions:
 \code{\link{dh.dropCols}()},
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeStrata}()},
+\code{\link{dh.quantileSplit}()},
 \code{\link{dh.renameVars}()},
 \code{\link{dh.tidyEnv}()}
 }
