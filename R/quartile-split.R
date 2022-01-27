@@ -18,7 +18,7 @@
 #' * "ge_l" = greater than or equal to the lowest band and less than the highest
 #' band
 #' @param type Character specifying whether to derive quartiles from combined
-#' data or within each cohort. Use "combined" to use combined quartiles, and 
+#' data or within each cohort. Use "combine" to use combined quartiles, and 
 #' "split" to use cohort-specific quartiles.
 #' @template new_obj
 #' @param var_suffix Character specifying the suffix to give the created variable.
