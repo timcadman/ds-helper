@@ -7,7 +7,7 @@
 dh.makeIQR(
   df = NULL,
   vars = NULL,
-  type = c("separate", "combined"),
+  type = c("combine", "split"),
   new_obj = df,
   conns = NULL,
   checks = TRUE,
@@ -19,9 +19,9 @@ dh.makeIQR(
 
 \item{vars}{Character vector of columns within `df` to transform.}
 
-\item{type}{Use "separate" to transform the variable based on the
-within-cohort IQR, or "combined" to use the combined IQR across all cohorts
-specified in `conns`.}
+\item{type}{Use "combine" to transform the variable based on the combined IQR 
+across all cohorts specified in `conns`, or "split" to transform based on the
+within-cohort IQR.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
@@ -34,8 +34,8 @@ function. Default is TRUE.}
 }
 \value{
 Server-side object specified in `df` with transformed variables added
-as columns. Variables have suffic "_iqr_s" if type is "separate" and suffix
-"iqr_c" if type is "combined".
+as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s" 
+if type is "split".
 }
 \description{
 This function scales variables by their interquartile range. IQR is

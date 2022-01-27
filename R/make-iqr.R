@@ -6,17 +6,17 @@
 #'
 #' @template df
 #' @param vars Character vector of columns within `df` to transform.
-#' @param type Use "separate" to transform the variable based on the
-#' within-cohort IQR, or "combined" to use the combined IQR across all cohorts
-#' specified in `conns`.
+#' @param type Use "combine" to transform the variable based on the combined IQR 
+#' across all cohorts specified in `conns`, or "split" to transform based on the
+#' within-cohort IQR.
 #' @template conns
 #' @template new_obj
 #' @template checks
 #' @param new_df_name Retired argument. Please use `new_obj' instead.
 #'
 #' @return Server-side object specified in `df` with transformed variables added
-#' as columns. Variables have suffic "_iqr_s" if type is "separate" and suffix
-#' "iqr_c" if type is "combined".
+#' as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s" 
+#' if type is "split".
 #'
 #' @importFrom dsBaseClient ds.colnames ds.dataFrame ds.make ds.class ds.mean
 #'             ds.quantileMean
@@ -29,7 +29,7 @@
 #' @family data manipulation functions
 #'
 #' @export
-dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "combined"),
+dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
                        new_obj = df, conns = NULL, checks = TRUE,
                        new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
@@ -55,6 +55,8 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "combined"),
     .isDefined(df = df, vars = vars, conns = conns)
   }
 
+  type <- ifelse(type == "combined", "combine", type)
+  
   type <- match.arg(type)
 
   df_vars <- paste0(df, "$", vars)
@@ -71,7 +73,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "combined"),
   }
 
   ## ---- Calculate IQRs ---------------------------------------------------------
-  if (type == "separate") {
+  if (type == "split") {
     meds <- df_vars %>%
       map(function(x) {
         cally1 <- paste0("quantileMeanDS(", x, ")")
@@ -105,7 +107,8 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "combined"),
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
-  } else if (type == "separate") {
+    
+  } else if (type == "combine") {
 
     ## ---- Identify cohorts which are all missing -----------------------------
     missing <- expand.grid(vars, names(conns)) %>%
