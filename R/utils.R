@@ -139,10 +139,10 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 .convertBooleText <- function(boole_string){
   
   op_symbol <- case_when(
-    band_action == "g_l" ~ c(">", "<"),
-    band_action == "ge_le" ~ c(">=", "<="),
-    band_action == "g_le" ~ c(">", "<="),
-    band_action == "ge_l" ~ c(">=", "<")
+    boole_string == "g_l" ~ c(">", "<"),
+    boole_string == "ge_le" ~ c(">=", "<="),
+    boole_string == "g_le" ~ c(">", "<="),
+    boole_string == "ge_l" ~ c(">=", "<")
   )
   
 }
@@ -259,7 +259,20 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
       names_to = "coh_num",
       values_to = "observations"
     ) %>%
-    left_join(., coh_ref, by = "coh_num") %>%
+    left_join(., coh_ref, by = "coh_num") 
+  
+  if(n_obs %>% dplyr::filter(levels == 1) %>% nrow == 0){
+    
+    replace_all_missing <- n_obs %>%
+      mutate(
+        levels = "1",
+        observations = 0)
+    
+    n_obs <- bind_rows(n_obs, replace_all_missing)
+    
+  }
+  
+  n_obs <- n_obs %>%
     dplyr::filter(levels == 1) %>%
     dplyr::select(-levels)
   
