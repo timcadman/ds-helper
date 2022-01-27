@@ -27,7 +27,7 @@ Other data manipulation functions:
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeIQR}()},
 \code{\link{dh.makeStrata}()},
-\code{\link{dh.quantileSplit}()},
+\code{\link{dh.quartileSplit}()},
 \code{\link{dh.renameVars}()}
 }
 \concept{data manipulation functions}
