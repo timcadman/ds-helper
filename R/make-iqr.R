@@ -107,6 +107,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
+    
   } else if (type == "combine") {
 
     ## ---- Identify cohorts which are all missing -----------------------------
