@@ -30,22 +30,64 @@
 #' has insufficient observations within that quartile (less than the filter
 #' threshold) the variable will not be created an a warning will be returned.
 #' 
+#' @importFrom rlang arg_match set_names
+#' @importFrom dplyr bind_rows group_by group_keys group_split left_join 
+#' mutate select ungroup filter filter_at
+#' @importFrom dsBaseClient ds.assign ds.dataFrame ds.ls ds.recodeValues
+#' @importFrom DSI datashield.aggregate datashield.connections_find
+#' @importFrom purrr imap map pmap
+#' 
 #' @family data manipulation functions
 #'
 #' @md
 #'
 #' @export
-dh.quantileSplit <- function(
-  df = NULL, var = NULL, new_obj = NULL, conns = NULL, band_action = NULL, 
-  type = NULL, var_suffix = "_q_"){
+dh.quartileSplit <- function(
+  df = NULL, var = NULL, new_obj = NULL, band_action = NULL, 
+  type = NULL, var_suffix = "_q_", conns = NULL){
   
-  . <- suffix <- boole_name <- subset_name <- cohort <- enough_obs <- suffix
-  
-  message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
   
+  . <- suffix <- boole_name <- subset_name <- cohort <- enough_obs <- NULL
+  
+  if (is.null(df)) {
+    stop("`df` must not be NULL.", call. = FALSE)
+  }
+  
+  if (is.null(var)) {
+    stop("`var` must not be NULL.", call. = FALSE)
+  }
+  
+  if (is.null(new_obj)) {
+    new_obj <- df
+  }
+
+  if (is.null(band_action)) {
+    stop("`band_action` must not be NULL.", call. = FALSE)
+  }
+  
+  if (is.null(type)) {
+    stop("`type` must not be NULL.", call. = FALSE)
+  }
+  
+  type <- arg_match(type, c("combine", "split"))
+  band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
+  
+  cally <- call("classDS", paste0(df, "$", var))
+  var_class <- DSI::datashield.aggregate(conns, cally)
+  
+  if (length(unique(var)) > 1) {
+    stop("`var` does not have the same class in all studies.", call. = FALSE)
+  } 
+  
+  if (any(!var_class %in% c("numeric", "integer"))) {
+    stop("`age_var` must be class numeric or integer.", call. = FALSE)
+  }
+  
+  message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)  
+
   start_objs <- ds.ls(datasources = conns)
   
   available_var <- .checkDataAvailable(
@@ -167,13 +209,11 @@ dh.quantileSplit <- function(
   
   message("** Step 4 of 9: Creating variables ... ", appendLF = FALSE)
   
-  if(type == "combined"){
+  if(type == "combine"){
     
     quant_ref <- left_join(boole_ref, discloure_ref, by = "boole_short") %>%
       dplyr::filter(enough_obs == TRUE) %>%
       mutate(var_name = paste0(var, var_suffix, suffix))
-    
-    quant_ref %>% print(n = Inf)
     
   } else if(type == "split"){
     
@@ -185,7 +225,17 @@ dh.quantileSplit <- function(
   
   quant_ref %>%
     pmap(function(var_name, cohort, boole_short, ...){
+
+      ## We recode all values of 0 (ie not in the quartile) to NA      
+      ds.recodeValues(
+        var.name = boole_short,
+        values2replace.vector = 0,
+        new.values.vector = NA,
+        newobj = boole_short,
+        datasources = conns[cohort]
+      )
       
+      ## Then multiply by the original variable
       ds.assign(
         toAssign = paste0(df, "$", var, "*", boole_short), 
         newobj = var_name,
@@ -245,43 +295,47 @@ dh.quantileSplit <- function(
 #' @template conns 
 #'
 #' @noRd
-.getQuantileBands <- function(df, var, type, conns){
+.getQuantileBands <- function(df = NULL, var = NULL, type = NULL, conns = NULL){
   
-  cohort <- perc_25 <- perc_50 <- perc_75 <- quant_names <- NULL
+  type <- arg_match(type, c("combine", "split"))
+  
+  cohort <- perc_5 <- perc_25 <- perc_50 <- perc_75 <- perc_95 <- quant_names <- 
+    NULL
+  
   stats <- dh.getStats(
     df = df,
     vars = var, 
     checks = FALSE, 
     conns = conns)
   
-  if(type == "combined"){
+  if(type == "combine"){
     
     quants <- stats$continuous %>% 
       dplyr::filter(cohort == "combined") %>%
-      dplyr::select(cohort, perc_25, perc_50, perc_75)
+      dplyr::select(cohort, perc_5, perc_25, perc_50, perc_75, perc_95)
     
     out <- quants %>%
       mutate(
-        lower = list(c(0, perc_25, perc_50, perc_75)),
-        upper = list(c(perc_25, perc_50, perc_75, 1)))
+        lower = list(c(perc_5*-100000, perc_25, perc_50, perc_75)),
+        upper = list(c(perc_25, perc_50, perc_75, perc_95*100000)))
     
-  } else if(type == "split"){
+    } else if(type == "split"){
     
     quants <- stats$continuous %>% 
       dplyr::filter(cohort != "combined") %>%
-      dplyr::select(cohort, perc_25, perc_50, perc_75) %>%
+      dplyr::select(cohort, perc_5, perc_25, perc_50, perc_75, perc_95) %>%
       group_by(cohort) 
     
     quants_names <- group_keys(quants) %>% unlist
     
     lower_list <- quants %>%
       group_split() %>%
-      map(~c(0, .x$perc_25, .x$perc_50, .x$perc_75)) %>%
+      map(~c(.x$perc_5 * -100000, .x$perc_25, .x$perc_50, .x$perc_75)) %>%
       set_names(quant_names)
     
     upper_list <- quants %>%
       group_split() %>%
-      map(~c(.x$perc_25, .x$perc_50, .x$perc_75, 1)) %>%
+      map(~c(.x$perc_25, .x$perc_50, .x$perc_75, .x$perc_95*100000)) %>%
       set_names(quant_names)
     
     out <- quants %>%
@@ -293,4 +347,5 @@ dh.quantileSplit <- function(
   }
   
   return(out)
+  
 }
