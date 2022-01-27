@@ -72,6 +72,8 @@ dh.quartileSplit <- function(
     stop("`type` must not be NULL.", call. = FALSE)
   }
   
+  type <- ifelse(type == "combined", "combine", type)
+  
   type <- arg_match(type, c("combine", "split"))
   band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
   
