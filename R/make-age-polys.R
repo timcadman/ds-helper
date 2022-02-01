@@ -1,21 +1,21 @@
-#' Produces multiple transformations of age term for fractional polynomial
-#' analysis.
+#' Produces multiple transformations of the age term for fractional polynomial
+#' analyses
 #'
 #' When we do trajectory analyses using fractional polynomials we often want
 #' to try models with different combinations of age polynomials. This function
-#' creates the following age transformations in datashield: age^-2, age^-1,
-#' age^-0.5, log(age), age^0.5, age^2, age^3.
+#' creates multiple transformations of an age variable to different powers.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df opal dataframe
-#' @param age_var the age variable to transform
-#' @param poly_form a vector of powers by which to transform the age variable
-#' @param poly_names a vector of names for the created variables, the same length
-#' and order as poly_form
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
-#' @param agevars Retired argument name. Please use `new_obj' instead.
+#' @template conns
+#' @template df
+#' @param age_var Character specifying age variable within `df` to transform.
+#' @param poly_form Character vector of powers by which to transform `age_var`.
+#' @param poly_names Character vector of names for the created variables. Must
+#' the same length and order as `poly_form`.
+#' @template checks
+#' @param agevars Retired argument name. Please use `age_var' instead.
 #'
-#' @return transformations of age created in df
+#' @return Transformations of age are added as columns to server-side object
+#' specified in `df`.
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr %>%
@@ -23,11 +23,14 @@
 #' @importFrom dsBaseClient ds.cbind
 #' @importFrom DSI datashield.connections_find
 #'
+#' @family trajectory functions
+#' @family data manipulation functions
+#'
 #' @export
-dh.makeAgePolys <- function(df = NULL, age_var = NULL, conns = NULL,
+dh.makeAgePolys <- function(df = NULL, age_var = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
                             poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
-                            checks = TRUE, agevars = NULL) {
+                            conns = NULL, checks = TRUE, agevars = NULL) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

@@ -10,3 +10,4 @@
 ^TROUBLESHOOTING\.Rmd$
 ^cran-comments\.md$
 ^codecov\.yml$
+^man-roxygen

@@ -2,9 +2,7 @@
 % Please edit documentation in R/trim-pred-data.R
 \name{dh.trimPredData}
 \alias{dh.trimPredData}
-\title{Trims predicted values based on min and max values provided. Useful
-where you want to ensure that predicted values are limited at the range
-of observed values.}
+\title{Trims predicted values based on min and max values provided}
 \usage{
 dh.trimPredData(
   pred = NULL,
@@ -15,21 +13,35 @@ dh.trimPredData(
 )
 }
 \arguments{
-\item{pred}{a tibble of predicted values}
+\item{pred}{Tibble of predicted values returned by dh.predictLmer.}
 
-\item{coh_names}{a vector of cohort names corresponding to the cohort names in pred}
+\item{coh_names}{Character Vector of cohort names corresponding to cohorts
+included in `pred`.}
 
-\item{age}{name of the variable corresponding to age in the predicted values}
+\item{age}{Character specifying name of the age variable in `pred`.}
 
-\item{min}{a vector of minimum values of age, length equal to number of cohorts}
+\item{min}{Vector of minimum values of age with length equal to number of
+cohorts in `pred`.}
 
-\item{max}{a vector of maximum values of age, length equal to number of cohorts}
+\item{max}{Vector of maximum values of age with length equal to number of
+cohorts in `pred`.}
 }
 \value{
-The original tibble of predicted values, trimmed by the min and max ages
+`pred` is returned as a tibble with predicted values outside of
+`min` and `max` removed.
 }
 \description{
-Trims predicted values based on min and max values provided. Useful
-where you want to ensure that predicted values are limited at the range
-of observed values.
+This is to be used in conjuncture with `ds.predictLmer`. The new data frame
+used for prediction may contain age or time values not present in the
+original data. This allows you to remove all predicted values beyond a
+minimum and maximum age. This ensures that plots only show predict values
+over a range where there was actually data.
 }
+\seealso{
+Other trajectory functions: 
+\code{\link{dh.lmeMultPoly}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeLmerForm}()},
+\code{\link{dh.predictLmer}()}
+}
+\concept{trajectory functions}

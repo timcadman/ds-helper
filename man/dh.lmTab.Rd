@@ -2,44 +2,80 @@
 % Please edit documentation in R/lm-tab.R
 \name{dh.lmTab}
 \alias{dh.lmTab}
-\title{Extracts the coefficients and confidence intervals from a ds.glm or
-ds.glmSLMA model.}
+\title{Extracts coefficients and confidence intervals from linear models}
 \usage{
 dh.lmTab(
   model = NULL,
-  type = NULL,
+  type = "wide",
   coh_names = NULL,
-  direction = c("long", "wide"),
+  direction = NULL,
   ci_format = NULL,
   family = "gaussian",
+  digits = 2,
   round_digits = 2,
   exp = FALSE
 )
 }
 \arguments{
-\item{model}{saved output from either ds.glm,  ds.glmSLMA or ds.lmerSLMA}
+\item{model}{Object returned from either ds.glm, ds.glmSLMA or ds.lmerSLMA
+functions.}
 
-\item{type}{either "ipd", "slma" or "lmer"}
+\item{type}{Character specifying type of object provided in \code{model}. Can be
+either "glm_ipd", "glm_slma" or "lmer_slma".}
 
-\item{coh_names}{a vector of cohort names. Note this needs to be in the same
-order as the cohorts provided to the model.}
+\item{coh_names}{Character vector of cohorts included in \code{model}. Note this
+must be in the same order as the cohorts were included in the model.}
 
-\item{direction}{either "long" or "wide"}
+\item{direction}{Character specifying the output format. Can be either "wide"
+or "long". See "Value" for more details.}
 
-\item{ci_format}{format for the confidence intervals when direction == "wide".
-"separate" outputs separate columns with upper and lower CIs.
-"paste" adds these in brackets to the coefficient.'}
+\item{ci_format}{format for the confidence intervals when direction is "wide".
+If "separate", upper and lower confidence intervals are displayed as columns.
+If "paste", confidence intervals are returned in the same column as the
+coefficient within brackets.}
 
-\item{family}{where type is ipd or slma, specify the family used in the model}
+\item{family}{Specifies the family used in the analysis where type is
+"glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
+"gaussian".}
 
-\item{round_digits}{Number of decimal places to use in table. Default is 2.}
+\item{digits}{Optionally, the number of decimal places to round output to. 
+Default is 2.}
 
-\item{exp}{specify whether you want odds ratios to be exponentiated}
+\item{round_digits}{Deprecated argument name: please use \code{digits} instead.}
+
+\item{exp}{Optionally, specify whether estimates from binomial models should
+be exponentiated, ie returned as odds ratios. This argument is ignored if
+\code{type} is "gaussian".}
 }
 \value{
-A tibble containing the estimate with lower and upper confidence intervals
+A tibble. When \code{direction} is "wide" & \code{ci_format} is "paste", this
+contains five columns:
+\itemize{
+\item variable
+\item est
+\item lowci
+\item uppci
+\item pvalue
+}
+
+When \code{direction} is "long", a tibble with three columns is returned:
+\itemize{
+\item variable
+\item coefficient (containing values "est", "lowci", "uppci", "pvalue")
+\item value
+}
 }
 \description{
-Extracts the coefficients and confidence intervals from a ds.glm or
-ds.glmSLMA model.
+To conveniently view model results or make tables, it is useful to extract
+the coefficients in a useable format. This function extracts coefficients for
+ds.glm, ds.glmSLMA and ds.lmerSLMA objects.
 }
+\seealso{
+Other descriptive functions: 
+\code{\link{dh.anyData}()},
+\code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.defineCases}()},
+\code{\link{dh.getStats}()},
+\code{\link{dh.meanByGroup}()}
+}
+\concept{descriptive functions}

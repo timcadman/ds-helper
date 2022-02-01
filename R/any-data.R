@@ -1,26 +1,20 @@
-#' Not completely missing variables
+#' Describe whether variables are completely missing for each cohort
 #'
-#' When performing a Study Level Meta Analysis of coefficients linear models (for example),
-#' the intention should be that a consistent set of confounding variables is available
-#' for each cohort and used during model fitting.
-#' However it is not strictly necessary to have all confounding variables available in all
-#' cohorts in order to generate a coefficient representing the relationship between exposure
-#' and outcome.
-#' Assume that some cohorts have some completely empty confounding variables. In this scenario
-#' it is useful to be able to specify a model to fit on all cohorts and use a look up table
-#' to understand if there are any cohorts that lack a particular confounder. This look up
-#' table can be used to automatically exclude completely missing confounders without having
-#' to do this by hand. This is particularly useful if you are looking at a large number of
-#' combinations of exposures, outcomes and confounders.
-#' The purpose of this function is to generate this look up table automatically.
+#' When performing a Study Level Meta Analysis of coefficients, it
+#' is usually necessary that all cohorts have some data on all variables in the
+#' model. Manually identifying which cohorts have some data on required
+#' variables is time-consuming and at risk of error. This function automatically
+#' generates a look-up table with this information.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df server side dataframe
-#' @param vars vector of server side variable names within df
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @template df
+#' @param vars Character vector of columns within `df`.
+#' @template checks
+#' @template conns
 #'
-#' @return a dataframe with columns for each variable and rows for each cohort
-#' indicating if the variable is not completely missing
+#' @return Client-side tibble containing columns for each variable and rows
+#' for each cohort indicating if the variable is not completely missing.
+#'
+#' @family descriptive functions
 #'
 #' @importFrom dplyr %>% mutate select everything
 #' @importFrom dsBaseClient ds.colnames ds.numNA ds.length

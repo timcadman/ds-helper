@@ -2,33 +2,36 @@
 % Please edit documentation in R/mean-by-age.R
 \name{dh.meanByAge}
 \alias{dh.meanByAge}
-\title{Calculate mean values of one repeated measures variable by an age variable}
+\title{This was the original version of dh.meanByGroup. It has now been deprecated.}
 \usage{
 dh.meanByAge(
   df = NULL,
   outcome = NULL,
   age_var = NULL,
-  conns = NULL,
   intervals = NULL,
+  conns = NULL,
   checks = FALSE
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
 \item{outcome}{outcome variable in long format}
 
 \item{age_var}{age in years}
 
-\item{conns}{connection object for DataSHIELD backends}
-
 \item{intervals}{table defining our age bands}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{conns}{DataSHIELD connections object.}
+
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
 Mean values for each unit of your age variable are returned
 }
 \description{
-Calculate mean values of one repeated measures variable by an age variable
+Whilst I always use this with 'age' as a grouping variable, it is a more
+general function than that. I have thus renamed it to reflect that any
+continuous grouping variable can be used.
 }

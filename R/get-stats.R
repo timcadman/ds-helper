@@ -1,50 +1,57 @@
-#' Produces descriptive statistics in useful format
+#' Produces a range of descriptive statistics in a useful format
 #'
-#' This function extracts descriptive statistics from variables held in opal
-#' tables via DS. It mainly uses "ds.summary", but it also extracts extra
-#' info not given by default. It also avoids a problem encountered with
-#' ds.summary where it gets upset if the variable you request isn't present
-#' within a cohort. Instead this function just returns NA for that variable and
-#' for that cohort. This is more useful, e.g. if you want to make descriptive
-#' tables for papers and show that a certain cohort is lacking some information.
-#' Although, this may be less important if using ds.dataFrameFill throughout
-#' your scripts.
+#' Whilst dsBaseClient provides the functions 'ds.table' and 'ds.summary' to
+#' calculate descriptive statistics, their output is not in a very useable
+#' format. This function extracts key descriptive statistics and returns them in
+#' tibble.
 #'
-#' @param conns connection object for DataSHIELD backends
-#' @param df opal dataframe
-#' @param vars vector of variable names in dataframe
-#' @param digits number of decimal places to round continuous stats to. Default
-#'               is 2.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' This function also overcomes an issue with ds.summary, where it throws an
+#' error if the variable is missing in one or more study. By contrast,
+#' dh.getStats will return the variable for that cohort with all NAs. See
+#' 'value' for details of returned statistics.
 #'
-#' @return The function returns a list with two elements containing dataframes
-#' with summary statistics for (i) categorical and (ii) continuous variables.
-#' These data frames are in longform and contain the following variables.
+#' @template conns
+#' @template df
+#' @param vars Character vector of columns within `df` to summarise.
+#' @template digits
+#' @template checks
 #'
-#' Categorical:
-#' variable = variable
-#'  category = level of variable, including missing as a category
-#'  value = number of observations
-#'  cohort = name of cohort, including combined values for all cohorts
-#'  cohort_n = total number of observations for cohort in dataset
-#'  valid_n = number of valid observations for variable (sum of ns for each
-#'            categories)
-#'  valid_perc = observations within a category as percentage of valid_n
+#' @family descriptive functions
 #'
-#' Continuous:
+#' @return A client-side list with two elements: "categorical" and "continuous".
+#' Each element contains a tibble with descriptive statistics as follows.
 #'
-#'  cohort = cohort, including combined values for all cohorts
-#'  variable = variable
-#'  mean = mean (for combined value for all cohorts this is calculated by meta-
-#'        analysis using fixed-effects)
-#'  std.dev = standard deviation (again calculated by MA for cohorts combined)
-#'  valid_n = as above
-#'  cohort_n = as above
-#'  missing_n = as above
-#'  missing_perc = as above
+#' Categorical: \cr
+#' * "variable" = Variable name.
+#' * cohort = Cohort name, where "combined" refers to pooled statistics.
+#' * category = Level of variable, including 'missing' as a category.
+#' * value = Number of observations within category.
+#' * cohort_n = Total number of observations per cohort within `df`.
+#' * valid_n = Number of valid observations for variable (sum of ns for all
+#'            categories excluding missing).
+#' * missing_n = Number of missing observations.
+#' * perc_valid = Numnber of observations within a category as percentage of
+#' valid_n.
+#' * perc_total = Number of observations within a category as percentage of
+#' cohort_n.
+#'
+#' Continuous: \cr
+#'
+#' * variable = As above.
+#' * cohort = As above.
+#' * mean = Mean. The pooled value calculated by fixed-effect meta-analysis.
+#' * std.dev = Standard deviation. The pooled value is also calculate by fixed-
+#' * effect meta-analysis.
+#' * perc_5, perc_10, perc_25, perc_50, perc_75, perc_90, perc_95 = 5th to 95th
+#' * percentile values.
+#' * valid_n = As above.
+#' * cohort_n = As above.
+#' * missing_n = As above.
+#' * missing_perc = Percentage of observations missing.
 #'
 #' @importFrom tibble as_tibble tibble
-#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup left_join bind_rows rename filter mutate_at vars distinct add_row
+#' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
+#' left_join bind_rows rename filter mutate_at vars distinct add_row n_distinct
 #' @importFrom purrr map flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
@@ -53,8 +60,11 @@
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find datashield.aggregate
 #'
+#' @md
+#'
 #' @export
-dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE) { # nolint
+dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
+                        checks = TRUE) { # nolint
 
   ################################################################################
   # 1. First checks
@@ -81,7 +91,7 @@ dh.getStats <- function(df = NULL, vars = NULL, conns = NULL, digits = 2, checks
     variance <- variable <- category <- value <- cohort_n <- valid_n <-
     missing_n <- perc_missing <- EstimatedVar <- Nvalid <- any_obs <-
     bind_cols <- cohort <- combined <- disc <- discrepancy <- key_stats <-
-    n_distinct <- out_cont <- outcome <- same_levels <- se <- stat <-
+    out_cont <- outcome <- same_levels <- se <- stat <-
     stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
     perc_valid <- perc_total <- Ntotal <- NULL
 
@@ -165,8 +175,7 @@ check with ds.class \n\n",
 
     if (any(level_ref$same_levels == "no") == TRUE) {
       stop(
-        "The following categorical variables specified in `vars` do not have the same levels in all cohorts.
-Please check using ds.levels:\n\n",
+        "The following categorical variables specified in `vars` do not have the same levels in all cohorts. Please check using ds.levels:\n\n",
         level_ref %>%
           dplyr::filter(same_levels == "no") %>%
           pull(variable) %>%

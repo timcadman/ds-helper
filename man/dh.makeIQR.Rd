@@ -8,37 +8,46 @@ dh.makeIQR(
   df = NULL,
   vars = NULL,
   type = c("separate", "pooled"),
-  conns = NULL,
   new_obj = df,
+  conns = NULL,
   checks = TRUE,
   new_df_name = NULL
 )
 }
 \arguments{
-\item{df}{datashield dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{variables to transform}
+\item{vars}{Character vector of columns within `df` to transform.}
 
-\item{type}{either "separate" to transform the variable based on the IQR
-calculated within cohort, or "pooled" to transform based on the
-pooled IQR across all cohorts provided in the 'conns' argument.}
+\item{type}{Use "separate" to transform the variable based on the
+within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts
+specified in `conns`.}
 
-\item{conns}{connections object to DataSHIELD backends}
+\item{new_obj}{Character specifying name for created serverside object.}
 
-\item{new_obj}{name for new dataframe with original vars and iqr versions.}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 
-\item{new_df_name}{Retired argument name. Please use `new_obj' instead.}
+\item{new_df_name}{Retired argument. Please use `new_obj' instead.}
 }
 \value{
-the original dataframe with transformed variables added with the
-        suffix "_iqr_c" (if cohort range was used) or "iqr_p" if pooled
-        range was used.
+Server-side object specified in `df` with transformed variables added
+as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
+"iqr_p" if pooled is type is "pooled".
 }
 \description{
-This function is used to scale variables by the interquartile range
+This function scales variables by their interquartile range. IQR is
 calulcated either within cohort or using the pooled IQR across cohorts.
-The formula is: value(subject) / (75th percentile - 25th percentile).
-#'
+The formula used is: value[subject] / (75th percentile - 25th percentile).
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.dropCols}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeStrata}()},
+\code{\link{dh.renameVars}()},
+\code{\link{dh.tidyEnv}()}
+}
+\concept{data manipulation functions}

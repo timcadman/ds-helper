@@ -1,49 +1,62 @@
 #' Make formulae for fitting multiple fractional polynomial models
 #'
-#' To identify the combination of fractional polynomials which give the best
-#' fit often we will fit models with lots of different combinations. This
-#' function builds formulae for that purpose.
+#' This function is designed to be used with `dh.lmeMultPoly`. It generates
+#' formulae for multiple fractional polynomial models which can be used as
+#' input to the `formulae` argument in `dh.lmeMultPoly`.
 #'
-#' @param outcome outcome for the models
-#' @param idvar unique identifier for subject
-#' @param agevars vector of names of age polynomials in dataset that you will use in your models
-#' @param random either "intercept" or "slope" to specify random effects
-#' @param fixed optional vector of fixed effects
-#' @param age_interactions if TRUE also create interaction terms between age
-#'                         terms and fixed effects
+#' @param outcome Outcome variable within data frame to be specified in `df`
+#' argument in `dh.lmeMultPoly`.
+#' @param id_var Character specifying the name of the column which uniquely
+#' identifies each subject within data frame to be specified in `df`
+#' argument in `dh.lmeMultPoly`.
+#' @param age_vars Character vector specifying names of age polynomials present
+#' in data frame specified in `df` argument in `dh.lmeMultPoly`.
+#' @param random Specifies random effects to include in formulae. Use either
+#' "intercept" for random intercept model or "slope" for random slope model.
+#' @param fixed Optionally, character vector specifying fixed effects to be
+#' included in model.
+#' @param age_interactions Logical; if TRUE, interactions terms are created
+#' between `age_vars` and `fixed`. Default is FALSE.
 #'
-#' @return a tibble containing the created formulae
+#' @return Tibble containing two columns:
+#'
+#' * polys = Transformations of `age_var`
+#' * formula = Formula to be used as input to ds.lmerSLMA or dh.lmeMultPoly.
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
 #'
+#' @family trajectory functions
+#'
+#' @md
+#'
 #' @export
-dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random = NULL,
-                            fixed = NULL, age_interactions = NULL) {
+dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
+                            random = NULL, fixed = NULL, age_interactions = FALSE) {
   if (is.null(outcome)) {
     stop("`outcome` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(idvar)) {
-    stop("`idvar` must not be NULL.", call. = FALSE)
+  if (is.null(id_var)) {
+    stop("`id_var` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(agevars)) {
-    stop("`agevars` must not be NULL.", call. = FALSE)
+  if (is.null(age_vars)) {
+    stop("`age_vars` must not be NULL.", call. = FALSE)
   }
 
   random <- arg_match(random, c("intercept", "slope"))
 
   ## ---- Make all combinations of polynomials ---------------------------------------------------
-  poly_fixed <- combn(agevars, 2, paste, collapse = "+")
+  poly_fixed <- combn(age_vars, 2, paste, collapse = "+")
 
 
   ## ---- Define our random effects --------------------------------------------------------------
 
   if (random == "intercept") {
-    random_eff <- paste0("(1|", idvar, ")")
+    random_eff <- paste0("(1|", id_var, ")")
   } else if (random == "slope") {
-    random_eff <- paste0("(1+", poly_fixed, "|", idvar, ")")
+    random_eff <- paste0("(1+", poly_fixed, "|", id_var, ")")
   }
 
   ## ---- Do the business -----------------------------------------------------------------
@@ -55,7 +68,7 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
   } else if (!is.null(fixed) & is.null(age_interactions)) {
     forms <- paste0(outcome, "~1+", poly_fixed, "+", fixed, "+", random_eff)
   } else if (!is.null(fixed) & !is.null(age_interactions)) {
-    fixed_tmp <- paste0(fixed, "*", agevars)
+    fixed_tmp <- paste0(fixed, "*", age_vars)
     fixed_int <- combn(fixed_tmp, 2, paste, collapse = "+")
 
     forms <- paste0(outcome, "~1+", poly_fixed, "+", fixed, "+", fixed_int, "+", random_eff)
@@ -63,8 +76,8 @@ dh.makeLmerForm <- function(outcome = NULL, idvar = NULL, agevars = NULL, random
 
   ## ---- Output -------------------------------------------------------------------
   out <- tibble(
-    polys = combn(agevars, 2, paste, collapse = ","),
-    formulae = forms
+    polys = combn(age_vars, 2, paste, collapse = ","),
+    formula = forms
   )
 
   return(out)

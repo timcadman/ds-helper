@@ -1,0 +1,410 @@
+---
+title: "Descriptive functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{dsHelper}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r settings, echo = FALSE}
+options(datashield.progress = FALSE)
+options(datashield.progress.clear = TRUE)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(results = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+options(knitr.duplicate.label = "allow")
+```
+
+# Introducation
+dsHelper contains a number of client-side functions designed to simplify data 
+manipulation and analysis using DataSHIELD. Functions are grouped in the
+following families:
+
+- Descriptive functions 
+- Data manipulation functions
+- Utility functions 
+- Functions for trajectory models
+
+This vignette demonstrates the first three families of function. Functions to 
+assist with trajectory/mixed effect analysis are described in a separate 
+tutorial.
+
+```{r}
+library(dsHelper)
+library(dsBaseClient)
+library(DSI)
+library(DSMolgenisArmadillo)
+```
+
+# Data: simulated data based on LifeCycle variables
+To demonstrate these functions we will use remote simulated data for three 
+cohorts: ALSPAC, BCG & BiB.
+
+If you are unsure how to log in, please consult the DataSHIELD vignette:
+[link] 
+
+```{r}
+token <- armadillo.get_token("https://armadillo.test.molgenis.org")
+
+builder <- DSI::newDSLoginBuilder()
+
+builder$append(
+server = "alspac",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmalspac/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+builder$append(
+server = "bcg",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmbcg/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+builder$append(
+server = "bib",
+url = "https://armadillo.test.molgenis.org",
+table = "mlmbib/tutorial/data",
+token = token,
+driver = "ArmadilloDriver")
+
+logindata <- builder$build()
+
+conns <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "data")
+
+ds.colnames("data")
+```
+
+# Data manipulation functions
+
+## Rename variables with dh.renameVars()
+dh.renameVars allows you to change the names of one or more variables within a 
+dataframe. For example, we can rename the variables "id", and "ethnicity"
+with simpler names:
+
+```{r}
+dh.renameVars(
+  df = "data",
+  current_names = c("ethnicity", "pat_soc"), 
+  new_names = c("race", "paternal_class"))
+
+ds.colnames("data")
+```
+
+## Removing columns with dh.dropCols()
+dh.dropCols allows you to remove columns from a dataframe. The argument "type"
+allows you to specify whether to remove or to keep the provided variables. For
+example, we can remove the column "mat_ed":
+```{r}
+dh.dropCols(
+  df = "data", 
+  vars = "mat_ed", 
+  type = "remove")
+
+ds.colnames("data")
+```
+
+Alternatively, we can just to keep certain columns and remove everything else.
+In this example we keep the columns "sex", "height_m" and "ivf":
+```{r}
+dh.dropCols(
+  df = "data", 
+  vars = c("id", "age", "sex", "weight"), 
+  type = "keep")
+
+ds.colnames("data")
+```
+
+## Creating strata of a variable with dh.makeStrata()
+A common scenario is when you have repeat measurements of a variable, but
+want to create individual versions of that variable within different age 
+bands.
+
+For example, you may have a dataset with repeat measurments of height between
+ages 2-18. However, you want to create a new variable which is height between
+ages 4-6. This is quite a long process in datashield, as it involves creating
+a number of subsets. It is also necessary to deal with situations where a 
+subject has >1 observation within the specified period.
+
+In the example below, we create two variables for child height measured between 
+(i) ages 4-6 and (ii) ages 7-10. Where children have more than one observation 
+in either window, we opt to take the earliest measurement. This behaviour is
+controlled by the argument "mult_action". You can also choose to take (i) the 
+latest variable, or (ii) the variable closest to a particular time point.
+Finally, within each band we choose to take values >= to the lowest band, and 
+< the highest band. This behaviour is controlled by the argument "band_action".
+See ?dh.makeStrata for more information on the available arguments.
+
+In this example it runs quite quickly, however if you are using many cohorts
+with large datasets it can take a considerable amount of time (30 - 60 min).
+
+```{r}
+dh.makeStrata(
+  df = "data",
+  var_to_subset = "weight",
+  age_var = "age", 
+  bands = c(4, 6, 7, 10), 
+  mult_action = "earliest",
+  band_action = "ge_l", 
+  id_var = "id", 
+  new_obj = "height_data")
+
+ds.colnames("height_data")
+```
+
+The created dataset contains 5 variables: the id variable, two variables
+giving the height value within the specified bands (height_.6, height_.10) and
+two variables giving the age of measurement for these height variables (age.6,
+age.10). 
+
+We can then use ds.merge to join this dataframe back with our main data:
+```{r}
+ds.merge(
+  x.name = "data", 
+  y.name = "height_data", 
+  by.x = "id", 
+  by.y = "id", 
+  all.x = TRUE, 
+  newobj = "data")
+
+ds.colnames("data")
+```
+
+## Transforming continuous variable to interquartile range using dh.makeIQR()
+In some scenarios (e.g. when using an environmental exposures) we want to 
+standardise a continuous variable by transforming it by its interquartile range. 
+The formula is:
+
+value(subject) / 75th percentile(sample) - 25th percentile(sample)
+
+When using data from multiple cohorts there are two options for the denominator:
+(i) create IQR in each cohort using the interquartile range in that cohort,
+(ii) create IQR in each cohort by using the combined interquartile range
+across all cohorts. This is controlled by the argument `type`.
+
+In this example we transform child weight. The created variable will have
+the suffix "iqr_c" if `type` is "separate" and "iqr_p" if type = "pooled".
+
+```{r}
+dh.makeIQR(
+  df = "data",
+  vars = "weight",
+  type = "separate",
+  new_obj = "data")
+
+ds.colnames("data")
+ds.summary("weight_iqr_c")
+```
+
+## Removing objects from workspace using dh.tidyEnv()
+The DataSHIELD function `ds.rm()` allows you to remove single objects from your
+workspace. However, we may want to remove a number of objects at once. Use
+the argument `type` to choose whether to keep or remove the variables listed in
+`vars`. Here we chose to keep "data" and remove everything else.
+
+```{r}
+dh.tidyEnv(
+  obj = "data",
+  type = "keep")
+
+ds.ls()
+```
+
+## Identifying column indices using dh.findVarsIndex
+There are some occasions when we need to do know what column a set of 
+variables is. For example, the function ds.dataFrameSubset takes an input for 
+the argument `keep.cols` a vector column positions.
+
+Subsetting data frames by column number is highly susceptable to breaking (e.g
+if you change the order of steps in a script). This function allows you to
+identify the column numbers of a vector of column names, like so:
+
+```{r}
+dh.findVarsIndex(
+  df = "data",
+  vars = c("sex", "age", "weight")
+)
+```
+
+# Describing data
+
+## Summarising data using dh.getStats()
+The DataSHIELD functions `ds.summary` and `ds.table` produce basic descriptive
+statistics. However, they have a number of limitations: the output is not in a 
+very useable format, you can only specify one variable at a time, and they don't
+provide some information that we will likely need in manuscripts (e.g. about
+missingness). 
+
+Here we describe multiple variables using dh.getStats():
+
+```{r}
+test <- dh.getStats(
+  df = "data",
+  vars = c("age", "sex", "weight")
+)
+
+ds.colnames("data")
+
+test$categorical %>% select(variable, cohort, valid_n, missing_n, perc_missing)
+```
+
+The output is a list of two tibbles, corresponding to categorical and continuous
+variables. See the help file for a list of calculated figures and stats.
+
+## Extracting model coefficients using dh.lmTab
+When we run simple linear regression models in DataSHIELD, the coefficients are
+returned within a nested list. It can be a bit tricky to manually extract these
+(e.g. to create a table or a plot). This function extracts the coefficients
+from linear models and outputs them in a tibble. It can also handle mixed-effect
+models and will also return summaries of random effects.
+
+```{r}
+output <- ds.glm(formula = "weight~age", data = "data", family = "gaussian")
+
+dh.lmTab(
+  model = output, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "separate")
+```
+
+For manuscripts we may want to include confidence intervals in brackets after
+the point estimate. We can specify this with the argument "ci_format":
+
+```{r}
+dh.lmTab(
+  model = output, 
+  type = "glm_ipd", 
+  direction = "wide", 
+  ci_format  = "paste")
+```
+
+## Checking class of data using dh.classDiscrepancy()
+In an ideal world all variables would have the same class in every study. 
+However due to mistakes in harmonisation (or your scripts!) this may not be the
+case. The can cause problems because many DataSHIELD functions require the input
+variable(s) to have the same class in all studies. 
+
+Using dh.classDiscrepancy we can produce a tibble summarising the class of 
+variable(s) across multiple studies. If we leave the argument `vars` empty
+we check the class of all variables. The column "discrepancy" summarises 
+whether there are differences across studies.
+
+```{r}
+dh.classDiscrepancy(df = "data")
+```
+
+## Checking non-missing data using dh.anyData()
+When we perform analyses with multiple cohorts, we may want to use the same
+set of covariates in all analyses. We can use dh.anyData() to check which
+cohortsh have at least some data on given variables.
+
+```{r}
+dh.anyData(
+  df = "data",
+  vars = c("age", "sex", "weight")
+)
+```
+
+# Creating a dataset for analysis using dh.defineCases()
+Before starting analysis we often want to restrict the dataset to subjects
+meeting certain criteria. In the first example, we create a vector indicating
+whether each subject has complete data on the set of variables age, sex and 
+weight:
+
+```{r}
+dh.defineCases(
+  df = "data", 
+  vars = c("age", "sex", "weight"),
+  type = "all", 
+  new_obj = "data_on_all_vars")
+
+ds.table("data_on_all_vars")$output.list$TABLE_rvar.by.study_counts
+``` 
+The data we have here is not the best to illustrate this function, as 
+there is no missing data.
+
+We can also check whether subjects have available data on *any* of a set of 
+variables:
+```{r}
+dh.defineCases(
+  df = "data", 
+  vars = c("age", "sex", "weight"),
+  type = "any", 
+  new_obj = "data_on_any_vars")
+
+ds.table("data_on_any_vars")$output.list$TABLE_rvar.by.study_counts
+``` 
+Again, we can't see the differences because all subjects have data on all
+variables. However, lets assume that we want to create an subset of our data
+restricted to participants with data on at least one of these variables. We 
+can then use ds.dataFrameSubset in conjuncture with the vector we created:
+
+```{r}
+ds.dataFrameSubset(
+  df.name = "data", 
+  V1.name = "data_on_any_vars", 
+  V2.name = "1", 
+  Boolean.operator = "==", 
+  newobj = "analysis_df")
+```
+
+
+# Miscellaneous functions
+
+## Enabling auto-complete functionality within R Studio. 
+When using R studio with native R, auto-complete suggestions will appear for
+variables within a data frame. However, by default these won't appear for 
+variables within a serverside data frame. 
+
+We can get round this by creating a local object with the same structure as the 
+remote object. Once you have run this function, autocomplete options for the
+data frame "data" should now be available.
+
+```{r}
+dh.localProxy(df = "data", conns = conns)
+```
+
+## Manually pooling estimates by meta-analysis
+Most of the time the meta-analysis functions in DataSHIELD (e.g. ds.glmSLMA)
+will be sufficient. However, you may sometimes need additional flexibility 
+with meta-analysis. For example, currently ds.glmSLMA doesn't return 
+heterogeneity statistics.
+
+This functions takes vectors of coefficients and standard errors from
+multiple cohorts and meta-analyses them.
+
+First we fit a model in different cohorts and extract the coefficients:
+```{r}
+output <- ds.glmSLMA(
+  formula = "weight~age", 
+  dataName = "data", 
+  family = "gaussian")
+```
+
+Now we can use this object and to the meta-analysis manually:
+
+```{r}
+meta_analysed <- dh.metaManual(
+  model = output,
+  method = "ML")
+```
+
+The output consists of a list with two elements. The first element ("model") is 
+a list with the output from metafor. The length will be the number of variables
+meta-analysed:
+
+```{r}
+str(meta_analysed$model)
+```
+
+The second element ("coefficients") is a summary table:
+```{r}
+meta_analysed$coefs
+```
+
+
+
+
+

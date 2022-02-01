@@ -1,22 +1,22 @@
-#' Rename multiple variables at once
+#' Rename one or more columns within a serverside data frame
 #'
-#' This function allows you to rename multiple variable from a dataframe. At the
-#' moment it doesn't "rename" as such, it creates duplicate variables with the
-#' new names. I've left it like this to keep in the spirit of ds/opal set up
-#' by not automating the deletion of variables.
+#' This function is an analogue of `dplyr::rename` which allows you to rename
+#' columns of a serverside data frame.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df dataframe
-#' @param current_names a vector with names of existing DataSHIELD variables to
-#'        rename
-#' @param new_names a vector corresponding to the vector provided to current_names
-#'        with the new variable names.
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
-#' @return None. The new variables are added to the df specified
+#' @template conns
+#' @template df
+#' @param current_names Character vector of columns within `df` to rename.
+#' @param new_names Character vector giving the new names for the columns
+#' specified in `current_names`.
+#' @template checks
+#' @return Data frame specified in `df` is returned server-side with variables
+#' renamed.
 #'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' @importFrom DSI datashield.connections_find
+#'
+#' @family data manipulation functions
 #'
 #' @export
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
@@ -40,7 +40,7 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   names <- NULL
 
   if (checks == TRUE) {
-    .isDefined(df = df, vars = vars, conns = conns)
+    .isDefined(df = df, vars = current_names, conns = conns)
   }
 
   if (length(current_names) != length(new_names)) {
@@ -68,14 +68,16 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   dh.dropCols(
     df = df,
     vars = current_names,
-    new_df_name = df,
+    type = "remove",
+    new_obj = df,
     conns = conns,
     checks = FALSE
   )
 
   dh.tidyEnv(
     obj = new_names,
-    conns = conns
+    conns = conns,
+    type = "remove"
   ) %>%
     invisible()
 }

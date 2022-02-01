@@ -1,18 +1,24 @@
-#' Subsets a dataframe using column names.
+#' Removes columns from a serverside data frame
 #'
-#' Often we may have created variables within a dataframe that we no longer
-#' need. This function allows you to specify either the variables you want to
-#' keep or drop and create a new dataframe with only the variables you need.
+#' Often we want to remove variables from a dataframe. This function
+#' allows you to specify the variables you either want to remove or keep and
+#' and creates a new dataframe with only the required variables.
 #'
-#' @param conns connections object to DataSHIELD backends
-#' @param df datashield dataframe
-#' @param vars variables to keep or remove
-#' @param new_obj name for the new dataframe
-#' @param type whether to remove or keep specified variables
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @template conns
+#' @template df
+#' @param vars Character vector specifying columns within `df` to be removed or
+#' kept.
+#' @param new_obj Optionally, character specifying name for new server-side
+#' data frame. Default is to return original data frame with columns removed.
+#' @param type Character specifying how to treat `vars`. If "remove" these
+#' variables are removed from the data frame, if "keep" these variables are
+#' kept in the data frame and all others are removed.
+#' @template checks
 #' @param new_df_name Retired argument name. Please use `new_obj' instead.
 #'
-#' @return a new dataframe is created containing the specified subset of columns
+#' @return Server-side data frame the specified subset of columns.
+#'
+#' @family data manipulation functions
 #'
 #' @importFrom dsBaseClient ds.asNumeric ds.colnames ds.dataFrameSubset ds.make
 #' @importFrom purrr imap map
@@ -21,7 +27,8 @@
 #' @importFrom stringr str_subset
 #'
 #' @export
-dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove", "keep"), conns = NULL, checks = TRUE, new_df_name = NULL) {
+dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
+                        conns = NULL, checks = TRUE, new_df_name = NULL) {
   . <- NULL
 
   if (is.null(conns)) {
@@ -45,7 +52,11 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = c("remove",
     new_obj <- new_df_name
   }
 
-  type <- match.arg(type)
+  if (is.null(type)) {
+    stop("`type` must not be NULL.", call. = FALSE)
+  }
+
+  type <- match.arg(type, c("remove", "keep"))
 
   if (type == "keep") {
     ds.dataFrame(

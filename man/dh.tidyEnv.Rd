@@ -2,22 +2,31 @@
 % Please edit documentation in R/tidy-env.R
 \name{dh.tidyEnv}
 \alias{dh.tidyEnv}
-\title{Tidy up the server environment}
+\title{Remove multiple objects from the serverside environment}
 \usage{
 dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 }
 \arguments{
-\item{obj}{objects that you want to either keep or remove}
+\item{obj}{Server-side objects that you want to either keep or remove.}
 
-\item{type}{either "remove" to remove the listed objects of "keep" to keep
-the listed objects and remove everything else.}
+\item{type}{Either "remove" to remove objects specified in `obj` or "keep" to
+keep objects specified in `obj` and remove everything else.}
 
-\item{conns}{connections object to DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 }
 \value{
-None. Objects removed from ds environment
+None. Objects are removed from the server-side environnment.
 }
 \description{
-This is a very simple wrapper around ds.rm to allow you to remove more than
-one object at a time.
+This is a wrapper around ds.rm to allow you to remove multiple objects
+in one call.
 }
+\seealso{
+Other data manipulation functions: 
+\code{\link{dh.dropCols}()},
+\code{\link{dh.makeAgePolys}()},
+\code{\link{dh.makeIQR}()},
+\code{\link{dh.makeStrata}()},
+\code{\link{dh.renameVars}()}
+}
+\concept{data manipulation functions}

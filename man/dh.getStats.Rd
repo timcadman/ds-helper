@@ -2,57 +2,76 @@
 % Please edit documentation in R/get-stats.R
 \name{dh.getStats}
 \alias{dh.getStats}
-\title{Produces descriptive statistics in useful format}
+\title{Produces a range of descriptive statistics in a useful format}
 \usage{
-dh.getStats(df = NULL, vars = NULL, conns = NULL, digits = 2, checks = TRUE)
+dh.getStats(df = NULL, vars = NULL, digits = 2, conns = NULL, checks = TRUE)
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{vector of variable names in dataframe}
+\item{vars}{Character vector of columns within \code{df} to summarise.}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{digits}{Optionally, the number of decimal places to round output to. 
+Default is 2.}
 
-\item{digits}{number of decimal places to round continuous stats to. Default
-is 2.}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
-The function returns a list with two elements containing dataframes
-with summary statistics for (i) categorical and (ii) continuous variables.
-These data frames are in longform and contain the following variables.
+A client-side list with two elements: "categorical" and "continuous".
+Each element contains a tibble with descriptive statistics as follows.
 
-Categorical:
-variable = variable
- category = level of variable, including missing as a category
- value = number of observations
- cohort = name of cohort, including combined values for all cohorts
- cohort_n = total number of observations for cohort in dataset
- valid_n = number of valid observations for variable (sum of ns for each
-           categories)
- valid_perc = observations within a category as percentage of valid_n
+Categorical: \cr
+\itemize{
+\item "variable" = Variable name.
+\item cohort = Cohort name, where "combined" refers to pooled statistics.
+\item category = Level of variable, including 'missing' as a category.
+\item value = Number of observations within category.
+\item cohort_n = Total number of observations per cohort within \code{df}.
+\item valid_n = Number of valid observations for variable (sum of ns for all
+categories excluding missing).
+\item missing_n = Number of missing observations.
+\item perc_valid = Numnber of observations within a category as percentage of
+valid_n.
+\item perc_total = Number of observations within a category as percentage of
+cohort_n.
+}
 
-Continuous:
-
- cohort = cohort, including combined values for all cohorts
- variable = variable
- mean = mean (for combined value for all cohorts this is calculated by meta-
-       analysis using fixed-effects)
- std.dev = standard deviation (again calculated by MA for cohorts combined)
- valid_n = as above
- cohort_n = as above
- missing_n = as above
- missing_perc = as above
+Continuous: \cr
+\itemize{
+\item variable = As above.
+\item cohort = As above.
+\item mean = Mean. The pooled value calculated by fixed-effect meta-analysis.
+\item std.dev = Standard deviation. The pooled value is also calculate by fixed-
+\item effect meta-analysis.
+\item perc_5, perc_10, perc_25, perc_50, perc_75, perc_90, perc_95 = 5th to 95th
+\item percentile values.
+\item valid_n = As above.
+\item cohort_n = As above.
+\item missing_n = As above.
+\item missing_perc = Percentage of observations missing.
+}
 }
 \description{
-This function extracts descriptive statistics from variables held in opal
-tables via DS. It mainly uses "ds.summary", but it also extracts extra
-info not given by default. It also avoids a problem encountered with
-ds.summary where it gets upset if the variable you request isn't present
-within a cohort. Instead this function just returns NA for that variable and
-for that cohort. This is more useful, e.g. if you want to make descriptive
-tables for papers and show that a certain cohort is lacking some information.
-Although, this may be less important if using ds.dataFrameFill throughout
-your scripts.
+Whilst dsBaseClient provides the functions 'ds.table' and 'ds.summary' to
+calculate descriptive statistics, their output is not in a very useable
+format. This function extracts key descriptive statistics and returns them in
+tibble.
 }
+\details{
+This function also overcomes an issue with ds.summary, where it throws an
+error if the variable is missing in one or more study. By contrast,
+dh.getStats will return the variable for that cohort with all NAs. See
+'value' for details of returned statistics.
+}
+\seealso{
+Other descriptive functions: 
+\code{\link{dh.anyData}()},
+\code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.defineCases}()},
+\code{\link{dh.lmTab}()},
+\code{\link{dh.meanByGroup}()}
+}
+\concept{descriptive functions}

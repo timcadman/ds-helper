@@ -1,23 +1,26 @@
-#' Return return indices of columns in opal dataframe
+#' Return return indices of column names in server-side dataframe
 #'
-#' Some ds functions ask you to provide the index of variables as arguments.
-#' This is highly susceptable to breaking! This is a simple function that will
-#' return the index of variables for a given cohort. It is usefully used in
-#' combination the "keep.cols" argument of ds.dataFrameSubset.
+#' Some DataSHIELD functions require column indices as parameters. This is
+#' hqighly susceptable to breaking as changes in code will change the order of
+#' variables. This function allows you to specify the names of columns and
+#' returns their indices.
 #'
-#' @param conns connections object for DataSHIELD backends
-#' @param df datashield dataframe
-#' @param vars vector of variable names in dataframe
-#' @param checks Boolean. Whether or not to perform checks prior to running function. Default is TRUE.
+#' @template conns
+#' @template df
+#' @param vars Character vector of columns within `df` for which to return the
+#' indices.
+#' @template checks
 #'
-#' @return list of indices where length of list is number of cohorts provided
+#' @return Client-side list of indices corresponding to `vars`, where the length
+#' of the list corresponds to the number of cohorts included in `conns`.
 #'
 #' @importFrom dsBaseClient ds.colnames
 #' @importFrom purrr pmap
 #' @importFrom DSI datashield.connections_find
 #'
 #' @export
-dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
+dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL,
+                             checks = TRUE) {
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -34,21 +37,10 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE
     .isDefined(df = df, vars = vars, conns = conns)
   }
 
-  ## -- Make reference table of vars and cohorts -------------------------------
-  ref_tab <- tibble(
-    var = rep(vars, length(names(conns))),
-    cohort = rep(names(conns), each = length(vars))
-  )
-
-  ## ---- Get column names for each cohort -------------------------------------
   cols <- datashield.aggregate(conns, call("colnamesDS", df))
-
-  tmp <- ref_tab %>%
-    pmap(function(var, cohort) {
-      which(cols[[1]] %in% var == TRUE)
-    })
-
-  out <- split(unlist(tmp), ceiling(seq_along(unlist(tmp)) / length(vars)))
+  
+  out <- cols %>% map(~ which(.x %in% vars == TRUE))
+  
   names(out) <- names(conns)
 
   return(out)

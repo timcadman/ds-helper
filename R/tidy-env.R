@@ -1,23 +1,25 @@
-#' Tidy up the server environment
+#' Remove multiple objects from the serverside environment
 #'
-#' This is a very simple wrapper around ds.rm to allow you to remove more than
-#' one object at a time.
+#' This is a wrapper around ds.rm to allow you to remove multiple objects
+#' in one call.
 #'
-#' @param conns connections object to DataSHIELD backends
-#' @param obj objects that you want to either keep or remove
-#' @param type either "remove" to remove the listed objects of "keep" to keep
-#'             the listed objects and remove everything else.
+#' @param conns DataSHIELD connections object.
+#' @param obj Server-side objects that you want to either keep or remove.
+#' @param type Either "remove" to remove objects specified in `obj` or "keep" to
+#' keep objects specified in `obj` and remove everything else.
 #'
-#' @return None. Objects removed from ds environment
+#' @return None. Objects are removed from the server-side environnment.
 #'
 #' @importFrom purrr map imap
 #' @importFrom dsBaseClient ds.rm ds.ls
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
 #'
+#' @family data manipulation functions
+#'
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
-  . <- NULL
+  . <- value <- NULL
 
   if (is.null(obj)) {
     stop("`obj` must not be NULL.", call. = FALSE)
@@ -34,6 +36,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   }
 
   if (type == "remove") {
+
     ## Check no objects to removed have character length >20
     obj_lengths <- tibble(
       obj = obj,
@@ -55,7 +58,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
       map(
         ~ds.rm(x.name = .x, datasources = conns)
       )
-    
+
   } else if (type == "keep") {
     objects <- names(conns) %>%
       map(
@@ -69,24 +72,24 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
 
     names(vars) <- names(conns)
 
-    ## Check no objects to removed have character length >20
-    obj_lengths <- vars %>%
-      map(~ nchar(.)) %>%
-      map(~ any(. > 20)) %>%
-      unlist() %>%
-      any(. > 20)
-
-    if (obj_lengths == TRUE) {
-      stop("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
-           due to risk of malicious code. Amend your script so that your objects have shorter names", call. = FALSE)
-    }
-
     vars_tibble <- vars %>%
       map(~ as_tibble(.)) %>%
       imap(~ mutate(., cohort = .y)) %>%
-      bind_rows()
+      bind_rows() %>%
+      mutate(length = value %>% map_int(nchar))
+    
+    obj_valid <- vars_tibble %>%  
+      dplyr::filter(length < 20) 
+    
+    obj_not_valid <- vars_tibble %>%  
+      dplyr::filter(length >= 20) 
+    
+    if (nrow(obj_not_valid > 0)) {
+      warning(paste0("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
+           due to risk of malicious code. These objects have not been removed.", as.character(obj_not_valid$value)), call. = FALSE)
+    }
 
-    vars_tibble %>% pmap(function(cohort, value) {
+    obj_valid %>% pmap(function(cohort, value, ...) {
       ds.rm(x.name = value, datasources = conns[cohort])
     })
   }

@@ -2,37 +2,47 @@
 % Please edit documentation in R/get-anon-plot-data.R
 \name{dh.getAnonPlotData}
 \alias{dh.getAnonPlotData}
-\title{Extracts an anonymised version of the dataset which can be used
-to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-function but stores the data produced this function. Note you need to make
-sure your plot window is large enough to produce the plot.}
+\title{Extracts an anonymised version of serverside data which can be used to create
+bespoke plots}
 \usage{
 dh.getAnonPlotData(
   df = NULL,
-  v1 = NULL,
-  v2 = NULL,
+  var_1 = NULL,
+  var_2 = NULL,
   conns = NULL,
   checks = TRUE
 )
 }
 \arguments{
-\item{df}{opal dataframe}
+\item{df}{Character specifying a server-side data frame.}
 
-\item{v1}{variable in df to get plotdata for}
+\item{var_1}{Character giving the name of a column within `df` for which to
+extract anonymised data.}
 
-\item{v2}{optional second variable if you want to get scatterplot data}
+\item{var_2}{Optionally, character specifying a second column within `df`.
+If a column is specified then scatter plot data will be returned with `var_1`
+as the explanatory variable and `var_2` as the outcome variable. Default is
+NULL which returns anonymised data only for `var_1`.}
 
-\item{conns}{connection object for DataSHIELD backends}
+\item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Boolean. Whether or not to perform checks prior to running function. Default is TRUE.}
+\item{checks}{Logical; if TRUE checks are performed prior to running the 
+function. Default is TRUE.}
 }
 \value{
-A list of the length of the number of variables provided containing
-        anonymised values for each subject of each cohort provided.
+A tibble in long format containing columns 'cohort', 'var_1' and
+optionally `var_2`. The values for `var1` and `var_2` are the anonymised
+data points.
 }
 \description{
-Extracts an anonymised version of the dataset which can be used
-to create bespoke plots (e.g. using ggplot). This calls the ds.scatterPlot
-function but stores the data produced this function. Note you need to make
-sure your plot window is large enough to produce the plot.
+Whilst DataSHIELD has basic plotting functionality, for publications you may
+need more flexiblity in creating plots. This function calls server-side
+functions which create an anonymised copy of the data, and returns this data
+in a client-side object. These values can then be used to create plots (e.g
+with ggplot2).
 }
+\details{
+This function can return two types of anonymised data: either anonymised
+data for a single variable, or scatter-plot data for two variables.
+}
+\concept{functions to assist plot-making}
