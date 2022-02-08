@@ -1,5 +1,17 @@
 # dsHelper (development version)
 
+# dsHelper 0.4.9
+
+# dsHelper 0.4.8
+
+# dsHelper 0.4.7
+
+# dsHelper 0.4.6
+
+# dsHelper 0.4.5
+
+# dsHelper 0.4.4
+
 # dsHelper 0.4.3
 
 # dsHelper 0.4.2

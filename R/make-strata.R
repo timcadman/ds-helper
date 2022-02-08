@@ -367,7 +367,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     left_join(., suffix_ref, by = c("cohort", "suffix")) %>%
     mutate(
       old_name = paste0(var, suffix), 
-      new_name = paste0(var, ".", value_2)) %>%
+      new_name = paste0(var, ".", value_1, "_", value_2)) %>%
     group_by(cohort)
   
   rename_ref %>%
