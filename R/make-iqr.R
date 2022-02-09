@@ -1,22 +1,22 @@
 #' Transforms variables based on their interquartile range
 #'
 #' This function scales variables by their interquartile range. IQR is
-#' calulcated either within cohort or using the pooled IQR across cohorts.
+#' calulcated either within cohort or using the combined IQR across cohorts.
 #' The formula used is: value[subject] / (75th percentile - 25th percentile).
 #'
 #' @template df
 #' @param vars Character vector of columns within `df` to transform.
-#' @param type Use "separate" to transform the variable based on the
-#' within-cohort IQR, or "pooled" to use the pooled IQR across all cohorts
-#' specified in `conns`.
+#' @param type Use "combine" to transform the variable based on the combined IQR 
+#' across all cohorts specified in `conns`, or "split" to transform based on the
+#' within-cohort IQR.
 #' @template conns
 #' @template new_obj
 #' @template checks
 #' @param new_df_name Retired argument. Please use `new_obj' instead.
 #'
 #' @return Server-side object specified in `df` with transformed variables added
-#' as columns. Variables have suffic "_iqr_c" if type is "separate" and suffix
-#' "iqr_p" if pooled is type is "pooled".
+#' as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s" 
+#' if type is "split".
 #'
 #' @importFrom dsBaseClient ds.colnames ds.dataFrame ds.make ds.class ds.mean
 #'             ds.quantileMean
@@ -29,7 +29,7 @@
 #' @family data manipulation functions
 #'
 #' @export
-dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
+dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
                        new_obj = df, conns = NULL, checks = TRUE,
                        new_df_name = NULL) {
   . <- variable <- cohort <- formula <- NULL
@@ -55,6 +55,8 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     .isDefined(df = df, vars = vars, conns = conns)
   }
 
+  type <- ifelse(type == "combined", "combine", type)
+  
   type <- match.arg(type)
 
   df_vars <- paste0(df, "$", vars)
@@ -71,7 +73,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
   }
 
   ## ---- Calculate IQRs ---------------------------------------------------------
-  if (type == "separate") {
+  if (type == "split") {
     meds <- df_vars %>%
       map(function(x) {
         cally1 <- paste0("quantileMeanDS(", x, ")")
@@ -95,17 +97,18 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
 
     iqr_to_make %>%
       pmap(function(variable, cohort, formula) {
-        datashield.assign(conns, paste0(variable, "_iqr_c"), as.symbol(formula))
+        datashield.assign(conns, paste0(variable, "_iqr_s"), as.symbol(formula))
       })
 
     ds.dataFrame(
-      x = c(df, paste0(vars, "_iqr_c")),
+      x = c(df, paste0(vars, "_iqr_s")),
       newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
       check.names = FALSE
     )
-  } else if (type == "pooled") {
+    
+  } else if (type == "combine") {
 
     ## ---- Identify cohorts which are all missing -----------------------------
     missing <- expand.grid(vars, names(conns)) %>%
@@ -135,7 +138,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
       map(~ .$cohort) %>%
       set_names(unlist(group_keys(formean)))
 
-    ## ---- Get pooled IQR for non-missing cohorts -----------------------------
+    ## ---- Get combined IQR for non-missing cohorts -----------------------------
     meds <- formean %>%
       imap(
         ~ ds.quantileMean(
@@ -171,12 +174,12 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("separate", "pooled"),
     full_vars %>%
       pmap(function(cohort, variable, formula, ...) {
         datashield.assign(
-          conns[cohort], paste0(variable, "_iqr_p"), as.symbol(formula)
+          conns[cohort], paste0(variable, "_iqr_c"), as.symbol(formula)
         )
       })
 
     ds.dataFrame(
-      x = c(df, paste0(vars, "_iqr_p")),
+      x = c(df, paste0(vars, "_iqr_c")),
       newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
