@@ -113,6 +113,7 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
       est = round(model$coefficients[, "Estimate"], digits),
+      se = round(model$coefficients[, "Std. Error"], digits),
       lowci = round(model$coefficients[, lowci], digits),
       uppci = round(model$coefficients[, highci], digits),
       pvalue = round(model$coefficients[, "p-value"], digits)
@@ -211,7 +212,7 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
-      dplyr::select(variable, est, pvalue)
+      dplyr::select(variable, se, est, pvalue)
   }
 
   if (type == "lmer") {
