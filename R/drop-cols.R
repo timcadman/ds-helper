@@ -69,10 +69,10 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
 
     cols_to_keep <- cols %>%
       map(function(x) {
-        str_subset(x, paste0(vars, "\\b", collapse = "|"), negate = TRUE) %>%
+        x[which(!x %in% vars)] %>%
           paste0(df, "$", .)
       })
-
+    
     cols_to_keep %>%
       imap(
         ~ ds.dataFrame(

@@ -36,9 +36,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   }
 
   if (type == "remove") {
-    
-    obj <- obj
-    
+
     ## Check no objects to removed have character length >20
     obj_lengths <- tibble(
       obj = obj,
@@ -56,6 +54,11 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
            due to risk of malicious code. These objects have not been removed: \n\n", as.character(obj_not_valid$value)), call. = FALSE)
     }
     
+    obj_valid %>% 
+      map(
+        ~ds.rm(x.name = .x, datasources = conns)
+      )
+
   } else if (type == "keep") {
     objects <- names(conns) %>%
       map(

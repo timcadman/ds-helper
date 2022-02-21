@@ -16,10 +16,8 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/lifecycle-project/ds-helper/branch/master/graph/badge.svg)](https://app.codecov.io/gh/lifecycle-project/ds-helper?branch=master)
 [![Build Status](https://dev.azure.com/sidohaakma/datashield-packages/_apis/build/status/lifecycle-project.ds-helper?branchName=master)](https://dev.azure.com/sidohaakma/datashield-packages/_apis/build/status/lifecycle-project.ds-helper?branchName=master)
 
-This is a set of functions to automate processes in 'DataSHIELD' to make data
-manipulation and analysis easier. They are very much a work in progress! If you 
-have written functions that would also be useful to other DS users drop me an 
-email and we can incorporate them in the package. 
+This is a set of functions to help make data manipulation and analysis easier
+within DataSHIELD.  
 
 ## Install
 
