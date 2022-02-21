@@ -34,7 +34,7 @@ band
 }}
 
 \item{type}{Character specifying whether to derive quartiles from combined
-data or within each cohort. Use "combined" to use combined quartiles, and
+data or within each cohort. Use "combine" to use combined quartiles, and
 "split" to use cohort-specific quartiles.}
 
 \item{var_suffix}{Character specifying the suffix to give the created variable.
