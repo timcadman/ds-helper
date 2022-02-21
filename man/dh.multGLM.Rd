@@ -9,18 +9,12 @@ dh.multGLM(df = NULL, ref = NULL, checks = TRUE, conns = NULL)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
+\item{ref}{reference tibble, output from dh.buildModels.}
+
 \item{checks}{Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.}
 
 \item{conns}{DataSHIELD connections object.}
-
-\item{formulae}{Character vector containing model formulae to fit.}
-
-\item{model_names}{Character vector of names for the models specified in
-\code{formulae}.}
-
-\item{cohorts}{Character vector specifying which cohort to use for each
-model.}
 }
 \value{
 Tibble containing five columns:

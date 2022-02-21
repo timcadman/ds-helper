@@ -10,11 +10,7 @@
 #' @importFrom stringr str_detect
 #'
 #' @template df
-#' @param formulae Character vector containing model formulae to fit.
-#' @param model_names Character vector of names for the models specified in
-#' `formulae`.
-#' @param cohorts Character vector specifying which cohort to use for each 
-#' model.
+#' @param ref reference tibble, output from dh.buildModels.
 #' @template checks
 #' @template conns
 #'
@@ -61,7 +57,7 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL) {
           {
             ds.glmSLMA(
               formula = unlist(formula), 
-              data = df, 
+              dataName = df, 
               family = "binomial", 
               combine.with.metafor = TRUE,
               datasources = conns[cohorts]
