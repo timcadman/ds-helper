@@ -33,9 +33,8 @@
 dh.buildModels <- function(
   avail_exp = NULL, avail_cov = NULL, outcome = NULL){
   
-  coh <- names(avail_exp)[names(avail_exp) != "variable"]
-  vars <- avail_exp$variable
-  covs <- avail_cov$variable
+value <- variable <- exposure <- covariates <- formula <- cohort <- coh <- 
+  covs <- NULL
   
   exp_coh <- avail_exp %>%
     pmap(function(...){

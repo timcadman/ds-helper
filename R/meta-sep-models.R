@@ -1,5 +1,29 @@
+#' Function in progress to meta-analyse separate models.
+#' 
+#' @param ref Tibble, output from dh.multGlm. 
+#' @param exp Logical, whether to exponentiate coefficients after meta-analysis
+#' @param method Method of meta-analysing coefficients.
+#' @param coh_out Logical, whether to include cohort coefficients in output 
+#' along with meta-analysed results#' 
+#' 
+#' @return A tibble
+#'
+#' @family model building
+#'
+#' @importFrom rlang arg_match
+#' @importFrom purrr pmap set_names map pmap_df map_int
+#' @importFrom dplyr %>% bind_rows group_by group_keys group_split mutate select
+#' left_join
+#' @importFrom metafor rma.uni
+#' @importFrom tibble tibble
+#'
+#' @export
+
+
 dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL, 
                              coh_out = TRUE){
+  
+  exposure <- variable <- cohort <- . <- est <- lowci <- uppci <- NULL
   
   method <- arg_match(
     arg = method, 

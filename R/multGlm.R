@@ -16,6 +16,7 @@
 #' @param cohorts Character vector specifying which cohort to use for each 
 #' model.
 #' @template checks
+#' @template conns
 #'
 #' @return Tibble containing five columns:
 #' * model = Description of model fit, taken from `model_name`. 
@@ -28,8 +29,8 @@
 #' @md
 #'
 #' @export
-dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE) {
-  sum_log <- NULL
+dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL) {
+  formulae <- model_names <- cohorts <- converged <- NULL
   
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
@@ -47,10 +48,10 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE) {
     stop("`cohorts` must not be NULL.", call. = FALSE)
   }
   
-  if (checks == TRUE) {
-    .isDefined(df = df, conns = conns[unique(cohorts)])
+  if (is.null(conns)) {
+    conns <- datashield.connections_find()
   }
-
+  
   ## ---- Run the models ---------------------------------------------------------
   suppressWarnings(
     models <- ref %>%
