@@ -32,16 +32,8 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
   
-  if (is.null(formulae)) {
-    stop("`formulae` must not be NULL.", call. = FALSE)
-  }
-  
-  if (is.null(model_names)) {
-    stop("`poly_names` must not be NULL.", call. = FALSE)
-  }
-  
-  if (is.null(cohorts)) {
-    stop("`cohorts` must not be NULL.", call. = FALSE)
+  if (is.null(ref)) {
+    stop("`ref` must not be NULL.", call. = FALSE)
   }
   
   if (is.null(conns)) {

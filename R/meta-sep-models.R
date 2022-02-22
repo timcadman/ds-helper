@@ -18,8 +18,6 @@
 #' @importFrom tibble tibble
 #'
 #' @export
-
-
 dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL, 
                              coh_out = TRUE){
   
