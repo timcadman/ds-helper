@@ -31,26 +31,28 @@
 #'
 #' @export
 dh.buildModels <- function(
-  avail_exp = NULL, avail_cov = NULL, outcome = NULL){
+  exp_tib = NULL, cov_tib = NULL, outcome = NULL){
   
 value <- variable <- exposure <- covariates <- formula <- cohort <- coh <- 
-  covs <- NULL
+  covs <- out <- NULL
   
-  exp_coh <- avail_exp %>%
+  exp_coh <- exp_tib %>%
     pmap(function(...){
       
       tmp <- c(...)
       tmp[which(tmp == TRUE)] %>%
         names()
     }) %>%
-    set_names(vars) %>%
+    set_names(exp_tib$variable) %>%
     map(as_tibble) %>%
     bind_rows(.id = "exposure") %>%
     dplyr::rename(cohort = value)
   
+  coh <- names(cov_tib)[-1]
+  
   cov_coh <- coh %>%
     map(function(x){
-      avail_cov %>%
+      cov_tib %>%
         dplyr::select(variable, x) %>%
         dplyr::filter(!!sym(x) == TRUE) %>%
         pull(variable)
@@ -62,7 +64,7 @@ value <- variable <- exposure <- covariates <- formula <- cohort <- coh <-
     covariates = cov_coh
   )
   
-  if(length(covs) > 1){
+  if(nrow(cov_tib) > 1){
     
     out <- left_join(exp_coh, cov_coh_tib, by = "cohort") %>%
       mutate(outcome = outcome)
@@ -78,19 +80,19 @@ value <- variable <- exposure <- covariates <- formula <- cohort <- coh <-
     
     out <- out %>% mutate(formula = formulas)
     
-  } else if(length(covs) == 1){
+  } else if(nrow(cov_tib) == 1){
     
     out <- left_join(exp_coh, cov_coh_tib, by = "cohort") %>%
       mutate(
         outcome = outcome,
         formula = paste0(
-          outcome, "~", exposure, "+", covariates)
+          outcome, "~", exposure, "+", unlist(covariates))
       ) 
-  }
-  
   out <- out %>%
     dplyr::select(exposure, outcome, covariates, formula, cohort)
-  
+
+  }
+
   return(out)
-  
+    
 }
