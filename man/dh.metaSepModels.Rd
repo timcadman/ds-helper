@@ -4,7 +4,7 @@
 \alias{dh.metaSepModels}
 \title{Function in progress to meta-analyse separate models.}
 \usage{
-dh.metaSepModels(ref = NULL, exp = NULL, method = NULL, coh_out = TRUE)
+dh.metaSepModels(ref = NULL, exp = NULL, method = NULL, output = "both")
 }
 \arguments{
 \item{ref}{Tibble, output from dh.multGlm.}
@@ -13,8 +13,8 @@ dh.metaSepModels(ref = NULL, exp = NULL, method = NULL, coh_out = TRUE)
 
 \item{method}{Method of meta-analysing coefficients.}
 
-\item{coh_out}{Logical, whether to include cohort coefficients in output 
-along with meta-analysed results#'}
+\item{output}{Character; "cohort" to return cohort coefficients only, "meta"
+to return meta-analysed coefficients only, "both" to return both.}
 }
 \value{
 A tibble

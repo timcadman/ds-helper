@@ -12,9 +12,9 @@
 #' dh.metaSepModels: meta-analyse the coefficients and return key output in a 
 #' neat table
 #'
-#' @param avail_exp Tibble, output from dh.anyData. Should contain all 
+#' @param exp_tib Tibble, output from dh.anyData. Should contain all 
 #' exposures you want to use. One model will be created for each exposure.
-#' @param avail_cov Tibble, output from dh.anyData. Should contain all 
+#' @param cov_tib Tibble, output from dh.anyData. Should contain all 
 #' covariates to include in your models. 
 #' @param outcome Character giving the name of your outcome variable.
 #' 

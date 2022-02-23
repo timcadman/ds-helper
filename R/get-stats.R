@@ -48,7 +48,6 @@
 #' * cohort_n = As above.
 #' * missing_n = As above.
 #' * missing_perc = Percentage of observations missing.
-#'
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows rename filter mutate_at vars distinct add_row n_distinct
@@ -59,6 +58,7 @@
 #' @importFrom stats setNames
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find datashield.aggregate
+#' @importFrom utils capture.output
 #'
 #' @md
 #'
@@ -93,7 +93,7 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     bind_cols <- cohort <- combined <- disc <- discrepancy <- key_stats <-
     out_cont <- outcome <- same_levels <- se <- stat <-
     stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
-    perc_valid <- perc_total <- Ntotal <- NULL
+    perc_valid <- perc_total <- Ntotal <- disclosure_fail <- NULL
   
   ################################################################################
   # 2. Get classes of variables
@@ -307,17 +307,7 @@ check with ds.class \n\n",
     
   }
   ## ---- Continuous -------------------------------------------------------------
-<<<<<<< Updated upstream
 
-  if (nrow(cont_ref) > 0) {
-    stats_cont <- bind_rows(
-      quantiles = statsHelper(ref = cont_ref, type = "quantileMean"),
-      variance = statsHelper(ref = cont_ref, type = "var")
-    )
-  }
-
-=======
-  
   if (nrow(cont_ref) > 0) {
     
     quantiles_extracted <- .statsQuantMean(cont_ref)
@@ -330,7 +320,6 @@ check with ds.class \n\n",
     
   }
   
->>>>>>> Stashed changes
   ################################################################################
   # 9. Calculate combined stats for categorical variables
   ################################################################################
@@ -509,13 +498,15 @@ check with ds.class \n\n",
 #' @param ref reference tibble of vars with four columns: variable, cohort, 
 #' any_obs and levels.
 #' 
-#' @importFrom dplyr %>% group_by bind_rows
-#' @importFrom purrr group_map set_names pmap
+#' @importFrom dplyr %>% group_by bind_rows group_map
+#' @importFrom purrr set_names pmap
 #' @importFrom tibble tibble as_tibble
-#' @importFrom DSI: datashield.aggregate
+#' @importFrom DSI datashield.aggregate
 #' 
-#' #' @noRd
+#' @noRd
 .statsTable <- function(ref){
+  
+  variable <- NULL
   
   ref %>%
     group_by(variable) %>%
@@ -555,14 +546,16 @@ check with ds.class \n\n",
 #' @param ref reference tibble of vars with four columns: variable, cohort, 
 #' any_obs and levels.
 #' 
-#' @importFrom dplyr %>% group_by mutate case_when bind_rows
+#' @importFrom dplyr %>% group_by mutate case_when bind_rows group_map
 #' @importFrom tidyr pivot_longer
-#' @importFrom purrr group_map pmap
+#' @importFrom purrr pmap
 #' @importFrom tibble tibble
-#' @importFrom DSI: datashield.aggregate
+#' @importFrom DSI datashield.aggregate
 #' 
-#' #' @noRd      
+#' @noRd      
 .statsQuantMean <- function(ref){
+  
+  variable <- NULL
   
   ref %>%
     group_by(variable) %>%
@@ -609,14 +602,16 @@ check with ds.class \n\n",
 #' @param ref reference tibble of vars with four columns: variable, cohort, 
 #' any_obs and levels.
 #' 
-#' @importFrom dplyr %>% group_by mutate case_when select bind_rows
+#' @importFrom dplyr %>% group_by mutate case_when select bind_rows group_map
 #' @importFrom tidyr pivot_longer
-#' @importFrom purrr group_map pmap
+#' @importFrom purrr pmap
 #' @importFrom tibble tibble
-#' @importFrom DSI: datashield.aggregate
+#' @importFrom DSI datashield.aggregate
 #' 
-#' #' @noRd     
+#' @noRd     
 .statsVar <- function(ref){
+  
+  variable <- NULL
   
   ref %>%
     group_by(variable) %>%
@@ -658,10 +653,12 @@ check with ds.class \n\n",
 #' @importFrom dplyr %>% group_by group_split bind_rows
 #' @importFrom purrr map set_names
 #' @importFrom tibble tibble
-#' @importFrom DSI: datashield.aggregate
+#' @importFrom DSI datashield.aggregate
 #' 
-#' #' @noRd   
+#' @noRd   
 .tidyStats <- function(ref, stats){
+  
+  variable <- NULL
   
   cohort_names <- ref %>%
     group_by(variable) %>%

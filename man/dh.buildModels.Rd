@@ -4,13 +4,13 @@
 \alias{dh.buildModels}
 \title{This function is part of a pipeline to build regression models in DataSHIELD}
 \usage{
-dh.buildModels(avail_exp = NULL, avail_cov = NULL, outcome = NULL)
+dh.buildModels(exp_tib = NULL, cov_tib = NULL, outcome = NULL)
 }
 \arguments{
-\item{avail_exp}{Tibble, output from dh.anyData. Should contain all 
+\item{exp_tib}{Tibble, output from dh.anyData. Should contain all 
 exposures you want to use. One model will be created for each exposure.}
 
-\item{avail_cov}{Tibble, output from dh.anyData. Should contain all 
+\item{cov_tib}{Tibble, output from dh.anyData. Should contain all 
 covariates to include in your models.}
 
 \item{outcome}{Character giving the name of your outcome variable.}
