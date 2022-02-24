@@ -46,7 +46,7 @@
 #' @family descriptive functions
 #'
 #' @export
-dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
+dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = NULL, ci_format = NULL,
                      family = "gaussian", digits = 2, round_digits = 2,
                      exp = FALSE) {
@@ -215,7 +215,7 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
       dplyr::select(variable, se, est, pvalue)
   }
 
-  if (type == "lmer") {
+  if (type == "lmer_slma") {
 
     ## Get random effects
     random_sd <- paste0("study", seq(1, nstudy, 1)) %>%
