@@ -248,7 +248,6 @@ check with ds.class \n\n",
     dplyr::filter(type %in% c("numeric", "integer")) %>%
     select(variable, cohort, any_obs)
   
-  
   ################################################################################
   # 7. Check for disclosure issues
   ################################################################################
@@ -361,14 +360,12 @@ check with ds.class \n\n",
     ## ---- Final stats ------------------------------------------------------------
     out_cat <- left_join(
       out_cat, cat_valid_n,
-      by = c("variable", "category", "cohort")
-    ) %>%
+      by = c("variable", "category", "cohort")) %>%
       mutate(
         missing_n = cohort_n - valid_n,
         perc_valid = (value / valid_n) * 100,
         perc_missing = (missing_n / cohort_n) * 100,
-        perc_total = (value / cohort_n) * 100
-      ) %>%
+        perc_total = (value / cohort_n) * 100) %>%
       select(variable, cohort, category, value, everything()) %>%
       mutate(across(perc_valid:perc_total, ~ round(., digits))) %>%
       ungroup()
