@@ -54,7 +54,7 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
   ## ---- First we extract coefficients ------------------------------------------
   coefs <- dh.lmTab(
     model = model,
-    type = "lmer",
+    type = "lmer_slma",
     coh_names = coh_names,
     direction = "long",
     ci_format = "separate"
