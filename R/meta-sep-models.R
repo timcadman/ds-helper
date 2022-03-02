@@ -140,7 +140,13 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
       mutate(
         i2 = NA, 
         n_studies = 1, 
-        metafor_obj = NA) %>%
+        metafor_obj = NA,
+        weight = 1/(se^2)) %>%
+      group_by(exposure, variable) %>%
+      group_split() %>%
+      map(~mutate(., weight_scaled = (weight / sum(weight)*100))) %>%
+      bind_rows %>%
+      ungroup %>%
       left_join(., sample_n_coh, by = c("exposure", "cohort")) 
     
     ma.out <- left_join(ma.out, sample_n_comb, by = "exposure") %>%
