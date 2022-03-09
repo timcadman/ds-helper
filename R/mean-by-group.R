@@ -190,6 +190,7 @@ paste0(warnings$issues$cohort, collapse = ", ")
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
       obj = c(cats$new_df_name, assign_conditions$varname),
+      type = "remove", 
       conns = conns
     )
   }
