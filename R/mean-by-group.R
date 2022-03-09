@@ -70,7 +70,28 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
       "meanSdGpDS(", paste0(df, "$", outcome), ",",
       "age_round", ")"
     )
+    
     mean_tmp <- DSI::datashield.aggregate(conns, as.symbol(calltext))
+    ## ---- Deal with disclosure issues ----------------------------------------
+    
+    warnings <- mean_tmp %>% map(function(x){
+      tibble(warning = !is.null(x$Warning))}) %>%
+      bind_rows(.id = "cohort")
+    
+    issues <- warnings %>% dplyr::filter(warning == TRUE)  
+    
+    if(nrow(issues) > 0){
+      
+      warning(
+"The following cohorts have at least one group with between 1 and 2 observations 
+so it is not possible to return grouped values. Try collapsing some categories or 
+re-run the function using the `intervals` argument. \n\n", 
+      
+paste0(issues %>% pull(cohort), collapse = ", ")
+
+)
+      
+    }
 
     ## ---- Now put into neat long format -------------------------------------------------------
     out <- mean_tmp %>%
@@ -85,7 +106,8 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
     ## ---- Remove temporary objects ------------------------------------------------------------
     dh.tidyEnv(
       obj = c("age_tmp", "age_round"),
-      type = "remove"
+      type = "remove", 
+      conns = conns
     )
   } else if (!is.null(intervals)) {
 
