@@ -365,6 +365,22 @@ check with ds.class \n\n",
   }
 
   ################################################################################
+  # Check for invalid cases
+  ################################################################################
+  invalid <- stats_cat %>% dplyr::filter(str_detect(category, "Failed"))
+  
+  if(nrow(invalid) > 0){
+    
+    warning("These variables have insufficient cell count for at least
+            one cohort and have been removed:")
+    
+    invalid %>% dplyr::select(variable, cohort) %>% print
+    
+  }
+  
+  stats_cat <- stats_cat %>% dplyr::filter(!str_detect(category, "Failed"))
+  
+  ################################################################################
   # 9. Calculate combined stats for categorical variables
   ################################################################################
 

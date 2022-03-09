@@ -46,7 +46,7 @@
 #' @family descriptive functions
 #'
 #' @export
-dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
+dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = NULL, ci_format = NULL,
                      family = "gaussian", digits = 2, round_digits = 2,
                      exp = FALSE) {
@@ -113,6 +113,7 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
       est = round(model$coefficients[, "Estimate"], digits),
+      se = round(model$coefficients[, "Std. Error"], digits),
       lowci = round(model$coefficients[, lowci], digits),
       uppci = round(model$coefficients[, highci], digits),
       pvalue = round(model$coefficients[, "p-value"], digits)
@@ -211,10 +212,10 @@ dh.lmTab <- function(model = NULL, type = "wide", coh_names = NULL,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
-      dplyr::select(variable, est, pvalue)
+      dplyr::select(variable, se, est, pvalue)
   }
 
-  if (type == "lmer") {
+  if (type == "lmer_slma") {
 
     ## Get random effects
     random_sd <- paste0("study", seq(1, nstudy, 1)) %>%
