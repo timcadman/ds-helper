@@ -73,28 +73,23 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
     
     mean_tmp <- DSI::datashield.aggregate(conns, as.symbol(calltext))
     ## ---- Deal with disclosure issues ----------------------------------------
+    warnings <- .checkDisclosureMeanGp(mean_tmp)
     
-    warnings <- mean_tmp %>% map(function(x){
-      tibble(warning = !is.null(x$Warning))}) %>%
-      bind_rows(.id = "cohort")
-    
-    issues <- warnings %>% dplyr::filter(warning == TRUE)  
-    
-    if(nrow(issues) > 0){
+    if(nrow(warnings$issues) > 0){
       
       warning(
 "The following cohorts have at least one group with between 1 and 2 observations 
 so it is not possible to return grouped values. Try collapsing some categories or 
 re-run the function using the `intervals` argument. \n\n", 
       
-paste0(issues %>% pull(cohort), collapse = ", ")
+paste0(warnings$issues$cohort, collapse = ", ")
 
 )
       
     }
-
+    
     ## ---- Now put into neat long format -------------------------------------------------------
-    out <- mean_tmp %>%
+    out <- warnings$no_issues_data %>%
       map(function(x) {
         x$Mean_gp %>%
           as_tibble(rownames = "age") %>%
@@ -135,7 +130,7 @@ paste0(issues %>% pull(cohort), collapse = ", ")
     cats %>%
       pmap(function(value, op, new_df_name, ...) {
         ds.Boole(
-          V1 = "data$age",
+          V1 = paste0(df, "$", group_var),
           V2 = value,
           Boolean.operator = op,
           newobj = new_df_name,
@@ -160,12 +155,19 @@ paste0(issues %>% pull(cohort), collapse = ", ")
       pull(varname) %>%
       map(
         ~ ds.meanSdGp(
-          x = "data$weight",
+          x = paste0(df, "$", outcome),
           y = .,
           type = "split",
           datasources = conns
         )
       )
+    
+
+    ## Check for disclose issues
+    disclosure <- .checkDisclosureMeanGp(obs_by_agecat_comb)
+    
+    
+    
 
     ## Now we take these values and put them into a neater table
     out <- obs_by_agecat_comb %>%
@@ -193,4 +195,28 @@ paste0(issues %>% pull(cohort), collapse = ", ")
   }
 
   return(out)
+}
+
+
+#' Internal function to check disclosure issues in this function
+#' 
+#' @param mean_gp output from ds.meanSdGp
+#' 
+#' @importFrom purrr map
+#' @importFrom tibble tibble
+#' @importFrom dplyr %>% bind_rows filter
+#' noRd
+.checkDisclosureMeanGp <- function(mean_gp){
+  
+  warnings <- mean_gp %>% map(function(x){
+    tibble(warning = !is.null(x$Warning))}) %>%
+    bind_rows(.id = "cohort")
+  
+  issues <- warnings %>% dplyr::filter(warning == TRUE)  
+  no_issues <- mean_gp[!names(mean_gp) %in% issues$cohort] 
+  
+  return(list(
+    summary = warnings, 
+    issues = issues, 
+    no_issues_data = no_issues))
 }
