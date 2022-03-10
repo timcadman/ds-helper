@@ -148,44 +148,55 @@ paste0(warnings$issues$cohort, collapse = ", ")
       pmap(function(condition, varname) {
         DSI::datashield.assign(conns, varname, as.symbol(condition))
       })
+    
+    ## Check disclosure issues
+    disclosure <- assign_conditions$varname %>%
+      map(~.checkDisclosure(., conns = conns)) %>%
+      set_names(assign_conditions$varname) %>%
+      bind_rows(.id = "variable")
+    
 
+    no_obs <- disclosure %>% dplyr::filter(enough_obs == FALSE)
+    
+    if(nrow(no_obs) > 0){
+      
+      warning(paste(capture.output({
+        cat("These cohorts have no observations within the following
+              intervals and will be excluded\n\n")
+        no_obs %>% dplyr::select(variable, cohort) %>%
+          print(n = Inf)
+      }), collapse = "\n"))
+
+    }
+    
+    valid_obs <- disclosure %>% dplyr::filter(enough_obs == TRUE)
+    
     ## We then use these vectors to summarise mean observed height at the age
     ## periods we are interested in.
-    obs_by_agecat_comb <- assign_conditions %>%
-      pull(varname) %>%
-      map(
-        ~ ds.meanSdGp(
+    obs_by_agecat_comb <- valid_obs %>%
+      pmap(function(variable, cohort, ...){
+        
+        ds.meanSdGp(
           x = paste0(df, "$", outcome),
-          y = .,
+          y = variable,
           type = "split",
-          datasources = conns
-        )
-      )
+          datasources = conns[cohort])
+      })
     
-
-    ## Check for disclose issues
-    disclosure <- .checkDisclosureMeanGp(obs_by_agecat_comb)
-    
-    
-    
-
     ## Now we take these values and put them into a neater table
     out <- obs_by_agecat_comb %>%
       map(function(x) {
         x$Mean_gp %>%
           as_tibble(rownames = "group") %>%
-          slice(2)
-      }) %>%
+          slice(2) %>%
+      pivot_longer(
+        cols = -group,
+        names_to = "cohort", 
+        values_to = "mean")}) %>%
       bind_rows() %>%
       mutate(group = str_remove(group, "_[^_]+$")) %>%
       mutate(group = str_remove(group, "grp_")) %>%
-      pivot_longer(
-        cols = -group,
-        names_to = "cohort",
-        values_to = "mean"
-      ) %>%
       dplyr::select(cohort, group, mean)
-
 
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
