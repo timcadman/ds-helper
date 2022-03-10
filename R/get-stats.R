@@ -299,7 +299,7 @@ check with ds.class \n\n",
   
   ## ---- Categorical ------------------------------------------------------------
   if (nrow(fact_ref) > 0) {
-    stats_extracted <- .statsTable(ref = fact_ref, df = df) 
+    stats_extracted <- .statsTable(ref = fact_ref, df = df, conns = conns) 
     
     stats_cat <- .tidyStats(fact_ref, stats_extracted) %>% 
       left_join(., cohort_ns, by = "cohort")
@@ -325,8 +325,8 @@ check with ds.class \n\n",
 
   if (nrow(cont_ref) > 0) {
     
-    quantiles_extracted <- .statsQuantMean(ref = cont_ref, df = df)
-    variance_extracted <- .statsVar(ref = cont_ref, df = df)
+    quantiles_extracted <- .statsQuantMean(ref = cont_ref, df = df, conns = conns)
+    variance_extracted <- .statsVar(ref = cont_ref, df = df, conns = conns)
     
     stats_cont <- bind_rows(
       quantiles = .tidyStats(cont_ref, quantiles_extracted),
@@ -517,7 +517,7 @@ check with ds.class \n\n",
 #' @importFrom DSI datashield.aggregate
 #' 
 #' @noRd
-.statsTable <- function(ref, df){
+.statsTable <- function(ref, df, conns){
   
   variable <- NULL
   
@@ -566,7 +566,7 @@ check with ds.class \n\n",
 #' @importFrom DSI datashield.aggregate
 #' 
 #' @noRd      
-.statsQuantMean <- function(ref, df){
+.statsQuantMean <- function(ref, df, conns){
   
   variable <- NULL
   
@@ -622,7 +622,7 @@ check with ds.class \n\n",
 #' @importFrom DSI datashield.aggregate
 #' 
 #' @noRd     
-.statsVar <- function(ref, df){
+.statsVar <- function(ref, df, conns){
   
   variable <- NULL
   
