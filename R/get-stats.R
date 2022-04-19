@@ -319,7 +319,7 @@ check with ds.class \n\n",
       
     }
     
-    stats_cat <- stats_cat %>% dplyr::filter(!str_detect(category, "Failed"))
+    stats_cat <- stats_cat %>% dplyr::filter(is.na(category) | !str_detect(category, "Failed"))
     
   }
   ## ---- Continuous -------------------------------------------------------------
