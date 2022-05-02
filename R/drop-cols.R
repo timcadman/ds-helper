@@ -62,6 +62,8 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
     ds.dataFrame(
       x = paste0(df, "$", vars),
       newobj = new_obj,
+      check.names = FALSE,
+      DataSHIELD.checks = FALSE,
       datasources = conns
     )
   } else if (type == "remove") {
@@ -78,7 +80,9 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
         ~ ds.dataFrame(
           x = .x,
           datasources = conns[.y],
-          newobj = new_obj
+          newobj = new_obj, 
+          check.names = FALSE,
+          DataSHIELD.checks = FALSE
         )
       )
   }

@@ -1,5 +1,7 @@
 # dsHelper (development version)
 
+# dsHelper 0.4.11
+
 # dsHelper 0.4.10
 
 # dsHelper 0.4.9
