@@ -220,7 +220,6 @@ check with ds.class \n\n",
 
   vars_long <- left_join(vars_long, classes, by = "variable")
 
-
   ## ---- Final reference table for factors --------------------------------------
   fact_ref <- vars_long %>%
     dplyr::filter(type == "factor")
@@ -367,19 +366,22 @@ check with ds.class \n\n",
   ################################################################################
   # Check for invalid cases
   ################################################################################
-  invalid <- stats_cat %>% dplyr::filter(str_detect(category, "Failed"))
-  
-  if(nrow(invalid) > 0){
-    
+
+  invalid <- data.frame()
+  if (nrow(fact_ref) > 0) {
+    invalid <- stats_cat %>% dplyr::filter(str_detect(category, "Failed"))
+    stats_cat <- stats_cat %>% dplyr::filter(!str_detect(category, "Failed"))
+  }
+
+  if (nrow(invalid) > 0) {
     warning("These variables have insufficient cell count for at least
             one cohort and have been removed:")
-    
-    invalid %>% dplyr::select(variable, cohort) %>% print
-    
+
+    invalid %>%
+      dplyr::select(variable, cohort) %>%
+      print()
   }
-  
-  stats_cat <- stats_cat %>% dplyr::filter(!str_detect(category, "Failed"))
-  
+
   ################################################################################
   # 9. Calculate combined stats for categorical variables
   ################################################################################
