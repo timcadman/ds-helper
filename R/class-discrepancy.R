@@ -51,7 +51,10 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
   classes <- paste0(df, "$", fun_vars) %>%
     map_df(function(x) {
       calltext <- call("classDS", x)
-      datashield.aggregate(conns, calltext)
+      datashield.aggregate(conns, calltext) %>%
+        lapply(function(x){
+          paste(x, collapse = ",")
+        })
     })
 
   ## ---- Create column indicating whether there is a discrepancy --------------
