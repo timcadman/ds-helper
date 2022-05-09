@@ -7,6 +7,7 @@
 #' variable, which may not always be what is required.
 #'
 #' @importFrom DSI datashield.connections_find datashield.assign
+#' @importFrom dsBaseClient ds.meanSdGp
 #' @importFrom purrr map
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr bind_rows %>% slice
@@ -29,7 +30,7 @@
 dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
                            intervals = NULL, conns = NULL, checks = FALSE) {
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <-
-    . <- NULL
+    . <- enough_obs <- variable <- NULL
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
@@ -217,7 +218,7 @@ paste0(warnings$issues$cohort, collapse = ", ")
 #' @importFrom purrr map
 #' @importFrom tibble tibble
 #' @importFrom dplyr %>% bind_rows filter
-#' noRd
+#' @noRd
 .checkDisclosureMeanGp <- function(mean_gp){
   
   warnings <- mean_gp %>% map(function(x){

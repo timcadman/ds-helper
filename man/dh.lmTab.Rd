@@ -6,7 +6,7 @@
 \usage{
 dh.lmTab(
   model = NULL,
-  type = "wide",
+  type = NULL,
   coh_names = NULL,
   direction = NULL,
   ci_format = NULL,
