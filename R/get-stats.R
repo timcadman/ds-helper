@@ -220,8 +220,7 @@ check with ds.class \n\n",
     dplyr::rename(type = type_w_null)
   
   vars_long <- left_join(vars_long, classes, by = "variable")
-  
-  
+
   ## ---- Final reference table for factors --------------------------------------
   fact_ref <- vars_long %>%
     dplyr::filter(type == "factor")
@@ -325,7 +324,7 @@ check with ds.class \n\n",
   ## ---- Continuous -------------------------------------------------------------
 
   if (nrow(cont_ref) > 0) {
-    
+
     quantiles_extracted <- .statsQuantMean(ref = cont_ref, df = df, conns = conns)
     variance_extracted <- .statsVar(ref = cont_ref, df = df, conns = conns)
     
