@@ -18,7 +18,7 @@
 #' * "ge_l" = greater than or equal to the lowest band and less than the highest
 #' band
 #' @param type Character specifying whether to derive quartiles from combined
-#' data or within each cohort. Use "combined" to use combined quartiles, and 
+#' data or within each cohort. Use "combine" to use combined quartiles, and 
 #' "split" to use cohort-specific quartiles.
 #' @template new_obj
 #' @param var_suffix Character specifying the suffix to give the created variable.
@@ -71,6 +71,8 @@ dh.quartileSplit <- function(
   if (is.null(type)) {
     stop("`type` must not be NULL.", call. = FALSE)
   }
+  
+  type <- ifelse(type == "combined", "combine", type)
   
   type <- arg_match(type, c("combine", "split"))
   band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))

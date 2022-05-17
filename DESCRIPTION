@@ -42,7 +42,6 @@ Suggests:
 URL: https://github.com/lifecycle-project/ds-helper/,
   https://lifecycle-project.github.io/ds-helper/
 BugReports: https://github.com/lifecycle-project/ds-helper/issues/
-Additional_repositories: https://cran.obiba.org/
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
