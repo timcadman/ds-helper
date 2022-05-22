@@ -3,13 +3,8 @@
 #' @param ref Tibble, output from dh.multGlm. 
 #' @param exp Logical, whether to exponentiate coefficients after meta-analysis
 #' @param method Method of meta-analysing coefficients.
-<<<<<<< HEAD
-#' @param coh_out Logical, whether to include cohort coefficients in output 
-#' along with meta-analysed results#' 
-=======
 #' @param output Character; "cohort" to return cohort coefficients only, "meta"
 #' to return meta-analysed coefficients only, "both" to return both.
->>>>>>> 942d5d61d4636adcf9d59d80c3a47b851ce8a969
 #' 
 #' @return A tibble
 #'
@@ -145,16 +140,6 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
       mutate(
         i2 = NA, 
         n_studies = 1, 
-<<<<<<< HEAD
-        metafor_obj = NA, 
-        weight = 1 / (se^2)) %>%
-      group_by(exposure, variable) %>%
-      group_split() %>%
-      map(~mutate(., weight_scaled = (weight / sum(weight)) *100)) %>%
-      bind_rows() %>%
-      ungroup() %>% 
-      left_join(., sample_n_coh, by = c("exposure", "cohort"))
-=======
         metafor_obj = NA,
         weight = 1/(se^2)) %>%
       group_by(exposure, variable) %>%
@@ -163,8 +148,7 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
       bind_rows %>%
       ungroup %>%
       left_join(., sample_n_coh, by = c("exposure", "cohort")) 
->>>>>>> 942d5d61d4636adcf9d59d80c3a47b851ce8a969
-    
+
     ma.out <- left_join(ma.out, sample_n_comb, by = "exposure") %>%
       mutate(cohort = "combined")
     
