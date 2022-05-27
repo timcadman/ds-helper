@@ -82,23 +82,12 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
           lowci = meta$ci.lb,
           uppci = meta$ci.ub,
           i2 = round(meta$I2, 1), 
-          n_studies = meta$k)
+          n_coh = meta$k)
         
       }) %>%
       mutate(metafor_obj = model_holder$meta)
     
   }
-  
-  ## ---- Calculate sample size for each cohort & analysis ---------------------
-  sample_n_coh <- ref %>%
-    dplyr::select(exposure, cohort) %>%
-    mutate(
-      valid_n = ref$fit %>%
-        map_int(function(x){
-          
-          x$output.summary$study1$Nvalid
-        })
-    )
   
     ## ---- Calculate combined sample size ---------------------------------------
     labs <- sample_n_coh %>% group_by(exposure) %>% group_keys %>% unlist
@@ -108,7 +97,7 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
       group_split %>%
       map(function(x){
         
-        tibble(valid_n = sum(x$valid_n))
+        tibble(n_obs = sum(x$valid_n))
         
       }) %>%
       set_names(labs) %>%
@@ -139,15 +128,13 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
     both.out <- coh.out %>%
       mutate(
         i2 = NA, 
-        n_studies = 1, 
         metafor_obj = NA,
         weight = 1/(se^2)) %>%
       group_by(exposure, variable) %>%
       group_split() %>%
       map(~mutate(., weight_scaled = (weight / sum(weight)*100))) %>%
       bind_rows %>%
-      ungroup %>%
-      left_join(., sample_n_coh, by = c("exposure", "cohort")) 
+      ungroup 
 
     ma.out <- left_join(ma.out, sample_n_comb, by = "exposure") %>%
       mutate(cohort = "combined")
