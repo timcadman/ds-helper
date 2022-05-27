@@ -6,8 +6,8 @@
 #' is provided, it will be reused for all the selected columns.
 #'
 #' @template df
-#' @param objective_columns Character vector specifying which columns are to be casted to new classes.
-#' @param objective_class Character vector specifying the objective classes of the selected columns.
+#' @param target_vars Character vector specifying which columns are to be casted to new classes.
+#' @param target_class Character vector specifying the objective classes of the selected columns.
 #' @template conns
 #' @template checks
 #' 
@@ -16,30 +16,30 @@
 #'
 #' @return Tibble with a summary of the successful and failed casts
 #' @export
-dh.columnCast <- function(df = NULL, objective_columns = NULL, objective_class = NULL, conns = NULL, checks = TRUE){
+dh.columnCast <- function(df = NULL, target_vars = NULL, target_class = NULL, conns = NULL, checks = TRUE){
   
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
   
-  if (is.null(objective_columns)) {
+  if (is.null(target_vars)) {
     stop("`current_names` must not be NULL.", call. = FALSE)
   }
   
   
-  if (is.null(objective_class)) {
+  if (is.null(target_class)) {
     stop("`current_names` must not be NULL.", call. = FALSE)
   }
   
   `%notin%` <- Negate(`%in%`)
-  if(any(objective_class %notin% c("factor", "character", "numeric", "integer"))){
+  if(any(target_class %notin% c("factor", "character", "numeric", "integer"))){
     stop("", call. = FALSE) # TODO completar missatge correctament
   }
   
-  if(length(objective_columns) != length(objective_class) & length(objective_class) == 1){
-    objective_class <- rep(objective_class, length(objective_columns))
+  if(length(target_vars) != length(target_class) & length(target_class) == 1){
+    target_class <- rep(target_class, length(target_vars))
     warning("") # TODO completar missatge correctament
-  } else if (length(objective_columns) != length(objective_class)) {
+  } else if (length(target_vars) != length(target_class)) {
     stop("", call. = FALSE) # TODO completar missatge correctament
   }
   
@@ -48,35 +48,45 @@ dh.columnCast <- function(df = NULL, objective_columns = NULL, objective_class =
   }
   
   if (checks == TRUE) {
-    .isDefined(df = df, vars = objective_columns, conns = conns)
+    .isDefined(df = df, vars = target_vars, conns = conns)
   }
   
-  # Get column indexes the `objective_columns` have on the `df`
-  objective_columns_index <- which(ds.colnames(x = df, datasources = conns)[[1]] %in% objective_columns)
+  # Get column indexes the `target_vars` have on the `df`
+  target_vars_index <- lapply(ds.colnames(x = df, datasources = conns), function(x){
+    match(target_vars, x)
+  })
   
-  # Perform casting of `objective_columns` to `objective_class`
-  casting_results <- lapply(1:length(objective_columns), function(x){
-    switch(objective_class[x],
-           "factor" = tryCatch({ds.asFactor(input.var.name = paste0(df, "$", objective_columns[x]), 
-                                            newobj.name = objective_columns[x], 
-                                            datasources = conns);objective_columns[x]}, error = function(w){NULL}),
-           "character" = tryCatch({ds.asCharacter(x.name = paste0(df, "$", objective_columns[x]), 
-                                                  newobj = objective_columns[x], 
-                                                  datasources = conns);objective_columns[x]}, error = function(w){NULL}),
-           "numeric" = tryCatch({ds.asNumeric(x.name = paste0(df, "$", objective_columns[x]), 
-                                              newobj = objective_columns[x], 
-                                              datasources = conns);objective_columns[x]}, error = function(w){NULL}),
-           "integer" = tryCatch({ds.asInteger(x.name = paste0(df, "$", objective_columns[x]), 
-                                              newobj = objective_columns[x],
-                                              datasources = conns);objective_columns[x]}, error = function(w){NULL})
+  # Perform casting of `target_vars` to `target_class`
+  casting_results <- lapply(1:length(target_vars), function(x){
+    switch(target_class[x],
+           "factor" = tryCatch({
+             
+             
+             ds.asFactor(input.var.name = paste0(df, "$", target_vars[x]), 
+                                            newobj.name = target_vars[x], 
+                                            datasources = conns);target_vars[x]}, error = function(w){NULL}),
+           "character" = tryCatch({ds.asCharacter(x.name = paste0(df, "$", target_vars[x]), 
+                                                  newobj = target_vars[x], 
+                                                  datasources = conns);target_vars[x]}, error = function(w){NULL}),
+           "numeric" = tryCatch({ds.asNumeric(x.name = paste0(df, "$", target_vars[x]), 
+                                              newobj = target_vars[x], 
+                                              datasources = conns);target_vars[x]}, error = function(w){NULL}),
+           "integer" = tryCatch({ds.asInteger(x.name = paste0(df, "$", target_vars[x]), 
+                                              newobj = target_vars[x],
+                                              datasources = conns);target_vars[x]}, error = function(w){NULL})
            )
     })
   
-  # Get the successful casts
+  # Get the successful and failed casts
   success_casts <- unlist(lapply(casting_results, function(x){!is.null(x)}))
+  failed_casts <- !success_casts
+  warning(paste0("[", paste(target_vars[failed_casts], collapse = ", "), "] column(s) have failed, they will keep their previous class"),
+          call. = FALSE)
   
-  # Update `objective_columns_index` only with successful casts
-  objective_columns_index <- objective_columns_index[success_casts]
+  # Update `target_vars_index` only with successful casts
+  target_vars_index <- lapply(target_vars_index, function(x){
+    x[success_casts]
+  })
   
   # Get the object names for the successful casts
   cast_names <- unlist(casting_results)
@@ -89,28 +99,32 @@ dh.columnCast <- function(df = NULL, objective_columns = NULL, objective_class =
          source.each = "c",
          newobj = "ONES", 
          datasources = conns)
-  ds.dataFrameSubset(df.name = df, 
-                     V1.name = "ONES",  
-                     V2.name = "ONES",
-                     Boolean.operator = "==", 
-                     rm.cols = objective_columns_index, 
-                     newobj = paste0(df, "_aux_nobj"), 
-                     datasources = conns)
+  lapply(1:length(target_vars_index), function(x){
+    ds.dataFrameSubset(df.name = df, 
+                       V1.name = "ONES",  
+                       V2.name = "ONES",
+                       Boolean.operator = "==", 
+                       rm.cols = target_vars_index[[x]], 
+                       newobj = paste0(df, "_aux_nobj"), 
+                       datasources = conns[x])
+  })
   
   # Bind casted columns to the previous table
   ds.cbind(x = c(paste0(df, "_aux_nobj"), cast_names), newobj = paste0(df, "_aux_nobj"), datasources = conns)
   
   # Reorder table to align with original data and overwrite original table
-  ds.dataFrameSubset(df.name = paste0(df, "_aux_nobj"), 
-                     V1.name = "ONES",  
-                     V2.name = "ONES",
-                     Boolean.operator = "==", 
-                     keep.cols = match(ds.colnames(df, datasources = conns)[[1]], 
-                                       ds.colnames(paste0(df, "_aux_nobj"), datasources = conns)[[1]]),
-                     newobj = df,
-                     datasources = conns)
+  lapply(1:length(target_vars_index), function(x){
+    ds.dataFrameSubset(df.name = paste0(df, "_aux_nobj"), 
+                       V1.name = "ONES",  
+                       V2.name = "ONES",
+                       Boolean.operator = "==", 
+                       keep.cols = match(ds.colnames(df, datasources = conns[x])[[1]], 
+                                         ds.colnames(paste0(df, "_aux_nobj"), datasources = conns[x])[[1]]),
+                       newobj = df,
+                       datasources = conns[x])
+  })
   
-  return(tibble(objective_columns,
-         objective_class,
+  return(tibble(target_vars,
+         target_class,
          success = success_casts))
 }

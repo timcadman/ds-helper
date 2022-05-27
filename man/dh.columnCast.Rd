@@ -6,8 +6,8 @@
 \usage{
 dh.columnCast(
   df = NULL,
-  objective_columns = NULL,
-  objective_class = NULL,
+  target_vars = NULL,
+  target_class = NULL,
   conns = NULL,
   checks = TRUE
 )
@@ -15,9 +15,9 @@ dh.columnCast(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{objective_columns}{Character vector specifying which columns are to be casted to new classes.}
+\item{target_vars}{Character vector specifying which columns are to be casted to new classes.}
 
-\item{objective_class}{Character vector specifying the objective classes of the selected columns.}
+\item{target_class}{Character vector specifying the objective classes of the selected columns.}
 
 \item{conns}{DataSHIELD connections object.}
 
