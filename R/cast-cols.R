@@ -59,10 +59,7 @@ dh.columnCast <- function(df = NULL, target_vars = NULL, target_class = NULL, co
   # Perform casting of `target_vars` to `target_class`
   casting_results <- lapply(1:length(target_vars), function(x){
     switch(target_class[x],
-           "factor" = tryCatch({
-             
-             
-             ds.asFactor(input.var.name = paste0(df, "$", target_vars[x]), 
+           "factor" = tryCatch({ds.asFactor(input.var.name = paste0(df, "$", target_vars[x]), 
                                             newobj.name = target_vars[x], 
                                             datasources = conns);target_vars[x]}, error = function(w){NULL}),
            "character" = tryCatch({ds.asCharacter(x.name = paste0(df, "$", target_vars[x]), 
