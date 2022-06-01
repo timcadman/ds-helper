@@ -90,19 +90,23 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
   }
   
     ## ---- Calculate combined sample size ---------------------------------------
-    labs <- sample_n_coh %>% group_by(exposure) %>% group_keys %>% unlist
+    labs <- model_coefs %>% group_by(exposure) %>% group_keys %>% unlist
     
-    sample_n_comb <- sample_n_coh %>%
-      group_by(exposure) %>%
+    sample_n_comb <- model_coefs %>%
+      group_by(exposure, variable) %>%
       group_split %>%
       map(function(x){
         
-        tibble(n_obs = sum(x$valid_n))
-        
+        x %>% 
+          mutate(n_obs = sum(x$n_obs)) %>%
+          dplyr::select(exposure, variable, n_obs) %>%
+          slice(1)
       }) %>%
-      set_names(labs) %>%
-      bind_rows(.id = "exposure")
+      bind_rows
    
+    ma.out <- left_join(ma.out, sample_n_comb, by = c("exposure", "variable")) %>%
+      mutate(cohort = "combined")
+    
   if(output %in% c("cohort", "both") == TRUE){
   
     coh.out <- ref %>%
@@ -136,9 +140,6 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
       bind_rows %>%
       ungroup 
 
-    ma.out <- left_join(ma.out, sample_n_comb, by = "exposure") %>%
-      mutate(cohort = "combined")
-    
     out <- bind_rows(both.out, ma.out)
     
   } else if(output == "cohort"){
