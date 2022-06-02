@@ -89,7 +89,7 @@ dh.columnCast <- function(df = NULL, target_vars = NULL, target_class = NULL, co
   cast_names <- unlist(casting_results)
   
   # Get subset of original table without the successful casted columns
-  times <- tail(ds.dim(df, datasources = conns), 1)[1]
+  times <- tail(ds.dim(df, datasources = conns), 1)[[1]][1]
   ds.rep(x1 = 1,
          times = times,
          source.times = "c",
