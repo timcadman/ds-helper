@@ -1,5 +1,5 @@
 #' Casts column classes of a table
-#' 
+#'
 #' This function allows you to specify the desired classes for a some variables
 #' of a dataframe. The resulting dataframe will have the same column order as
 #' the input one. If multiple columns are to be casted but only one objective class
@@ -89,7 +89,7 @@ dh.columnCast <- function(df = NULL, target_vars = NULL, target_class = NULL, co
   cast_names <- unlist(casting_results)
   
   # Get subset of original table without the successful casted columns
-  times <- ds.dim(df, datasources = conns)[[3]][1]
+  times <- tail(ds.dim(df, datasources = conns), 1)[1]
   ds.rep(x1 = 1,
          times = times,
          source.times = "c",
