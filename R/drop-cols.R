@@ -123,7 +123,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
         source.length.out = "clientside",
         source.each = "clientside")
       
-      DSI::datashield.assign(conns[.y], "ones", calltext)
+      DSI::datashield.assign(conns[.y], "ONES", calltext)
     })
 }
   
