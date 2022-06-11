@@ -21,7 +21,7 @@ creates multiple transformations of an age variable to different powers."><!-- m
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -91,24 +91,39 @@ creates multiple transformations of an age variable to different powers.</p>
     <h2>Arguments</h2>
     <dl><dt>df</dt>
 <dd><p>Character specifying a server-side data frame.</p></dd>
+
+
 <dt>age_var</dt>
 <dd><p>Character specifying age variable within `df` to transform.</p></dd>
+
+
 <dt>poly_form</dt>
 <dd><p>Character vector of powers by which to transform `age_var`.</p></dd>
+
+
 <dt>poly_names</dt>
 <dd><p>Character vector of names for the created variables. Must
 the same length and order as `poly_form`.</p></dd>
+
+
 <dt>conns</dt>
 <dd><p>DataSHIELD connections object.</p></dd>
+
+
 <dt>checks</dt>
 <dd><p>Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.</p></dd>
+
+
 <dt>agevars</dt>
 <dd><p>Retired argument name. Please use `age_var' instead.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Transformations of age are added as columns to server-side object
+    
+
+<p>Transformations of age are added as columns to server-side object
 specified in `df`.</p>
     </div>
     <div id="see-also">
@@ -139,7 +154,7 @@ specified in `df`.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

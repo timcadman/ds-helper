@@ -20,7 +20,7 @@ of polynomial terms and compares the fit."><!-- mathjax --><script src="https://
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -87,20 +87,31 @@ of polynomial terms and compares the fit.</p>
     <h2>Arguments</h2>
     <dl><dt>df</dt>
 <dd><p>Character specifying a server-side data frame.</p></dd>
+
+
 <dt>formulae</dt>
 <dd><p>Character vector containing model formulae to fit.</p></dd>
+
+
 <dt>poly_names</dt>
 <dd><p>Character vector of names for the models specified in
 <code>formulae</code></p></dd>
+
+
 <dt>conns</dt>
 <dd><p>DataSHIELD connections object.</p></dd>
+
+
 <dt>checks</dt>
 <dd><p>Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>List containing three elements:</p><ul><li><p>models = List of objects returned by ds.lmerSLMA for each model fitted.</p></li>
+    
+
+<p>List containing three elements:</p><ul><li><p>models = List of objects returned by ds.lmerSLMA for each model fitted.</p></li>
 <li><p>convergence = Tibble providing information on convergence problems or
 error for each model fitted.</p></li>
 <li><p>fit = Tibble with columns containing negative loglikehood statistic for each
@@ -128,7 +139,7 @@ of the loglikelihoods across cohorts.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

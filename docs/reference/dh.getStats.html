@@ -20,7 +20,7 @@ tibble."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -82,22 +82,38 @@ tibble.</p>
     <h2>Arguments</h2>
     <dl><dt>df</dt>
 <dd><p>Character specifying a server-side data frame.</p></dd>
+
+
 <dt>vars</dt>
 <dd><p>Character vector of columns within <code>df</code> to summarise.</p></dd>
+
+
 <dt>digits</dt>
 <dd><p>Optionally, the number of decimal places to round output to. 
 Default is 2.</p></dd>
+
+
 <dt>conns</dt>
 <dd><p>DataSHIELD connections object.</p></dd>
+
+
 <dt>checks</dt>
 <dd><p>Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A client-side list with two elements: "categorical" and "continuous".
-Each element contains a tibble with descriptive statistics as follows.
-Categorical: <br></p><ul><li><p>"variable" = Variable name.</p></li>
+    
+
+<p>A client-side list with two elements: "categorical" and "continuous".
+Each element contains a tibble with descriptive statistics as follows.</p>
+
+
+<p>Categorical: <br></p>
+
+
+<ul><li><p>"variable" = Variable name.</p></li>
 <li><p>cohort = Cohort name, where "combined" refers to pooled statistics.</p></li>
 <li><p>category = Level of variable, including 'missing' as a category.</p></li>
 <li><p>value = Number of observations within category.</p></li>
@@ -109,7 +125,10 @@ categories excluding missing).</p></li>
 valid_n.</p></li>
 <li><p>perc_total = Number of observations within a category as percentage of
 cohort_n.</p></li>
-</ul><p>Continuous: <br></p><ul><li><p>variable = As above.</p></li>
+</ul><p>Continuous: <br></p>
+
+
+<ul><li><p>variable = As above.</p></li>
 <li><p>cohort = As above.</p></li>
 <li><p>mean = Mean. The pooled value calculated by fixed-effect meta-analysis.</p></li>
 <li><p>std.dev = Standard deviation. The pooled value is also calculate by fixed-</p></li>
@@ -150,7 +169,7 @@ dh.getStats will return the variable for that cohort with all NAs. See
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

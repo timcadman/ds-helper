@@ -1,9 +1,9 @@
 pandoc: 2.14.0.3
-pkgdown: 2.0.3
+pkgdown: 2.0.4
 pkgdown_sha: ~
 articles:
   TROUBLESHOOTING: TROUBLESHOOTING.html
   ds-helper-main-vignette: ds-helper-main-vignette.html
   ds-helper-trajectories-vignette: ds-helper-trajectories-vignette.html
-last_built: 2022-05-17T04:44Z
+last_built: 2022-06-11T16:29Z
 

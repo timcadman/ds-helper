@@ -23,7 +23,7 @@ with ggplot2)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -93,23 +93,34 @@ with ggplot2).</p>
     <h2>Arguments</h2>
     <dl><dt>df</dt>
 <dd><p>Character specifying a server-side data frame.</p></dd>
+
+
 <dt>var_1</dt>
 <dd><p>Character giving the name of a column within `df` for which to
 extract anonymised data.</p></dd>
+
+
 <dt>var_2</dt>
 <dd><p>Optionally, character specifying a second column within `df`.
 If a column is specified then scatter plot data will be returned with `var_1`
 as the explanatory variable and `var_2` as the outcome variable. Default is
 NULL which returns anonymised data only for `var_1`.</p></dd>
+
+
 <dt>conns</dt>
 <dd><p>DataSHIELD connections object.</p></dd>
+
+
 <dt>checks</dt>
 <dd><p>Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tibble in long format containing columns 'cohort', 'var_1' and
+    
+
+<p>A tibble in long format containing columns 'cohort', 'var_1' and
 optionally `var_2`. The values for `var1` and `var_2` are the anonymised
 data points.</p>
     </div>
@@ -131,7 +142,7 @@ data for a single variable, or scatter-plot data for two variables.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

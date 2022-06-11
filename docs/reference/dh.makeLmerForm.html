@@ -19,7 +19,7 @@ input to the formulae argument in dh.lmeMultPoly."><!-- mathjax --><script src="
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -88,26 +88,39 @@ input to the <code>formulae</code> argument in <code>dh.lmeMultPoly</code>.</p>
     <dl><dt>outcome</dt>
 <dd><p>Outcome variable within data frame to be specified in <code>df</code>
 argument in <code>dh.lmeMultPoly</code>.</p></dd>
+
+
 <dt>id_var</dt>
 <dd><p>Character specifying the name of the column which uniquely
 identifies each subject within data frame to be specified in <code>df</code>
 argument in <code>dh.lmeMultPoly</code>.</p></dd>
+
+
 <dt>age_vars</dt>
 <dd><p>Character vector specifying names of age polynomials present
 in data frame specified in <code>df</code> argument in <code>dh.lmeMultPoly</code>.</p></dd>
+
+
 <dt>random</dt>
 <dd><p>Specifies random effects to include in formulae. Use either
 "intercept" for random intercept model or "slope" for random slope model.</p></dd>
+
+
 <dt>fixed</dt>
 <dd><p>Optionally, character vector specifying fixed effects to be
 included in model.</p></dd>
+
+
 <dt>age_interactions</dt>
 <dd><p>Logical; if TRUE, interactions terms are created
 between <code>age_vars</code> and <code>fixed</code>. Default is FALSE.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Tibble containing two columns:</p><ul><li><p>polys = Transformations of <code>age_var</code></p></li>
+    
+
+<p>Tibble containing two columns:</p><ul><li><p>polys = Transformations of <code>age_var</code></p></li>
 <li><p>formula = Formula to be used as input to ds.lmerSLMA or dh.lmeMultPoly.</p></li>
 </ul></div>
     <div id="see-also">
@@ -131,7 +144,7 @@ between <code>age_vars</code> and <code>fixed</code>. Default is FALSE.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

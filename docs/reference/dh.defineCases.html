@@ -22,7 +22,7 @@ subject has non-missing values for any or all of a set of given variables."><!--
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -93,25 +93,40 @@ subject has non-missing values for any or all of a set of given variables.</p>
     <h2>Arguments</h2>
     <dl><dt>df</dt>
 <dd><p>Character specifying a server-side data frame.</p></dd>
+
+
 <dt>vars</dt>
 <dd><p>Character vector of columns within `df` to form definition set.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>Character specifying how to define cases. Use "any" to describe
 subjects with data on any of `vars`, and "all" to describe subjects with data
 on all of `vars.</p></dd>
+
+
 <dt>new_obj</dt>
 <dd><p>Character specifying name for created serverside object.</p></dd>
+
+
 <dt>conns</dt>
 <dd><p>DataSHIELD connections object.</p></dd>
+
+
 <dt>checks</dt>
 <dd><p>Logical; if TRUE checks are performed prior to running the 
 function. Default is TRUE.</p></dd>
+
+
 <dt>newobj</dt>
 <dd><p>Retired argument name. Please use `new_obj' instead.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Server-side vector defining whether subject meets criteria defined by
+    
+
+<p>Server-side vector defining whether subject meets criteria defined by
 `vars` and `type`. 1 indicates that criteria were met, 0 indicates that
 criteria weren't met.</p>
     </div>
@@ -141,7 +156,7 @@ criteria weren't met.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

@@ -19,7 +19,7 @@ ds.glm, ds.glmSLMA and ds.lmerSLMA objects."><!-- mathjax --><script src="https:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -91,37 +91,56 @@ ds.glm, ds.glmSLMA and ds.lmerSLMA objects.</p>
     <dl><dt>model</dt>
 <dd><p>Object returned from either ds.glm, ds.glmSLMA or ds.lmerSLMA
 functions.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>Character specifying type of object provided in <code>model</code>. Can be
 either "glm_ipd", "glm_slma" or "lmer_slma".</p></dd>
+
+
 <dt>coh_names</dt>
 <dd><p>Character vector of cohorts included in <code>model</code>. Note this
 must be in the same order as the cohorts were included in the model.</p></dd>
+
+
 <dt>direction</dt>
 <dd><p>Character specifying the output format. Can be either "wide"
 or "long". See "Value" for more details.</p></dd>
+
+
 <dt>ci_format</dt>
 <dd><p>format for the confidence intervals when direction is "wide".
 If "separate", upper and lower confidence intervals are displayed as columns.
 If "paste", confidence intervals are returned in the same column as the
 coefficient within brackets.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>Specifies the family used in the analysis where type is
 "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
 "gaussian".</p></dd>
+
+
 <dt>digits</dt>
 <dd><p>Optionally, the number of decimal places to round output to. 
 Default is 2.</p></dd>
+
+
 <dt>round_digits</dt>
 <dd><p>Deprecated argument name: please use <code>digits</code> instead.</p></dd>
+
+
 <dt>exp</dt>
 <dd><p>Optionally, specify whether estimates from binomial models should
 be exponentiated, ie returned as odds ratios. This argument is ignored if
 <code>type</code> is "gaussian".</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tibble. When <code>direction</code> is "wide" &amp; <code>ci_format</code> is "paste", this
+    
+
+<p>A tibble. When <code>direction</code> is "wide" &amp; <code>ci_format</code> is "paste", this
 contains five columns:</p><ul><li><p>variable</p></li>
 <li><p>est</p></li>
 <li><p>lowci</p></li>
@@ -153,7 +172,7 @@ contains five columns:</p><ul><li><p>variable</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

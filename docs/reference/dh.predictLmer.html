@@ -20,7 +20,7 @@ individual cohorts but yet for pooled models."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.15</span>
       </span>
     </div>
 
@@ -82,20 +82,29 @@ individual cohorts but yet for pooled models.</p>
     <h2>Arguments</h2>
     <dl><dt>model</dt>
 <dd><p>Model object returned by ds.lmerSLMA.</p></dd>
+
+
 <dt>new_data</dt>
 <dd><p>Tibble or data frame containing values for variables in
 `model` at which to predict values of the outcome. The column names in
 `new_data` must be identical to those in `model`, and all variables included
 in `model` must be present in `new_data`.</p></dd>
+
+
 <dt>coh_names</dt>
 <dd><p>Vector of cohort names. These must be in the order that
 cohorts were specified in `model`.</p></dd>
+
+
 <dt>newdata</dt>
 <dd><p>Retired argument name. Please use `new_data' instead.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Tibble of predicted outcome values based on values provided in
+    
+
+<p>Tibble of predicted outcome values based on values provided in
 `new_data`.</p>
     </div>
     <div id="see-also">
@@ -119,7 +128,7 @@ cohorts were specified in `model`.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
