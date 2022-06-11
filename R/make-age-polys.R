@@ -53,7 +53,7 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
   }
 
   if (checks == TRUE) {
-    .isDefined(df = df, vars = vars, conns = conns)
+    .isDefined(df = df, vars = age_var, conns = conns)
   }
 
   ## We have to do log a bit more differently

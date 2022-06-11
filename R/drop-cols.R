@@ -57,33 +57,73 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
   }
 
   type <- match.arg(type, c("remove", "keep"))
+  
+  var_position <- dh.findVarsIndex(
+    df = df, 
+    vars = vars,
+    conns = conns,
+    checks = F)
+  
+  .makeLengthVectors(df = df, conns = conns)
+  
+  if (type == "keep"){
 
-  if (type == "keep") {
-    ds.dataFrame(
-      x = paste0(df, "$", vars),
-      newobj = new_obj,
-      check.names = FALSE,
-      DataSHIELD.checks = FALSE,
-      datasources = conns
-    )
-  } else if (type == "remove") {
-    cols <- datashield.aggregate(conns, call("colnamesDS", df))
-
-    cols_to_keep <- cols %>%
-      map(function(x) {
-        x[which(!x %in% vars)] %>%
-          paste0(df, "$", .)
-      })
-    
-    cols_to_keep %>%
+    var_position %>%
       imap(
-        ~ ds.dataFrame(
-          x = .x,
-          datasources = conns[.y],
+        ~ ds.dataFrameSubset(
+          df.name = df, 
+          V1.name = "ONES",  
+          V2.name = "ONES",
+          Boolean.operator = "==", 
+          keep.cols = .x, 
           newobj = new_obj, 
-          check.names = FALSE,
-          DataSHIELD.checks = FALSE
-        )
-      )
+          datasources = conns[.y]))
+        
+  } else if(type == "remove"){
+    
+    var_position %>%
+      imap(
+        ~ds.dataFrameSubset(
+          df.name = df, 
+          V1.name = "ONES",  
+          V2.name = "ONES",
+          Boolean.operator = "==", 
+          rm.cols = .x, 
+          newobj = new_obj, 
+          datasources = conns[.y]))
+    
   }
+  
 }
+
+#' Automates process of creating vector of 1s for each study at correct length
+#' 
+#' @template df
+#' @template conns
+#' 
+#' @noRd 
+.makeLengthVectors <- function(df, conns){
+  
+  cally <- call("dimDS", df)
+  dimensions <- DSI::datashield.aggregate(conns, cally) %>%
+    map_int(~.x[[1]])
+  
+  dimensions %>%
+    imap(function(.x, .y){
+      
+      calltext <- call(
+        "repDS", 
+        x1.transmit = "1", 
+        times.transmit = paste0(.x),
+        length.out.transmit = "NA", 
+        each.transmit = "1",
+        x1.includes.characters = FALSE,
+        source.x1 = "clientside", 
+        source.times = "clientside",
+        source.length.out = "clientside",
+        source.each = "clientside")
+      
+      DSI::datashield.assign(conns[.y], "ONES", calltext)
+    })
+}
+  
