@@ -96,6 +96,20 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     perc_valid <- perc_total <- Ntotal <- disclosure_fail <- NULL
   
   ################################################################################
+  # 1. Remove duplicate variables  
+  ################################################################################
+  dups <- vars[duplicated(vars)]
+  
+  if(length(dups) >0){
+    
+    warning(paste0("The following variables specified in 'vars' are duplicated and will
+            be removed: ", paste0(dups, collapse = ",")))
+    
+  }
+  
+  vars <- unique(vars)
+  
+  ################################################################################
   # 2. Get classes of variables
   ################################################################################
   check_class <- dh.classDiscrepancy(
@@ -220,7 +234,7 @@ check with ds.class \n\n",
     dplyr::rename(type = type_w_null)
   
   vars_long <- left_join(vars_long, classes, by = "variable")
-
+  
   ## ---- Final reference table for factors --------------------------------------
   fact_ref <- vars_long %>%
     dplyr::filter(type == "factor")
@@ -256,38 +270,38 @@ check with ds.class \n\n",
   ## thinking how to do this in a better way.
   
   if(nrow(fact_ref) > 0){
-  
-  pre_check <- fact_ref %>%
-    pmap(function(variable, cohort, levels, ...){
-      
-      calltext <- call(
-        "tableDS",
-        rvar.transmit = paste0(df, "$", variable),
-        cvar.transmit = NULL,
-        stvar.transmit = NULL,
-        rvar.all.unique.levels.transmit = levels,
-        cvar.all.unique.levels.transmit = NULL,
-        stvar.all.unique.levels.transmit = NULL,
-        exclude.transmit = NULL,
-        useNA.transmit = "always",
-        force.nfilter.transmit = NULL
-      )
-      
-      datashield.aggregate(conns[cohort], calltext) 
-      
-    })
-  
-  fact_ref <- fact_ref %>% mutate(
-    disclosure_fail = pre_check %>% 
-      map(~str_detect(.[[1]], "Failed")[[1]]) %>%
-      unlist)
-  
-  invalid <- fact_ref %>% dplyr::filter(disclosure_fail == TRUE)
-  
-  fact_ref <- fact_ref %>% 
-    dplyr::filter(disclosure_fail == FALSE) %>%
-    dplyr::select(-disclosure_fail)
-  
+    
+    pre_check <- fact_ref %>%
+      pmap(function(variable, cohort, levels, ...){
+        
+        calltext <- call(
+          "tableDS",
+          rvar.transmit = paste0(df, "$", variable),
+          cvar.transmit = NULL,
+          stvar.transmit = NULL,
+          rvar.all.unique.levels.transmit = levels,
+          cvar.all.unique.levels.transmit = NULL,
+          stvar.all.unique.levels.transmit = NULL,
+          exclude.transmit = NULL,
+          useNA.transmit = "always",
+          force.nfilter.transmit = NULL
+        )
+        
+        datashield.aggregate(conns[cohort], calltext) 
+        
+      })
+    
+    fact_ref <- fact_ref %>% mutate(
+      disclosure_fail = pre_check %>% 
+        map(~str_detect(.[[1]], "Failed")[[1]]) %>%
+        unlist)
+    
+    invalid <- fact_ref %>% dplyr::filter(disclosure_fail == TRUE)
+    
+    fact_ref <- fact_ref %>% 
+      dplyr::filter(disclosure_fail == FALSE) %>%
+      dplyr::select(-disclosure_fail)
+    
   }
   
   ################################################################################
@@ -322,9 +336,9 @@ check with ds.class \n\n",
     
   }
   ## ---- Continuous -------------------------------------------------------------
-
+  
   if (nrow(cont_ref) > 0) {
-
+    
     quantiles_extracted <- .statsQuantMean(ref = cont_ref, df = df, conns = conns)
     variance_extracted <- .statsVar(ref = cont_ref, df = df, conns = conns)
     
@@ -488,18 +502,18 @@ check with ds.class \n\n",
   )
   
   if(nrow(fact_ref) > 0){
-  
-  if(nrow(invalid) > 0){
     
-    invalid_out <- invalid %>% dplyr::select(variable, cohort)
-
-    warning(paste(capture.output({
-      cat("These variables have insufficient cell count for at least
+    if(nrow(invalid) > 0){
+      
+      invalid_out <- invalid %>% dplyr::select(variable, cohort)
+      
+      warning(paste(capture.output({
+        cat("These variables have insufficient cell count for at least
           one cohort and have been removed:\n\n")
-      print(invalid_out)
-    }), collapse = "\n"))
-    
-  }
+        print(invalid_out)
+      }), collapse = "\n"))
+      
+    }
     
   }
   
