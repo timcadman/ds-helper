@@ -58,6 +58,14 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
 
   type <- match.arg(type, c("remove", "keep"))
   
+  if(length(vars) == 1 & type == "keep"){
+    
+    ds.make(toAssign = paste0(df, "$", vars), "tmp_obj")
+    ds.dataFrame(x = c(df, "tmp_obj"), newobj = df)
+    
+    vars <- c(vars, "tmp_obj")
+  }
+
   var_position <- dh.findVarsIndex(
     df = df, 
     vars = vars,
