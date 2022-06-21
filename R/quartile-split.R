@@ -9,14 +9,6 @@
 #' @template df
 #' @param var Character specifying continuous variable to transform into 
 #' quartiles.
-#' @param band_action Character specifying how the quartiles are separated:
-#' * "g_l" = greater than the lowest band and less than the highest band
-#' * "ge_le" = greater or equal to the lowest band and less than or equal to the
-#' highest band
-#' * "g_le" = greater than the lowest band and less than or equal to the highest
-#' band
-#' * "ge_l" = greater than or equal to the lowest band and less than the highest
-#' band
 #' @param type Character specifying whether to derive quartiles from combined
 #' data or within each cohort. Use "combine" to use combined quartiles, and 
 #' "split" to use cohort-specific quartiles.
@@ -43,8 +35,8 @@
 #'
 #' @export
 dh.quartileSplit <- function(
-  df = NULL, var = NULL, new_obj = NULL, band_action = NULL, 
-  type = NULL, var_suffix = "_q_", conns = NULL){
+  df = NULL, var = NULL, new_obj = NULL, var_suffix = "_q_", type = NULL, 
+  conns = NULL){
   
   if (is.null(conns)) {
     conns <- datashield.connections_find()
@@ -64,10 +56,6 @@ dh.quartileSplit <- function(
     new_obj <- df
   }
 
-  if (is.null(band_action)) {
-    stop("`band_action` must not be NULL.", call. = FALSE)
-  }
-  
   if (is.null(type)) {
     stop("`type` must not be NULL.", call. = FALSE)
   }
@@ -75,7 +63,6 @@ dh.quartileSplit <- function(
   type <- ifelse(type == "combined", "combine", type)
   
   type <- arg_match(type, c("combine", "split"))
-  band_action <- arg_match(band_action, c("g_l", "ge_le", "g_le", "ge_l"))
   
   cally <- call("classDS", paste0(df, "$", var))
   var_class <- DSI::datashield.aggregate(conns, cally)
@@ -88,7 +75,7 @@ dh.quartileSplit <- function(
     stop("`age_var` must be class numeric or integer.", call. = FALSE)
   }
   
-  message("** Step 1 of 9: Checking input data ... ", appendLF = FALSE)  
+  message("** Step 1 of 4: Checking input data ... ", appendLF = FALSE)  
 
   start_objs <- ds.ls(datasources = conns)
   
@@ -101,9 +88,7 @@ dh.quartileSplit <- function(
   valid_coh <- available_var$cohort
   message("DONE", appendLF = TRUE)
   
-  message("** Step 2 of 9: Defining subsets ... ", appendLF = FALSE)
-  
-  op_symbol <- .convertBooleText(band_action)
+  message("** Step 2 of 4: Defining subsets ... ", appendLF = FALSE)
   
   if(type == "combine"){
     
@@ -113,26 +98,21 @@ dh.quartileSplit <- function(
       type = "combine", 
       conns = conns[valid_coh])
     
-    boole_ref <- .makeBooleRef(
-      lower_vals = unlist(quant_bands$lower),
-      lower_op = op_symbol[1],
-      upper_vals = unlist(quant_bands$upper),
-      upper_op = op_symbol[2])
+    boole_ref <- tibble(
+      values = quant_bands %>% dplyr::select(perc_25:perc_75) %>% as.numeric,
+      op = rep(">=", 3), 
+      boole_short = paste0("bl_", 1:3))
     
     boole_ref %>%
-      pmap(function(value_1, op_1, value_2, op_2, boole_short, ...) {
-        .BooleTwoConditions(
-          df = df,
-          var = var,
-          value_1 = value_1,
-          op_1 = op_1,
-          value_2 = value_2,
-          op_2 = op_2,
-          newobj = boole_short,
-          conns = conns[valid_coh]
-        )
+      pmap(function(values, op, boole_short){
+        ds.Boole(
+          V1 = paste0(df, "$", var), 
+          V2 = values, 
+          Boolean.operator = op,
+          newobj = boole_short, 
+          datasources = conns[valid_coh])
       })
-    
+
   } else if(type == "split"){
     
     quant_bands <- .getQuantileBands(
@@ -142,148 +122,71 @@ dh.quartileSplit <- function(
       conns = conns[valid_coh])
     
     boole_ref <- quant_bands %>%
-      pmap(function(cohort, lower, upper, ...){
-        
-        .makeBooleRef(
-          lower_vals = unlist(lower),
-          lower_op = op_symbol[1],
-          upper_vals = unlist(upper),
-          upper_op = op_symbol[2]) 
-      }) %>% set_names(quant_bands$cohort) %>%
-      bind_rows(.id = "cohort")
+      dplyr::select(cohort, bl_2 = perc_25, bl_3 = perc_50, bl_4 = perc_75) %>%
+      pivot_longer(
+        cols = bl_2:bl_4,
+        names_to = "boole_short", 
+        values_to = "values") %>%
+      mutate(op = ">=")
+    
+    boole_extra <- boole_ref %>%
+      group_by(cohort) %>%
+      group_split %>%
+      map(~slice(., 1)) %>%
+      bind_rows %>%
+      mutate(boole_short = "bl_1") %>%
+      mutate(op = "<")
+    
+    boole_ref <- bind_rows(
+      boole_ref, boole_extra) %>%
+      arrange(cohort, boole_short) 
     
     boole_ref %>%
-      pmap(function(cohort, value_1, op_1, value_2, op_2, boole_short, ...) {
-        .BooleTwoConditions(
-          df = df,
-          var = var,
-          value_1 = value_1,
-          op_1 = op_1,
-          value_2 = value_2,
-          op_2 = op_2,
-          newobj = boole_short,
-          conns = conns[cohort]
-        )
+      pmap(function(cohort, values, boole_short, op) {
+        ds.Boole(
+          V1 = paste0(df, "$", var), 
+          V2 = values, 
+          Boolean.operator = op,
+          newobj = boole_short, 
+          datasources = conns[cohort])
       })
+    
   }
   
   message("DONE", appendLF = TRUE)
   
-  message("** Step 3 of 9: Check for disclosure issues ... ", appendLF = FALSE)
+  message("** Step 2 of 3: Creating variables ... ", appendLF = FALSE)
   
-  if(type == "combine"){
-    
-    discloure_ref <- boole_ref$boole_short %>%
-      map(
-        ~ .checkDisclosure(
-          bin_vec = .x,
-          conns = conns[valid_coh])) %>%
-      bind_rows()
-    
-  } else if(type == "split"){
-    
-    discloure_ref <- boole_ref %>%
-      pmap(function(cohort, boole_short, ...){
-        .checkDisclosure(
-          bin_vec = boole_short,
-          conns = conns[cohort])
-      }) %>%
-      bind_rows()
-    
-  }
+  out_obj <- paste0(var, var_suffix)
   
-  if (nrow(discloure_ref) < 1) {
-    stop("No subsets can be created as they would all contain fewer rows than the disclosure filter value")
-  }
+  ds.make(
+    toAssign = "bl_1+bl_2+bl_3", 
+    newobj = out_obj, 
+    datasources = conns[valid_coh])
   
-  failed_disclosure <- discloure_ref %>%
-    left_join(., boole_ref, by = "boole_short") %>%
-    dplyr::filter(enough_obs == FALSE)
+  ds.asFactor(out_obj, out_obj, datasources = conns[valid_coh])
   
-  if (nrow(failed_disclosure) > 1) {
-    warning(
-      "The following subsets cannot be created as they would contain fewer observations
-      than the disclosure filter value: \n\n",
-      paste0(failed_disclosure$cohort, ": ", failed_disclosure$subset_name, sep = "\n")
-    )
-  }
-  message("DONE", appendLF = TRUE)
-  
-  message("** Step 4 of 9: Creating variables ... ", appendLF = FALSE)
-  
-  if(type == "combine"){
-    
-    quant_ref <- left_join(boole_ref, discloure_ref, by = "boole_short") %>%
-      dplyr::filter(enough_obs == TRUE) %>%
-      mutate(var_name = paste0(var, var_suffix, suffix))
-    
-  } else if(type == "split"){
-    
-    quant_ref <- left_join(boole_ref, discloure_ref, by = c("cohort", "boole_short")) %>%
-      dplyr::filter(enough_obs == TRUE) %>%
-      mutate(var_name = paste0(var, var_suffix, suffix))
-    
-  }
-  
-  quant_ref %>%
-    pmap(function(var_name, cohort, boole_short, ...){
-
-      ## We recode all values of 0 (ie not in the quartile) to NA      
-      ds.recodeValues(
-        var.name = boole_short,
-        values2replace.vector = 0,
-        new.values.vector = NA,
-        newobj = boole_short,
-        datasources = conns[cohort]
-      )
-      
-      ## Then multiply by the original variable
-      ds.assign(
-        toAssign = paste0(df, "$", var, "*", boole_short), 
-        newobj = var_name,
-        datasources = conns[cohort]
-      ) 
-      
-    })
-  
-  quant_grouped <- quant_ref %>%
-    group_by(cohort) 
-  
-  quant_names <- group_keys(quant_grouped) %>% unlist
-  
-  to_join <- quant_grouped %>%
-    group_split %>%
-    set_names(quant_names) %>%
-    map(., ~.$var_name)
-  
-  to_join %>%
-    imap(
-      ~ds.dataFrame(
-        x = c(df, .x),
-        datasources = conns[.y], 
-        newobj = df
-      )
-    )
+  ds.dataFrame(
+    x = c(df, out_obj), 
+    newobj = new_obj, 
+    datasources = conns[valid_coh])
   
   message("DONE", appendLF = TRUE)
   
-  message("** Step 5 of 9: Removing temporary objects ... ", appendLF = FALSE)
+  message("** Step 3 of 3: Removing temporary objects ... ", appendLF = FALSE)
   
   .removeTempObjs(
     start_objs = start_objs,
     others_to_keep = new_obj,
-    conns = conns
-  )
+    conns = conns)
   
   message("DONE", appendLF = TRUE)
   
   cat(
-    "\nDataframe ", "'", new_obj, "'",
-    " has been created containing the following quantiles of ", var, ":\n\n",
-    sep = ""
-  )
-  
-  print(to_join)
+    "\nVariable ", "'", out_obj, "'",
+    " has been created in dataframe ", "'", new_obj, "'", " containing 
+    quartiles of ", var, ":\n\n",
+    sep = "")
   
 }
 
