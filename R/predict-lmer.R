@@ -13,6 +13,8 @@
 #' @param coh_names Vector of cohort names. These must be in the order that
 #' cohorts were specified in `model`.
 #' @param newdata Retired argument name. Please use `new_data' instead.
+#' @param type Type of object to get predict values for. Either 'lmer_slma' 
+#' (default) for LMER objects, or 'glm_slma' for glm slma objects
 #' @return Tibble of predicted outcome values based on values provided in
 #' `new_data`.
 #'
@@ -21,6 +23,7 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom purrr set_names map pmap_df pmap_dbl
 #' @importFrom tibble tibble
+#' @importFrom methods as
 #'
 #' @family trajectory functions
 #'
@@ -57,6 +60,7 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
   coefs <- dh.lmTab(
     model = model,
     type = type,
+    family = "gaussian",
     coh_names = coh_names,
     direction = "long",
     ci_format = "separate")
@@ -120,16 +124,19 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
     vcov <- study_ref %>%
       map(~ model$output.summary[[.]][["vcov"]])
     
-    var_names <- colnames(vcov[[1]])
-
   } else if(type == "glm_slma"){
     
     vcov <- study_ref %>%
-      map(~ model$output.summary[[.]][["VarCovMatrix"]])
+      map(function(x){
+        
+        out <- model$output.summary[[x]][["VarCovMatrix"]]
+        out <- as(out, "dppMatrix")
     
-    var_names <- colnames(vcov[[1]][[1]])
+      })
     
   }
+  
+  var_names <- colnames(vcov[[1]])
   
   ## Now we need to make sure our new data has the same order of columns as the
   ## vcov. This is slightly annoying because we had renamed our intercept
@@ -145,17 +152,17 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
   se <- vcov %>%
     map(function(x) {
       new_data %>%
-        pmap(function(...) {
+        pmap_dbl(function(...) {
           C <- c(...)
           std.er <- sqrt(t(C) %*% x %*% C)
-          #out <- std.er@x
+          out <- std.er@x
 
           return(out)
         })
     }) %>%
     set_names(coh_names) %>%
     map(as_tibble)
-
+  
   ## Now currently we haven't found a way to compute standard errors for the pooled
   ## results. So as a placeholder we will create a list the same length as for each
   ## cohort and set that to NA.
