@@ -26,7 +26,7 @@
 #'
 #' @export
 dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
-                           newdata = NULL) {
+                           newdata = NULL, type = "lmer_slma") {
   . <- intercept <- variable <- value <- coefficient <- cohort <- NULL
 
   if (is.null(model)) {
@@ -45,6 +45,8 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
     warning("Please use `new_data` instead of `newdata`")
     new_data <- newdata
   }
+  
+  type <- arg_match(type, c("lmer_slma", "glm_slma"))
 
   ## ---- First we add a column to the new data for the intercept ----------------
   new_data <- new_data %>%
@@ -54,19 +56,23 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
   ## ---- First we extract coefficients ------------------------------------------
   coefs <- dh.lmTab(
     model = model,
-    type = "lmer_slma",
+    type = type,
     coh_names = coh_names,
     direction = "long",
-    ci_format = "separate"
-  )
+    ci_format = "separate")
 
   ## ---- Now we get the names of coefficients which aren't the intercept --------
-  coef_names <- coefs$fixed %>%
+  if(type == "lmer_slma"){
+    
+    coefs <- coefs$fixed
+  }
+  
+  coef_names <- coefs %>%
     pull(variable) %>%
     unique()
 
   ## ---- Now we get the coefficients for each cohort ----------------------------
-  coefs_by_cohort <- coefs$fixed %>%
+  coefs_by_cohort <- coefs %>%
     pivot_wider(
       names_from = variable,
       values_from = value
@@ -109,9 +115,22 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
   study_ref <- paste0("study", nstudy)
 
   ## We get the vcov matrix for each study
-  vcov <- study_ref %>%
-    map(~ model$output.summary[[.]]$vcov)
+  if(type == "lmer_slma"){
+    
+    vcov <- study_ref %>%
+      map(~ model$output.summary[[.]][["vcov"]])
+    
+    var_names <- colnames(vcov[[1]])
 
+  } else if(type == "glm_slma"){
+    
+    vcov <- study_ref %>%
+      map(~ model$output.summary[[.]][["VarCovMatrix"]])
+    
+    var_names <- colnames(vcov[[1]][[1]])
+    
+  }
+  
   ## Now we need to make sure our new data has the same order of columns as the
   ## vcov. This is slightly annoying because we had renamed our intercept
   ## term to have a less silly name. We rename it again, get the columns in the
@@ -119,17 +138,17 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
 
   new_data <- new_data %>%
     dplyr::rename("(Intercept)" = intercept) %>%
-    dplyr::select(colnames(vcov[[1]])) %>%
+    dplyr::select(all_of(var_names)) %>%
     dplyr::rename(intercept = "(Intercept)")
 
   ## Feed in our newdata frame to get the SEs
   se <- vcov %>%
     map(function(x) {
       new_data %>%
-        pmap_dbl(function(...) {
+        pmap(function(...) {
           C <- c(...)
           std.er <- sqrt(t(C) %*% x %*% C)
-          out <- std.er@x
+          #out <- std.er@x
 
           return(out)
         })
