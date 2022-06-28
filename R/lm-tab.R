@@ -51,7 +51,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      family = "gaussian", digits = 2, round_digits = 2,
                      exp = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
-    variable <- est <- uppci <- pvalue <- NULL
+    variable <- est <- uppci <- pvalue <- . <- NULL
   
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
@@ -107,7 +107,6 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     highci <- "high0.95CI.LP"
   }
   
-  
   ## ---- Extract coefficients -------------------------------------------------
   if (type == "glm_ipd") {
     out <- tibble(
@@ -128,12 +127,23 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   } else if (type == "glm_slma" | type == "lmer_slma") {
     nstudy <- model$num.valid.studies
     
+    if(type == "glm_slma"){
     ns <- tibble(
       cohort = coh_names,
       n_obs = paste0("study", seq(1, nstudy, 1)) %>%
         map_int(function(x) {
           model$output.summary[[x]]$Nvalid
         }))
+    
+    } else if(type == "lmer_slma"){
+      
+      ns <- tibble(
+        cohort = coh_names,
+        n_obs = paste0("study", seq(1, nstudy, 1)) %>%
+          map_int(function(x) {
+            model$output.summary[[x]]$devcomp$dims[["N"]]
+          }))
+    }
     
     separate <- paste0("study", seq(1, nstudy, 1)) %>%
       map(function(x) {
