@@ -51,7 +51,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      family = "gaussian", digits = 2, round_digits = 2,
                      exp = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
-    variable <- est <- uppci <- pvalue <- NULL
+    variable <- est <- uppci <- pvalue <- . <- NULL
   
   ## ---- Argument checks ------------------------------------------------------
   if (is.null(model)) {
