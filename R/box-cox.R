@@ -65,7 +65,6 @@ dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1),
   df_var <- paste0(df, "$", var)
   var_con <- paste0(var, "_con")
   
-  
   formulae <- .defineBoxTrans(var_con, lamda) 
   
   .makeBoxTrans(formulae, unique_id, df, var, var_con, conns)
@@ -286,7 +285,7 @@ dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1),
   
   if(type == "combine"){
     
-    trans_ref <- box_summary$rank_av[[1]]
+    trans_ref <- box_summary$power[[1]]
   
    }else if(type == "separate"){
       
