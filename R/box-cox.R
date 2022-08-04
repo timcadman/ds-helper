@@ -28,7 +28,7 @@
 #' a serverside object corresponding to the best transformation.
 #' 
 #' @export
-dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.5), 
+dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1), 
                       unique_id = "child_id", type = NULL, transform = TRUE,
                       new_obj = NULL, checks = TRUE, conns = NULL) {
   
