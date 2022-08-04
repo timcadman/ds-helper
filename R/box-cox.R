@@ -371,7 +371,7 @@ dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1),
     
     message(cat("\nServerside objects have been created containing the best transformation for each cohort."))
     
-  } else if(transform == FALSE & type == "combine"){
+  } else if(transform == TRUE & type == "combine"){
     
     message(cat("\nServerside objects have been created containing this transformation."))
     
