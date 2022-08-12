@@ -482,7 +482,6 @@ check with ds.class \n\n",
       mutate(
         std.dev = sqrt(EstimatedVar),
         valid_n = replace_na(Nvalid, 0),
-        cohort_n = Ntotal,
         missing_n = cohort_n - valid_n,
         missing_perc = (missing_n / cohort_n) * 100
       ) %>%
