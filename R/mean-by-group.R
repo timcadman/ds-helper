@@ -10,7 +10,8 @@
 #' @importFrom dsBaseClient ds.meanSdGp
 #' @importFrom purrr map
 #' @importFrom tibble as_tibble
-#' @importFrom dplyr bind_rows %>% slice
+#' @importFrom dplyr bind_rows %>% slice 
+#' @importFrom tidyr separate
 #'
 #' @template conns
 #' @template df
@@ -30,7 +31,8 @@
 dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
                            intervals = NULL, conns = NULL, checks = FALSE) {
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <-
-    . <- enough_obs <- variable <- NULL
+    . <- enough_obs <- variable <- level <- std.dev <- nvalid <- ntotal <-
+    x <- NULL
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
@@ -210,8 +212,6 @@ paste0(warnings$issues$cohort, collapse = ", ")
           nvalid = x$Total_Nvalid,
           ntotal = x$Total_Ntotal, 
           cohort = colnames(x$Mean_gp_study))
-        
-      })
         
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
