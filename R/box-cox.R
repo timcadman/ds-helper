@@ -28,7 +28,7 @@
 #' a serverside object corresponding to the best transformation.
 #' 
 #' @export
-dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1), 
+dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2), 
                       unique_id = "child_id", type = NULL, transform = TRUE,
                       new_obj = NULL, checks = TRUE, conns = NULL) {
   
@@ -193,7 +193,8 @@ dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1),
     })
   
   ds.dataFrame(x = c(paste0(df, "$", unique_id), formulae$ref), 
-               newobj = "box_ref", datasources = conns)
+               newobj = "box_ref", datasources = conns, 
+               check.names = FALSE, DataSHIELD.checks = FALSE)
   
   ds.loadExposome(
     exposures = "box_ref", 
@@ -322,9 +323,18 @@ dh.boxCox <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.1),
   
   if(type == "combine"){
     
-    cally <- paste0("var_const^", best_trans_ref)
+    if(best_trans_ref == "log"){
+      
+      cally <- "log(var_const)"
+      
+    } else{
+      
+      cally <- paste0("var_const^", best_trans_ref)
+      
+    }
+    
     datashield.assign(conns, new_obj, as.symbol(cally))
-
+    
   } else if(type == "separate"){
     
     best_trans_ref %>%
