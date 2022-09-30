@@ -184,21 +184,35 @@ paste0(warnings$issues$cohort, collapse = ", ")
           datasources = conns[cohort])
       })
     
+
     ## Now we take these values and put them into a neater table
     out <- obs_by_agecat_comb %>%
-      map(function(x) {
-        x$Mean_gp %>%
-          as_tibble(rownames = "group") %>%
-          slice(2) %>%
-      pivot_longer(
-        cols = -group,
-        names_to = "cohort", 
-        values_to = "mean")}) %>%
+      map(function(x){
+        
+        tibble(
+          group = dimnames(x$Mean_gp_study)[[1]],
+          mean = as.numeric(x$Mean_gp_study),
+          std.dev = as.numeric(x$SEM_gp_stud), 
+          nvalid = as.numeric(x$Total_Nvalid),
+          ntotal = as.numeric(x$Total_Ntotal), 
+          cohort = colnames(x$Mean_gp_study)) 
+      }) %>%
       bind_rows() %>%
-      mutate(group = str_remove(group, "_[^_]+$")) %>%
+      separate(group, into = c("group", "level"), sep="_(?=[^_]+$)") %>%
+      dplyr::filter(level != 1) %>%
       mutate(group = str_remove(group, "grp_")) %>%
-      dplyr::select(cohort, group, mean)
-
+      dplyr::select(cohort, group, mean, std.dev, nvalid, ntotal, cohort)
+        
+        
+        tibble(
+          mean = x$Mean_gp_study, 
+          std.dev = x$SEM_gp_stud, 
+          nvalid = x$Total_Nvalid,
+          ntotal = x$Total_Ntotal, 
+          cohort = colnames(x$Mean_gp_study))
+        
+      })
+        
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
       obj = c(cats$new_df_name, assign_conditions$varname),
