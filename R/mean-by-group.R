@@ -196,22 +196,14 @@ paste0(warnings$issues$cohort, collapse = ", ")
           mean = as.numeric(x$Mean_gp_study),
           std.dev = as.numeric(x$SEM_gp_stud), 
           nvalid = as.numeric(x$Total_Nvalid),
-          ntotal = as.numeric(x$Total_Ntotal), 
           cohort = colnames(x$Mean_gp_study)) 
       }) %>%
       bind_rows() %>%
       separate(group, into = c("group", "level"), sep="_(?=[^_]+$)") %>%
       dplyr::filter(level != 1) %>%
       mutate(group = str_remove(group, "grp_")) %>%
-      dplyr::select(cohort, group, mean, std.dev, nvalid, ntotal, cohort)
-        
-        
-        tibble(
-          mean = x$Mean_gp_study, 
-          std.dev = x$SEM_gp_stud, 
-          nvalid = x$Total_Nvalid,
-          ntotal = x$Total_Ntotal, 
-          cohort = colnames(x$Mean_gp_study))
+      dplyr::select(cohort, group, mean, std.dev, nvalid, cohort)
+    
         
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
