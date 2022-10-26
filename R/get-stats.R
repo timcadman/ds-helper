@@ -205,14 +205,19 @@ check with ds.class \n\n",
   ################################################################################
   # 5. Get maximum ns for each cohort
   ################################################################################
-  cohort_ns <- ds.dim(df, type = "split", datasources = conns) %>%
+  cohort_ns_sep <- ds.dim(df, type = "split", datasources = conns) %>%
     map_df(~ .[1]) %>%
     set_names(names(conns)) %>%
     pivot_longer(
       cols = everything(),
       names_to = "cohort",
-      values_to = "cohort_n"
-    )
+      values_to = "cohort_n")
+  
+  cohort_n_comb <- tibble(
+    cohort = "combined",
+    cohort_n = sum(cohort_ns_sep$cohort_n))
+  
+  cohort_ns <- bind_rows(cohort_ns_sep, cohort_n_comb)
   
   ################################################################################
   # 6. Identify variable classes
