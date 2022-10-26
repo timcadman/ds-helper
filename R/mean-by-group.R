@@ -195,14 +195,21 @@ paste0(warnings$issues$cohort, collapse = ", ")
           group = dimnames(x$Mean_gp_study)[[1]],
           mean = as.numeric(x$Mean_gp_study),
           std.dev = as.numeric(x$SEM_gp_stud), 
-          nvalid = as.numeric(x$Total_Nvalid),
+          nvalid = as.numeric(x$Nvalid_gp_study),
           cohort = colnames(x$Mean_gp_study)) 
       }) %>%
       bind_rows() %>%
       separate(group, into = c("group", "level"), sep="_(?=[^_]+$)") %>%
-      dplyr::filter(level != 1) %>%
+      pivot_wider(
+        names_from = "level", 
+        values_from = c("nvalid", "mean", "std.dev")) %>%
+      dplyr::rename(
+        "nvalid" = nvalid_2, 
+        "nmissing" = nvalid_1, 
+        "mean" = mean_2,
+        "std.dev" = std.dev_2) %>%
       mutate(group = str_remove(group, "grp_")) %>%
-      dplyr::select(cohort, group, mean, std.dev, nvalid, cohort)
+      dplyr::select(cohort, group, mean, std.dev, nvalid, nmissing)
     
         
     ## ---- Remove temporary objects -------------------------------------------
