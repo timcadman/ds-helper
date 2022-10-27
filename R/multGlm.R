@@ -26,7 +26,7 @@
 #'
 #' @export
 dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL, 
-                       vary_df = F){
+                       vary_df = F, family = "gaussian"){
   formulae <- model_names <- cohort <- converged <- NULL
   
   if (vary_df == F & is.null(df)) {
@@ -58,7 +58,7 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
             ds.glmSLMA(
               formula = unlist(formula), 
               dataName = df, 
-              family = "binomial", 
+              family = family, 
               combine.with.metafor = TRUE,
               datasources = conns[cohort]
             )
