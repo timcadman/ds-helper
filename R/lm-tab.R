@@ -154,7 +154,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       bind_rows(.id = "cohort") %>%
       rename(est = Estimate) %>%
       rename(se = "Std. Error") %>%
-      dplyr::select(cohort, variable, est, se) %>%
+      dplyr::select(cohort, variable, est, se, "Pr(>|t|)") %>%
+      dplyr::rename(pvalue = "Pr(>|t|)") %>%
       left_join(., ns, by = "cohort") %>%
       mutate(n_coh = 1)
     
