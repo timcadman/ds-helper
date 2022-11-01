@@ -51,7 +51,8 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
                               inc_missing = NULL, round_digits = 2){
   
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
-    miss_n_perc <- category <- coh_label <- NULL
+    miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <- 
+    stats_cat <- stats_cont <- NULL
   
   if (is.null(stats)) {
     stop("`stats` must not be NULL.", call. = FALSE)

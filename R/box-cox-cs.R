@@ -28,6 +28,9 @@
 #' a serverside object corresponding to the best transformation.
 #' 
 #' @export
+#' 
+#' 
+
 dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2), 
                       unique_id = "child_id", type = NULL, transform = TRUE,
                       new_obj = NULL, checks = TRUE, conns = NULL) {
@@ -63,27 +66,92 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
   }
   
   df_var <- paste0(df, "$", var)
-  var_con <- paste0(var, "_con")
-  
-  formulae <- .defineBoxTrans(var_con, lamda) 
-  
-  .makeBoxTrans(formulae, unique_id, df, var, var_con, conns)
 
-  box_summary <- .doBoxCox(formulae, type, conns)
+  anon.pdata <- dh.getAnonPlotData(
+    df = df,
+    var_1 = var,
+    conns = conns,
+    checks = FALSE) %>%
+    dplyr::rename(value = 2)
   
-  best_trans_ref <- .finalTransRef(box_summary, type, conns)
-  
+  box_trans <- .doBoxCox(pdata = anon.pdata, type = type)
+    
   if(transform == TRUE){
   
-    .finalBoxTrans(best_trans_ref, df_var, type, new_obj, conns)
+    .checkNegatives(df_var, conns)
+    .finalBoxTrans(box_trans, df_var, type, new_obj, conns)
     
   } 
   
-  .boxMessage(best_trans_ref, type, transform)
+  .boxMessage(box_trans, type, transform)
   
   return(box_summary)
   
 }
+
+#' Performs boxcox test 
+#'
+#' @param formulae Tibble, output from .defineBoxTrans
+#' @param type. Character vector, either "separate" to identify the best 
+#' transformation in each cohort, or "combine" to identify the transformation
+#' which the highest rank on average across the cohorts in `conns`
+#' @template conns
+#' 
+#' @return Tibble with three columns (i) power, (ii) normality, (iii) p_value.
+#' These are sorted from highest to lowest p-value, with the first row 
+#' representing the best transformation.
+#'
+#' @importFrom tibble tibble
+#' @importFrom dplyr %>% contains
+#' @importFrom purrr cross2 map_chr
+#' @importFrom dsExposomeClient ds.normalityTest
+#'
+#' @noRd
+.doBoxCox <- function(pdata, type, conns){
+  
+  if(type == "combine"){
+    
+    box_input <- pdata %>% dplyr::filter(cohort == "combined" & value >= 1)
+    
+    box_out <- boxcox(
+      object = lm(box_input$value ~1, y = TRUE),
+      lamda = lamda, 
+      plotit = FALSE)
+    
+    out <- tibble(
+      cohort = "combined", 
+      lamda = box_out$x[which.max(box_out$y)])
+    
+  } else if(type == "separate"){
+    
+    box_input <- anon.pdata %>% 
+      dplyr::filter(cohort != "combined" & value >= 1) %>%
+      group_by(cohort) 
+    
+    coh_names <- group_keys(box_input) %>% pull
+    
+    out <- box_input %>% 
+      group_split %>%
+      map(function(x){
+        
+        reg_out <- lm(x$value ~1, y = TRUE)
+        
+        box_out <- boxcox(
+          object = reg_out,
+          lamda = lamda, 
+          plotit = FALSE) 
+        
+        out <- tibble(
+          lamda = box_out$x[which.max(box_out$y)])
+        
+      }) %>%
+      set_names(coh_names) %>%
+      bind_rows(.id = "cohort")
+    
+  }
+  
+}
+
 
 #' Checks for negative values in the input vector. Currently the function 
 #' cannot handle these.
@@ -115,192 +183,6 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
   
 }
 
-#' Creates a tibble of formula for boxcox transformations.
-#'
-#' @param var_con serverside vector of variable to transform
-#'
-#' @return Tibble with two columns (i) power, (ii) formula
-#'
-#' @importFrom tibble tibble
-#' @importFrom dplyr %>%
-#' @importFrom purrr cross2 map_chr
-#'
-#' @noRd
-.defineBoxTrans <- function(var_con, lamda){
-  
-  lamda_nolog <- lamda[lamda != 0]
-  lamda_form <- paste0("^", lamda_nolog)
-  
-  trans_out <- tibble(
-    power = as.character(lamda_nolog),
-    formula = cross2(var_con, lamda_form) %>% 
-      map_chr(paste, sep = "", collapse = ""), 
-    ref = paste0("trans_", seq(1:length(lamda_nolog))))
-  
-  if(any(lamda %in% 0) == TRUE){
-    
-    log_trans <- tibble(
-      power = "log",
-      formula = paste0("log(", var_con, ")"))
-    
-    trans_out <- bind_rows(trans_out, log_trans) 
-    
-    trans_out <- trans_out %>%
-      mutate(ref = paste0("trans_", seq(1:nrow(trans_out))))
-    
-    return(trans_out)
-    
-  } else{
-    
-    return(trans_out)
-    
-  }
-  
-}
-
-#' Creates transformations for boxcox test. A small constant is added to prevent
-#' infinite values. Note, have to do a bit of a hack by creating phenotype part 
-#' of object also as exposures.
-#'
-#' @param formulae Tibble, output from .defineBoxTrans
-#' @param unique_id Character vector specifying unique identifier within df. 
-#' Default = "child_id".
-#' @template df
-#' @template var
-#' @param var_con serverside vector of variable to transform
-#' @template conns
-#'
-#' @return Exposome serverside object names 'box_set' created containing 
-#' transformations.
-#'
-#' @importFrom dplyr %>%
-#' @importFrom purrr pmap
-#' @importFrom DSI datashield.assign
-#' @importFrom dsBaseClient ds.dataFrame
-#' @importFrom dsExposomeClient ds.loadExposome
-#'
-#' @noRd
-.makeBoxTrans <- function(formulae, unique_id, df, var, var_con, conns){
-  
-  cally <- paste0(df, "$", var, "+0.00005")
-  datashield.assign(conns, var_con, as.symbol(cally))
-  
-  formulae %>%
-    pmap(function(formula, ref, ...){
-      
-      datashield.assign(conns, ref, as.symbol(formula))
-      
-    })
-  
-  ds.dataFrame(x = c(paste0(df, "$", unique_id), formulae$ref), 
-               newobj = "box_ref", datasources = conns, 
-               check.names = FALSE, DataSHIELD.checks = FALSE)
-  
-  ds.loadExposome(
-    exposures = "box_ref", 
-    phenotypes = "box_ref", 
-    exposures.idcol = unique_id,
-    phenotypes.idcol = unique_id, 
-    object_name = "box_set")
-  
-} 
-
-#' Performs boxcox test 
-#'
-#' @param formulae Tibble, output from .defineBoxTrans
-#' @param type. Character vector, either "separate" to identify the best 
-#' transformation in each cohort, or "combine" to identify the transformation
-#' which the highest rank on average across the cohorts in `conns`
-#' @template conns
-#' 
-#' @return Tibble with three columns (i) power, (ii) normality, (iii) p_value.
-#' These are sorted from highest to lowest p-value, with the first row 
-#' representing the best transformation.
-#'
-#' @importFrom tibble tibble
-#' @importFrom dplyr %>% contains
-#' @importFrom purrr cross2 map_chr
-#' @importFrom dsExposomeClient ds.normalityTest
-#'
-#' @noRd
-.doBoxCox <- function(formulae, type, conns){
-  
-  exposure <- p.value <- . <- power <- normality <- p_value <- cohort <-
-    rank_av <- NULL
-  
-  norm_test <- ds.normalityTest("box_set", datasources = conns)
-  
-  norm_out <- norm_test %>%
-    map(as_tibble) %>%
-    map(
-      ~dplyr::rename(., 
-                     ref = exposure,
-                     p_value = p.value)) %>%
-    map(~left_join(formulae, ., by = "ref")) %>%
-    map(~dplyr::select(., power, normality, p_value)) %>%
-    map(~arrange(., desc(p_value)))
-  
-  if(type == "separate"){
-    
-    return(norm_out)
-    
-  } else if(type == "combine"){
-        
-    norm_out <- norm_out %>%
-      map(~mutate(., rank = seq(1, nrow(formulae), 1))) %>%
-      bind_rows(.id = "cohort") %>%
-      pivot_wider(
-        names_from = cohort,
-        values_from = c(rank, p_value)) %>%
-      mutate(rank_av = rowSums(
-        dplyr::select(., dplyr::contains("rank"))) / 
-        length(dplyr::select(., contains("rank")))) %>%
-      arrange(rank_av) %>%
-      dplyr::select(power, normality, rank_av)
-    
-    return(norm_out)
-    
-  }
-        
-}
-
-#' Creates short reference table containing best transformation(s) 
-#'
-#' @param box_summary Output from .doBoxCox
-#' @param type. Character vector, either "separate" to identify the best 
-#' transformation in each cohort, or "combine" to identify the transformation
-#' which the highest rank on average across the cohorts in `conns`
-#' @template conns
-#' 
-#' @return If type is "separate" returns a tibble with two columns: (i) cohort
-#' and (ii) power summarising the best transformation in each cohort. If type is
-#' "combine" returns a single character stating the best overall transformation.
-#'
-#' @importFrom dplyr %>% slice bind_rows select
-#' @importFrom purrr map
-#'
-#' @noRd
-.finalTransRef <- function(box_summary, type, conns){
-  
-  cohort <- power <- NULL
-  
-  if(type == "combine"){
-    
-    trans_ref <- box_summary$power[[1]]
-  
-   }else if(type == "separate"){
-      
-      trans_ref <- box_summary %>%
-        map(~slice(., 1)) %>%
-        bind_rows(.id = "cohort") %>%
-        dplyr::select(cohort, power)
-      
-    }
-    
-    return(trans_ref)
-  
-}
-
 #' Creates transformation of variable best on best power
 #'
 #' @param best_trans_ref Output from .finalTransRef 
@@ -316,31 +198,23 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
 #' @importFrom purrr pmap
 #'
 #' @noRd
-.finalBoxTrans <- function(best_trans_ref, df_var, type, new_obj, conns){
+.finalBoxTrans <- function(box_trans, df_var, type, new_obj, conns){
   
   cally <- paste0(df_var, "+0.00005")
   datashield.assign(conns, "var_const", as.symbol(cally))
   
   if(type == "combine"){
     
-    if(best_trans_ref == "log"){
+    cally <- paste0("var_const^", box_trans$lamda)
       
-      cally <- "log(var_const)"
-      
-    } else{
-      
-      cally <- paste0("var_const^", best_trans_ref)
-      
-    }
-    
     datashield.assign(conns, new_obj, as.symbol(cally))
     
   } else if(type == "separate"){
     
-    best_trans_ref %>%
-      pmap(function(cohort, power){
+    box_trans %>%
+      pmap(function(cohort, lamda){
         
-        cally <- paste0("(", df_var, "+0.00005)^", power)
+        cally <- paste0("(", df_var, "+0.00005)^", lamda)
         datashield.assign(conns[cohort], new_obj, as.symbol(cally))
         
       })
@@ -361,14 +235,14 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
 #' @return Return relevant error message
 #'
 #' @noRd
-.boxMessage <- function(best_trans_ref, type, transform){
+.boxMessage <- function(box_trans, type, transform){
   
   if(type == "separate"){
     
     message(
       cat("\nThe most normal transformation for each cohort is listed below."))
     
-    print(best_trans_ref)
+    print(box_trans)
     
   } else if(type == "combine"){
     
