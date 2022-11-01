@@ -63,6 +63,7 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
   
   if (checks == TRUE) {
     .isDefined(df = df, vars = var, conns = conns)
+    .checkNegatives(df_var, conns)
   }
   
   df_var <- paste0(df, "$", var)
@@ -78,14 +79,13 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
     
   if(transform == TRUE){
   
-    .checkNegatives(df_var, conns)
     .finalBoxTrans(box_trans, df_var, type, new_obj, conns)
     
   } 
   
   .boxMessage(box_trans, type, transform)
   
-  return(box_summary)
+  return(box_trans)
   
 }
 
@@ -122,6 +122,8 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
       cohort = "combined", 
       lamda = box_out$x[which.max(box_out$y)])
     
+    return(out)
+    
   } else if(type == "separate"){
     
     box_input <- anon.pdata %>% 
@@ -147,6 +149,8 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
       }) %>%
       set_names(coh_names) %>%
       bind_rows(.id = "cohort")
+    
+    return(out)
     
   }
   
@@ -200,27 +204,19 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
 #' @noRd
 .finalBoxTrans <- function(box_trans, df_var, type, new_obj, conns){
   
-  cally <- paste0(df_var, "+0.00005")
+  const <- 0.00005
+  
+  cally <- paste0(df_var, "+", const)
   datashield.assign(conns, "var_const", as.symbol(cally))
   
-  if(type == "combine"){
-    
-    cally <- paste0("var_const^", box_trans$lamda)
-      
-    datashield.assign(conns, new_obj, as.symbol(cally))
-    
-  } else if(type == "separate"){
-    
     box_trans %>%
       pmap(function(cohort, lamda){
         
-        cally <- paste0("(", df_var, "+0.00005)^", lamda)
+        cally <- paste0("(var_const^", lamda, ")-(", const^lamda, ")")
         datashield.assign(conns[cohort], new_obj, as.symbol(cally))
         
       })
-    
-  }
-  
+        
 }
 
 #' Returns relevant messages for boxcox function
@@ -247,7 +243,7 @@ dh.boxCoxCS <- function(df = NULL, var = NULL, lamda = seq(-2, 2, 0.2),
   } else if(type == "combine"){
     
     message(
-      cat("\nThe transformation ranked most normal on average across all cohorts was to power of: ", best_trans_ref))
+      cat("\nThe transformation ranked most normal on average across all cohorts was to power of: ", box_trans))
     
   }
   
