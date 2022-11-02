@@ -89,7 +89,7 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
       )
     })
 
-  ds.cbind(x = c(df, polys$poly), newobj = df)
+  ds.cbind(x = c(df, polys$poly), newobj = df, datasources = conns)
 
   cat("\nThe following transformations of age have been created in
     dataframe:", df, "\n\n", polys$poly)
