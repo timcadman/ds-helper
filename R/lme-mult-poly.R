@@ -35,8 +35,10 @@
 #' @export
 dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
                            conns = NULL, checks = TRUE) {
-  sum_log <- NULL
 
+  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <-
+    loglik_study2 <- sum_log <- NULL
+  
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -56,9 +58,6 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
   if (checks == TRUE) {
     .isDefined(df = df, conns = conns)
   }
-
-  loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <-
-    loglik_study2 <- NULL
 
   ## ---- Run the models ---------------------------------------------------------
   suppressWarnings(
@@ -166,6 +165,9 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
       add_row(model = poly_names[fail_tmp == FALSE])
   }
 
+  ## Set names for the models
+  models <- models %>% set_names(poly_names)
+  
   out <- list(models = models, convergence = problems, fit = fit.tab)
 
   return(out)
