@@ -116,7 +116,8 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
           type = "glm_slma",
           direction = "wide",
           family = "binomial", 
-          ci_format = "separate") %>%
+          ci_format = "separate", 
+          digits = 50) %>%
           dplyr::filter(cohort != "combined")
         
       }) %>%
