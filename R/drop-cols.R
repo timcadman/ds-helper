@@ -27,12 +27,16 @@
 #' @importFrom stringr str_subset
 #'
 #' @export
-dh.dropCols <- function(df = NULL, vars = NULL, new_obj = df, type = NULL,
+dh.dropCols <- function(df = NULL, vars = NULL, new_obj = NULL, type = NULL,
                         conns = NULL, checks = TRUE, new_df_name = NULL) {
   . <- NULL
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
+  }
+  
+  if (is.null(new_obj)) {
+    new_obj <- df
   }
 
   if (checks == TRUE) {
