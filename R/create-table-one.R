@@ -383,7 +383,7 @@ var_types <- c("categorical", "continuous")
 #' @noRd
 .formatContStats <- function(stats, vars, cont_stats, inc_missing, round_digits){
   
-  variable <- std.dev <- perc_50 <- perc_25 <- perc_75 <- missing_n <-
+  variable <- std.dev <- perc_50 <- perc_25 <- perc_75 <- perc_95 <- missing_n <-
     missing_perc <- cohort <- category <- value <- miss_n_perc <- 
     data_type <- NULL
   

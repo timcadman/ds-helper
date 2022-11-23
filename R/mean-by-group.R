@@ -32,7 +32,7 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
                            intervals = NULL, conns = NULL, checks = FALSE) {
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <-
     . <- enough_obs <- variable <- level <- std.dev <- nvalid <- ntotal <-
-    x <- NULL
+    x <- nvalid_2 <- nvalid_1 <- mean_2 <- std.dev_2 <- nmissing <- NULL
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
