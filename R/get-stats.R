@@ -177,6 +177,7 @@ check with ds.class \n\n",
     ## ---- Check whether these levels are identical for all cohorts ---------------
     level_ref <- check_levels %>%
       map(function(x){x[!is.na(x)]}) %>%
+      map_depth(2, sort) %>%
       map(unique) %>%
       map(length) %>%
       bind_rows() %>%
