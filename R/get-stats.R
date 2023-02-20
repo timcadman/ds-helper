@@ -177,6 +177,7 @@ check with ds.class \n\n",
     ## ---- Check whether these levels are identical for all cohorts ---------------
     level_ref <- check_levels %>%
       map(function(x){x[!is.na(x)]}) %>%
+      map_depth(2, sort) %>%
       map(unique) %>%
       map(length) %>%
       bind_rows() %>%
@@ -205,14 +206,19 @@ check with ds.class \n\n",
   ################################################################################
   # 5. Get maximum ns for each cohort
   ################################################################################
-  cohort_ns <- ds.dim(df, type = "split", datasources = conns) %>%
+  cohort_ns_sep <- ds.dim(df, type = "split", datasources = conns) %>%
     map_df(~ .[1]) %>%
     set_names(names(conns)) %>%
     pivot_longer(
       cols = everything(),
       names_to = "cohort",
-      values_to = "cohort_n"
-    )
+      values_to = "cohort_n")
+  
+  cohort_n_comb <- tibble(
+    cohort = "combined",
+    cohort_n = sum(cohort_ns_sep$cohort_n))
+  
+  cohort_ns <- bind_rows(cohort_ns_sep, cohort_n_comb)
   
   ################################################################################
   # 6. Identify variable classes
@@ -482,7 +488,6 @@ check with ds.class \n\n",
       mutate(
         std.dev = sqrt(EstimatedVar),
         valid_n = replace_na(Nvalid, 0),
-        cohort_n = Ntotal,
         missing_n = cohort_n - valid_n,
         missing_perc = (missing_n / cohort_n) * 100
       ) %>%

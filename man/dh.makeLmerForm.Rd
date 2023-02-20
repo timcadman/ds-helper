@@ -10,7 +10,7 @@ dh.makeLmerForm(
   age_vars = NULL,
   random = NULL,
   fixed = NULL,
-  age_interactions = FALSE
+  age_interactions = NULL
 )
 }
 \arguments{
@@ -50,6 +50,7 @@ Other trajectory functions:
 \code{\link{dh.lmeMultPoly}()},
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.predictLmer}()},
-\code{\link{dh.trimPredData}()}
+\code{\link{dh.trimPredData}()},
+\code{\link{dh.zByGroup}()}
 }
 \concept{trajectory functions}

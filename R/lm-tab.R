@@ -153,8 +153,22 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
       map(~ as_tibble(x = ., rownames = "variable")) %>%
       bind_rows(.id = "cohort") %>%
       rename(est = Estimate) %>%
-      rename(se = "Std. Error") %>%
-      dplyr::select(cohort, variable, est, se) %>%
+      rename(se = "Std. Error")
+    
+    if(type == "glm_slma"){
+    
+    separate <- separate %>%
+      dplyr::select(cohort, variable, est, se, "Pr(>|z|)") %>%
+      dplyr::rename(pvalue = "Pr(>|z|)")
+    
+    } else if(type == "lmer_slma"){
+      
+      separate <- separate %>%
+        mutate(pvalue = NA)
+      
+    }
+    
+    separate <- separate %>%
       left_join(., ns, by = "cohort") %>%
       mutate(n_coh = 1)
     
@@ -236,7 +250,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
         values_from = value
       ) %>%
       mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
-      dplyr::select(variable, se, est, pvalue)
+      dplyr::select(cohort, variable, se, est, pvalue)
   }
   
   if (type == "lmer_slma") {

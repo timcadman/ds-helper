@@ -46,7 +46,8 @@ Other trajectory functions:
 \code{\link{dh.lmeMultPoly}()},
 \code{\link{dh.makeLmerForm}()},
 \code{\link{dh.predictLmer}()},
-\code{\link{dh.trimPredData}()}
+\code{\link{dh.trimPredData}()},
+\code{\link{dh.zByGroup}()}
 
 Other data manipulation functions: 
 \code{\link{dh.dropCols}()},
@@ -54,7 +55,8 @@ Other data manipulation functions:
 \code{\link{dh.makeStrata}()},
 \code{\link{dh.quartileSplit}()},
 \code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()}
+\code{\link{dh.tidyEnv}()},
+\code{\link{dh.zByGroup}()}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}

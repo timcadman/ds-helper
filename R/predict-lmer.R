@@ -47,18 +47,21 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
   }
 
   ## ---- First we add a column to the new data for the intercept ----------------
+  if("intercept" %in% colnames(new_data) == FALSE){
+
   new_data <- new_data %>%
     mutate(intercept = 1) %>%
     select(intercept, everything())
 
-  ## ---- First we extract coefficients ------------------------------------------
+  }
+  
+  ## ---- Then we extract coefficients ------------------------------------------
   coefs <- dh.lmTab(
     model = model,
     type = "lmer_slma",
     coh_names = coh_names,
     direction = "long",
-    ci_format = "separate"
-  )
+    ci_format = "separate")
 
   ## ---- Now we get the names of coefficients which aren't the intercept --------
   coef_names <- coefs$fixed %>%
@@ -67,10 +70,10 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
 
   ## ---- Now we get the coefficients for each cohort ----------------------------
   coefs_by_cohort <- coefs$fixed %>%
+    dplyr::select(cohort, variable, coefficient, value) %>%
     pivot_wider(
       names_from = variable,
-      values_from = value
-    ) %>%
+      values_from = value) %>%
     dplyr::filter(coefficient == "est") %>%
     select(-coefficient) %>%
     group_by(cohort)
@@ -102,7 +105,6 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL,
       new_data %>%
         mutate(predicted = rowSums(x))
     })
-
 
   ## ---- Now get the standard errors ------------------------------------------------
   nstudy <- seq(1, model$num.valid.studies, 1)

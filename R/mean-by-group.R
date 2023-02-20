@@ -10,7 +10,8 @@
 #' @importFrom dsBaseClient ds.meanSdGp
 #' @importFrom purrr map
 #' @importFrom tibble as_tibble
-#' @importFrom dplyr bind_rows %>% slice
+#' @importFrom dplyr bind_rows %>% slice 
+#' @importFrom tidyr separate
 #'
 #' @template conns
 #' @template df
@@ -30,7 +31,8 @@
 dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
                            intervals = NULL, conns = NULL, checks = FALSE) {
   value <- op <- tmp <- varname <- new_df_name <- age <- group <- cohort <-
-    . <- enough_obs <- variable <- NULL
+    . <- enough_obs <- variable <- level <- std.dev <- nvalid <- ntotal <-
+    x <- nvalid_2 <- nvalid_1 <- mean_2 <- std.dev_2 <- nmissing <- NULL
 
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
@@ -184,21 +186,32 @@ paste0(warnings$issues$cohort, collapse = ", ")
           datasources = conns[cohort])
       })
     
+
     ## Now we take these values and put them into a neater table
     out <- obs_by_agecat_comb %>%
-      map(function(x) {
-        x$Mean_gp %>%
-          as_tibble(rownames = "group") %>%
-          slice(2) %>%
-      pivot_longer(
-        cols = -group,
-        names_to = "cohort", 
-        values_to = "mean")}) %>%
+      map(function(x){
+        
+        tibble(
+          group = dimnames(x$Mean_gp_study)[[1]],
+          mean = as.numeric(x$Mean_gp_study),
+          std.dev = as.numeric(x$StDev_gp_study), 
+          nvalid = as.numeric(x$Nvalid_gp_study),
+          cohort = colnames(x$Mean_gp_study)) 
+      }) %>%
       bind_rows() %>%
-      mutate(group = str_remove(group, "_[^_]+$")) %>%
+      separate(group, into = c("group", "level"), sep="_(?=[^_]+$)") %>%
+      pivot_wider(
+        names_from = "level", 
+        values_from = c("nvalid", "mean", "std.dev")) %>%
+      dplyr::rename(
+        "nvalid" = nvalid_2, 
+        "nmissing" = nvalid_1, 
+        "mean" = mean_2,
+        "std.dev" = std.dev_2) %>%
       mutate(group = str_remove(group, "grp_")) %>%
-      dplyr::select(cohort, group, mean)
-
+      dplyr::select(cohort, group, mean, std.dev, nvalid, nmissing)
+    
+        
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
       obj = c(cats$new_df_name, assign_conditions$varname),

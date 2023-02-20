@@ -31,6 +31,8 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
                             poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
                             conns = NULL, checks = TRUE, agevars = NULL) {
+  
+  df <- df
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -63,12 +65,11 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
     poly_names <- poly_names[str_detect(poly_names, "log") == FALSE]
     poly_form <- poly_form[str_detect(poly_form, "log") == FALSE]
   }
-  df_age <- c(paste0(df, "$", age_var))
+  df_age <- paste0(df, "$", age_var)
 
   polys <- tibble(
     poly = cross2(age_var, poly_names) %>% map_chr(paste, sep = "", collapse = ""),
-    form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = "")
-  )
+    form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = ""))
 
   if (log_yn == TRUE) {
     polys <- add_row(
@@ -87,8 +88,12 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
       )
     })
 
-  ds.cbind(x = c(df, polys$poly), newobj = df)
+  ds.cbind(x = c(df, polys$poly), newobj = df, datasources = conns)
 
+  dh.tidyEnv(
+    obj = polys$poly, 
+    type = "remove")
+  
   cat("\nThe following transformations of age have been created in
     dataframe:", df, "\n\n", polys$poly)
 }

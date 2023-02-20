@@ -30,6 +30,7 @@ generates a look-up table with this information.
 \seealso{
 Other descriptive functions: 
 \code{\link{dh.classDiscrepancy}()},
+\code{\link{dh.createTableOne}()},
 \code{\link{dh.defineCases}()},
 \code{\link{dh.getStats}()},
 \code{\link{dh.lmTab}()},

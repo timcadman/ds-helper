@@ -133,7 +133,7 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' Convert strings indicating boolean operators to symbols. Used in functions
 #' make-strata and quantile-split.
 #'
-#' @param boole_string
+#' @param boole_string Argument string to be converted to operators.
 #' @importFrom dplyr case_when
 #' @noRd
 .convertBooleText <- function(boole_string){

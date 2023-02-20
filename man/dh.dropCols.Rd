@@ -7,7 +7,7 @@
 dh.dropCols(
   df = NULL,
   vars = NULL,
-  new_obj = df,
+  new_obj = NULL,
   type = NULL,
   conns = NULL,
   checks = TRUE,
@@ -49,6 +49,7 @@ Other data manipulation functions:
 \code{\link{dh.makeStrata}()},
 \code{\link{dh.quartileSplit}()},
 \code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()}
+\code{\link{dh.tidyEnv}()},
+\code{\link{dh.zByGroup}()}
 }
 \concept{data manipulation functions}

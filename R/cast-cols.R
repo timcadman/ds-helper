@@ -13,6 +13,7 @@
 #' 
 #' @importFrom dsBaseClient ds.asFactor ds.asCharacter ds.asNumeric ds.asInteger ds.colnames ds.dim ds.rep ds.dataFrameSubset ds.cbind
 #' @importFrom DSI datashield.connections_find
+#' @importFrom utils tail
 #'
 #' @return Tibble with a summary of the successful and failed casts
 #' @export
