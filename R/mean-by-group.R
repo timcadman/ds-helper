@@ -194,7 +194,7 @@ paste0(warnings$issues$cohort, collapse = ", ")
         tibble(
           group = dimnames(x$Mean_gp_study)[[1]],
           mean = as.numeric(x$Mean_gp_study),
-          std.dev = as.numeric(x$SEM_gp_stud), 
+          std.dev = as.numeric(x$StDev_gp_study), 
           nvalid = as.numeric(x$Nvalid_gp_study),
           cohort = colnames(x$Mean_gp_study)) 
       }) %>%

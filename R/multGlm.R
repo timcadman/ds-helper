@@ -11,6 +11,9 @@
 #'
 #' @template df
 #' @param ref reference tibble, output from dh.buildModels.
+#' @param vary_df Option to provide different df for different models. Default
+#' is FALSE.
+#' @param family Family to use in glm models. Default is "gaussian".
 #' @template checks
 #' @template conns
 #'
@@ -55,7 +58,7 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
         
         tryCatch(
           {
-            ds.glmSLMA(
+            dsBaseClient::ds.glmSLMA(
               formula = unlist(formula), 
               dataName = df, 
               family = family, 

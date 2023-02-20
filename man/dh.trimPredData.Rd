@@ -42,6 +42,7 @@ Other trajectory functions:
 \code{\link{dh.lmeMultPoly}()},
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()}
+\code{\link{dh.predictLmer}()},
+\code{\link{dh.zByGroup}()}
 }
 \concept{trajectory functions}

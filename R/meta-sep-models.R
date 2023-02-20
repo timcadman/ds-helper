@@ -21,17 +21,16 @@
 dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL, 
                              output = "both"){
   
-  exposure <- variable <- cohort <- . <- est <- lowci <- uppci <- NULL
+  exposure <- variable <- cohort <- . <- est <- lowci <- uppci <- 
+    model_id <- n_obs <- se <- NULL
   
   method <- arg_match(
     arg = method, 
-    values = c("DL", "HE", "HS", "HSk", "SJ", "ML", "REML", "EB", "PM", "GENQ")
-  )
+    values = c("DL", "HE", "HS", "HSk", "SJ", "ML", "REML", "EB", "PM", "GENQ"))
   
   output <- arg_match(
     arg = output, 
-    values = c("meta", "cohort", "both")
-  )
+    values = c("meta", "cohort", "both"))
   
   if(output %in% c("meta", "both") == TRUE){
     ## ---- Get coefficients -----------------------------------------------------
@@ -81,7 +80,13 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
           se = meta$se,
           lowci = meta$ci.lb,
           uppci = meta$ci.ub,
-          i2 = round(meta$I2, 1), 
+          i2 = round(meta$I2, 2), 
+          t2 = round(meta$tau2, 2), 
+          q = round(meta$QE, 2), 
+          q_p = round(meta$QEp, 2),
+          k = round(meta$k, 2),
+          p = round(meta$p, 2),
+          t2_se = round(meta$se.tau2, 2), 
           n_coh = meta$k)
         
       }) %>%

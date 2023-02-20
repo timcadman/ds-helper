@@ -69,8 +69,7 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
 
   polys <- tibble(
     poly = cross2(age_var, poly_names) %>% map_chr(paste, sep = "", collapse = ""),
-    form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = "")
-  )
+    form = cross2(df_age, poly_form) %>% map_chr(paste, sep = "", collapse = ""))
 
   if (log_yn == TRUE) {
     polys <- add_row(
@@ -91,6 +90,10 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
 
   ds.cbind(x = c(df, polys$poly), newobj = df, datasources = conns)
 
+  dh.tidyEnv(
+    obj = polys$poly, 
+    type = "remove")
+  
   cat("\nThe following transformations of age have been created in
     dataframe:", df, "\n\n", polys$poly)
 }

@@ -28,6 +28,7 @@ Other data manipulation functions:
 \code{\link{dh.makeIQR}()},
 \code{\link{dh.makeStrata}()},
 \code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()}
+\code{\link{dh.renameVars}()},
+\code{\link{dh.zByGroup}()}
 }
 \concept{data manipulation functions}

@@ -158,8 +158,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     if(type == "glm_slma"){
     
     separate <- separate %>%
-      dplyr::select(cohort, variable, est, se, "Pr(>|t|)") %>%
-      dplyr::rename(pvalue = "Pr(>|t|)")
+      dplyr::select(cohort, variable, est, se, "Pr(>|z|)") %>%
+      dplyr::rename(pvalue = "Pr(>|z|)")
     
     } else if(type == "lmer_slma"){
       

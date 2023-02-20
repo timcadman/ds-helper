@@ -33,7 +33,7 @@
 #' @export
 dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, new_obj = NULL,
                            conns = NULL, checks = FALSE, newobj = NULL) {
-  if (is.null(df)) {
+   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
 

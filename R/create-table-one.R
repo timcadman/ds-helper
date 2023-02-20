@@ -6,7 +6,7 @@
 #' are included. 
 #'
 #' @param stats Exported object from dh.getStats.
-#' @template vars
+#' @param vars Variable to be included in table.
 #' @param var_labs Tibble with two columns: 'variable' containing the 
 #' names of the variables specified in `vars`, and 'var_label' containing the
 #' replacement labels for these variables.
@@ -31,6 +31,10 @@
 #' "med_iqr".
 #' @param inc_missing Boolean specifying whether to return missing values in
 #' the output. Use TRUE for yes and FALSE for no.
+#' @param round_digits Optionally, the number of decimal places to round output 
+#' to. Default is 2.
+#' @param perc_denom The denominator for percentages. Either 'valid' for valid
+#' cases or 'total' for total cases.
 #'
 #' @return Tibble containing formatted summary statistics. If `coh_direction` is
 #' 'cols', the tibble will contain four columns: 'cohort', 'variable', 
@@ -40,8 +44,8 @@
 #'
 #' @family descriptive functions
 #'
-#' @importFrom dplyr %>% left_join mutate select filter pivot_wider pivot_longer
-#' bind_rows
+#' @importFrom dplyr %>% left_join mutate select filter bind_rows
+#' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom rlang arg_match is_bool
 #'
 #' @export
@@ -53,7 +57,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <- 
-    stats_cat <- stats_cont <- NULL
+    stats_cat <- stats_cont <- old_var <- NULL
   
   if (is.null(stats)) {
     stop("`stats` must not be NULL.", call. = FALSE)
@@ -300,8 +304,8 @@ if(length(stats$categorical) > 0 & length(stats$continuous) > 0 ){
 #' @return List with two elements named 'categorical' and 'continuous' 
 #' containing character vectors of respective variable names.
 #' 
-#' @importFrom dplyr %>% pull unique
-#' @imporFrom purrr map set_names
+#' @importFrom dplyr %>% pull
+#' @importFrom purrr map set_names
 #' 
 #' @noRd
 .splitStatsVars <- function(stats, var_types){
@@ -383,7 +387,7 @@ var_types <- c("categorical", "continuous")
 #' 
 #' @param stats Exported object from dh.getStats
 #' @param vars Character vector of variable names
-#' @inc_missing Boolean specifying whether to return missing values in
+#' @param inc_missing Boolean specifying whether to return missing values in
 #' the output. Use TRUE for yes and FALSE for no.
 #' 
 #' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
@@ -395,7 +399,7 @@ var_types <- c("categorical", "continuous")
 #' 
 .formatCatStats <- function(stats, vars, inc_missing, round_digits, perc_denom){
   
-  variable <- value <- perc_valid <- cohort <- category <- NULL
+  variable <- value <- perc_valid <- cohort <- category <- perc_total <- NULL
   
   out <- stats$categorical %>%
     dplyr::filter(variable %in% vars) %>%
@@ -409,7 +413,7 @@ var_types <- c("categorical", "continuous")
   } else if(perc_denom == "valid"){
     
     out <- out %>%
-      mutate(value = if_else(
+      mutate(value = ifelse(
         !is.na(category), 
         paste0(value, " (", perc_valid, ")") ,
         paste0(value, " (", perc_total, ")"))) 
@@ -439,7 +443,7 @@ var_types <- c("categorical", "continuous")
 #' @param cont_stats Character specifying which summary statistic to return
 #' for continuous stats. Use 'med_iqr' to return the median and interquartile
 #' range, use 'mean_sd' to return the mean and standard deviation.
-#' @inc_missing Boolean specifying whether to return missing values in
+#' @param inc_missing Boolean specifying whether to return missing values in
 #' the output. Use TRUE for yes and FALSE for no.
 #' 
 #' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
@@ -453,7 +457,7 @@ var_types <- c("categorical", "continuous")
   
   variable <- std.dev <- perc_50 <- perc_25 <- perc_75 <- perc_95 <- missing_n <-
     missing_perc <- cohort <- category <- value <- miss_n_perc <- 
-    data_type <- NULL
+    data_type <- valid_n <- NULL
   
   out <- stats$continuous %>%
     dplyr::filter(variable %in% vars) %>%
@@ -583,7 +587,7 @@ var_types <- c("categorical", "continuous")
 #' in `required_cols`
 #' 
 #' @param labs Object provided either to var_labs, cat_labs or coh_labs
-#' @param ncol Integer specifying the required number of columns
+#' @param n_col Integer specifying the required number of columns
 #' @param required_cols Character vector specifying the required column names
 #' 
 #' @return Returns an error if number and names of columns does not match that
@@ -610,7 +614,7 @@ var_types <- c("categorical", "continuous")
 #' 
 #' @return Character vector of cohort names
 #' 
-#' @importFrom dplyr %>% pull unique
+#' @importFrom dplyr %>% pull
 #' 
 #' @noRd
 .availCoh <- function(stats, stats_types){
