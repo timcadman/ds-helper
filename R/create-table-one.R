@@ -47,8 +47,9 @@
 #' @export
 dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL, 
                               cat_labs = NULL, type = NULL, coh_labs = NULL, 
-                              coh_direction = "col", cont_stats = "med_iqr", 
-                              inc_missing = NULL, round_digits = 2){
+                              coh_direction = "cols", cont_stats = "med_iqr", 
+                              inc_missing = NULL, round_digits = 2, 
+                              perc_denom = NULL){
   
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <- 
@@ -72,7 +73,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     stop("`coh_direction` must not be NULL.", call. = FALSE)
   } 
   
-  coh_direction <- arg_match(coh_direction, c("row", "col"))
+  coh_direction <- arg_match(coh_direction, c("rows", "cols"))
 
   if (is.null(cont_stats)) {
     stop("`cont_stats` must not be NULL.", call. = FALSE)
@@ -84,24 +85,40 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     stop("`inc_missing` must not be NULL.", call. = FALSE)
   } 
 
-  
   if (is_bool(inc_missing) == FALSE){
     stop("`inc_missing` must be either TRUE or FALSE")
   }
   
-  avail_stats <- .splitStatsVars(stats)
+  if (is.null(perc_denom)) {
+    stop("`perc_denom` must not be NULL.", call. = FALSE)
+  } 
+  
+  perc_denom <- arg_match(perc_denom, c("valid", "total"))
+  
+  stats_types <- .checkAvailStats(stats)
+  
+  avail_stats <- .splitStatsVars(stats, stats_types)
   
   .checkVarsAvail(unlist(avail_stats), vars)
   
   vars_list <- .splitTargetVars(avail_stats, vars)
   
-  stats_cat <- .formatCatStats(stats, vars_list$categorical, inc_missing, 
-                               round_digits)
+  if(length(stats$categorical) > 0) {
+  
+    stats_cat <- .formatCatStats(stats, vars_list$categorical, inc_missing, 
+                               round_digits, perc_denom)
+  
+  }
+  
+  if(length(stats$continuous) > 0) {
+    
   stats_cont <- .formatContStats(stats, vars_list$continuous, cont_stats, 
                                  inc_missing, round_digits)
   
-  out <-  bind_rows(stats_cat, stats_cont) %>%
-    mutate(variable = factor(variable, levels = vars)) %>%
+  }
+  
+  out <- bind_rows(stats_cat, stats_cont) %>%
+    mutate(variable = factor(variable, levels = vars, ordered = T)) %>%
     arrange(variable)
   
   if(!is.null(cat_labs)){
@@ -124,16 +141,34 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     .checkLabsMatchVars(vars, var_labs)
     
     out <- out %>%
-      left_join(., var_labs, by = "variable") %>%
+      left_join(., 
+                var_labs %>% 
+                  dplyr::select(variable, var_label) %>%
+                  distinct, by = "variable") %>%
+      mutate(old_var = variable) %>%
       mutate(variable = var_label) %>%
       dplyr::select(-var_label)
+    
+  }
+  
+  if(!is.null(coh_labs)){
+    
+    .checkLabType(coh_labs)
+    .checkLabCols(coh_labs, 2, c("cohort", "coh_label"))
+    .checkLabsMatchCoh(stats, coh_labs, stats_types)
+    
+    out <- left_join(out, coh_labs, by = "cohort") %>%
+      dplyr::select(-cohort) %>%
+      dplyr::rename(cohort = coh_label) %>%
+      dplyr::select(cohort, everything())
     
   }
   
   if(type == "combined"){
     
     out <- out %>%
-      dplyr::filter(cohort == "combined")
+      dplyr::filter(cohort == "combined") %>%
+      dplyr::select(-data_type, -old_var)
     
   } else if(type == "cohort"){
     
@@ -165,16 +200,11 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
           
           out_cont <- out %>%
             dplyr::filter(data_type == "cont") %>%
-            dplyr::select(-category) %>%
-            pivot_longer(
-              cols = c(value, miss_n_perc), 
-              names_to = "category", 
-              values_to = "value") %>%
-            pivot_wider(
+             pivot_wider(
               names_from = cohort,
               values_from = value)
           
-          out <- bind_rows(out_cat, out_cont)
+          out <- bind_rows(out_cat, out_cont) 
           
         }
         
@@ -208,9 +238,8 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
           
           out <- bind_rows(out_cat, out_cont) %>%
             dplyr::select(-data_type) %>%
-            pivot_wider(
-              names_from = c(variable, category), 
-              values_from = value)
+            mutate(old_var = factor(old_var, levels = vars, ordered = TRUE)) %>%
+            arrange(old_var)
           
         }
           
@@ -218,29 +247,51 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     
     }
       
-  avail_coh <- .availCoh(stats)
+  avail_coh <- .availCoh(stats, stats_types)
   
   avail_coh <- c(avail_coh[!avail_coh == "combined"], "combined")
   
+  if(coh_direction == "rows"){
+    
   out <- out %>%
     mutate(cohort = factor(cohort, levels = avail_coh, ordered = TRUE))
   
-    if(!is.null(coh_labs)){
+  } 
   
-    .checkLabType(coh_labs)
-    .checkLabCols(coh_labs, 2, c("cohort", "coh_label"))
-    .checkLabsMatchCoh(stats, coh_labs)
-      
-    out <- left_join(out, coh_labs, by = "cohort") %>%
-      dplyr::select(-cohort) %>%
-      dplyr::rename(cohort = coh_label) %>%
-      dplyr::select(cohort, everything())
-    
-    }
+ # out <- out %>%
+#    dplyr::select(-old_var)
   
   return(out)
   
 }
+
+#' Identifies whether there are both categorical and continuous stats
+#' 
+#' @param Exported object from dh.getStats
+#' 
+#' @return Character vector containing the names of available stats objects
+#' 
+#' @noRd
+.checkAvailStats <- function(stats){
+
+  var_types <- NULL
+
+if(length(stats$categorical) > 0 & length(stats$continuous) > 0 ){
+
+  var_types <- c("categorical", "continuous")  
+
+} else if (length(stats$categorical) > 0 & length(stats$continuous) == 0 ){
+  
+  var_types <- "categorical"
+  
+} else if (length(stats$categorical) == 0 & length(stats$continuous) > 0 ){
+  
+  var_types <- "continuous"
+  
+}
+  
+}
+
 
 #' Extracts variables names from `stats` object.
 #' 
@@ -253,11 +304,11 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @imporFrom purrr map set_names
 #' 
 #' @noRd
-.splitStatsVars <- function(stats){
+.splitStatsVars <- function(stats, var_types){
   
   variable <- NULL
   
-  var_types <- c("categorical", "continuous")
+
   
   out <- var_types  %>%
     map(function(x){
@@ -283,8 +334,8 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @noRd
 .checkVarsAvail <- function(source_vars, target_vars){
   
-  avail <- vars[vars %in% source_vars]
-  not_avail <- vars[!vars %in% source_vars]
+  avail <- target_vars[target_vars %in% source_vars]
+  not_avail <- target_vars[!target_vars %in% source_vars]
   
   if(length(not_avail > 0)){
     
@@ -341,24 +392,41 @@ var_types <- c("categorical", "continuous")
 #' @importFrom dplyr %>% filter mutate select
 #' 
 #' @noRd
-.formatCatStats <- function(stats, vars, inc_missing, round_digits){
+#' 
+.formatCatStats <- function(stats, vars, inc_missing, round_digits, perc_denom){
   
   variable <- value <- perc_valid <- cohort <- category <- NULL
   
   out <- stats$categorical %>%
     dplyr::filter(variable %in% vars) %>%
-    mutate(perc_valid = round(perc_valid, round_digits)) %>%
-    mutate(value = paste0(value, " (", perc_valid, ")")) %>% 
-    dplyr::select(cohort, variable, category, value) %>%
-    mutate(data_type = "cat")
-
+    mutate(perc_valid = signif(perc_valid, round_digits))
   
+  if(perc_denom == "total"){
+    
+    out <- out %>%
+    mutate(value = paste0(value, " (", perc_total, ")")) 
+    
+  } else if(perc_denom == "valid"){
+    
+    out <- out %>%
+      mutate(value = if_else(
+        !is.na(category), 
+        paste0(value, " (", perc_valid, ")") ,
+        paste0(value, " (", perc_total, ")"))) 
+    
+  }
+    
   if(inc_missing == FALSE){
     
     out <- out %>%
      dplyr::filter(!is.na(category))
     
-  }
+  } 
+  
+  out <- out  %>% 
+    dplyr::select(cohort, variable, category, value) %>%
+    mutate(data_type = "cat") %>%
+    mutate(category = ifelse(is.na(category), "missing", as.character(category)))
   
   return(out)
   
@@ -389,15 +457,17 @@ var_types <- c("categorical", "continuous")
   
   out <- stats$continuous %>%
     dplyr::filter(variable %in% vars) %>%
-    mutate(across(c(mean:perc_95, missing_perc), ~round(., round_digits))) %>%
-    mutate(value = NA, category = "") %>%
-    mutate(data_type = "cont")
-
+    mutate(across(c(mean:perc_95, missing_perc), ~signif(., round_digits))) %>%
+    mutate(data_type = "cont") %>%
+    pivot_longer(
+      cols = c(valid_n, missing_n),
+      names_to = "category", 
+      values_to = "missing") 
   
   if(cont_stats == "mean_sd"){
     
     out <- out %>%
-      mutate(value = paste0(mean, " (", std.dev, ")")) 
+      mutate(value = paste0(mean, " \u00b1 ", std.dev)) 
     
   } else if(cont_stats == "med_iqr"){
     
@@ -409,8 +479,12 @@ var_types <- c("categorical", "continuous")
   if(inc_missing == TRUE){
     
     out <- out %>%
-      mutate(miss_n_perc = paste0(missing_n, " (", missing_perc, ")")) %>%
-      dplyr::select(cohort, variable, category, value, miss_n_perc, data_type)
+      mutate(value = ifelse(category == "missing_n", 
+                            paste0(missing, " (", missing_perc, ")"), value)) %>%
+      dplyr::select(cohort, variable, category, value, miss_n_perc, data_type) %>%
+      mutate(category = case_when(
+        category == "valid_n" ~ "value",
+        category == "missing_n" ~ "missing"))
     
   } else if(inc_missing == FALSE){
     
@@ -518,13 +592,12 @@ var_types <- c("categorical", "continuous")
 #' noRd
 .checkLabCols <- function(labs, n_col, required_cols){
   
-  check_cols <- any(colnames(labs) %in% required_cols == FALSE)
-  check_length <- length(colnames(labs))
+  check_cols <- all(required_cols %in% colnames(labs))
   
-  if(check_cols == TRUE | check_length != n_col){
+  if(check_cols == FALSE){
     
     stop(
-      paste0("Labels object must be a tibble containing exactly ", n_col, 
+      paste0("Labels object must be a tibble containing ", n_col, 
              " columns: ", paste0(required_cols, collapse = ", ")))
     
   }
@@ -540,12 +613,12 @@ var_types <- c("categorical", "continuous")
 #' @importFrom dplyr %>% pull unique
 #' 
 #' @noRd
-.availCoh <- function(stats){
+.availCoh <- function(stats, stats_types){
   
   cohort <- NULL 
   
-out <- stats %>%
-  map(function(x){x %>% pull(cohort) %>% unique}) %>%
+out <- stats_types %>%
+  map(function(x){stats[[x]] %>% pull(cohort) %>% unique}) %>%
   unlist %>%
   unique
 
@@ -564,9 +637,9 @@ return(out)
 #' `coh_labs`. Otherwise nothing is returned.
 #' 
 #' @noRd
-.checkLabsMatchCoh <- function(stats, coh_labs){
+.checkLabsMatchCoh <- function(stats, coh_labs, stats_types){
   
-  avail_coh <- .availCoh(stats)
+  avail_coh <- .availCoh(stats, stats_types)
   
   missing_coh_labs <- avail_coh[!avail_coh %in% coh_labs$cohort]
   
