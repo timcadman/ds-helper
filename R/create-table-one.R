@@ -81,13 +81,38 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     
   }
   
-  
+  if(length(stats$continuous) > 0) {
+    
+    stats_cont <- .formatContStats()
+    
+  }
  
+  if(!is.null(cat_labs)){
+    
+    .checkLabsMatchCats()
+    cat_labs <- .cleanLabs(cat_labs, c("variable", "category", "cat_label"))
+    
+    stats_cat <- stats_cat %>%
+      left_join(., cat_labs, by = c("variable", "category")) %>%
+      dplyr::select(cohort, variable, category = cat_label, value)
+    
+  }
   
-  out$category
-
-  mutate(perc_valid = signif(perc_valid, round_digits))
-
+  out <- bind_rows(stats_cat, stats_cont)
+  
+  if(!is.null(var_labs)){
+    
+    var_labs <- .cleanLabs(var_labs, c("variable", "var_label"))
+    
+    out <- out %>%
+      left_join(., var_labs, by = "variable") %>%
+      dplyr::select(cohort, variable = var_label, category, value)
+      
+      mutate(old_var = variable) %>%
+      mutate(variable = var_label) %>%
+      dplyr::select(-var_label)
+    
+  }
   
   if(inc_missing == FALSE){
     
@@ -95,6 +120,19 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
       dplyr::filter(!is.na(category))
     
   } 
+  
+
+  
+
+
+  
+  
+  out$category
+
+  mutate(perc_valid = signif(perc_valid, round_digits))
+
+  
+
   
 
   
@@ -110,46 +148,15 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
 
   
-  if(length(stats$continuous) > 0) {
-    
-  stats_cont <- .formatContStats(stats, vars_list$continuous, cont_stats, 
-                                 inc_missing, round_digits)
+
   
-  }
-  
-  out <- bind_rows(stats_cat, stats_cont) %>%
+  %>%
     mutate(variable = factor(variable, levels = vars, ordered = T)) %>%
     arrange(variable)
   
-  if(!is.null(cat_labs)){
-    
-    .checkLabType(cat_labs)
-    .checkLabCols(cat_labs, 3, c("variable", "category", "cat_label"))
-    .checkLabsMatchCats(stats_cat, cat_labs)
-    
-    out <- out %>%
-      left_join(., cat_labs, by = c("variable", "category")) %>%
-      mutate(category = cat_label) %>%
-      dplyr::select(-cat_label)
-    
-  }
+
   
-  if(!is.null(var_labs)){
-    
-    .checkLabType(var_labs)
-    .checkLabCols(var_labs, 2, c("variable", "var_label"))
-    .checkLabsMatchVars(vars, var_labs)
-    
-    out <- out %>%
-      left_join(., 
-                var_labs %>% 
-                  dplyr::select(variable, var_label) %>%
-                  distinct, by = "variable") %>%
-      mutate(old_var = variable) %>%
-      mutate(variable = var_label) %>%
-      dplyr::select(-var_label)
-    
-  }
+
   
   if(!is.null(coh_labs)){
     
@@ -281,7 +288,22 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   assert_logical(inc_missing)
   assert_choice(perc_denom, c("valid", "total"))
   
-}
+  if(!is.null(cat_labs)){
+    
+    assert_data_frame(cat_labs)
+    assert_subset(c("variable", "category", "cat_label"), colnames(cat_labs))
+    
+  }
+  
+  if(!is.null(var_labs)){
+  
+    assert_data_frame(var_labs)
+    assert_subset(c("variable", "var_label"), colnames(var_labs))
+    assert_subset(vars, var_labs$variable)
+
+  }
+  
+  }
 
 #' Checks that all the variable names provided to `vars` are available in the
 #' object provided to `stats`
@@ -379,7 +401,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @importFrom dplyr %>% filter mutate select
 #' 
 #' @noRd
-.formatContStats <- function(stats_sub){
+.formatContStats <- function(){
   
   out <- stats_sub$continuous %>%
     pivot_longer(
@@ -411,8 +433,53 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
 }
 
+#' Checks that all categorical variables provided to `stats_cat` have 
+#' corresponding labels provided in `cat_labs`
+#' 
+#' 
+#' @return Returns an error if labels have not been provided for all levels of
+#' all categorical variables. 
+#' 
+#' @importFrom dplyr left_join %>% filter 
+#' 
+#' @noRd
+.checkLabsMatchCats <- function(){
+  
+  category <- cat_label <- NULL
+  
+  test_cats <- left_join(stats_cat, cat_labs, by = c("variable", "category")) %>%
+    dplyr::filter(category != "missing")
+  
+  missing_cats <- test_cats %>% 
+    dplyr::filter(!is.na(category) & is.na(cat_label))
+  
+  if(length(missing_cats > 0)){
+    
+    stop(
+      "The following categorical variables are included in 'vars' 
+      but do not have a corresponding labels for all categories provided in 
+      `cat_labs`\n\n")
+    
+    print(missing_cats)
+    
+  }
+  
+}
 
+#' Removes duplicates and selects only required columns
+#' 
+#' @return Cleaned dataframe of labels
+#' 
+#' @noRd
+.cleanLabs <- function(labs, cols){
+  
+out <- labs %>%
+  distinct %>%
+  dplyr::select(all_of(cols))
 
+return(out)
+
+}
 
 
 #' Identifies whether there are both categorical and continuous stats
@@ -503,113 +570,6 @@ var_types <- c("categorical", "continuous")
 }
 
 
-
-#' Checks whether the object provided is either a tibble or data frame.
-#' 
-#' @param labs Object provided either to var_labs, cat_labs or coh_labs
-#'  
-#' @return Returns an error of provided variables is not one of these types.
-#' Otherwise nothing is returned.
-#' 
-#' @noRd 
-.checkLabType <- function(labs){
-  
-  check_type <- class(labs)
-  
-  if(!any(check_type %in% c("tbl_df", "tbl", "data.frame") == TRUE) == TRUE){
-    
-    stop("Label object must be class tibble or data frame")
-    
-  }
-  
-}
-
-#' Checks that all variables provided to `vars` exist in `var_labs`.
-#' 
-#' @param vars Character vector of variable names
-#' @param var_labs Tibble with two columns: 'variable' containing the 
-#' names of the variables specified in `vars`, and 'var_label' containing the
-#' replacement labels for these variables.
-#' 
-#' @return Returns an error if all variables provided to `vars` do not exist in
-#' `var_labs`. Otherwise nothing is returned.
-#' 
-#' @noRd
-.checkLabsMatchVars <- function(vars, var_labs){
-  
-  missing_vars <- vars[!vars %in% var_labs$variable]
-  
-  if(length(missing_vars > 0)){
-    
-    stop(
-      cat("The following variables are specifed in `vars` but do not have a 
-         corresponding label provided in `var_labs`\n\n", missing_vars))
-    
-  }
-  
-}
-
-#' Checks that all categorical variables provided to `stats_cat` have 
-#' corresponding labels provided in `cat_labs`
-#' 
-#' @param stats_cat Object returned from .formatCatStats
-#' @param cat_labs Tibble with three columns: 'variable' containing the 
-#' names of the categorical variables specified in `vars`, 'category' 
-#' containing the categories of these variabels, and "cat_label" containing
-#' the replacement category labels for these variables.
-#' 
-#' @return Returns an error if labels have not been provided for all levels of
-#' all categorical variables. 
-#' 
-#' @importFrom dplyr left_join %>% filter 
-#' 
-#' @noRd
-.checkLabsMatchCats <- function(stats_cat, cat_labs){
-  
-  category <- cat_label <- NULL
-  
-  test_cats <- left_join(stats_cat, cat_labs, by = c("variable", "category"))
-  
-  missing_cats <- test_cats %>% 
-    dplyr::filter(!is.na(category) & is.na(cat_label))
-  
-  if(length(missing_cats > 0)){
-    
-    stop(
-      "The following categorical variables are included in 'vars' 
-      but do not have a corresponding labels for all categories provided in 
-      `cat_labs`\n\n")
-    
-    print(missing_cats)
-    
-  }
-  
-}
-
-#' Checks that the columns provided in labs contain all and only those provided
-#' in `required_cols`
-#' 
-#' @param labs Object provided either to var_labs, cat_labs or coh_labs
-#' @param n_col Integer specifying the required number of columns
-#' @param required_cols Character vector specifying the required column names
-#' 
-#' @return Returns an error if number and names of columns does not match that
-#' specified
-#' 
-#' noRd
-.checkLabCols <- function(labs, n_col, required_cols){
-  
-  check_cols <- all(required_cols %in% colnames(labs))
-  
-  if(check_cols == FALSE){
-    
-    stop(
-      paste0("Labels object must be a tibble containing ", n_col, 
-             " columns: ", paste0(required_cols, collapse = ", ")))
-    
-  }
-  
-}
 
 #' Makes character vector of cohorts present within `stats`
 #' 
