@@ -69,20 +69,70 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <- 
     stats_cat <- stats_cont <- old_var <- NULL
   
+  previous 650 lines
   
   .checks()
   .checkVarsInStats()
+  stats_sub <- .subsetVars()
+  
   
 
+  mutate(perc_valid = signif(perc_valid, round_digits))
 
+  #stats_types <- .checkAvailStats(stats)
   
-  stats_types <- .checkAvailStats(stats)
+  #avail_stats <- .splitStatsVars(stats, stats_types)
   
-  avail_stats <- .splitStatsVars(stats, stats_types)
+  #vars_list <- .splitTargetVars(avail_stats, vars)
   
-  .checkVarsAvail(unlist(avail_stats), vars)
   
-  vars_list <- .splitTargetVars(avail_stats, vars)
+  
+  #' Performs the initial formatting of categorical statistics
+  #' 
+  #' @param stats Exported object from dh.getStats
+  #' @param vars Character vector of variable names
+  #' @param inc_missing Boolean specifying whether to return missing values in
+  #' the output. Use TRUE for yes and FALSE for no.
+  #' 
+  #' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
+  #' 'value' and 'data_type'
+  #' 
+  #' @importFrom dplyr %>% filter mutate select
+  #' 
+  #' @noRd
+  #' 
+  .formatCatStats <- function(stats_sub){
+    
+   if(perc_denom == "total"){
+      
+      out <- out %>%
+        mutate(value = paste0(value, " (", perc_total, ")")) 
+      
+    } else if(perc_denom == "valid"){
+      
+      out <- out %>%
+        mutate(value = ifelse(
+          !is.na(category), 
+          paste0(value, " (", perc_valid, ")") ,
+          paste0(value, " (", perc_total, ")"))) 
+      
+    }
+    
+    if(inc_missing == FALSE){
+      
+      out <- out %>%
+        dplyr::filter(!is.na(category))
+      
+    } 
+    
+    out <- out  %>% 
+      dplyr::select(cohort, variable, category, value) %>%
+      mutate(data_type = "cat") %>%
+      mutate(category = ifelse(is.na(category), "missing", as.character(category)))
+    
+    return(out)
+    
+  }
   
   if(length(stats$categorical) > 0) {
   
@@ -295,7 +345,17 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
 }
 
-
+#' Subsets `stats` to include only variables specified in `vars`
+#' 
+#' @return Subset of `stats`
+#' 
+#' @noRd
+.subsetVars <- function(){
+  
+  stats %>%
+    map(~dplyr::filter(., variable %in% vars))
+  
+}
 
 
 
@@ -358,33 +418,6 @@ if(length(stats$categorical) > 0 & length(stats$continuous) > 0 ){
   
 }
 
-#' Checks that all the variable names provided to `vars` are available in the
-#' object provided to `stats`
-#' 
-#' @param source_vars Vector of variables names extracted from `stats`
-#' @param target_vars Vector of variable names provided to `vars`
-#' 
-#' @return Returns an error if all variables in `target_vars` are not included
-#' in `source_vars`, otherwise nothing is returned.
-#' 
-#' @noRd
-.checkVarsAvail <- function(source_vars, target_vars){
-  
-  avail <- target_vars[target_vars %in% source_vars]
-  not_avail <- target_vars[!target_vars %in% source_vars]
-  
-  if(length(not_avail > 0)){
-    
-    stop(
-      paste0(
-        "The following variables provided in `vars` are not present in the
-      statistics provided in `stats`\n\n", 
-        paste0(not_avail, collapse = ", "))
-    )
-    
-  }
-  
-}
 
 #' Divides variable names provided to `vars` into categorical and continuous 
 #' using the variable types in `stats`
@@ -415,58 +448,7 @@ var_types <- c("categorical", "continuous")
   
 }
 
-#' Performs the initial formatting of categorical statistics
-#' 
-#' @param stats Exported object from dh.getStats
-#' @param vars Character vector of variable names
-#' @param inc_missing Boolean specifying whether to return missing values in
-#' the output. Use TRUE for yes and FALSE for no.
-#' 
-#' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
-#' 'value' and 'data_type'
-#' 
-#' @importFrom dplyr %>% filter mutate select
-#' 
-#' @noRd
-#' 
-.formatCatStats <- function(stats, vars, inc_missing, round_digits, perc_denom){
-  
-  variable <- value <- perc_valid <- cohort <- category <- perc_total <- NULL
-  
-  out <- stats$categorical %>%
-    dplyr::filter(variable %in% vars) %>%
-    mutate(perc_valid = signif(perc_valid, round_digits))
-  
-  if(perc_denom == "total"){
-    
-    out <- out %>%
-    mutate(value = paste0(value, " (", perc_total, ")")) 
-    
-  } else if(perc_denom == "valid"){
-    
-    out <- out %>%
-      mutate(value = ifelse(
-        !is.na(category), 
-        paste0(value, " (", perc_valid, ")") ,
-        paste0(value, " (", perc_total, ")"))) 
-    
-  }
-    
-  if(inc_missing == FALSE){
-    
-    out <- out %>%
-     dplyr::filter(!is.na(category))
-    
-  } 
-  
-  out <- out  %>% 
-    dplyr::select(cohort, variable, category, value) %>%
-    mutate(data_type = "cat") %>%
-    mutate(category = ifelse(is.na(category), "missing", as.character(category)))
-  
-  return(out)
-  
-}
+
 
 #' Performs the initial formatting of continuous statistics
 #' 
