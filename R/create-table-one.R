@@ -35,7 +35,7 @@ dh.createTableOne(
 #' 'cohort' or 'both'. Use 'rows' to return cohorts as rows and variable as 
 #' columns, or use 'cols' to return cohorts as columns and variables as rows.
 #' Defauls is "col".
-#' @param cont_stats Character specifying which summary statistic to return
+#' @param cont_format Character specifying which summary statistic to return
 #' for continuous stats. Use 'med_iqr' to return the median and interquartile
 #' range, use 'mean_sd' to return the mean and standard deviation. Default is
 #' "med_iqr".
@@ -61,7 +61,7 @@ dh.createTableOne(
 #' @export
 dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL, 
                               cat_labs = NULL, type = NULL, coh_labs = NULL, 
-                              coh_direction = "cols", cont_stats = "med_iqr", 
+                              coh_direction = "cols", cont_format = "med_iqr", 
                               inc_missing = NULL, round_digits = 2, 
                               perc_denom = NULL){
   
@@ -71,34 +71,40 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   previous 650 lines
   
-  .checks()
-  .checkVarsInStats()
-  stats_sub <- .subsetVars()
+  .checkArgs()
   
-  if(length(stats$categorical) > 0) {
+  .checkVarsInStats()
+  
+  stats_sub_vars <- .subsetVars()
+  
+  stats_sub_coh <- .subsetCoh()
+  
+  if(nrow(stats$categorical) > 0) {
     
     stats_cat <- .formatCatStats()
     
+    if(!is.null(cat_labs)){
+      
+      .checkLabsMatchCats()
+      cat_labs <- .cleanLabs(cat_labs, c("variable", "category", "cat_label"))
+      
+      stats_cat <- stats_cat %>%
+        left_join(., cat_labs, by = c("variable", "category")) %>%
+        dplyr::select(cohort, variable, category = cat_label, value)
+      
+    }
+    
   }
   
-  if(length(stats$continuous) > 0) {
+  if(nrow(stats$continuous) > 0) {
     
     stats_cont <- .formatContStats()
     
   }
- 
-  if(!is.null(cat_labs)){
-    
-    .checkLabsMatchCats()
-    cat_labs <- .cleanLabs(cat_labs, c("variable", "category", "cat_label"))
-    
-    stats_cat <- stats_cat %>%
-      left_join(., cat_labs, by = c("variable", "category")) %>%
-      dplyr::select(cohort, variable, category = cat_label, value)
-    
-  }
   
-  out <- bind_rows(stats_cat, stats_cont)
+  out <- bind_rows(stats_cat, stats_cont) %>%
+    dplyr::mutate(variable = factor(variable, levels = vars)) %>%
+    arrange(variable)
   
   if(!is.null(var_labs)){
     
@@ -107,24 +113,18 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     out <- out %>%
       left_join(., var_labs, by = "variable") %>%
       dplyr::select(cohort, variable = var_label, category, value)
-      
-      mutate(old_var = variable) %>%
-      mutate(variable = var_label) %>%
-      dplyr::select(-var_label)
+
     
   }
   
   if(!is.null(coh_labs)){
     
-    .checkLabsMatchCoh(stats, coh_labs, stats_types)
+    coh_labs <- .cleanLabs(coh_labs, c("cohort", "cohort_labs"))
     
     out <- left_join(out, coh_labs, by = "cohort") %>%
-      dplyr::select(-cohort) %>%
-      dplyr::rename(cohort = coh_label) %>%
-      dplyr::select(cohort, everything())
+      dplyr::select(cohort = cohort_labs, variable, category, value) 
     
   }
-  
   
   if(inc_missing == FALSE){
     
@@ -133,142 +133,23 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     
   } 
   
-
-  
-
-
-  
-  
-  out$category
-
-  mutate(perc_valid = signif(perc_valid, round_digits))
-
-  
-
-  
-
-  
-  #stats_types <- .checkAvailStats(stats)
-  
-  #avail_stats <- .splitStatsVars(stats, stats_types)
-  
-  #vars_list <- .splitTargetVars(avail_stats, vars)
-  
-  
-  
- 
-  
-
-  
-
-  
-  %>%
-    mutate(variable = factor(variable, levels = vars, ordered = T)) %>%
-    arrange(variable)
-  
-
-  
-
-  
-
-  
-  if(type == "combined"){
+  if(coh_direction == "cols"){
     
     out <- out %>%
-      dplyr::filter(cohort == "combined") %>%
-      dplyr::select(-data_type, -old_var)
-    
-  } else if(type == "cohort"){
-    
-    out <- out %>%
-      dplyr::filter(cohort != "combined")
-    
-  }
-    
-    if(type %in% c("cohort", "both")){
+      pivot_wider(
+        names_from = cohort,
+        values_from = value)
       
-      if(coh_direction == "cols"){
-
-        if(inc_missing == FALSE){
-          
-          out <- out %>%
-            pivot_wider(
-              names_from = cohort,
-              values_from = value)
-          
-        } else if(inc_missing == TRUE){
-          
-          out_cat <- out %>%
-            dplyr::filter(data_type == "cat") %>%
-            dplyr::select(-miss_n_perc) %>%
-            mutate(category = ifelse(is.na(category), "miss_n_perc", category)) %>%
-            pivot_wider(
-              names_from = cohort,
-              values_from = value)
-          
-          out_cont <- out %>%
-            dplyr::filter(data_type == "cont") %>%
-             pivot_wider(
-              names_from = cohort,
-              values_from = value)
-          
-          out <- bind_rows(out_cat, out_cont) 
-          
-        }
-        
-        out <- out %>%
-          dplyr::select(-data_type)
-        
-        } else if(coh_direction == "rows"){
-        
-        if(inc_missing == FALSE){
-          
+  } else if(coh_direction == "rows"){
+      
     out <- out %>%
-      dplyr::select(-data_type) %>%
       pivot_wider(
         names_from = c(variable, category),
         values_from = value) 
     
-        } else if(inc_missing == TRUE){
-          
-          out_cat <- out %>%
-            dplyr::filter(data_type == "cat") %>%
-            mutate(category = ifelse(is.na(category), "miss_n_perc", category)) %>%
-            dplyr::select(-miss_n_perc) 
-          
-          out_cont <- out %>%
-            dplyr::filter(data_type == "cont") %>%
-            dplyr::select(-category) %>%
-            pivot_longer(
-              cols = c(value, miss_n_perc), 
-              names_to = "category", 
-              values_to = "value")
-          
-          out <- bind_rows(out_cat, out_cont) %>%
-            dplyr::select(-data_type) %>%
-            mutate(old_var = factor(old_var, levels = vars, ordered = TRUE)) %>%
-            arrange(old_var)
-          
-        }
-          
-        }
-    
     }
-      
-  avail_coh <- .availCoh(stats, stats_types)
   
-  avail_coh <- c(avail_coh[!avail_coh == "combined"], "combined")
-  
-  if(coh_direction == "rows"){
-    
-  out <- out %>%
-    mutate(cohort = factor(cohort, levels = avail_coh, ordered = TRUE))
-  
-  } 
-  
- # out <- out %>%
-#    dplyr::select(-old_var)
-  
+
   return(out)
   
 }
@@ -279,7 +160,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @return Nothing if checks pass, else throws an error
 #' 
 #' @noRd
-.checks <- function(){
+.checkArgs <- function(){
   
   assert_list(stats)
   assert_character(vars)
@@ -319,9 +200,6 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
 }
   
-  
-  
-
 #' Checks that all the variable names provided to `vars` are available in the
 #' object provided to `stats`
 #' 
@@ -365,6 +243,29 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
 }
 
+#' Subset stats based on argument to `type`
+#' 
+#' @noRd
+.subsetCoh <- function(){
+  
+  if(type == "combined"){
+    
+    out <- stats_sub_vars %>%
+    map(~dplyr::filter(., cohort == "combined"))
+    
+    } else if(type == "cohort"){
+  
+      out <- stats_sub_vars %>%
+    map(~dplyr::filter(., cohort != "combined"))
+  
+    } else if(type == "both"){
+    
+      out <- stats_sub_vars
+      
+    }
+  
+}
+  
 #' Performs the initial formatting of categorical statistics
 #' 
 #' 
@@ -377,14 +278,18 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' 
 .formatCatStats <- function(){
   
+  out <- stats_sub_coh$categorical %>%
+    mutate(
+      across(c(perc_valid, perc_total), ~signif(., round_digits))) 
+ 
   if(perc_denom == "total"){
     
-    out <- stats_sub$categorical %>%
+    out <- out %>%
       mutate(value = paste0(value, " (", perc_total, ")")) 
     
   } else if(perc_denom == "valid"){
     
-    out <- stats_sub$categorica %>%
+    out <- out %>%
       mutate(value = ifelse(
         !is.na(category), 
         paste0(value, " (", perc_valid, ")") ,
@@ -393,9 +298,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   }
   
   out <- out  %>% 
-    dplyr::select(cohort, variable, category, value) %>%
-    mutate(
-      category = ifelse(is.na(category), "missing", as.character(category)))
+    dplyr::select(cohort, variable, category, value)
   
   return(out)
   
@@ -420,18 +323,24 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @noRd
 .formatContStats <- function(){
   
-  out <- stats_sub$continuous %>%
+  out <- stats_sub_coh$continuous %>%
+    mutate(
+      across(
+        c(mean:perc_95, missing_perc), ~signif(., round_digits))) 
+  
+  out <- out %>%
     pivot_longer(
       cols = c(valid_n, missing_n),
       names_to = "category", 
-      values_to = "missing") 
+      values_to = "missing") %>%
+    mutate(category = ifelse(category == "missing_n", NA, cont_format))
   
-  if(cont_stats == "mean_sd"){
+  if(cont_format == "mean_sd"){
     
     out <- out %>%
       mutate(value = paste0(mean, " \u00b1 ", std.dev)) 
     
-  } else if(cont_stats == "med_iqr"){
+  } else if(cont_format == "med_iqr"){
     
     out <- out %>%
       mutate(value = paste0(perc_50, " (", perc_25, ",", perc_75, ")")) 
@@ -439,12 +348,9 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   }
   
   out <- out %>%
-    mutate(value = ifelse(category == "missing_n", 
+    mutate(value = ifelse(is.na(category), 
                           paste0(missing, " (", missing_perc, ")"), value)) %>%
-    dplyr::select(cohort, variable, category, value) %>%
-    mutate(category = case_when(
-      category == "valid_n" ~ "value",
-      category == "missing_n" ~ "missing"))
+    dplyr::select(cohort, variable, category, value)
   
   return(out)
   
@@ -497,117 +403,3 @@ out <- labs %>%
 return(out)
 
 }
-
-
-#' Identifies whether there are both categorical and continuous stats
-#' 
-#' @param Exported object from dh.getStats
-#' 
-#' @return Character vector containing the names of available stats objects
-#' 
-#' @noRd
-.checkAvailStats <- function(stats){
-
-  var_types <- NULL
-
-if(length(stats$categorical) > 0 & length(stats$continuous) > 0 ){
-
-  var_types <- c("categorical", "continuous")  
-
-} else if (length(stats$categorical) > 0 & length(stats$continuous) == 0 ){
-  
-  var_types <- "categorical"
-  
-} else if (length(stats$categorical) == 0 & length(stats$continuous) > 0 ){
-  
-  var_types <- "continuous"
-  
-}
-  
-}
-
-
-#' Extracts variables names from `stats` object.
-#' 
-#' @param Exported object from dh.getStats
-#' 
-#' @return List with two elements named 'categorical' and 'continuous' 
-#' containing character vectors of respective variable names.
-#' 
-#' @importFrom dplyr %>% pull
-#' @importFrom purrr map set_names
-#' 
-#' @noRd
-.splitStatsVars <- function(stats, var_types){
-  
-  variable <- NULL
-  
-
-  
-  out <- var_types  %>%
-    map(function(x){
-      
-      stats[[x]] %>% pull(variable) %>% unique
-      
-    }) %>%
-    set_names(var_types)
-  
-  return(out)
-  
-}
-
-
-#' Divides variable names provided to `vars` into categorical and continuous 
-#' using the variable types in `stats`
-#' 
-#' @param stats_vars Output from .splitStatsVars
-#' @param target_vars Vector of variable names provided to `vars`
-#' 
-#' @return List with two elements named 'categorical' and 'continuous' 
-#' containing character vectors of respective variable names.
-#' 
-#' @importFrom dplyr %>%
-#' @importFrom purrr map set_names
-#' 
-#' @noRd
-.splitTargetVars <- function(stats_vars, target_vars){
-                             
-var_types <- c("categorical", "continuous")
-  
-  out <- var_types %>%
-    map(function(x){
-      
-      stats_vars[[x]][stats_vars[[x]] %in% target_vars]    
-      
-    }) %>%
-    set_names(var_types)
-  
-  return(out)
-  
-}
-
-
-
-#' Makes character vector of cohorts present within `stats`
-#' 
-#' @param stats Exported object from dh.getStats
-#' 
-#' @return Character vector of cohort names
-#' 
-#' @importFrom dplyr %>% pull
-#' 
-#' @noRd
-.availCoh <- function(stats, stats_types){
-  
-  cohort <- NULL 
-  
-out <- stats_types %>%
-  map(function(x){stats[[x]] %>% pull(cohort) %>% unique}) %>%
-  unlist %>%
-  unique
-
-return(out)
-
-}
-
-
