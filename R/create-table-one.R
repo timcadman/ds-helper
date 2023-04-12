@@ -75,7 +75,16 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   .checkVarsInStats()
   stats_sub <- .subsetVars()
   
+  if(length(stats$categorical) > 0) {
+    
+    stats_cat <- .formatCatStats()
+    
+  }
   
+  
+ 
+  
+  out$category
 
   mutate(perc_valid = signif(perc_valid, round_digits))
 
@@ -87,8 +96,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     
   } 
   
-  %>%
-    mutate(category = ifelse(is.na(category), "missing", as.character(category)))
+
   
   #stats_types <- .checkAvailStats(stats)
   
@@ -100,12 +108,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
  
   
-  if(length(stats$categorical) > 0) {
-  
-    stats_cat <- .formatCatStats(stats, vars_list$categorical, inc_missing, 
-                               round_digits, perc_denom)
-  
-  }
+
   
   if(length(stats$continuous) > 0) {
     
@@ -325,10 +328,6 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 
 #' Performs the initial formatting of categorical statistics
 #' 
-#' @param stats Exported object from dh.getStats
-#' @param vars Character vector of variable names
-#' @param inc_missing Boolean specifying whether to return missing values in
-#' the output. Use TRUE for yes and FALSE for no.
 #' 
 #' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
 #' 'value' and 'data_type'
@@ -355,11 +354,64 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   }
   
   out <- out  %>% 
-    dplyr::select(cohort, variable, category, value) 
+    dplyr::select(cohort, variable, category, value) %>%
+    mutate(
+      category = ifelse(is.na(category), "missing", as.character(category)))
   
   return(out)
   
 }
+
+#' Performs the initial formatting of continuous statistics
+#' 
+#' @param stats Exported object from dh.getStats
+#' @param vars Character vector of variable names
+#' @param cont_stats Character specifying which summary statistic to return
+#' for continuous stats. Use 'med_iqr' to return the median and interquartile
+#' range, use 'mean_sd' to return the mean and standard deviation.
+#' @param inc_missing Boolean specifying whether to return missing values in
+#' the output. Use TRUE for yes and FALSE for no.
+#' 
+#' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
+#' 'value' and 'data_type'. If `inc_missing` is TRUE contains an sixth column
+#' 'miss_n_perc'
+#' 
+#' @importFrom dplyr %>% filter mutate select
+#' 
+#' @noRd
+.formatContStats <- function(stats_sub){
+  
+  out <- stats_sub$continuous %>%
+    pivot_longer(
+      cols = c(valid_n, missing_n),
+      names_to = "category", 
+      values_to = "missing") 
+  
+  if(cont_stats == "mean_sd"){
+    
+    out <- out %>%
+      mutate(value = paste0(mean, " \u00b1 ", std.dev)) 
+    
+  } else if(cont_stats == "med_iqr"){
+    
+    out <- out %>%
+      mutate(value = paste0(perc_50, " (", perc_25, ",", perc_75, ")")) 
+    
+  }
+  
+  out <- out %>%
+    mutate(value = ifelse(category == "missing_n", 
+                          paste0(missing, " (", missing_perc, ")"), value)) %>%
+    dplyr::select(cohort, variable, category, value) %>%
+    mutate(category = case_when(
+      category == "valid_n" ~ "value",
+      category == "missing_n" ~ "missing"))
+  
+  return(out)
+  
+}
+
+
 
 
 
@@ -451,71 +503,6 @@ var_types <- c("categorical", "continuous")
 }
 
 
-
-#' Performs the initial formatting of continuous statistics
-#' 
-#' @param stats Exported object from dh.getStats
-#' @param vars Character vector of variable names
-#' @param cont_stats Character specifying which summary statistic to return
-#' for continuous stats. Use 'med_iqr' to return the median and interquartile
-#' range, use 'mean_sd' to return the mean and standard deviation.
-#' @param inc_missing Boolean specifying whether to return missing values in
-#' the output. Use TRUE for yes and FALSE for no.
-#' 
-#' @return Tibble containing 5 columns: 'cohort', 'variable', 'category', 
-#' 'value' and 'data_type'. If `inc_missing` is TRUE contains an sixth column
-#' 'miss_n_perc'
-#' 
-#' @importFrom dplyr %>% filter mutate select
-#' 
-#' @noRd
-.formatContStats <- function(stats, vars, cont_stats, inc_missing, round_digits){
-  
-  variable <- std.dev <- perc_50 <- perc_25 <- perc_75 <- perc_95 <- missing_n <-
-    missing_perc <- cohort <- category <- value <- miss_n_perc <- 
-    data_type <- valid_n <- NULL
-  
-  out <- stats$continuous %>%
-    dplyr::filter(variable %in% vars) %>%
-    mutate(across(c(mean:perc_95, missing_perc), ~signif(., round_digits))) %>%
-    mutate(data_type = "cont") %>%
-    pivot_longer(
-      cols = c(valid_n, missing_n),
-      names_to = "category", 
-      values_to = "missing") 
-  
-  if(cont_stats == "mean_sd"){
-    
-    out <- out %>%
-      mutate(value = paste0(mean, " \u00b1 ", std.dev)) 
-    
-  } else if(cont_stats == "med_iqr"){
-    
-    out <- out %>%
-    mutate(value = paste0(perc_50, " (", perc_25, ",", perc_75, ")")) 
-      
-  }
-  
-  if(inc_missing == TRUE){
-    
-    out <- out %>%
-      mutate(value = ifelse(category == "missing_n", 
-                            paste0(missing, " (", missing_perc, ")"), value)) %>%
-      dplyr::select(cohort, variable, category, value, miss_n_perc, data_type) %>%
-      mutate(category = case_when(
-        category == "valid_n" ~ "value",
-        category == "missing_n" ~ "missing"))
-    
-  } else if(inc_missing == FALSE){
-    
-    out <- out %>% 
-      dplyr::select(cohort, variable, category, value, data_type)
-    
-  }
-  
-  return(out)
-  
-}
 
 #' Checks whether the object provided is either a tibble or data frame.
 #' 
