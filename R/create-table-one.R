@@ -71,7 +71,9 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   
   .checks()
+  .checkVarsInStats()
   
+
 
   
   stats_types <- .checkAvailStats(stats)
@@ -261,6 +263,40 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   assert_choice(perc_denom, c("valid", "total"))
   
 }
+
+#' Checks that all the variable names provided to `vars` are available in the
+#' object provided to `stats`
+#' 
+#' 
+#' @return Nothing if all variable provided in `vars` exist in `stats`, else
+#' throws an error.
+#' 
+#' @noRd
+.checkVarsInStats <- function(){
+  
+  stats_vars <- stats %>%
+    map(~.x$variable) %>%
+    unlist %>%
+    unique
+  
+  avail <- vars[vars %in% stats_vars]
+  not_avail <- vars[!vars %in% stats_vars]
+  
+  if(length(not_avail > 0)){
+    
+    stop(
+      paste0(
+        "The following variables provided in `vars` are not present in the
+      statistics provided in `stats`\n\n", 
+        paste0(not_avail, collapse = ", "))
+    )
+    
+  }
+  
+}
+
+
+
 
 
 
