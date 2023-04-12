@@ -60,7 +60,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     stats_cat <- stats_cont <- old_var <- cohort_labs <- stats_sub_coh <- 
     stats_sub_vars <- NULL
   
-  .checkArgs(stats, type, inc_missing, perc_denom, cat_labs, var_labs,
+  .checkArgs(stats, vars, type, inc_missing, perc_denom, cat_labs, var_labs,
              coh_labs, coh_direction, cont_format)
   
   .checkVarsInStats(stats, vars)
