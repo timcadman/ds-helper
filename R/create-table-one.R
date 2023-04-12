@@ -151,8 +151,8 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' assert_logical assert_data_frame assert_subset
 #' 
 #' @noRd
-.checkArgs <- function(stats, type, inc_missing, perc_denom, cat_labs, var_labs,
-                       coh_labs, coh_direction, cont_format){
+.checkArgs <- function(stats, vars, type, inc_missing, perc_denom, cat_labs, 
+                       var_labs, coh_labs, coh_direction, cont_format){
   
   assert_list(stats)
   assert_character(vars)
