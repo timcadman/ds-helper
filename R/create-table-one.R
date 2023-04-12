@@ -31,7 +31,7 @@
 #' "med_iqr".
 #' @param inc_missing Boolean specifying whether to return missing values in
 #' the output. Use TRUE for yes and FALSE for no.
-#' @param round_digits Optionally, the number of decimal places to round output 
+#' @param sig_digits Optionally, the number of decimal places to round output 
 #' to. Default is 2.
 #' @param perc_denom The denominator for percentages. Either 'valid' for valid
 #' cases or 'total' for total cases.
@@ -52,7 +52,7 @@
 dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL, 
                               cat_labs = NULL, type = NULL, coh_labs = NULL, 
                               coh_direction = "cols", cont_format = "med_iqr", 
-                              inc_missing = NULL, round_digits = 2, 
+                              inc_missing = NULL, sig_digits = 2, 
                               perc_denom = NULL){
   
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
@@ -60,21 +60,22 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     stats_cat <- stats_cont <- old_var <- cohort_labs <- stats_sub_coh <- 
     stats_sub_vars <- NULL
   
-  .checkArgs()
+  .checkArgs(stats, type, inc_missing, perc_denom, cat_labs, var_labs,
+             coh_labs, coh_direction, cont_format)
   
-  .checkVarsInStats()
+  .checkVarsInStats(stats, vars)
   
-  stats_sub_vars <- .subsetVars()
+  stats_sub_vars <- .subsetVars(stats)
   
-  stats_sub_coh <- .subsetCoh()
+  stats_sub_coh <- .subsetCoh(type, stats_sub_vars)
   
   if(nrow(stats$categorical) > 0) {
     
-    stats_cat <- .formatCatStats()
+    stats_cat <- .formatCatStats(stats_sub_coh, perc_denom, sig_digits)
     
     if(!is.null(cat_labs)){
       
-      .checkLabsMatchCats()
+      .checkLabsMatchCats(stats_cat, cat_labs)
       cat_labs <- .cleanLabs(cat_labs, c("variable", "category", "cat_label"))
       
       stats_cat <- stats_cat %>%
@@ -87,7 +88,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   if(nrow(stats$continuous) > 0) {
     
-    stats_cont <- .formatContStats()
+    stats_cont <- .formatContStats(stats_sub_coh, cont_format, sig_digits)
     
   }
   
@@ -97,10 +98,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   if(!is.null(var_labs)){
     
-    var_labs <- .cleanLabs(var_labs, c("variable", "var_label"))
+    var_labs_clean <- .cleanLabs(var_labs, c("variable", "var_label"))
     
     out <- out %>%
-      left_join(., var_labs, by = "variable") %>%
+      left_join(., var_labs_clean, by = "variable") %>%
       dplyr::select(cohort, variable = var_label, category, value)
 
     
@@ -237,21 +238,21 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' Subset stats based on argument to `type`
 #' 
 #' @noRd
-.subsetCoh <- function(type, stats_sub_vars){
+.subsetCoh <- function(type, stats){
   
   if(type == "combined"){
     
-    out <- stats_sub_vars %>%
+    out <- stats %>%
     map(~dplyr::filter(., cohort == "combined"))
     
     } else if(type == "cohort"){
   
-      out <- stats_sub_vars %>%
+      out <- stats %>%
     map(~dplyr::filter(., cohort != "combined"))
   
     } else if(type == "both"){
     
-      out <- stats_sub_vars
+      out <- stats
       
     }
   
@@ -267,13 +268,13 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' 
 #' @noRd
 #' 
-.formatCatStats <- function(stats_sub_coh, perc_denom){
+.formatCatStats <- function(stats, perc_denom, sig_digits){
   
   perc_valid <- perc_total <- value <- category <- cohort <- variable <- NULL
   
-  out <- stats_sub_coh$categorical %>%
+  out <- stats$categorical %>%
     mutate(
-      across(c(perc_valid, perc_total), ~signif(., round_digits))) 
+      across(c(perc_valid, perc_total), ~signif(., sig_digits))) 
  
   if(perc_denom == "total"){
     
@@ -314,15 +315,15 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @importFrom dplyr %>% filter mutate select
 #' 
 #' @noRd
-.formatContStats <- function(stats_sub_coh, cont_format){
+.formatContStats <- function(stats, cont_format, sig_digits){
   
   perc_95 <- missing_perc <- valid_n <- missing_n <- category <- std.dev <-
     perc_50 <- perc_25 <- perc_75 <- value <- cohort <- variable <- NULL
   
-  out <- stats_sub_coh$continuous %>%
+  out <- stats$continuous %>%
     mutate(
       across(
-        c(mean:perc_95, missing_perc), ~signif(., round_digits))) 
+        c(mean:perc_95, missing_perc), ~signif(., sig_digits))) 
   
   out <- out %>%
     pivot_longer(
@@ -362,7 +363,9 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @importFrom dplyr left_join %>% filter 
 #' 
 #' @noRd
-.checkLabsMatchCats <- function(stats_cat, cat_labs, category, cat_label){
+.checkLabsMatchCats <- function(stats_cat, cat_labs){
+  
+  category <- cat_label <- NULL
   
   test_cats <- left_join(stats_cat, cat_labs, by = c("variable", "category")) %>%
     dplyr::filter(category != "missing")
@@ -391,9 +394,9 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 .cleanLabs <- function(labs, cols){
   
 out <- labs %>%
-  distinct %>%
-  dplyr::select(all_of(cols))
-
+  dplyr::select(all_of(cols)) %>%
+  distinct
+  
 return(out)
 
 }

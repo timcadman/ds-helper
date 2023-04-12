@@ -14,7 +14,7 @@ dh.createTableOne(
   coh_direction = "cols",
   cont_format = "med_iqr",
   inc_missing = NULL,
-  round_digits = 2,
+  sig_digits = 2,
   perc_denom = NULL
 )
 }
@@ -54,7 +54,7 @@ range, use 'mean_sd' to return the mean and standard deviation. Default is
 \item{inc_missing}{Boolean specifying whether to return missing values in
 the output. Use TRUE for yes and FALSE for no.}
 
-\item{round_digits}{Optionally, the number of decimal places to round output 
+\item{sig_digits}{Optionally, the number of decimal places to round output 
 to. Default is 2.}
 
 \item{perc_denom}{The denominator for percentages. Either 'valid' for valid
