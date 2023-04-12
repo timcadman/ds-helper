@@ -66,7 +66,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   .checkVarsInStats(stats, vars)
   
   stats_sub_vars <- .subsetVars(stats, vars)
-   
+  
   stats_sub_coh <- .subsetCoh(type, stats_sub_vars)
   
   if(nrow(stats$categorical) > 0) {
@@ -228,10 +228,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @return Subset of `stats`
 #' 
 #' @noRd
-.subsetVars <- function(stats, vars){
+.subsetVars <- function(stats, vars_to_keep){
   
   stats %>%
-    map(~dplyr::filter(., variable %in% vars))
+    map(~dplyr::filter(., variable %in% vars_to_keep))
   
 }
 
