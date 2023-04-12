@@ -114,6 +114,18 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     
   }
   
+  if(!is.null(coh_labs)){
+    
+    .checkLabsMatchCoh(stats, coh_labs, stats_types)
+    
+    out <- left_join(out, coh_labs, by = "cohort") %>%
+      dplyr::select(-cohort) %>%
+      dplyr::rename(cohort = coh_label) %>%
+      dplyr::select(cohort, everything())
+    
+  }
+  
+  
   if(inc_missing == FALSE){
     
     out <- out %>%
@@ -158,18 +170,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
 
   
-  if(!is.null(coh_labs)){
-    
-    .checkLabType(coh_labs)
-    .checkLabCols(coh_labs, 2, c("cohort", "coh_label"))
-    .checkLabsMatchCoh(stats, coh_labs, stats_types)
-    
-    out <- left_join(out, coh_labs, by = "cohort") %>%
-      dplyr::select(-cohort) %>%
-      dplyr::rename(cohort = coh_label) %>%
-      dplyr::select(cohort, everything())
-    
-  }
+
   
   if(type == "combined"){
     
@@ -303,7 +304,23 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 
   }
   
+  if(!is.null(coh_labs)){
+    
+    assert_data_frame(coh_labs)
+    assert_subset(c("cohort", "cohort_labs"), colnames(coh_labs))
+    
+    distinct_cohorts <- map(stats, ~.x$cohort) %>% 
+      unlist %>%
+      unique
+    
+    assert_subset(distinct_cohorts, coh_labs$cohort)
+    
   }
+  
+}
+  
+  
+  
 
 #' Checks that all the variable names provided to `vars` are available in the
 #' object provided to `stats`
@@ -593,29 +610,4 @@ return(out)
 
 }
 
-#' Checks that all cohorts contained within `stats` exist in `coh_labs`.
-#' 
-#' @param stats Exported object from dh.getStats
-#' @param coh_labs Tibble with two columns: 'cohort' containing the 
-#' names of the cohorts present in `stats`, and 'coh_label' containing the
-#' replacement labels for these cohorts
-#' 
-#' @return Returns an error if all cohorts present in `stats` do not exist in
-#' `coh_labs`. Otherwise nothing is returned.
-#' 
-#' @noRd
-.checkLabsMatchCoh <- function(stats, coh_labs, stats_types){
-  
-  avail_coh <- .availCoh(stats, stats_types)
-  
-  missing_coh_labs <- avail_coh[!avail_coh %in% coh_labs$cohort]
-  
-  if(length(missing_coh_labs > 0)){
-    
-    stop(
-      cat("The following cohorts are contained in `stats` but do not have a 
-         corresponding label provided in `coh_labs`\n\n", missing_coh_labs))
-    
-  }
-  
-}
+
