@@ -1,3 +1,13 @@
+dh.createTableOne(
+  stats = descriptives_all, 
+  vars = vars_ordered, 
+  var_labs = full.ref, 
+  cat_labs = sample_cat.ref,
+  type = "combined", 
+  inc_missing = TRUE, 
+  round_digits = 3, 
+  perc_denom = "valid")) 
+
 #' Creates tables in useful formats for including in manuscripts
 #'
 #' dh.getStats extracts key statistics and stores them in a clientside list. 
@@ -59,45 +69,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <- 
     stats_cat <- stats_cont <- old_var <- NULL
   
-  if (is.null(stats)) {
-    stop("`stats` must not be NULL.", call. = FALSE)
-  }
   
-  if (is.null(vars)) {
-    stop("`vars` must not be NULL.", call. = FALSE)
-  }
+  .checks()
+  
 
-  if (is.null(type)) {
-    stop("`type` must not be NULL.", call. = FALSE)
-  } 
-  
-  type <- arg_match(type, c("cohort", "combined", "both"))
-
-  if (is.null(coh_direction)) {
-    stop("`coh_direction` must not be NULL.", call. = FALSE)
-  } 
-  
-  coh_direction <- arg_match(coh_direction, c("rows", "cols"))
-
-  if (is.null(cont_stats)) {
-    stop("`cont_stats` must not be NULL.", call. = FALSE)
-  } 
-  
-  cont_stats <- arg_match(cont_stats, c("med_iqr", "mean_sd"))
-  
-  if (is.null(inc_missing)) {
-    stop("`inc_missing` must not be NULL.", call. = FALSE)
-  } 
-
-  if (is_bool(inc_missing) == FALSE){
-    stop("`inc_missing` must be either TRUE or FALSE")
-  }
-  
-  if (is.null(perc_denom)) {
-    stop("`perc_denom` must not be NULL.", call. = FALSE)
-  } 
-  
-  perc_denom <- arg_match(perc_denom, c("valid", "total"))
   
   stats_types <- .checkAvailStats(stats)
   
@@ -268,6 +243,27 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   return(out)
   
 }
+
+
+#' Performs argument checks
+#' 
+#' @return Nothing if checks pass, else throws an error
+#' 
+#' @noRd
+.checks <- function(){
+  
+  assert_list(stats)
+  assert_character(vars)
+  assert_choice(type, c("cohort", "combined", "both"))
+  assert_choice(coh_direction, c("rows", "cols"))
+  assert_choice(cont_stats, c("med_iqr", "mean_sd"))
+  assert_logical(inc_missing)
+  assert_choice(perc_denom, c("valid", "total"))
+  
+}
+
+
+
 
 #' Identifies whether there are both categorical and continuous stats
 #' 
