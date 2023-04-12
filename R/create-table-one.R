@@ -66,7 +66,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   .checkVarsInStats(stats, vars)
   
   stats_sub_vars <- .subsetVars(stats, vars)
-  
+   
   stats_sub_coh <- .subsetCoh(type, stats_sub_vars)
   
   if(nrow(stats$categorical) > 0) {
