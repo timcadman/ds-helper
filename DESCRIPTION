@@ -27,13 +27,12 @@ Imports:
   tibble,
   purrr,
   tidyr,
-  tidyselect,
   stringr,
-  meta,
   magrittr,
   rlang,
   DSI,
-  metafor
+  metafor,
+  checkmate
 Suggests:
   knitr,
   rmarkdown,
@@ -45,4 +44,4 @@ BugReports: https://github.com/lifecycle-project/ds-helper/issues/
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3

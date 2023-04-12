@@ -12,7 +12,7 @@ dh.createTableOne(
   type = NULL,
   coh_labs = NULL,
   coh_direction = "cols",
-  cont_stats = "med_iqr",
+  cont_format = "med_iqr",
   inc_missing = NULL,
   round_digits = 2,
   perc_denom = NULL
@@ -46,7 +46,7 @@ replacement labels for these cohorts.}
 columns, or use 'cols' to return cohorts as columns and variables as rows.
 Defauls is "col".}
 
-\item{cont_stats}{Character specifying which summary statistic to return
+\item{cont_format}{Character specifying which summary statistic to return
 for continuous stats. Use 'med_iqr' to return the median and interquartile
 range, use 'mean_sd' to return the mean and standard deviation. Default is
 "med_iqr".}

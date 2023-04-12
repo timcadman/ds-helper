@@ -1,13 +1,3 @@
-dh.createTableOne(
-  stats = descriptives_all, 
-  vars = vars_ordered, 
-  var_labs = full.ref, 
-  cat_labs = sample_cat.ref,
-  type = "combined", 
-  inc_missing = TRUE, 
-  round_digits = 3, 
-  perc_denom = "valid")) 
-
 #' Creates tables in useful formats for including in manuscripts
 #'
 #' dh.getStats extracts key statistics and stores them in a clientside list. 
@@ -67,9 +57,8 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <- 
-    stats_cat <- stats_cont <- old_var <- NULL
-  
-  previous 650 lines
+    stats_cat <- stats_cont <- old_var <- cohort_labs <- stats_sub_coh <- 
+    stats_sub_vars <- NULL
   
   .checkArgs()
   
@@ -148,25 +137,27 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
         values_from = value) 
     
     }
-  
 
   return(out)
   
 }
 
-
 #' Performs argument checks
 #' 
 #' @return Nothing if checks pass, else throws an error
 #' 
+#' @importFrom checkmate assert_list assert_character assert_choice 
+#' assert_logical assert_data_frame assert_subset
+#' 
 #' @noRd
-.checkArgs <- function(){
+.checkArgs <- function(stats, type, inc_missing, perc_denom, cat_labs, var_labs,
+                       coh_labs, coh_direction, cont_format){
   
   assert_list(stats)
   assert_character(vars)
   assert_choice(type, c("cohort", "combined", "both"))
   assert_choice(coh_direction, c("rows", "cols"))
-  assert_choice(cont_stats, c("med_iqr", "mean_sd"))
+  assert_choice(cont_format, c("med_iqr", "mean_sd"))
   assert_logical(inc_missing)
   assert_choice(perc_denom, c("valid", "total"))
   
@@ -208,7 +199,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' throws an error.
 #' 
 #' @noRd
-.checkVarsInStats <- function(){
+.checkVarsInStats <- function(stats, vars){
   
   stats_vars <- stats %>%
     map(~.x$variable) %>%
@@ -236,7 +227,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @return Subset of `stats`
 #' 
 #' @noRd
-.subsetVars <- function(){
+.subsetVars <- function(stats){
   
   stats %>%
     map(~dplyr::filter(., variable %in% vars))
@@ -246,7 +237,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' Subset stats based on argument to `type`
 #' 
 #' @noRd
-.subsetCoh <- function(){
+.subsetCoh <- function(type, stats_sub_vars){
   
   if(type == "combined"){
     
@@ -276,7 +267,9 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' 
 #' @noRd
 #' 
-.formatCatStats <- function(){
+.formatCatStats <- function(stats_sub_coh, perc_denom){
+  
+  perc_valid <- perc_total <- value <- category <- cohort <- variable <- NULL
   
   out <- stats_sub_coh$categorical %>%
     mutate(
@@ -321,7 +314,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @importFrom dplyr %>% filter mutate select
 #' 
 #' @noRd
-.formatContStats <- function(){
+.formatContStats <- function(stats_sub_coh, cont_format){
+  
+  perc_95 <- missing_perc <- valid_n <- missing_n <- category <- std.dev <-
+    perc_50 <- perc_25 <- perc_75 <- value <- cohort <- variable <- NULL
   
   out <- stats_sub_coh$continuous %>%
     mutate(
@@ -366,9 +362,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
 #' @importFrom dplyr left_join %>% filter 
 #' 
 #' @noRd
-.checkLabsMatchCats <- function(){
-  
-  category <- cat_label <- NULL
+.checkLabsMatchCats <- function(stats_cat, cat_labs, category, cat_label){
   
   test_cats <- left_join(stats_cat, cat_labs, by = c("variable", "category")) %>%
     dplyr::filter(category != "missing")
