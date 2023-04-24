@@ -69,6 +69,14 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   
   stats_sub_coh <- .subsetCoh(type, stats_sub_vars)
   
+  stats_cat <- tibble(
+    cohort = character(), 
+    variable = character(), 
+    category = character(), 
+    value = character())
+  
+  stats_cont <- stats_cat 
+  
   if(nrow(stats$categorical) > 0) {
     
     stats_cat <- .formatCatStats(stats_sub_coh, perc_denom, sig_digits)
