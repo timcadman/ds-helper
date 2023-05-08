@@ -65,7 +65,8 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = NULL, type = NULL,
   if(length(vars) == 1 & type == "keep"){
     
     ds.make(toAssign = paste0(df, "$", vars), "tmp_obj", datasources = conns)
-    ds.dataFrame(x = c(df, "tmp_obj"), newobj = df, datasources = conns)
+    ds.dataFrame(x = c(df, "tmp_obj"), newobj = df, datasources = conns, 
+                 stringsAsFactors = F)
     
     vars <- c(vars, "tmp_obj")
   }

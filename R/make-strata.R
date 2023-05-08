@@ -611,7 +611,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   ds.dataFrame(
     x = c(sorted_subset, "variable_suffix"),
     newobj = "subset_w_suffix",
-    datasources = conns
+    datasources = conns, 
+    stringsAsFactors = FALSE
   )
 
   vars_to_reshape <- c(var_to_subset, age_var)
@@ -671,7 +672,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     datasources = conns,
     newobj = "df_tmp",
     check.rows = FALSE,
-    check.names = FALSE
+    check.names = FALSE, 
+    stringsAsFactors = FALSE
   )
 
   ds.reShape(
