@@ -313,9 +313,34 @@ check with ds.class \n\n",
   ################################################################################
   # 8. Extract statistics
   ################################################################################
+  out_cat <- tibble(
+    "variable" = character(),     
+    "cohort" = character(),       
+    "category" = character(),     
+    "value" = double(),        
+    "cohort_n" = integer(),
+    "valid_n" = double(),        
+    "missing_n" = double(),            
+    "perc_valid" = double(),          
+    "perc_missing" = double(),         
+    "perc_total" = double())
   
-  out_cat <- list()
-  out_cont <- list()
+  out_cont <- tibble(
+    "variable" = character(),
+    "cohort" = character(),       
+    "mean" = numeric(),         
+    "std.dev" = numeric(),      
+    "perc_5" = numeric(),       
+    "perc_10" = numeric(),      
+    "perc_25" = numeric(),      
+    "perc_50" = numeric(),     
+    "perc_75" = numeric(),      
+    "perc_90" = numeric(),      
+    "perc_95" = numeric(),      
+    "valid_n" = numeric(),      
+    "cohort_n" = integer(),     
+    "missing_n" = double(),    
+    "missing_perc" = numeric())
   
   ## ---- Categorical ------------------------------------------------------------
   if (nrow(fact_ref) > 0) {

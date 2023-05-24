@@ -222,7 +222,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     left_join(., boole_ref, by = "boole_short") %>%
     dplyr::filter(enough_obs == FALSE)
 
-  if (nrow(failed_disclosure) > 1) {
+  if (nrow(failed_disclosure) >= 1) {
     warning(
       "The following subsets cannot be created as they would contain fewer observations
       than the disclosure filter value: \n\n",
@@ -611,7 +611,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   ds.dataFrame(
     x = c(sorted_subset, "variable_suffix"),
     newobj = "subset_w_suffix",
-    datasources = conns
+    datasources = conns, 
+    stringsAsFactors = FALSE
   )
 
   vars_to_reshape <- c(var_to_subset, age_var)
@@ -671,7 +672,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     datasources = conns,
     newobj = "df_tmp",
     check.rows = FALSE,
-    check.names = FALSE
+    check.names = FALSE, 
+    stringsAsFactors = FALSE
   )
 
   ds.reShape(

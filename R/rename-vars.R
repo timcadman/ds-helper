@@ -62,7 +62,8 @@ dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
   ds.dataFrame(
     x = c(df, names$newvar),
     newobj = df,
-    datasources = conns
+    datasources = conns, 
+    stringsAsFactors = F
   )
 
   dh.dropCols(

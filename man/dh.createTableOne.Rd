@@ -12,9 +12,9 @@ dh.createTableOne(
   type = NULL,
   coh_labs = NULL,
   coh_direction = "cols",
-  cont_stats = "med_iqr",
+  cont_format = "med_iqr",
   inc_missing = NULL,
-  round_digits = 2,
+  sig_digits = 2,
   perc_denom = NULL
 )
 }
@@ -46,7 +46,7 @@ replacement labels for these cohorts.}
 columns, or use 'cols' to return cohorts as columns and variables as rows.
 Defauls is "col".}
 
-\item{cont_stats}{Character specifying which summary statistic to return
+\item{cont_format}{Character specifying which summary statistic to return
 for continuous stats. Use 'med_iqr' to return the median and interquartile
 range, use 'mean_sd' to return the mean and standard deviation. Default is
 "med_iqr".}
@@ -54,7 +54,7 @@ range, use 'mean_sd' to return the mean and standard deviation. Default is
 \item{inc_missing}{Boolean specifying whether to return missing values in
 the output. Use TRUE for yes and FALSE for no.}
 
-\item{round_digits}{Optionally, the number of decimal places to round output 
+\item{sig_digits}{Optionally, the number of decimal places to round output 
 to. Default is 2.}
 
 \item{perc_denom}{The denominator for percentages. Either 'valid' for valid
