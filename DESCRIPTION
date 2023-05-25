@@ -19,26 +19,26 @@ Authors@R:
            role = "ctb",
            email = "tom.bishop@mrc-epid.cam.ac.uk"))
 Maintainer: Tim Cadman <t.cadman@bristol.ac.uk>
-  Depends: 
+Depends: 
   R (>= 3.5.0)
 Imports:
   dsBaseClient (>= 6.1.0),
-dplyr (>= 1.0.2),
-tibble,
-purrr,
-tidyr,
-stringr,
-magrittr,
-rlang,
-DSI,
-metafor,
-checkmate
+  dplyr (>= 1.0.2),
+  tibble,
+  purrr,
+  tidyr,
+  stringr,
+  magrittr,
+  rlang,
+  DSI,
+  metafor,
+  checkmate,
 Suggests:
   knitr,
-rmarkdown,
-testthat,
-mockery
-URL: https://github.com/lifecycle-project/ds-helper/,
+  rmarkdown,
+  testthat,
+  mockery
+URL: https://github.com/lifecycle-project/ds-helper/
 https://lifecycle-project.github.io/ds-helper/
   BugReports: https://github.com/lifecycle-project/ds-helper/issues/
   VignetteBuilder: knitr
