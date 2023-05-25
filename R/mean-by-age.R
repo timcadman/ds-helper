@@ -1,9 +1,6 @@
-#' This was the original version of dh.meanByGroup. It has now been deprecated.
+#' This was the original version of dh.meanByGroup. It is now defunct.
 #'
-#' Whilst I always use this with 'age' as a grouping variable, it is a more
-#' general function than that. I have thus renamed it to reflect that any
-#' continuous grouping variable can be used.
-#'
+#' @title dh.meanByAge
 #' @template conns
 #' @template df
 #' @param outcome outcome variable in long format
@@ -13,18 +10,18 @@
 #'
 #' @return Mean values for each unit of your age variable are returned
 #'
-#' @export
-dh.meanByAge <- function(df = NULL, outcome = NULL, age_var = NULL,
-                         intervals = NULL, conns = NULL, checks = FALSE) {
-  .Deprecated("dh.meanByAge")
-  message("dh.meanByAge will be defunct from version 1.0.0 onwards")
+#' @name dh.meanByAge-defunct
+#' @usage dh.meanByAge(conns, df, outcome, age_var, intervals, checks)
+#' @seealso \code{\link{dsHelper-deprecated}}
+#' @keywords internal
+NULL
 
-  dh.meanByGroup(
-    df = df,
-    outcome = outcome,
-    group_var = age_var,
-    conns = conns,
-    intervals = intervals,
-    checks = checks
-  )
-}
+#' @rdname dsHelper-defunct
+#' @section \code{dh.meanByAge}:
+#' For \code{dh.meanByAge}, use \code{\link{dh.meanByGroup}}.
+#'
+#' @export
+dh.meanByAge <- function(...) {
+    .Defunct(msg = "'dh.meanByAge' has been removed from this package. 
+    Use dh.meanByAge instead. See help('Defunct')")
+  }
