@@ -37,7 +37,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
                            conns = NULL, checks = TRUE) {
 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <-
-    loglik_study2 <- sum_log <- NULL
+    loglik_study2 <- sum_log <- fit.tab <- NULL
   
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
