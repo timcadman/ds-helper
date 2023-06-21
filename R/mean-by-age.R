@@ -12,8 +12,8 @@
 #'
 #' @name dh.meanByAge-defunct
 #' @usage dh.meanByAge(conns, df, outcome, age_var, intervals, checks)
-#' @seealso \code{\link{dsHelper-deprecated}}
 #' @keywords internal
+#' @noRd
 NULL
 
 #' @rdname dsHelper-defunct

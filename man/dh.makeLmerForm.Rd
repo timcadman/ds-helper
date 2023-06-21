@@ -14,8 +14,8 @@ dh.makeLmerForm(
 )
 }
 \arguments{
-\item{outcome}{Outcome variable within data frame to be specified in \code{df}
-argument in \code{dh.lmeMultPoly}.}
+\item{outcome}{Character specifying the name of outcome variable within data
+frame to be specified in \code{df} argument in \code{dh.lmeMultPoly}.}
 
 \item{id_var}{Character specifying the name of the column which uniquely
 identifies each subject within data frame to be specified in \code{df}
@@ -28,10 +28,13 @@ in data frame specified in \code{df} argument in \code{dh.lmeMultPoly}.}
 "intercept" for random intercept model or "slope" for random slope model.}
 
 \item{fixed}{Optionally, character vector specifying fixed effects to be
-included in model.}
+included in model. If no argument is provided default is to create formula
+only including outcome, age terms and random effects.}
 
-\item{age_interactions}{Logical; if TRUE, interactions terms are created
-between \code{age_vars} and \code{fixed}. Default is FALSE.}
+\item{age_interactions}{Optionally, character vector specifying variable
+provided to \code{fixed} for which to create interactions with \verb{age vars}.
+If no argument is provided default is to create formula with no interaction
+terms.}
 }
 \value{
 Tibble containing two columns:
