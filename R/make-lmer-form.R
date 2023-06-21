@@ -28,6 +28,8 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
+#' @importFrom checkmate assert check_string check_choice reportAssertions 
+#' makeAssertCollection
 #'
 #' @family trajectory functions
 #'
@@ -37,11 +39,11 @@
 dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
                             random = NULL, fixed = NULL, age_interactions = NULL) {
 
-  check_args()
+  check_args(outcome, id_var, age_vars, random, fixed, age_interactions)
   
   formula_fixed <- make_fixed_effects(age_vars, fixed, age_interactions)
   
-  formula_random <- .make_random_effects(random, poly_fixed, id_var)
+  formula_random <- .make_random_effects(random, age_vars, id_var)
   
   out <- tibble(
     polys = combn(age_vars, 2, paste, collapse = ","),
@@ -59,9 +61,7 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
 #' @return error message if any checks through an error, else nothing.
 #' 
 #' @noRd
-check_args <- function(){
-  
-  environment(.checkArgs) <- environment(dh.makeLmerForm) 
+check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions){
   
   error_messages <- makeAssertCollection()
   
@@ -75,7 +75,7 @@ check_args <- function(){
     check_choice(random, c("intercept", "slope")),
     add = error_messages)
   
-  reportAssertions(collection)
+  reportAssertions(error_messages)
   
 }
      
@@ -90,6 +90,8 @@ check_args <- function(){
 #' 
 #' @noRd
 make_fixed_effects <- function(age_vars, fixed, age_interactions){
+  
+  poly_fixed <- NULL
   
   polynomial_terms <- combn(age_vars, 2, paste, collapse = "+")
   
@@ -120,13 +122,13 @@ make_fixed_effects <- function(age_vars, fixed, age_interactions){
 #' @return String representing the random effects component of the formula.
 #' 
 #' @noRd
-.make_random_effects <- function(random, poly_fixed, id_var){
+.make_random_effects <- function(random, age_vars, id_var){
   
   if (random == "intercept") {
     random_eff <- paste0("(1|", id_var, ")")
     
   } else if (random == "slope") {
-    random_eff <- paste0("(1+", poly_fixed, "|", id_var, ")")
+    random_eff <- paste0("(1+", age_vars, "|", id_var, ")")
   } 
   
   return(random_eff)

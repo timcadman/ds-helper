@@ -146,6 +146,8 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
       }) %>%
       set_names(poly_names[fail_tmp == TRUE])
 
+    browser()
+    
     ## Now we put this into a nicer format
     fit.tab <- raw_logs %>%
       map(unlist) %>%
