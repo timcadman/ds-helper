@@ -131,7 +131,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
-  if (length(poly_comp) > 1) {
+  if (length(poly_comp) >= 1) {
     ## First we get the loglikelihood value for each study and each model
     raw_logs <- models[fail_tmp == TRUE] %>%
       map(function(x) {
@@ -146,8 +146,6 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
       }) %>%
       set_names(poly_names[fail_tmp == TRUE])
 
-    browser()
-    
     ## Now we put this into a nicer format
     fit.tab <- raw_logs %>%
       map(unlist) %>%
