@@ -17,20 +17,8 @@
 
 git remote set-url origin "https://${GITHUB_TOKEN}@github.com/${BUILD_REPOSITORY_NAME}.git"
 git checkout -f master
-git fetch --tags
 Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', git2r::config(user.email = 'sido@haakma.org', user.name = 'Azure Pipeline'))"
 RELEASE_SCOPE="patch"
-Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', usethis::use_version('${RELEASE_SCOPE}'))"
-TAG=$(grep Version DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 PACKAGE=$(grep Package DESCRIPTION | head -n1 | cut -d':' -f2 | xargs)
 Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', pkgdown::build_site())"
-git commit -a -m "[ci skip] Created release: ${TAG}"
-echo "Releasing ${PACKAGE} ${TAG}"
 R CMD build .
-Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', devtools::check_built(path = './${PACKAGE}_${TAG}.tar.gz', force_suggests = TRUE))"
-set +x; curl -v --user "${NEXUS_USER}:${NEXUS_PASS}" --upload-file "${PACKAGE}_${TAG}".tar.gz "${REGISTRY}"/src/contrib/"${PACKAGE}_${TAG}".tar.gz
-git tag "${TAG}"
-echo "Creating new development version for R-package: [ ${BUILD_REPOSITORY_NAME} ]"
-Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', usethis::use_version('dev'))"
-git commit -a -m '[ci skip]: Increment dev-version number'
-git push --tags origin master
