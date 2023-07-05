@@ -15,9 +15,9 @@
 #' @param ci_format format for the confidence intervals when direction is "wide".
 #' If "separate", upper and lower confidence intervals are displayed as columns.
 #' If "paste", confidence intervals are returned in the same column as the
-#' coefficient within brackets.
+#' coefficient within brackets. Option "paste" is only available if `ci_format` 
+#' is "wide"
 #' @template digits
-#' @param round_digits Deprecated argument name: please use `digits` instead.
 #' @param family Specifies the family used in the analysis where type is
 #' "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
 #' "gaussian".
@@ -48,73 +48,25 @@
 #' @export
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = NULL, ci_format = NULL,
-                     family = "gaussian", digits = 2, round_digits = 2,
+                     family = "gaussian", digits = 2,
                      exp = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
     variable <- est <- uppci <- pvalue <- . <- NULL
   
-  ## ---- Argument checks ------------------------------------------------------
-  if (is.null(model)) {
-    stop("`model` must not be NULL.", call. = FALSE)
-  }
-  if (is.null(type)) {
-    stop("`type` must not be NULL.", call. = FALSE)
-  }
-  if (is.null(coh_names) & type %in% c("glm_slma", "lmer_slma")) {
-    stop("`coh_names` must not be NULL.", call. = FALSE)
-  }
-  
-  if (!missing(round_digits)) {
-    warning("Please use `digits` instead of `round_digits`. This option will be
-    removed from version 1.0.0")
-    
-    digits <- round_digits
-  }
-  
-  if (type == "ipd") {
-    warning("Please use 'glm_ipd' instead of 'ipd'. This option will be removed
-      from version 1.0.0")
-    type <- "glm_ipd"
-  }
-  
-  if (type == "slma") {
-    warning("Please use 'glm_slma' instead of 'slma' This option will be removed
-      from version 1.0.0")
-    type <- "glm_slma"
-  }
-  
-  if (type == "lmer") {
-    warning("Please use 'lmer_slma' instead of 'lmer'. This option will be removed
-      from version 1.0.0")
-    type <- "lmer_slma"
-  }
-  
-  type <- arg_match(type, c("glm_ipd", "glm_slma", "lmer_slma"))
-  direction <- arg_match(direction, c("long", "wide"))
-  ci_format <- arg_match(ci_format, c("paste", "separate"))
-  family <- arg_match(family, c("gaussian", "binomial"))
-  
-  if (direction == "long" & ci_format == "paste") {
-    warning("It is not possible to paste CIs in long format. Argument ignored")
-  }
-  
+  check_args(model, type, direction, ci_format, family, coh_names)
+
+  ci_names <- match_coef_names(family)
+      
   ## ---- Coefficient names depending on model ---------------------------------
-  if (family == "gaussian") {
-    lowci <- "low0.95CI"
-    highci <- "high0.95CI"
-  } else if (family == "binomial") {
-    lowci <- "low0.95CI.LP"
-    highci <- "high0.95CI.LP"
-  }
-  
+
   ## ---- Extract coefficients -------------------------------------------------
   if (type == "glm_ipd") {
     out <- tibble(
       variable = dimnames(model$coefficients)[[1]],
       est = round(model$coefficients[, "Estimate"], digits),
       se = round(model$coefficients[, "Std. Error"], digits),
-      lowci = round(model$coefficients[, lowci], digits),
-      uppci = round(model$coefficients[, highci], digits),
+      lowci = round(model$coefficients[, ci_names$lowci], digits),
+      uppci = round(model$coefficients[, ci_names$highci], digits),
       pvalue = round(model$coefficients[, "p-value"], digits),
       n_obs = model$nsubs
     ) %>%
@@ -302,4 +254,59 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   }
   
   return(out)
+}
+
+#' Check for errors in input arguments. 
+#' 
+#' @return error message if any checks throw an error, else nothing.
+#' 
+#' @noRd
+check_args <- function(model, type, direction, ci_format, family, coh_names){
+  
+  error_messages <- makeAssertCollection()
+  
+  assert(
+    check_list(model),
+    check_choice(type, c("glm_ipd", "glm_slma", "lmer_slma")), 
+    check_choice(direction, c("long", "wide")), 
+    check_choice(ci_format, c("paste", "separate")), 
+    check_choice(family, c("gaussian", "binomial")), 
+    add = error_messages, 
+    combine = "and"
+  )
+  
+  if(type %in% c("glm_slma", "lmer_slma")){
+    
+    assert(
+      check_string(coh_names), 
+      add = error_messages
+    )
+    
+  }
+  
+  return(reportAssertions(error_messages))
+  
+}
+
+#' Returns the name of the element in `model` which contains the confidence 
+#' intervals. These are named differently depending on which family is used.
+#' 
+#' @return List with names of lower and upper confidence interval elements.
+#' 
+#' @noRd
+match_coef_names <- function(family){
+  
+  coef_out <- list(
+    lowci = "low0.95CI",
+    highci = "high0.95CI")
+  
+  if (family == "binomial") {
+    
+    coef_out <- coef_out %>%
+      map(~paste0(.x, ".LP"))
+    
+  }
+  
+  return(coef_out)
+  
 }
