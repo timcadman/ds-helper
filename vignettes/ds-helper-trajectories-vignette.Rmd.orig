@@ -2,11 +2,7 @@
 title: "Conducting mixed effect/trajectory analysis using DataSHIELD"
 author: Tim Cadman
 date: 27th October 2021
-output:
-  html_document:
-    toc: true
-    toc_depth: 2
-    number_sections: true
+output: rmarkdown::html_vignette
 editor_options:
   chunk_output_type: console
 ---
