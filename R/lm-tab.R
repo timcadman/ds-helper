@@ -66,7 +66,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
     variable <- est <- lowci <- uppci <- pvalue <- . <- NULL
   
-  lm_tab_check_args(model, type, direction, ci_format, family, coh_names)
+  lm_tab_check_args(model, type, direction, ci_format, family, coh_names, 
+                    exponentiate)
 
   if(type == "glm_ipd"){
     
@@ -476,8 +477,10 @@ return(ses)
 #' @noRd
 paste_ci <- function(coefs){
   
+  . <- NULL
+  
   coefs_paste <- coefs %>%
-    mutate(est = paste0("est", " (", "lowci", ",", "uppci", ")")) %>%
+    mutate(est = paste0(.$est, " (", .$lowci, ",", .$uppci, ")")) %>%
     dplyr::select(-"lowci", -"uppci")
   
   return(coefs_paste)
