@@ -68,9 +68,9 @@ check_args <- function(outcome, id_var, age_vars, random, fixed, age_interaction
   assert(
     check_string(outcome), 
     check_string(id_var), 
-    check_string(age_vars),
+    checkCharacter(age_vars),
     check_string(random),
-    check_string(fixed, null.ok = TRUE), 
+    checkCharacter(fixed, null.ok = TRUE), 
     check_string(age_interactions),
     check_choice(random, c("intercept", "slope")),
     add = error_messages, 
