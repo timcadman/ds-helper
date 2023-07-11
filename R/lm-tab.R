@@ -165,7 +165,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 #' @return error message if any checks throw an error, else nothing.
 #' 
 #' @noRd
-lm_tab_check_args <- function(model, type, direction, ci_format, family, coh_names){
+lm_tab_check_args <- function(model, type, direction, ci_format, family, 
+                              coh_names, exponentiate){
   
   error_messages <- makeAssertCollection()
   

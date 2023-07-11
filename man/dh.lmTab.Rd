@@ -12,7 +12,7 @@ dh.lmTab(
   ci_format = NULL,
   family = "gaussian",
   digits = 2,
-  exp = FALSE
+  exponentiate = FALSE
 )
 }
 \arguments{
