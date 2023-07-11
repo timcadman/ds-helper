@@ -253,7 +253,7 @@ add_ns_ipd <- function(coefs, model){
 #' @param coh_names From outer function.
 #' @param nstudy Vector of form "study1, study2, ... studyn" corresponding to 
 #' number of studies in model.
-#' @output tibble with 6 columns: "cohort", "variable", "Estimate", 
+#' @return tibble with 6 columns: "cohort", "variable", "Estimate", 
 #' "Std. Error", "t value", "Pr(>|t|)".
 #' @noRd
 extract_slma_coh <- function(model, coh_names, nstudy){
@@ -485,7 +485,7 @@ paste_ci <- function(coefs){
 #' @param coefs Tibble of coefficients.
 #' @return Input tibble with all instances of "(Intercept)" in column "variable"
 #' renamed as detailed above.
-#' @noRD
+#' @noRd
 rename_intercept <- function(coefs){
   
   int_renamed <- coefs %>%
