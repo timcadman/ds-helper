@@ -73,9 +73,10 @@ check_args <- function(outcome, id_var, age_vars, random, fixed, age_interaction
     check_string(fixed, null.ok = TRUE), 
     check_string(age_interactions),
     check_choice(random, c("intercept", "slope")),
-    add = error_messages)
+    add = error_messages, 
+    combine = "and")
   
-  reportAssertions(error_messages)
+  return(reportAssertions(error_messages))
   
 }
      
