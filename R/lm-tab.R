@@ -24,8 +24,8 @@
 #' @param exp Optionally, specify whether estimates from binomial models should
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
-#'
-#' @importFrom checkmate check_list check_set_equal
+#' 
+#' @importFrom checkmate check_list check_set_equal makeAssertCollection
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match .data
@@ -62,7 +62,7 @@
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = NULL, ci_format = NULL,
                      family = "gaussian", digits = 2,
-                     exp = FALSE) {
+                     exponentiate = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
     variable <- est <- lowci <- uppci <- pvalue <- . <- NULL
   
@@ -99,6 +99,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     
     random <- extract_random(model, coh_names, nstudy)
     
+  }
+    
   if(type %in% c("glm_slma", "lmer_slma")){
   
     pooled_coefs <- extract_slma_pooled(model, nstudy)
@@ -114,9 +116,9 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     
   }
     
-    if (exp == TRUE & family == "binomial" & direction == "long")
+    if (exponentiate == TRUE & family == "binomial" & direction == "long"){
       
-      exp <- coefs %>%
+      coefs <- coefs %>%
       mutate(across(c(est, lowci, uppci), ~ exp(.)))
     
   }
@@ -185,7 +187,7 @@ lm_tab_check_args <- function(model, type, direction, ci_format, family, coh_nam
       add = error_messages
     )
     
-    if (exp == TRUE & family == "gaussian") {
+    if (exponentiate == TRUE & family == "gaussian") {
       warning("It is not recommended to exponentiate coefficients from linear
             regression: argument is ignored")
     }
@@ -453,10 +455,12 @@ rename_slma_pooled <- function(pooled_coefs){
 #' @noRd
 add_ci <- function(coefs){
 
+  . <- NULL
+  
  ses <- coefs %>%
   mutate(
-   lowci = "est" - 1.96 * "se", 
-  uppci = "est" + 1.96 * "se") 
+   lowci = .$est - 1.96 * .$se, 
+  uppci = .$est + 1.96 * .$se) 
 
 return(ses)
 
