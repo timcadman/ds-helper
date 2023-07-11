@@ -99,7 +99,10 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     coh_coefs <- add_ns_slma(coh_ns, coh_coefs, coh_names)
     
     random <- extract_random(model, coh_names, nstudy)
+    random <- rename_intercept(random, col_name = "var1")
     
+    random <- random %>%
+      mutate(across(stddev, ~round(., digits)))
   }
     
   if(type %in% c("glm_slma", "lmer_slma")){
@@ -143,7 +146,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     
     }
 
-  coefs <- rename_intercept(coefs)
+  coefs <- rename_intercept(coefs, col_name = "variable")
   
   if (type == "lmer_slma"){
     
@@ -494,11 +497,12 @@ paste_ci <- function(coefs){
 #' @return Input tibble with all instances of "(Intercept)" in column "variable"
 #' renamed as detailed above.
 #' @noRd
-rename_intercept <- function(coefs){
+rename_intercept <- function(coefs, col_name){
   
   int_renamed <- coefs %>%
     mutate(
-      variable = ifelse(coefs$variable == "(Intercept)", "intercept", coefs$variable)
+      !!sym(col_name) := ifelse(
+        !!sym(col_name) == "(Intercept)", "intercept", !!sym(col_name))
     )
   
   return(int_renamed)
