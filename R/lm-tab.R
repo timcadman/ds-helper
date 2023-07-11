@@ -25,9 +25,11 @@
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
 #'
+#' @importFrom checkmate check_list check_set_equal
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
-#' @importFrom rlang arg_match
+#' @importFrom rlang arg_match .data
+#' @import lme4
 #'
 #' @return A tibble. When `direction` is "wide" & `ci_format` is "paste", this
 #' contains five columns:
@@ -41,6 +43,17 @@
 #' * variable
 #' * coefficient (containing values "est", "lowci", "uppci", "pvalue")
 #' * value
+#' 
+#' When `type` is "lmer_slma", a list of 2 elements where the first element
+#' is as described as above, and the second element is a tibble of random 
+#' effects with 5 columns: "cohort", "group", "var1", "var2", "stddev". 
+#' "stddev" gives either the 
+#' 
+#' #' Extracts the random effects from an lmer_slma model. Returns tibble 
+#' containing, for each cohort, the standard deviation of the random terms
+#' and the standard deviation of the residual error. If two or more random 
+#' terms are included, it also returns the correlation between the terms.
+#' 
 #'
 #' @md
 #' @family descriptive functions
@@ -51,217 +64,106 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      family = "gaussian", digits = 2,
                      exp = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
-    variable <- est <- uppci <- pvalue <- . <- NULL
+    variable <- est <- lowci <- uppci <- pvalue <- . <- NULL
   
-  check_args(model, type, direction, ci_format, family, coh_names)
+  lm_tab_check_args(model, type, direction, ci_format, family, coh_names)
 
-  ci_names <- match_coef_names(family)
-      
-  ## ---- Coefficient names depending on model ---------------------------------
-
-  ## ---- Extract coefficients -------------------------------------------------
-  if (type == "glm_ipd") {
-    out <- tibble(
-      variable = dimnames(model$coefficients)[[1]],
-      est = round(model$coefficients[, "Estimate"], digits),
-      se = round(model$coefficients[, "Std. Error"], digits),
-      lowci = round(model$coefficients[, ci_names$lowci], digits),
-      uppci = round(model$coefficients[, ci_names$highci], digits),
-      pvalue = round(model$coefficients[, "p-value"], digits),
-      n_obs = model$nsubs
-    ) %>%
-      pivot_longer(
-        cols = -variable,
-        names_to = "coefficient",
-        values_to = "value"
-      )
+  if(type == "glm_ipd"){
     
-  } else if (type == "glm_slma" | type == "lmer_slma") {
-    nstudy <- model$num.valid.studies
+  coefs <- extract_ipd(model)
+  coefs <- rename_ipd(coefs)
+  coefs <- add_ns_ipd(coefs, model)
+  
+  } 
+  
+  if(type %in% c("glm_slma", "lmer_slma")){
     
-    if(type == "glm_slma"){
-    ns <- tibble(
-      cohort = coh_names,
-      n_obs = paste0("study", seq(1, nstudy, 1)) %>%
-        map_int(function(x) {
-          model$output.summary[[x]]$Nvalid
-        }))
+  nstudy <- paste0("study", seq(1, model$num.valid.studies))
+  coh_coefs <- extract_slma_coh(model, coh_names, nstudy)  
+  
+  }
+  
+  if(type == "glm_slma"){
     
-    } else if(type == "lmer_slma"){
-      
-      ns <- tibble(
-        cohort = coh_names,
-        n_obs = paste0("study", seq(1, nstudy, 1)) %>%
-          map_int(function(x) {
-            model$output.summary[[x]]$devcomp$dims[["N"]]
-          }))
-    }
+    coh_coefs <- rename_glm_slma(coh_coefs)
+    coh_ns <- extract_ns_slma(model, nstudy)
+    coh_coefs <- add_ns_slma(coh_ns, coh_coefs, coh_names)
     
-    separate <- paste0("study", seq(1, nstudy, 1)) %>%
-      map(function(x) {
-        model$output.summary[[x]]$coefficients
-      }) %>%
-      set_names(coh_names) %>%
-      map(~ as_tibble(x = ., rownames = "variable")) %>%
-      bind_rows(.id = "cohort") %>%
-      rename(est = Estimate) %>%
-      rename(se = "Std. Error")
+  }
+  
+  if(type == "lmer_slma"){
     
-    if(type == "glm_slma"){
+    coh_coefs <- rename_lmer_slma(coh_coefs)
+    coh_ns <- extract_ns_lmer(model, nstudy)
+    coh_coefs <- add_ns_slma(coh_ns, coh_coefs, coh_names)
     
-    separate <- separate %>%
-      dplyr::select(cohort, variable, est, se, "Pr(>|z|)") %>%
-      dplyr::rename(pvalue = "Pr(>|z|)")
+    random <- extract_random(model, coh_names, nstudy)
     
-    } else if(type == "lmer_slma"){
-      
-      separate <- separate %>%
-        mutate(pvalue = NA)
-      
-    }
+  if(type %in% c("glm_slma", "lmer_slma")){
+  
+    pooled_coefs <- extract_slma_pooled(model, nstudy)
+    pooled_coefs <- rename_slma_pooled(pooled_coefs)
     
-    separate <- separate %>%
-      left_join(., ns, by = "cohort") %>%
-      mutate(n_coh = 1)
-    
-    glm_slma <- model$SLMA.pooled.ests.matrix %>%
-      as_tibble(rownames = "variable") %>%
-      rename(est = pooled.ML) %>%
-      rename(se = se.ML) %>%
-      mutate(cohort = "combined") %>%
-      dplyr::select(cohort, variable, est, se) %>%
+    pooled_coefs <- pooled_coefs %>% 
       mutate(
-        n_obs = sum(ns$n_obs), 
-        n_coh = nstudy)
+        n_obs = sum(coh_ns), 
+        n_coh = length(nstudy))
     
-    ## Fix a problem where variables are not named correctly
-    if (length(nstudy) == 1) {
-      glm_slma$variable <- unique(separate$variable)
-    }
+    coefs <- bind_rows(coh_coefs, pooled_coefs)
+    coefs <- add_ci(coefs)  
     
-    out <- bind_rows(separate, glm_slma) %>%
-      group_by(variable, cohort) %>%
-      group_split() %>%
-      map(
-        ~ mutate(
-          .data = .,
-          lowci = est - 1.96 * se,
-          uppci = est + 1.96 * se
-        )
-      ) %>%
-      map(
-        ~ pivot_longer(
-          data = .x,
-          cols = c(est, se, lowci, uppci),
-          names_to = "coefficient",
-          values_to = "value"
-        )
-      ) %>%
-      bind_rows()
+  }
+    
+    if (exp == TRUE & family == "binomial" & direction == "long")
+      
+      exp <- coefs %>%
+      mutate(across(c(est, lowci, uppci), ~ exp(.)))
+    
   }
   
-  out <- out %>%
-    mutate(
-      variable = ifelse(variable == "(Intercept)", "intercept", variable),
-      value = round(value, digits)
-    )
+  coefs <- coefs %>%
+    mutate(across(est:uppci, ~round(., digits)))
   
-  
-  ## ---- Convert to odds ratios where specified -------------------------------
-  if (exp == TRUE & family == "gaussian") {
-    warning("It is not recommended to exponentiate coefficients from linear
-            regression: argument is ignored")
-  } else if (exp == TRUE & family == "binomial" & direction == "long") {
-    out <- out %>%
-      mutate(value = case_when(
-        coefficient == "pvalue" ~ value,
-        coefficient %in% c("est", "lowci", "uppci") ~ round(exp(value), digits)
-      ))
-  } else if (exp == TRUE & family == "binomial" & direction == "wide") {
-    out <- out %>%
-      pivot_wider(
-        names_from = c(coefficient),
-        values_from = value
-      ) %>%
-      mutate(across(est:uppci, ~ round(exp(.), digits)))
-  }
-  
-  ## ---- Put into final format ------------------------------------------------
-  if (direction == "long") {
-    out <- out
-  } else if (direction == "wide" & ci_format == "separate") {
-    out <- out %>%
-      pivot_wider(
-        names_from = coefficient,
-        values_from = value
-      )
-  } else if (direction == "wide" & ci_format == "paste") {
-    out <- out %>%
-      pivot_wider(
-        names_from = coefficient,
-        values_from = value
-      ) %>%
-      mutate(est = paste0(est, " (", lowci, ",", uppci, ")")) %>%
-      dplyr::select(cohort, variable, se, est, pvalue)
-  }
-  
-  if (type == "lmer_slma") {
+  if(direction == "long"){
     
-    ## Get random effects
-    random_sd <- paste0("study", seq(1, nstudy, 1)) %>%
-      map(function(x) {
-        model$output.summary[[x]]$varcor
-      }) %>%
-      set_names(coh_names) %>%
-      map_depth(2, function(x) {
-        attr(x, "stddev")
-      }) %>%
-      map(as.data.frame) %>%
-      map(as_tibble, rownames = "coefficient") %>%
-      bind_rows(.id = "cohort") %>%
+    coefs <- coefs %>%
       pivot_longer(
-        cols = c(-cohort, -coefficient),
-        names_to = "cluster",
-        values_to = "stddev"
-      )
+        cols = c(est:uppci), 
+        names_to = "coefficient",
+        values_to = "value")
     
-    ## Get std of residual error
-    res_sd <- paste0("study", seq(1, nstudy, 1)) %>%
-      map(function(x) {
-        model$output.summary[[x]]$sigma
-      }) %>%
-      set_names(coh_names) %>%
-      map(as.data.frame) %>%
-      map(as_tibble) %>%
-      bind_rows(.id = "cohort") %>%
-      set_names(c("cohort", "res_std"))
-    
-    random_cor <- paste0("study", seq(1, nstudy, 1)) %>%
-      map(function(x) {
-        model$output.summary[[x]]$varcor
-      }) %>%
-      set_names(coh_names) %>%
-      map_depth(2, function(x) {
-        attr(x, "correlation")
-      })
-    
-    out <- list(
-      fixed = out,
-      random_sd = random_sd,
-      resid_sd = res_sd,
-      random_cor = random_cor
-    )
   }
   
-  return(out)
-}
+  if (direction == "wide" & ci_format == "paste") {
+    
+    coefs <- paste_ci(coefs)
+    
+    }
 
+  coefs <- rename_intercept(coefs)
+  
+  if (type == "lmer_slma"){
+    
+    return(
+      list(
+        fixed = coefs, 
+        random = random)
+    )
+    
+  } else{
+    
+    return(coefs)
+    
+  }
+  
+}
+    
 #' Check for errors in input arguments. 
 #' 
 #' @return error message if any checks throw an error, else nothing.
 #' 
 #' @noRd
-check_args <- function(model, type, direction, ci_format, family, coh_names){
+lm_tab_check_args <- function(model, type, direction, ci_format, family, coh_names){
   
   error_messages <- makeAssertCollection()
   
@@ -279,34 +181,318 @@ check_args <- function(model, type, direction, ci_format, family, coh_names){
     
     assert(
       check_string(coh_names), 
+      check_set_equal(length(coh_names), model$num.valid.studies),
       add = error_messages
     )
+    
+    if (exp == TRUE & family == "gaussian") {
+      warning("It is not recommended to exponentiate coefficients from linear
+            regression: argument is ignored")
+    }
+    
+    if (type == "lmer_slma"){
+      
+      assert_choice(family, "gaussian")
+      
+    }
     
   }
   
   return(reportAssertions(error_messages))
+
+}
+
+#' Extracts the model coefficients from a glm_ipd model.
+#' 
+#' @param model From outer function.
+#' @param type From outer function.
+#' @return tibble with 7 columns: "variable", "Estimate", "Std. Error", 
+#' "z-value", "p-value", "low0.95CI", "high0.95CI".
+#' @noRd
+extract_ipd <- function(model, type){
+  
+  coefs <- as_tibble(model$coefficients, rownames = "variable") 
+  return(coefs)
+}
+
+#' Renames coefficients from glm_ipd model to desired output.
+#' 
+#' @param coefs Output from extract_ipd
+#' @return tibble with 6 columns: "variable", "est", "se", "pvalue", "lowci", 
+#' "uppci".
+#' @noRd
+rename_ipd <- function(coefs){
+  
+  renamed <- coefs %>%
+    dplyr::select("variable", est = "Estimate", se = "Std. Error", 
+                  pvalue = "p-value", lowci = "low0.95CI", uppci = "high0.95CI")
+  
+  return(renamed)
   
 }
 
-#' Returns the name of the element in `model` which contains the confidence 
-#' intervals. These are named differently depending on which family is used.
+#' Adds the total number of observations within the model to the tibble of 
+#' coefficients.
 #' 
-#' @return List with names of lower and upper confidence interval elements.
-#' 
+#' @param coefs Tibble of coefficients
+#' @param model From outer function.
+#' @return tibble with extra column: "n_obs".
 #' @noRd
-match_coef_names <- function(family){
+add_ns_ipd <- function(coefs, model){
   
-  coef_out <- list(
-    lowci = "low0.95CI",
-    highci = "high0.95CI")
+  ns <- coefs %>%
+    mutate(n_obs = model$nsubs)
   
-  if (family == "binomial") {
+  return(ns)
+  
+}
+
+#' Extracts the model coefficients from a glm_slma model.
+#' 
+#' @param model From outer function.
+#' @param coh_names From outer function.
+#' @param nstudy Vector of form "study1, study2, ... studyn" corresponding to 
+#' number of studies in model.
+#' @output tibble with 6 columns: "cohort", "variable", "Estimate", 
+#' "Std. Error", "t value", "Pr(>|t|)".
+#' @noRd
+extract_slma_coh <- function(model, coh_names, nstudy){
+  
+  cohort_coefs <- nstudy %>%
+    map(function(x) {
+      model$output.summary[[x]]$coefficients %>%
+        as_tibble(rownames = "variable")
+    }) %>%  set_names(coh_names) %>%
+    bind_rows(.id = "cohort")
+  
+  return(cohort_coefs)
+  
+}
+
+#' Renames coefficients from glm_slma model to desired output.
+#' 
+#' @param coefs Output from extract_slma_coh
+#' @return tibble with 5 columns: "cohort", "variable", "est", "se", "pvalue".
+#' @noRd
+rename_glm_slma <- function(coefs){
+  
+  coefs_renamed <- coefs %>%
+    dplyr::select("cohort", "variable", est = "Estimate", 
+                  se = "Std. Error", pvalue = "Pr(>|t|)") 
+  
+  return(coefs_renamed)
+  
+}
+
+#' Renames coefficients from glm_slma model to desired output.
+#' 
+#' @param coefs Output from extract_slma_coh
+#' @return tibble with 6 columns: "variable", "est", "se", "pvalue", "lowci", 
+#' "uppci".
+#' @noRd
+rename_slma_pooled <- function(pooled_coefs){
+  
+  pooled_renamed <- pooled_coefs %>%
+    dplyr::select("cohort", "variable", est = "pooled.ML", se = "se.ML")
+  
+  return(pooled_renamed)
+  
+}
+
+#' Extracts the number of observations contained within a glm_slma model for 
+#' each cohort.
+#'
+#' @param model From outer function
+#' @param nstudy Vector of form "study1, study2, ... studyn" corresponding to 
+#' number of studies in model.
+#' @return Vector of integers of length of `nstudy`.
+#' @noRd
+extract_ns_slma <- function(model, nstudy){
+  
+  ns <- nstudy %>%
+    map_int(function(x){
+      model$output.summary[[x]]$Nvalid
+    })
+  
+  return(ns)
+  
+}
+
+#' Adds column to tibble containing number of observations within a model
+#' 
+#' @param ns Integer vector with model ns output from extract_ns_slma.
+#' @param coefs Tibble with model coefficients.
+#' @param coh_names From outer function.
+#' @return Tibble with two additional columns: "n_obs", "n_coh". "n_coh" will
+#' always equal one: this column is added so that the structure matches that
+#' output from the pooled results where this number will vary.
+#' @noRd
+add_ns_slma <- function(ns, coefs, coh_names){
+  
+  ns_tibble <- tibble(
+    cohort = coh_names,
+    n_obs = ns) %>%
+    mutate(n_coh = 1)
+  
+  ns_out <- left_join(
+    coefs, ns_tibble, by = "cohort")
+  
+  return(ns_out)
+  
+}
+
+#' Renames coefficients from lmer_slma model to desired output.
+#' 
+#' @param coefs Output from extract_slma_coh
+#' @return tibble with 5 columns: "cohort", "variable", "est", "se", "pvalue".
+#' 'pvalue' is empty because this is not currently returned from the lmer_slma 
+#' model.
+#' @noRd
+rename_lmer_slma <- function(coefs){
+
+coefs_renamed <- coefs %>%
+  dplyr::select("cohort", "variable", est = "Estimate", se = "Std. Error") %>%
+  mutate(pvalue = NA)
+
+return(coefs_renamed)
+
+}
+ 
+#' Extracts the number of observations contained within a lmer_slma model for 
+#' each cohort.
+#'
+#' @param model From outer function
+#' @param nstudy Vector of form "study1, study2, ... studyn" corresponding to 
+#' number of studies in model.
+#' @return Vector of integers of length of `nstudy`.
+#' @noRd
+extract_ns_lmer <- function(model, nstudy){
+  
+  ns <- nstudy %>%
+    map_int(function(x){
+      model$output.summary[[x]]$devcomp$dims[["N"]]
+    })
+  
+  return(ns)
+  
+}
+
+#' Extracts the random effects from an lmer_slma model. Returns tibble 
+#' containing, for each cohort, the standard deviation of the random terms
+#' and the standard deviation of the residual error. If two or more random 
+#' terms are included, it also returns the correlation between the terms.
+#' 
+#' @param model From outer function
+#' @param coh_names From outer function.
+#' @param nstudy Vector of form "study1, study2, ... studyn" corresponding to 
+#' number of studies in model.
+#' @return Tibble with 5 columns: "cohort", "group", "var1", "var2", "stddev".
+#' @noRd
+extract_random <- function(model, coh_names, nstudy){
+  
+  random_extracted <- nstudy %>%
+    map(function(x) {
+      model$output.summary[[x]]$varcor %>%
+        as.data.frame %>%
+        as_tibble %>%
+        dplyr::select(
+          group = "grp", "var1", "var2", stddev = "sdcor")
+      
+    }) %>%
+    set_names(coh_names) %>%
+    bind_rows(.id = "cohort")
+  
+  return(random_extracted)
+  
+}
+
+#' Extracts the meta-analysed model coefficients from either a glm_slma or 
+#' lmer_slma model.
+#' 
+#' @param model From outer function.
+#' @param nstudy Vector of form "study1, study2, ... studyn" corresponding to 
+#' number of studies in model.
+#' @return tibble with 8 columns: "variable", "pooled.ML", "se.ML", 
+#' "pooled.REML", "se.REML", "pooled.FE", "se.FE", "cohort".
+#' @noRd
+extract_slma_pooled <- function(model, nstudy){
+  
+  pooled_coefs <- model$SLMA.pooled.ests.matrix %>%
+    as_tibble(rownames = "variable")  %>%
+    mutate(cohort = "combined")
+  
+  if (length(nstudy) == 1) {
     
-    coef_out <- coef_out %>%
-      map(~paste0(.x, ".LP"))
+    pooled_coefs$variable <- rownames(model$betamatrix.all)
     
   }
   
-  return(coef_out)
+  return(pooled_coefs)
+  
+}
+
+#' Renames meta-analysed coefficients from slma model to desired output.
+#' 
+#' @param coefs Output from extract_slma_pooled
+#' @return tibble with 5 columns: "cohort", "variable", "est", "se".
+#' @noRd
+rename_slma_pooled <- function(pooled_coefs){
+  
+  pooled_renamed <- pooled_coefs %>%
+    dplyr::select("cohort", "variable", est = "pooled.ML", se = "se.ML")
+  
+  return(pooled_renamed)
+  
+}
+
+#' Calculates upper and lower confidence intervals based on standard error and
+#' adds these to tibble of coeffients.
+#'
+#' @param coefs Tibble of coefficients
+#' @return Original tibble with additional two columns: "uppci" and "lowci".
+#' @noRd
+add_ci <- function(coefs){
+
+ ses <- coefs %>%
+  mutate(
+   lowci = "est" - 1.96 * "se", 
+  uppci = "est" + 1.96 * "se") 
+
+return(ses)
+
+}
+
+#' Pastes confidence intervals to estimates.
+#' 
+#' @param coefs tibble of coefficients containing at least "se", "lowci" and 
+#' "uppci"
+#' @return Input tibble with (i) "est" column replaced with 
+#' "est (lowci, uppci)", (ii) columns "lowci" and "uppci" removed.
+#' @noRd
+paste_ci <- function(coefs){
+  
+  coefs_paste <- coefs %>%
+    mutate(est = paste0("est", " (", "lowci", ",", "uppci", ")")) %>%
+    dplyr::select(-"lowci", -"uppci")
+  
+  return(coefs_paste)
+  
+}
+
+#' In model output the intercept is listed a bit strangely, as "(Intercept)".
+#' To improve readability this function renames to "intercept".
+#' 
+#' @param coefs Tibble of coefficients.
+#' @return Input tibble with all instances of "(Intercept)" in column "variable"
+#' renamed as detailed above.
+#' @noRD
+rename_intercept <- function(coefs){
+  
+  int_renamed <- coefs %>%
+    mutate(
+      variable = ifelse(coefs$variable == "(Intercept)", "intercept", coefs$variable)
+    )
+  
+  return(int_renamed)
   
 }
