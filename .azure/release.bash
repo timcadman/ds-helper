@@ -33,4 +33,4 @@ git tag "${TAG}"
 echo "Creating new development version for R-package: [ ${BUILD_REPOSITORY_NAME} ]"
 Rscript -e "withr::with_libpaths(new = '${R_LIBS_USER}', usethis::use_version('dev'))"
 git commit -a -m '[ci skip]: Increment dev-version number'
-git push --tags origin master
+git push --tags origin master 
