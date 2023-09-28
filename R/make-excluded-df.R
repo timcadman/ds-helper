@@ -17,7 +17,7 @@
 #' @importFrom utils head
 #'
 #' @export
-dt.makeExcludedDf <- function(original_df, final_df, new_obj,
+dt.makeExcludedDf <- function(original_df, final_df, id_var = "child_id", new_obj,
                               type = "wide", conns = NULL){
   
   if (is.null(conns)) {
@@ -42,7 +42,7 @@ dt.makeExcludedDf <- function(original_df, final_df, new_obj,
     })
   
   ds.dataFrame(
-    x = c(paste0(final_df, "$child_id"), "final_ones"),
+    x = c(paste0(final_df, "$", id_var), "final_ones"),
     newobj = "final_tmp")
   
 ## ---- Now merge this vector with baseline_df ---------------------------------
@@ -52,8 +52,8 @@ if(type == "wide"){
   ds.merge(
   x.name = original_df,
   y.name = "final_tmp",
-  by.x.names = "child_id",
-  by.y.names = "child_id",
+  by.x.names = id_var,
+  by.y.names = id_var,
   all.x = TRUE,
   all.y = FALSE, 
   newobj = "orig_w_vec")
@@ -63,8 +63,8 @@ if(type == "wide"){
   ds.merge(
     x.name = original_df,
     y.name = "final_tmp",
-    by.x.names = c("child_id", "age"),
-    by.y.names = c("child_id", "age"),
+    by.x.names = c(id_var, "age"),
+    by.y.names = c(id_var, "age"),
     all.x = TRUE,
     all.y = FALSE, 
     newobj = "orig_w_vec")

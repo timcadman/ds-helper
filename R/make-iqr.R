@@ -105,7 +105,8 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
       newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
-      check.names = FALSE
+      check.names = FALSE, 
+      stringsAsFactors = FALSE
     )
     
   } else if (type == "combine") {
@@ -183,7 +184,8 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
       newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
-      check.names = FALSE
+      check.names = FALSE, 
+      stringsAsFactors = FALSE
     )
   }
   cat("\nThe following IQR transformations have been created in dataframe ", "'", new_obj, "':", "\n\n", sep = "")

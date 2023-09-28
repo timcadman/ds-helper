@@ -12,8 +12,7 @@ dh.lmTab(
   ci_format = NULL,
   family = "gaussian",
   digits = 2,
-  round_digits = 2,
-  exp = FALSE
+  exponentiate = FALSE
 )
 }
 \arguments{
@@ -32,7 +31,8 @@ or "long". See "Value" for more details.}
 \item{ci_format}{format for the confidence intervals when direction is "wide".
 If "separate", upper and lower confidence intervals are displayed as columns.
 If "paste", confidence intervals are returned in the same column as the
-coefficient within brackets.}
+coefficient within brackets. Option "paste" is only available if \code{ci_format}
+is "wide"}
 
 \item{family}{Specifies the family used in the analysis where type is
 "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
@@ -40,8 +40,6 @@ coefficient within brackets.}
 
 \item{digits}{Optionally, the number of decimal places to round output to. 
 Default is 2.}
-
-\item{round_digits}{Deprecated argument name: please use \code{digits} instead.}
 
 \item{exp}{Optionally, specify whether estimates from binomial models should
 be exponentiated, ie returned as odds ratios. This argument is ignored if
@@ -64,6 +62,16 @@ When \code{direction} is "long", a tibble with three columns is returned:
 \item coefficient (containing values "est", "lowci", "uppci", "pvalue")
 \item value
 }
+
+When \code{type} is "lmer_slma", a list of 2 elements where the first element
+is as described as above, and the second element is a tibble of random
+effects with 5 columns: "cohort", "group", "var1", "var2", "stddev".
+"stddev" gives either the
+
+#' Extracts the random effects from an lmer_slma model. Returns tibble
+containing, for each cohort, the standard deviation of the random terms
+and the standard deviation of the residual error. If two or more random
+terms are included, it also returns the correlation between the terms.
 }
 \description{
 To conveniently view model results or make tables, it is useful to extract

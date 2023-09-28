@@ -18,8 +18,8 @@
 #' @name dh.makeOutcome-defunct
 #' @usage dh.meanByAge(df, outcome, age_var, bands, mult_action, mult_vals, 
 #' keep_original, df_name, conns, id_var, band_action)
-#' @seealso \code{\link{dsHelper-deprecated}}
 #' @keywords internal
+#' @noRd
 NULL
 
 #' @rdname dsHelper-defunct

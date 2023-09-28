@@ -1,7 +1,7 @@
 Package: dsHelper
 Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
-Version: 1.0.2.9000
+Version: 1.0.2
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
 Authors@R: 
   c(person(given= "Tim", 
@@ -33,15 +33,18 @@ Imports:
   DSI,
   metafor,
   checkmate,
+  withr,
+  lme4, 
+  webmockr
 Suggests:
   knitr,
   rmarkdown,
   testthat,
   mockery
-URL: https://github.com/lifecycle-project/ds-helper/
-https: //lifecycle-project.github.io/ds-helper/
-  BugReports: https://github.com/lifecycle-project/ds-helper/issues/
-  VignetteBuilder: knitr
+URL: https://github.com/lifecycle-project/ds-helper/, 
+  https: //lifecycle-project.github.io/ds-helper/
+BugReports: https://github.com/lifecycle-project/ds-helper/issues/
+VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.2.3

@@ -37,7 +37,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
                            conns = NULL, checks = TRUE) {
 
   loglik <- model <- study <- log_rank <- . <- av_rank <- loglik_study1 <-
-    loglik_study2 <- sum_log <- NULL
+    loglik_study2 <- sum_log <- fit.tab <- NULL
   
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
@@ -131,7 +131,7 @@ dh.lmeMultPoly <- function(df = NULL, formulae = NULL, poly_names = NULL,
   ## ---- Summarise fit info -----------------------------------------------------
   nstudies <- paste0("study", seq(1, length(conns), 1))
 
-  if (length(poly_comp) > 1) {
+  if (length(poly_comp) >= 1) {
     ## First we get the loglikelihood value for each study and each model
     raw_logs <- models[fail_tmp == TRUE] %>%
       map(function(x) {
