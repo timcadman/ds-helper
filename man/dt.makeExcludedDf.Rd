@@ -4,7 +4,14 @@
 \alias{dt.makeExcludedDf}
 \title{Given df-A & df-B, creates a new df which is the rows in A but not in B}
 \usage{
-dt.makeExcludedDf(original_df, final_df, new_obj, type = "wide", conns = NULL)
+dt.makeExcludedDf(
+  original_df,
+  final_df,
+  id_var = "child_id",
+  new_obj,
+  type = "wide",
+  conns = NULL
+)
 }
 \arguments{
 \item{original_df}{Dataframe containing the full sample}
