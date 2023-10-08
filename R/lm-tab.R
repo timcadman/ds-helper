@@ -21,7 +21,7 @@
 #' @param family Specifies the family used in the analysis where type is
 #' "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
 #' "gaussian".
-#' @param exp Optionally, specify whether estimates from binomial models should
+#' @param exponentiate Optionally, specify whether estimates from binomial models should
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
 #' 
@@ -54,7 +54,6 @@
 #' and the standard deviation of the residual error. If two or more random 
 #' terms are included, it also returns the correlation between the terms.
 #' 
-#'
 #' @md
 #' @family descriptive functions
 #'
@@ -64,7 +63,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      family = "gaussian", digits = 2,
                      exponentiate = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
-    variable <- est <- lowci <- uppci <- pvalue <- . <- NULL
+    variable <- est <- lowci <- uppci <- pvalue <- . <- stddev <- NULL
   
   lm_tab_check_args(model, type, direction, ci_format, family, coh_names, 
                     exponentiate)

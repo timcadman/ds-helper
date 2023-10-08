@@ -1,10 +1,9 @@
 ---
 title: "Descriptive functions"
+author: Tim Cadman
 output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{dsHelper}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+editor_options:
+  chunk_output_type: console
 ---
 ```{r settings, echo = FALSE}
 options(datashield.progress = FALSE)
@@ -12,6 +11,7 @@ options(datashield.progress.clear = TRUE)
 knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(results = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
+options(rmarkdown.html_vignette.check_title = FALSE)
 options(knitr.duplicate.label = "allow")
 ```
 

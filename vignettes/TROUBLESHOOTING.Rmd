@@ -1,13 +1,14 @@
 ---
 title: "Troubeshooting"
+author: Tim Cadman
 output: rmarkdown::html_vignette
+editor_options:
+  chunk_output_type: console
 vignette: >
-  %\VignetteIndexEntry{Troubleshooting}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Troubeshooting}
+  %\VignetteEngine{knitr::knitr}
+  \usepackage[utf8]{inputenc}
 ---
-
-
 
 ## Installing the package
 

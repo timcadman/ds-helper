@@ -1,10 +1,13 @@
 ---
 title: "Conducting mixed effect/trajectory analysis using DataSHIELD"
 author: Tim Cadman
-date: 27th October 2021
 output: rmarkdown::html_vignette
 editor_options:
   chunk_output_type: console
+vignette: >
+  %\VignetteIndexEntry{Conducting mixed effect/trajectory analysis using DataSHIELD}
+  %\VignetteEngine{knitr::knitr}
+  \usepackage[utf8]{inputenc}
 ---
 
 # Introduction

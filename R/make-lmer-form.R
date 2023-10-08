@@ -61,7 +61,8 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
 #' @return error message if any checks through an error, else nothing.
 #' 
 #' @noRd
-check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions){
+check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions) {
+  checkCharacter <- NULL
   
   error_messages <- makeAssertCollection()
   

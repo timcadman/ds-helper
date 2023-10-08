@@ -1,12 +1,14 @@
 ---
 title: "Descriptive functions"
+author: Tim Cadman
 output: rmarkdown::html_vignette
+editor_options:
+  chunk_output_type: console
 vignette: >
-  %\VignetteIndexEntry{dsHelper}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Descriptive functions}
+  %\VignetteEngine{knitr::knitr}
+  \usepackage[utf8]{inputenc}
 ---
-
 
 # Introducation
 dsHelper contains a number of client-side functions designed to simplify data 

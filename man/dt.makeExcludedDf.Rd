@@ -18,6 +18,8 @@ dt.makeExcludedDf(
 
 \item{final_df}{Dataframe containing the included sample}
 
+\item{id_var}{variable that indicates the id that shoudl be used}
+
 \item{new_obj}{Character specifying name for created serverside object.}
 
 \item{type}{Specifies type of dataframe in `original_df`. Either 'long' or

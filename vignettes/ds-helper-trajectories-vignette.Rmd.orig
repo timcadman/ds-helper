@@ -1,7 +1,6 @@
 ---
 title: "Conducting mixed effect/trajectory analysis using DataSHIELD"
 author: Tim Cadman
-date: 27th October 2021
 output: rmarkdown::html_vignette
 editor_options:
   chunk_output_type: console
@@ -13,7 +12,9 @@ knitr::opts_chunk$set(message = FALSE)
 knitr::opts_chunk$set(results = FALSE)
 knitr::opts_chunk$set(warning = FALSE)
 options(knitr.duplicate.label = "allow")
+options(rmarkdown.html_vignette.check_title = FALSE)
 ```
+
 # Introduction
 
 ## Overview

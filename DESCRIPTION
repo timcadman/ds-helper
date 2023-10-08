@@ -33,14 +33,13 @@ Imports:
   DSI,
   metafor,
   checkmate,
-  withr,
-  lme4, 
-  webmockr
+  lme4
 Suggests:
   knitr,
-  rmarkdown,
+  markdown,
   testthat,
-  mockery
+  webmockr,
+  withr
 URL: https://github.com/lifecycle-project/ds-helper/, 
   https: //lifecycle-project.github.io/ds-helper/
 BugReports: https://github.com/lifecycle-project/ds-helper/issues/

@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">dsHelper</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.4.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.3.9000</span>
       </span>
     </div>
 
@@ -43,25 +43,22 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/TROUBLESHOOTING.html">Troubeshooting</a>
-    </li>
-    <li>
       <a href="../articles/ds-helper-main-vignette.html">Descriptive functions</a>
     </li>
     <li>
       <a href="../articles/ds-helper-trajectories-vignette.html">Conducting mixed effect/trajectory analysis using DataSHIELD</a>
     </li>
+    <li>
+      <a href="../articles/TROUBLESHOOTING.html">Troubeshooting</a>
+    </li>
   </ul>
-</li>
-<li>
-  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
@@ -85,6 +82,7 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Troubeshooting</h1>
+                        <h4 data-toc-skip class="author">Tim Cadman</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/lifecycle-project/ds-helper/blob/HEAD/vignettes/TROUBLESHOOTING.Rmd" class="external-link"><code>vignettes/TROUBLESHOOTING.Rmd</code></a></small>
@@ -100,18 +98,20 @@
 <div class="section level3">
 <h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
 </h3>
-<p>If the <code>nloptr</code> dependency does not install and your working on a linux-based system please install <code>nlopt</code>.</p>
+<p>If the <code>nloptr</code> dependency does not install and your
+working on a linux-based system please install <code>nlopt</code>.</p>
 <p>For CentOS</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">yum</span> install nlopt nlopt-devel</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">yum</span> install nlopt nlopt-devel</span></code></pre></div>
 <p>For Ubuntu</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install libnlopt-dev</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">apt-get</span> install libnlopt-dev</span></code></pre></div>
 <p>For Mac</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install nlopt</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">brew</span> install nlopt</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tidyrcpp-11-install-error">Tidyr/CPP 11 install error<a class="anchor" aria-label="anchor" href="#tidyrcpp-11-install-error"></a>
 </h3>
-<p>If you get an error when trying to install tidyr, run the following lines of code:</p>
+<p>If you get an error when trying to install tidyr, run the following
+lines of code:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html" class="external-link">remove.packages</a></span><span class="op">(</span><span class="st">"tidyr"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/remove.packages.html" class="external-link">remove.packages</a></span><span class="op">(</span><span class="st">"cpp11"</span><span class="op">)</span></span>

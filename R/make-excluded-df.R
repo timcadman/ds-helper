@@ -6,8 +6,10 @@
 #'
 #' @param original_df Dataframe containing the full sample
 #' @param final_df Dataframe containing the included sample
+#' @param id_var variable that indicates the id that shoudl be used 
 #' @param type Specifies type of dataframe in `original_df`. Either 'long' or
 #' 'wide'. NOTE NOT CURRENTLY FUNCTIONAL - ONLY WORKS FOR WIDE.
+#' 
 #' @template new_obj
 #' @template conns
 #' 
