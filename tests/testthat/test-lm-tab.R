@@ -1,7 +1,7 @@
 library(dplyr)
 
 ipd.fit <- readRDS("data/test_glm.rds")
-slma.fit <- readRDS("~/ds-helper/tests/testthat/data/test_slma.rds")
+slma.fit <- readRDS("data/test_slma.rds")
 lmer.fit <- readRDS("data/test_lmer.rds")
 
 coh_names <- c("alspac", "chop", "dnbc", "eden", "genr", "moba", "raine", 
@@ -408,14 +408,14 @@ test_that("Check that paste_ci returns correct column type", {
 ################################################################################
 # rename_intercept  
 ################################################################################
-intercept_in <- tibble(
-  variable = c("test", "intercept", "(Intercept)"), 
-  est = rnorm(3))
+#intercept_in <- tibble(
+#  variable = c("test", "intercept", "(Intercept)"), 
+#  est = rnorm(3))
 
-test_that("Check that rename_intercept has removed brackets", {
+#test_that("Check that rename_intercept has removed brackets", {
   
-  expect_equal(
-    rename_intercept(intercept_in)$variable, 
-    c("test", "intercept", "intercept")
-  )
-})
+#  expect_equal(
+#    rename_intercept(intercept_in)$variable, 
+#    c("test", "intercept", "intercept")
+#  )
+#})

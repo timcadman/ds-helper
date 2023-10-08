@@ -38,6 +38,7 @@ Suggests:
   knitr,
   markdown,
   testthat,
+  httr,
   webmockr,
   withr
 URL: https://github.com/lifecycle-project/ds-helper/, 
