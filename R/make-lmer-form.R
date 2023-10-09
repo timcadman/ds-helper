@@ -68,7 +68,7 @@ check_args <- function(outcome, id_var, age_vars, random, fixed, age_interaction
   assert(
     check_string(outcome), 
     check_string(id_var), 
-    check_Ccharacter(age_vars),
+    check_character(age_vars),
     check_string(random),
     check_character(fixed, null.ok = TRUE), 
     check_string(age_interactions, null.ok = TRUE),
