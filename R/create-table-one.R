@@ -385,7 +385,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   missing_cats <- test_cats %>% 
     dplyr::filter(!is.na(category) & is.na(cat_label))
   
-  if(length(missing_cats) > 0){
+  if(nrow(missing_cats) > 0){
     
     stop(
       "The following categorical variables are included in 'vars' 
