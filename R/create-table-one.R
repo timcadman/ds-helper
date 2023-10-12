@@ -194,6 +194,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
       unlist %>%
       unique
     
+    if(type == "cohort"){
+    distinct_cohorts <- distinct_cohorts[distinct_cohorts != "combined"]
+    }
+    
     assert_subset(distinct_cohorts, coh_labs$cohort)
     
   }
@@ -381,7 +385,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
   missing_cats <- test_cats %>% 
     dplyr::filter(!is.na(category) & is.na(cat_label))
   
-  if(length(missing_cats > 0)){
+  if(length(missing_cats) > 0){
     
     stop(
       "The following categorical variables are included in 'vars' 
