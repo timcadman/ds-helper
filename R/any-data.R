@@ -42,7 +42,7 @@ dh.anyData <- function(df = NULL, vars = NULL, conns = NULL, checks = TRUE) {
   }
 
   if (checks == TRUE) {
-    .isDefined(df = df, vars = vars, conns = conns)
+    .isDefined(df = df, conns = conns)
   }
 
   # get the lengths
