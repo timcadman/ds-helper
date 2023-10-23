@@ -85,7 +85,6 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   }
   
   if(type == "glm_slma"){
-    
     coh_coefs <- rename_glm_slma(coh_coefs)
     coh_ns <- extract_ns_slma(model, nstudy)
     coh_coefs <- add_ns_slma(coh_ns, coh_coefs, coh_names)
@@ -285,7 +284,7 @@ rename_glm_slma <- function(coefs){
   
   coefs_renamed <- coefs %>%
     dplyr::select("cohort", "variable", est = "Estimate", 
-                  se = "Std. Error", pvalue = "Pr(>|t|)") 
+                  se = "Std. Error", pvalue = contains("Pr(>|")) 
   
   return(coefs_renamed)
   
