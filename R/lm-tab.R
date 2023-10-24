@@ -21,7 +21,7 @@
 #' @param family Specifies the family used in the analysis where type is
 #' "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
 #' "gaussian".
-#' @param exp Optionally, specify whether estimates from binomial models should
+#' @param exponentiate Optionally, specify whether estimates from binomial models should
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
 #' 
