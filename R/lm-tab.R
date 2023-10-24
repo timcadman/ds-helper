@@ -64,7 +64,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      family = "gaussian", digits = 2,
                      exponentiate = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
-    variable <- est <- lowci <- uppci <- pvalue <- . <- NULL
+    variable <- est <- lowci <- uppci <- pvalue <- . <- stddev <- NULL
   
   lm_tab_check_args(model, type, direction, ci_format, family, coh_names, 
                     exponentiate)
@@ -279,6 +279,7 @@ extract_slma_coh <- function(model, coh_names, nstudy){
 #' 
 #' @param coefs Output from extract_slma_coh
 #' @return tibble with 5 columns: "cohort", "variable", "est", "se", "pvalue".
+#' @importFrom tidyselect contains
 #' @noRd
 rename_glm_slma <- function(coefs){
   
