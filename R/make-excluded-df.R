@@ -8,6 +8,7 @@
 #' @param final_df Dataframe containing the included sample
 #' @param type Specifies type of dataframe in `original_df`. Either 'long' or
 #' 'wide'. NOTE NOT CURRENTLY FUNCTIONAL - ONLY WORKS FOR WIDE.
+#' @template id_var 
 #' @template new_obj
 #' @template conns
 #' 
@@ -17,7 +18,7 @@
 #' @importFrom utils head
 #'
 #' @export
-dt.makeExcludedDf <- function(original_df, final_df, id_var = "child_id", new_obj,
+dh.makeExcludedDf <- function(original_df, final_df, id_var = "child_id", new_obj,
                               type = "wide", conns = NULL){
   
   if (is.null(conns)) {
