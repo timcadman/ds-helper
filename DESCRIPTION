@@ -35,7 +35,8 @@ Imports:
   checkmate,
   withr,
   lme4, 
-  webmockr
+  webmockr,
+  tidyselect
 Suggests:
   knitr,
   rmarkdown,
