@@ -14,6 +14,7 @@
 #' @param vary_df Option to provide different df for different models. Default
 #' is FALSE.
 #' @param family Family to use in glm models. Default is "gaussian".
+#' @param weights Optional, serverside object containing weights to be used in the model.
 #' @template checks
 #' @template conns
 #'
@@ -29,7 +30,7 @@
 #'
 #' @export
 dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL, 
-                       vary_df = F, family = "gaussian"){
+                       vary_df = F, family = "gaussian", weights = NULL){
   formulae <- model_names <- cohort <- converged <- NULL
   
   if (vary_df == F & is.null(df)) {
@@ -54,7 +55,7 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
   ## ---- Run the models -------------------------------------------------------
   suppressWarnings(
     models <- ref %>%
-      pmap(function(formula, cohort, df, ...){
+      pmap(function(formula, cohort, df, weight_obj, ...){
         
         tryCatch(
           {
@@ -63,6 +64,7 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
               dataName = df, 
               family = family, 
               combine.with.metafor = TRUE,
+              weights = weights,
               datasources = conns[cohort]
             )
           },
