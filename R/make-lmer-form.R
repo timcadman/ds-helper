@@ -48,8 +48,8 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
   out <- tibble(
     polys = combn(age_vars, 2, paste, collapse = ","),
     formula = paste(
-      paste0(outcome, "~1"), 
-      formula_fixed, formula_random, sep = "+"))
+      paste0(outcome, "~1+"), 
+      formula_fixed, "+", formula_random))
   
   return(out)
   
@@ -103,11 +103,27 @@ make_fixed_effects <- function(age_vars, fixed, age_interactions){
     
   } 
   
+  if(!is.null(fixed)){
   additional_fixed_terms <- paste0(fixed, collapse = "+")
+  }
   
-  all_fixed_terms <- paste(
-    polynomial_terms, additional_fixed_terms, age_interactions, 
-    sep = "+")
+  if(is.null(fixed) & is.null(age_interactions)){
+    
+    all_fixed_terms <- paste(polynomial_terms, sep = "+")
+    
+  } else if(is.null(age_interactions)){
+    
+    all_fixed_terms <- paste(
+      polynomial_terms, additional_fixed_terms, 
+      sep = "+")
+    
+  } else{
+    
+    all_fixed_terms <- paste(
+      polynomial_terms, additional_fixed_terms, age_interactions, 
+      sep = "+")
+    
+  }
   
   return(all_fixed_terms)
   
