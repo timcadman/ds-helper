@@ -28,6 +28,7 @@
 #' @export
 dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL) {
   
+  
   validate_input(model, new_data, coh_names)
   
   if ("intercept" %in% colnames(new_data) == FALSE) {
@@ -41,9 +42,11 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL) {
   check_new_data_cols(new_data, coef_names)
   new_data_sub <- subset_new_data(new_data, coef_names)
   
-  coefs_by_cohort <- split_coefficients_by_cohort(coefs, coef_names)
+  coefs_wide <- reshape_coefficients(coefs, coef_names)
+  coefs_by_cohort <- split_coefficients_by_cohort(coefs_wide, coef_names)
+  coefs_formatted <- format_split_coefficients(coefs_by_cohort)
   
-  products <- calculate_products(coefs_by_cohort, coef_names, new_data)
+  products <- calculate_products(coefs_formatted, coef_names, new_data_sub)
   predictions <- calculate_predictions(products, new_data_sub)
   vcov_by_cohort <- extract_vcov(model, coh_names)
   se <- calculate_standard_errors(model, new_data_sub, vcov_by_cohort)
@@ -107,11 +110,11 @@ add_intercept_column <- function(new_data) {
 #' @param model Model object returned by ds.lmerSLMA.
 #' @param coh_names A vector of cohort names.
 #' @noRd
-extract_coefficients <- function(model, conns) {
+extract_coefficients <- function(model, coh_names) {
   coefs <- dh.lmTab(
     model = model,
     type = "lmer_slma",
-    coh_names = names(conns),
+    coh_names = coh_names,
     direction = "long",
     ci_format = "separate"
   )
