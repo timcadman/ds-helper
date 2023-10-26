@@ -21,7 +21,8 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom purrr set_names map pmap_df pmap_dbl
 #' @importFrom tibble tibble
-#' @importFrom checkmate check_list check_data_frame check_character check_subset
+#' @importFrom checkmate assert_list assert_data_frame assert_character 
+#' assert_set_equal
 #'
 #' @family trajectory functions
 #'
@@ -72,18 +73,16 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL) {
 #' @param new_data The data frame of new data.
 #' @param coh_names A vector of cohort names.
 #' @param newdata An alternative parameter name for new_data (deprecated).
+#' @return Error if checks fail, else no return.
 #' @noRd
 validate_input <- function(model, new_data, coh_names) {
   
   error_messages <- makeAssertCollection()
   
-  assert(
-    check_list(model), 
-    check_data_frame(new_data), 
-    check_character(coh_names), 
-    combine = "and"
-  )
-  
+  assert_list(model, add = error_messages)
+  assert_data_frame(new_data, add = error_messages)
+  assert_character(coh_names, add = error_messages)
+ 
   return(reportAssertions(error_messages))
   
 }
@@ -93,6 +92,7 @@ validate_input <- function(model, new_data, coh_names) {
 #' Add an intercept column to the new data if not present.
 #'
 #' @param new_data The data frame to add an intercept column to.
+#' @return new_data tibble with additional column 'intercept'.
 #' @noRd 
 add_intercept_column <- function(new_data) {
   
@@ -109,6 +109,7 @@ add_intercept_column <- function(new_data) {
 #'
 #' @param model Model object returned by ds.lmerSLMA.
 #' @param coh_names A vector of cohort names.
+#' @return tibble, output from dh.lmtTab.
 #' @noRd
 extract_coefficients <- function(model, coh_names) {
   coefs <- dh.lmTab(
@@ -124,6 +125,7 @@ extract_coefficients <- function(model, coh_names) {
 #' Returns a character vector of coefficient names excluding the intercept.
 #'
 #' @param coefs A data frame of coefficients.
+#' @return character vector with variable names from the model.
 #' @noRd
 get_coefficient_names <- function(coefs) {
   
@@ -139,6 +141,8 @@ get_coefficient_names <- function(coefs) {
 #' 
 #' @param new_data The data frame of new data.
 #' @param coef_names Character vector of coefficient names from model.
+#' @return Returns error if all coefficients don't have correspondong column in 
+#' new_data, else no return.
 #' 
 #' @noRd
 check_new_data_cols <- function(new_data, coef_names){
@@ -149,8 +153,9 @@ check_new_data_cols <- function(new_data, coef_names){
 
 #' Subset `new_data` to contain only columns corresponding to `coef_names`
 #' 
-#' @param new_data The data frame to add an intercept column to.
+#' @param new_data The data frame of new data.
 #' @param coef_names Character vector of coefficient names from model.
+#' @return Subset of new_data containing only variables in model.
 #' @noRd
 subset_new_data <- function(new_data, coef_names){
   
@@ -163,6 +168,7 @@ subset_new_data <- function(new_data, coef_names){
 #' Reshape coefficients into wide format.
 #' 
 #' @param coefs Coefficients ouput from `dh.lmTab`.
+#' @return coefficients reshaped into wide format.
 #' @noRd
 reshape_coefficients <- function(coefs, coef_names){
   
@@ -184,6 +190,7 @@ reshape_coefficients <- function(coefs, coef_names){
 #' Returns a list with coefficients grouped by cohort.
 #'
 #' @param coef_names Coefficients in wide format, output from `reshape_coefficients`.
+#' @return list of length number of cohorts, containing tibbles of coefficients.
 #' @noRd
 split_coefficients_by_cohort <- function(coefs_wide, coef_names) {
   
@@ -199,6 +206,7 @@ split_coefficients_by_cohort <- function(coefs_wide, coef_names) {
 #' Format split coefficients by adding cohort names and removing unneeded column.
 #' 
 #' @param split_coefficients Coefficients split by cohort: output from `split_coefficients_by_cohort`
+#' @return Input list with cohort names added as list names and cohort column removed.
 #' @noRd
 format_split_coefficients <- function(coefs_by_cohort){
   
@@ -218,6 +226,7 @@ format_split_coefficients <- function(coefs_by_cohort){
 #' @param coefs_by_cohort A data frame of coefficients by cohort.
 #' @param coef_names A character vector of coefficient names.
 #' @param new_data The data frame of new data.
+#' @return list of dataframes with new_data values multiplied by coefficients.
 #' @noRd 
 calculate_products <- function(formatted_coefficients, coef_names, new_data_sub) {
   
@@ -238,6 +247,7 @@ calculate_products <- function(formatted_coefficients, coef_names, new_data_sub)
 #'
 #' @param coefficients_by_data A list of data frames with coefficients multiplied by new data.
 #' @param new_data The data frame of new data.
+#' @return list of vectors of predicted values.
 #' @noRd
 calculate_predictions <- function(products, new_data_sub) {
   
@@ -251,6 +261,7 @@ calculate_predictions <- function(products, new_data_sub) {
 #' Extract vcov matrices from model object; returns list of vcov grouped by cohort.
 #' 
 #' @param model Model object returned by ds.lmerSLMA.
+#' @return List of vcov matrices, list length is number of cohorts.
 #' @noRd
 extract_vcov <- function(model, coh_names){
   
@@ -270,6 +281,7 @@ extract_vcov <- function(model, coh_names){
 #' @param model Model object returned by ds.lmerSLMA.
 #' @param new_data The data frame of new data.
 #' @param vcov A list of covariance matrices.
+#' @return list of vectors of standard errors.
 #' @noRd
 calculate_standard_errors <- function(model, new_data_sub, vcov) {
   
@@ -295,6 +307,8 @@ calculate_standard_errors <- function(model, new_data_sub, vcov) {
 #' @param model Model object returned by ds.lmerSLMA.
 #' @param new_data The data frame of new data.
 #' @param vcov A list of covariance matrices.
+#' @return List of SEs with extra element added as placeholder for combined 
+#' estimates, length equals number of rows of new_data.
 #' @noRd
 set_combined_as_null <- function(se, new_data){
   
@@ -307,6 +321,7 @@ set_combined_as_null <- function(se, new_data){
 #' This function sorts a list based on the names of its elements and returns the sorted list.
 #'
 #' @param list_name A list to be sorted.
+#' @return sorts list elements alphabetically by name.
 #' @noRd
 sort_list <- function(list_name){
   
@@ -321,10 +336,11 @@ sort_list <- function(list_name){
 # 
 #' @param predicted_sort The first list with names to compare.
 #' @param se_sort The second list with names to compare.
+#' @return if names of predicted and SE lists are the same, nothing, else error.
 #' @noRd
 check_pred_match_se <- function(predicted_sort, se_sort){
   
-  check_set_equal(names(predicted_sort), names(se_sort), ordered = TRUE)
+  checkmate::assert_set_equal(names(predicted_sort), names(se_sort), ordered = TRUE)
   
 }
 
@@ -335,6 +351,7 @@ check_pred_match_se <- function(predicted_sort, se_sort){
 #' @param new_data A data frame of new data.
 #' @param predicted_sort A list of predicted values with names matching new data.
 #' @param se_sort A list of standard errors with names matching new data.
+#' @return tibble containing columns of new_data, predicted values and SEs.
 #' @noRd
 join_new_data_predicted_se <- function(new_data, predicted_sort, se_sort){
   
@@ -359,6 +376,7 @@ join_new_data_predicted_se <- function(new_data, predicted_sort, se_sort){
 # 
 #' @param new_pred_se A data frame containing predicted values, standard errors, and cohort 
 #' information.
+#' @return input dataframe with 2 columns added for lower and upper standarad errors.
 #' @noRd
 add_confidence_intervals <- function(new_pred_se){
   
