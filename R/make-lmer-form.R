@@ -28,8 +28,8 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
-#' @importFrom checkmate assert check_string check_choice reportAssertions 
-#' makeAssertCollection
+#' @importFrom checkmate assert_string assert_character assert_choice 
+#' reportAssertions makeAssertCollection
 #'
 #' @family trajectory functions
 #'
@@ -38,8 +38,8 @@
 #' @export
 dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
                             random = NULL, fixed = NULL, age_interactions = NULL) {
-
-  check_args(outcome, id_var, age_vars, random, fixed, age_interactions)
+  
+  lmer_form_check_args(outcome, id_var, age_vars, random, fixed, age_interactions)
   
   formula_fixed <- make_fixed_effects(age_vars, fixed, age_interactions)
   
@@ -54,32 +54,29 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
   return(out)
   
 }
-  
+
 #' Check for errors in input arguments. All parameters inherited from outer 
 #' function.
 #' 
 #' @return error message if any checks through an error, else nothing.
 #' 
 #' @noRd
-check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions){
+lmer_form_check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions){
   
   error_messages <- makeAssertCollection()
   
-  assert(
-    check_string(outcome), 
-    check_string(id_var), 
-    check_character(age_vars),
-    check_string(random),
-    check_character(fixed, null.ok = TRUE), 
-    check_string(age_interactions, null.ok = TRUE),
-    check_choice(random, c("intercept", "slope")),
-    add = error_messages, 
-    combine = "and")
+  checkmate::assert_string(outcome, add = error_messages) 
+  checkmate::assert_string(id_var, add = error_messages)
+  checkmate::assert_character(age_vars, add = error_messages)
+  checkmate::assert_string(random, add = error_messages)
+  checkmate::assert_character(fixed, null.ok = TRUE, add = error_messages)
+  checkmate::assert_string(age_interactions, null.ok = TRUE, add = error_messages)
+  checkmate::assert_choice(random, c("intercept", "slope"), add = error_messages)
   
   return(reportAssertions(error_messages))
   
 }
-     
+
 #' Translates choices for fixed effects into formula component recognised by 
 #' ds.lmerSLMA.
 #' 
@@ -104,7 +101,7 @@ make_fixed_effects <- function(age_vars, fixed, age_interactions){
   } 
   
   if(!is.null(fixed)){
-  additional_fixed_terms <- paste0(fixed, collapse = "+")
+    additional_fixed_terms <- paste0(fixed, collapse = "+")
   }
   
   if(is.null(fixed) & is.null(age_interactions)){
