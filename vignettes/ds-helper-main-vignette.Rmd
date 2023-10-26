@@ -38,6 +38,10 @@ library(DSMolgenisArmadillo)
 library(tidyverse)
 ```
 
+```
+## Error in library(tidyverse): there is no package called 'tidyverse'
+```
+
 # Data: simulated data based on LifeCycle variables
 To demonstrate these functions we will use remote simulated data for three 
 cohorts: ALSPAC, BCG & BiB.
@@ -160,8 +164,21 @@ dh.makeStrata(
   band_action = "ge_l", 
   id_var = "id", 
   new_obj = "height_data")
+```
 
+```
+## Error in `pmap()`:
+## ℹ In index: 1.
+## Caused by error:
+## ! There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.colnames("height_data")
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 The created dataset contains 5 variables: the id variable, two variables
@@ -179,8 +196,18 @@ ds.merge(
   by.y = "id", 
   all.x = TRUE, 
   newobj = "data")
+```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.colnames("data")
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 ## Transforming continuous variable to interquartile range using dh.makeIQR()
@@ -205,13 +232,26 @@ dh.makeIQR(
   vars = "weight",
   type = "split",
   new_obj = "data")
+```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.colnames("data")
-ds.summary("weight_iqr_c")
 ```
 
 ```
-## Error: The input object weight_iqr_c is not defined in alspac, bcg, bib!
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
+ds.summary("data$weight_iqr_s")
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 ## Removing objects from workspace using dh.tidyEnv()
@@ -225,8 +265,21 @@ the argument `type` to choose whether to keep or remove the variables listed in
 dh.tidyEnv(
   obj = "data",
   type = "keep")
+```
 
+```
+## Error in `map()`:
+## ℹ In index: 1.
+## Caused by error:
+## ! There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.ls()
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 ## Identifying column indices using dh.findVarsIndex
@@ -246,6 +299,10 @@ dh.findVarsIndex(
 )
 ```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
 # Describing data
 
 ## Summarising data using dh.getStats()
@@ -263,10 +320,26 @@ test <- dh.getStats(
   df = "data",
   vars = c("age", "sex", "weight")
 )
+```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.colnames("data")
+```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 test$categorical %>% select(variable, cohort, valid_n, missing_n, perc_missing)
+```
+
+```
+## Error in test$categorical %>% select(variable, cohort, valid_n, missing_n, : could not find function "%>%"
 ```
 
 The output is a list of two tibbles, corresponding to categorical and continuous
@@ -282,7 +355,13 @@ models and will also return summaries of random effects.
 
 ```r
 output <- ds.glm(formula = "weight~age", data = "data", family = "gaussian")
+```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 dh.lmTab(
   model = output, 
   type = "glm_ipd", 
@@ -340,6 +419,10 @@ whether there are differences across studies.
 dh.classDiscrepancy(df = "data")
 ```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
 ## Checking non-missing data using dh.anyData()
 When we perform analyses with multiple cohorts, we may want to use the same
 set of covariates in all analyses. We can use dh.anyData() to check which
@@ -351,6 +434,10 @@ dh.anyData(
   df = "data",
   vars = c("age", "sex", "weight")
 )
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 # Creating a dataset for analysis using dh.defineCases()
@@ -366,8 +453,21 @@ dh.defineCases(
   vars = c("age", "sex", "weight"),
   type = "all", 
   new_obj = "data_on_all_vars")
+```
 
+```
+## Error in `map()`:
+## ℹ In index: 1.
+## Caused by error:
+## ! There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.table("data_on_all_vars")$output.list$TABLE_rvar.by.study_counts
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 The data we have here is not the best to illustrate this function, as 
 there is no missing data.
@@ -381,8 +481,21 @@ dh.defineCases(
   vars = c("age", "sex", "weight"),
   type = "any", 
   new_obj = "data_on_any_vars")
+```
 
+```
+## Error in `map()`:
+## ℹ In index: 1.
+## Caused by error:
+## ! There are some DataSHIELD errors, list them with datashield.errors()
+```
+
+```r
 ds.table("data_on_any_vars")$output.list$TABLE_rvar.by.study_counts
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 Again, we can't see the differences because all subjects have data on all
 variables. However, lets assume that we want to create an subset of our data
@@ -397,6 +510,10 @@ ds.dataFrameSubset(
   V2.name = "1", 
   Boolean.operator = "==", 
   newobj = "analysis_df")
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 
@@ -416,6 +533,10 @@ data frame "data" should now be available.
 dh.localProxy(df = "data", conns = conns)
 ```
 
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
+```
+
 ## Manually pooling estimates by meta-analysis
 Most of the time the meta-analysis functions in DataSHIELD (e.g. ds.glmSLMA)
 will be sufficient. However, you may sometimes need additional flexibility 
@@ -432,6 +553,10 @@ output <- ds.glmSLMA(
   formula = "weight~age", 
   dataName = "data", 
   family = "gaussian")
+```
+
+```
+## Error: There are some DataSHIELD errors, list them with datashield.errors()
 ```
 
 Now we can use this object and to the meta-analysis manually:
