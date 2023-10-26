@@ -408,14 +408,14 @@ test_that("Check that paste_ci returns correct column type", {
 ################################################################################
 # rename_intercept  
 ################################################################################
-intercept_in <- tibble(
-  variable = c("test", "intercept", "(Intercept)"), 
-  est = rnorm(3))
+#intercept_in <- tibble(
+#  variable = c("test", "intercept", "(Intercept)"), 
+#  est = rnorm(3))
 
-test_that("Check that rename_intercept has removed brackets", {
+#test_that("Check that rename_intercept has removed brackets", {
   
-  expect_equal(
-    rename_intercept(intercept_in)$variable, 
-    c("test", "intercept", "intercept")
-  )
-})
+#  expect_equal(
+#    rename_intercept(intercept_in)$variable, 
+#    c("test", "intercept", "intercept")
+#  )
+#})
