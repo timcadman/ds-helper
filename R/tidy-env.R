@@ -56,7 +56,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
     
     obj_valid %>% 
       map(
-        ~ds.rm(x.name = .x, datasources = conns)
+        ~ds.rm(x.names = .x, datasources = conns)
       )
 
   } else if (type == "keep") {
@@ -90,7 +90,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
     }
 
     obj_valid %>% pmap(function(cohort, value, ...) {
-      ds.rm(x.name = value, datasources = conns[cohort])
+      ds.rm(x.names = value, datasources = conns[cohort])
     })
   }
 }
