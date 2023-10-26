@@ -247,20 +247,35 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 .checkDisclosure <- function(bin_vec, conns) {
   observations <- . <- NULL
   
-  coh_ref <- tibble(
-    coh_num = as.character(seq(1, length(names(conns)))),
-    cohort = names(conns)
-  )
+  if(utils::packageVersion("dsBaseClient") == "6.1.0"){
+    
+    coh_ref <- tibble(
+      coh_num = as.character(seq(1, length(names(conns)))),
+      cohort = names(conns)
+    )
+    
+    n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
+      as_tibble(rownames = "levels") %>%
+      pivot_longer(
+        cols = c(-levels),
+        names_to = "coh_num",
+        values_to = "observations"
+      ) %>%
+      left_join(., coh_ref, by = "coh_num")
+    
+  } else{
+    
+    n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
+      as_tibble(rownames = "levels") %>%
+      pivot_longer(
+        cols = c(-levels),
+        names_to = "cohort",
+        values_to = "observations"
+      ) 
+    
+  }
   
-  n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
-    as_tibble(rownames = "levels") %>%
-    pivot_longer(
-      cols = c(-levels),
-      names_to = "coh_num",
-      values_to = "observations"
-    ) %>%
-    left_join(., coh_ref, by = "coh_num") 
-  
+      
   if(n_obs %>% dplyr::filter(levels == 1) %>% nrow == 0){
     
     replace_all_missing <- n_obs %>%
