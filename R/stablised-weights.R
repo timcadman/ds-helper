@@ -15,11 +15,12 @@
 #'   4. Create stabilized weights using the formatted proportions and GLM predictions.
 #' @note Currently only works with binary outcome variable.
 #' @return Stabilized weights assigned as serverside object `new_obj`
+#' @importFrom checkmate assert_character assert_true
 #' @export
 dh.stablisedWeights <- function(glm_object = NULL, outcome_df = NULL, outcome_var = NULL, 
                                 new_obj = NULL, conns = NULL){
   
-    stablise_check_args(glm_object, outcome_df, outcome_var, new_obj, conns)
+  stablise_check_args(glm_object, outcome_df, outcome_var, new_obj, conns)
     
   predictedValues(glm_object)
   
@@ -50,7 +51,6 @@ dh.stablisedWeights <- function(glm_object = NULL, outcome_df = NULL, outcome_va
 #'   3. Confirming that the outcome variable has exactly two levels (binary).
 #'   4. Ensuring that `new_obj` is a character string.
 #' @return Throws error(s) if any check fails, else no return.
-#' @importFrom checkmate check_character check_true
 #' @noRd
 stablise_check_args <- function(glm_object, outcome_df, outcome_var, new_obj, conns){
   
@@ -61,13 +61,10 @@ stablise_check_args <- function(glm_object, outcome_df, outcome_var, new_obj, co
   
   error_messages <- makeAssertCollection()
   
-  assert(
-    check_character(glm_object),
-    check_true(all(glm_object_exists)), 
-    check_true(all(outcome_levels == 2)),
-    check_character(new_obj),
-    add = error_messages, 
-    combine = "and")
+  checkmate::assert_character(glm_object, add = error_messages)
+  checkmate::assert_true(all(glm_object_exists, add = error_messages))
+  checkmate::assert_true(all(outcome_levels == 2), add = error_messages)
+  checkmate::assert_character(new_obj, add = error_messages)
   
   return(reportAssertions(error_messages))
   
