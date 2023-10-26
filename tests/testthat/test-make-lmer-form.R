@@ -12,7 +12,7 @@
 test_that("check_args doesn't return an error if arguments are correct", {
   
   expect_true(
-    check_args(outcome = "test", id_var = "test", age_vars = "test", random = "intercept", 
+    lmer_form_check_args(outcome = "test", id_var = "test", age_vars = "test", random = "intercept", 
                fixed = "test", age_interactions = "test"))
   
 })

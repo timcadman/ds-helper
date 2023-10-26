@@ -1,7 +1,7 @@
 library(dplyr)
 
 ipd.fit <- readRDS("data/test_glm.rds")
-slma.fit <- readRDS("~/ds-helper/tests/testthat/data/test_slma.rds")
+slma.fit <- readRDS("data/test_slma.rds")
 lmer.fit <- readRDS("data/test_lmer.rds")
 
 coh_names <- c("alspac", "chop", "dnbc", "eden", "genr", "moba", "raine", 
@@ -17,7 +17,7 @@ test_that("check_args returns an error when arguments are incorrect", {
   expect_error(
     lm_tab_check_args(model = 99, type = 99, direction = 99, 
                       ci_format = "asdasd", family = 99, coh_names = 99), 
-    "5 assertions failed:\n * Variable 'model': Must be of type 'list', not 'double'.\n * Variable 'model': Must be element of set\n * {'glm_ipd','glm_slma','lmer_slma'}, but types do not match (numeric\n * != character).\n * Variable 'model': Must be element of set {'long','wide'}, but types\n * do not match (numeric != character).\n * Variable 'model': Must be element of set {'paste','separate'}, but\n * is 'asdasd'.\n * Variable 'model': Must be element of set {'gaussian','binomial'},\n * but types do not match (numeric != character).", 
+    "5 assertions failed:\n * Variable 'model': Must be of type 'list', not 'double'.\n * Variable 'type': Must be element of set\n * {'glm_ipd','glm_slma','lmer_slma'}, but types do not match (numeric\n * != character).\n * Variable 'direction': Must be element of set {'long','wide'}, but\n * types do not match (numeric != character).\n * Variable 'ci_format': Must be element of set {'paste','separate'},\n * but is 'asdasd'.\n * Variable 'family': Must be element of set {'gaussian','binomial'},\n * but types do not match (numeric != character).", 
     fixed = TRUE
   )
 })
@@ -82,8 +82,8 @@ test_that("rename_ipd throws error if provided incorrect variable names", {
   
   expect_error(
     rename_ipd(ipd_rename_not_expected), 
-    "Can't subset columns that don't exist\\.\\
-\\✖ Column `variable` doesn't exist\\."
+    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.", 
+    fixed = TRUE
   )
 })
     
@@ -181,8 +181,8 @@ test_that("rename_glm_slma throws error if provided incorrect variable names", {
   
   expect_error(
     rename_glm_slma(slma_rename_not_expected), 
-    "Can't subset columns that don't exist\\.\\
-\\✖ Column `variable` doesn't exist\\."
+    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.", 
+    fixed = TRUE
   )
 })
 
@@ -248,8 +248,8 @@ test_that("rename_lmer_slma throws error if provided incorrect variable names", 
   
   expect_error(
     rename_lmer_slma(lmer_rename_not_expected), 
-    "Can't subset columns that don't exist\\.\\
-\\✖ Column `variable` doesn't exist\\."
+    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.", 
+    fixed = TRUE
   )
 })
 
@@ -363,8 +363,8 @@ test_that("rename_slma_pooled throws error if provided incorrect variable names"
   
   expect_error(
     rename_slma_pooled(pooled_rename_not_expected), 
-    "Can't subset columns that don't exist\\.\\
-\\✖ Column `variable` doesn't exist\\."
+    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.", 
+    fixed = TRUE
   )
 })
 
