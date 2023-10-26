@@ -2,7 +2,7 @@
 title: "Descriptive functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{dsHelper}
+  %\VignetteIndexEntry{Descriptive functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -24,10 +24,18 @@ tutorial.
 
 
 ```r
+#install.packages("remotes")
+#library(remotes)
+#install_github("timcadman/ds-helper")
+#install_github("datashield/DSI")
+#install_github("datashield/dsBaseClient")
+#install.packages("DSMolgenisArmadillo")
+#install.packages("tidyverse")
 library(dsHelper)
-library(dsBaseClient)
 library(DSI)
+library(dsBaseClient)
 library(DSMolgenisArmadillo)
+library(tidyverse)
 ```
 
 # Data: simulated data based on LifeCycle variables
@@ -39,30 +47,34 @@ If you are unsure how to log in, please consult the DataSHIELD vignette:
 
 
 ```r
-token <- armadillo.get_token("https://armadillo.test.molgenis.org")
+url <- "https://armadillo-demo.molgenis.net"
+token <- armadillo.get_token(url)
 
 builder <- DSI::newDSLoginBuilder()
 
 builder$append(
 server = "alspac",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmalspac/tutorial/data",
+url = url,
+table = "trajectories/data/alspac",
 token = token,
-driver = "ArmadilloDriver")
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
 builder$append(
 server = "bcg",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmbcg/tutorial/data",
+url = url,
+table = "trajectories/data/bcg",
 token = token,
-driver = "ArmadilloDriver")
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
 builder$append(
 server = "bib",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmbib/tutorial/data",
+url = url,
+table = "trajectories/data/bib",
 token = token,
-driver = "ArmadilloDriver")
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
 logindata <- builder$build()
 
@@ -82,7 +94,7 @@ with simpler names:
 ```r
 dh.renameVars(
   df = "data",
-  current_names = c("ethnicity", "pat_soc"), 
+  current_names = c("ethnicity", "father_socialclass"), 
   new_names = c("race", "paternal_class"))
 
 ds.colnames("data")
@@ -96,7 +108,7 @@ example, we can remove the column "mat_ed":
 ```r
 dh.dropCols(
   df = "data", 
-  vars = "mat_ed", 
+  vars = "mother_education", 
   type = "remove")
 
 ds.colnames("data")
@@ -191,21 +203,15 @@ the suffix "iqr_c" if `type` is "separate" and "iqr_p" if type = "pooled".
 dh.makeIQR(
   df = "data",
   vars = "weight",
-  type = "separate",
+  type = "split",
   new_obj = "data")
-```
 
-```
-## Error in match.arg(type): 'arg' should be one of "combine", "split"
-```
-
-```r
 ds.colnames("data")
 ds.summary("weight_iqr_c")
 ```
 
 ```
-## Error: The input object(s) weight_iqr_c is(are) not defined on one or more of the studies!
+## Error: The input object weight_iqr_c is not defined in alspac, bcg, bib!
 ```
 
 ## Removing objects from workspace using dh.tidyEnv()
@@ -284,6 +290,17 @@ dh.lmTab(
   ci_format  = "separate")
 ```
 
+```
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
+```
+
 For manuscripts we may want to include confidence intervals in brackets after
 the point estimate. We can specify this with the argument "ci_format":
 
@@ -294,6 +311,17 @@ dh.lmTab(
   type = "glm_ipd", 
   direction = "wide", 
   ci_format  = "paste")
+```
+
+```
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
 ```
 
 ## Checking class of data using dh.classDiscrepancy()
@@ -429,7 +457,6 @@ The second element ("coefficients") is a summary table:
 ```r
 meta_analysed$coefs
 ```
-
 
 
 

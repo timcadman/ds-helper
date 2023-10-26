@@ -1,8 +1,10 @@
 ---
 title: "Conducting mixed effect/trajectory analysis using DataSHIELD"
-author: Tim Cadman
-date: 27th October 2021
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conducting mixed effect/trajectory analysis using DataSHIELD}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 editor_options:
   chunk_output_type: console
 ---
@@ -31,11 +33,9 @@ cited above. It would be helpful to read this tutorial in conjuncture with this
 paper.
 
 Please note that not all the methods used in Hughes et al. are available in 
-DataSHIELD. Currently it is not possible to use (i) multiple imputation, (ii)
-spline models, or (iii) 1-stage meta-analysis of mixed effects models. 
-All of these are in the pipeline and this tutorial will be extended when these 
-methods become available.
+DataSHIELD. Currently it is not possible to do 1-stage meta-analysis of mixed effects models. All of these are in the pipeline and this tutorial will be extended when these methods become available.
 
+Do spline models!
 
 ## Data
 We will be working with simulated repeated measures data for four cohorts:
@@ -60,21 +60,24 @@ If prompted to update packages, select option 'none'.
 
 First install the package 'remotes' which contains the function 'install_github'.
 
+
 ```r
-install.packages("remotes")
+#install.packages("remotes")
 library(remotes)
 ```
 
 
+
 ```r
-install_github("datashield/DSI")
-install_github("datashield/dsBaseClient", ref = "v6.2-dev")
-install_github("lifecycle-project/ds-helper", ref = "traj-fun")
-install.packages("DSMolgenisArmadillo")
-install.packages("tidyverse")
+#install_github("datashield/DSI")
+#install_github("datashield/dsBaseClient")
+#install_github("lifecycle-project/ds-helper", ref = "dev")
+#install.packages("DSMolgenisArmadillo")
+#install.packages("tidyverse")
 ```
 
 Now we load these packages.
+
 
 ```r
 library(dsBaseClient)
@@ -99,22 +102,14 @@ The simulated data is held on a remote server. To access it, you first
 request a 'token' which contains the login details. You then use this to login 
 and assign the data.
 
+
 ```r
-token <- armadillo.get_token("https://armadillo.test.molgenis.org")
+url <- "https://armadillo-demo.molgenis.net/"
+token <- armadillo.get_token(url)
 ```
 
 ```
-## Error: Real HTTP connections are disabled.
-## Unregistered request:
-##   GET:  https://armadillo.test.molgenis.org/actuator/info   with headers {Accept: application/json, text/xml, application/xml, */*}
-## 
-## You can stub this request with the following snippet:
-## 
-##    stub_request('get', uri = 'https://armadillo.test.molgenis.org/actuator/info') %>%
-##      wi_th(
-##        headers = list('Accept' = 'application/json, text/xml, application/xml, */*')
-##      )
-## ============================================================
+## [1] "We're opening a browser so you can log in with code DG7J55"
 ```
 
 ```r
@@ -122,74 +117,142 @@ builder <- DSI::newDSLoginBuilder()
 
 builder$append(
 server = "alspac",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmalspac/tutorial/data",
+url = url,
+table = "trajectories/data/alspac",
 token = token,
-driver = "ArmadilloDriver")
-```
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
-```
-## Error in data.frame(server = as.character(server), url = as.character(url), : object 'token' not found
-```
-
-```r
 builder$append(
 server = "bcg",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmbcg/tutorial/data",
+url = url,
+table = "trajectories/data/bcg",
 token = token,
-driver = "ArmadilloDriver")
-```
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
-```
-## Error in data.frame(server = as.character(server), url = as.character(url), : object 'token' not found
-```
-
-```r
 builder$append(
 server = "bib",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmbib/tutorial/data",
+url = url,
+table = "trajectories/data/bib",
 token = token,
-driver = "ArmadilloDriver")
-```
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
-```
-## Error in data.frame(server = as.character(server), url = as.character(url), : object 'token' not found
-```
-
-```r
 builder$append(
 server = "probit",
-url = "https://armadillo.test.molgenis.org",
-table = "mlmprobit/tutorial/data",
+url = url,
+table = "trajectories/data/probit",
 token = token,
-driver = "ArmadilloDriver")
-```
+driver = "ArmadilloDriver", 
+profile = "xenon")
 
-```
-## Error in data.frame(server = as.character(server), url = as.character(url), : object 'token' not found
-```
-
-```r
 logindata <- builder$build()
 
-conns <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "data")
+conns <- DSI::datashield.login(logins = logindata, assign = T, symbol = "data")
 ```
 
 ```
-## Error in options[[i]]: subscript out of bounds
+## 
+## Logging into the collaborating servers
+```
+
+```
+## 
+   [-------------------------------------------------------------------------------------]   0% / 0s
+##   No variables have been specified. 
+##   All the variables in the table 
+##   (the whole dataset) will be assigned to R!
+## 
+## Assigning table data...
+## 
+   [-------------------------------------------------------------------------------------]   0% / 0s
 ```
   
 We can check that this has worked. You should see that each cohort has one 
 dataframe called "data", which contains 7 variables.
 
+
 ```r
-ds.summary("data", datasources = conns)
+ds.summary("data")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $alspac
+## $alspac$class
+## [1] "data.frame"
+## 
+## $alspac$`number of rows`
+## [1] 129681
+## 
+## $alspac$`number of columns`
+## [1] 7
+## 
+## $alspac$`variables held`
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
+## [6] "mother_education"   "weight"            
+## 
+## 
+## $bcg
+## $bcg$class
+## [1] "data.frame"
+## 
+## $bcg$`number of rows`
+## [1] 12724
+## 
+## $bcg$`number of columns`
+## [1] 7
+## 
+## $bcg$`variables held`
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
+## [6] "mother_education"   "weight"            
+## 
+## 
+## $bib
+## $bib$class
+## [1] "data.frame"
+## 
+## $bib$`number of rows`
+## [1] 68864
+## 
+## $bib$`number of columns`
+## [1] 7
+## 
+## $bib$`variables held`
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
+## [6] "mother_education"   "weight"            
+## 
+## 
+## $probit
+## $probit$class
+## [1] "data.frame"
+## 
+## $probit$`number of rows`
+## [1] 191224
+## 
+## $probit$`number of columns`
+## [1] 7
+## 
+## $probit$`variables held`
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
+## [6] "mother_education"   "weight"
 ```
 We wont be using all of the variables today, however if you want to come back 
 and use this data to try out more complicated models we'll keep it online.
@@ -203,12 +266,23 @@ We can make scatter plots with age on the x-axis and weight on the y-axis.
 Note that the values that you see are anonymised - they are a non-disclosive
 approximation of the original values.
 
+
 ```r
-ds.scatterPlot(x = "data$age", y = "data$weight", datasources = conns)
+ds.scatterPlot(x = "data$age", y = "data$weight")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+![scatter plot](scatter-plot.png)
+
+```
+## [1] "Split plot created"
 ```
 
 What are you initial thoughts about the data?
@@ -221,35 +295,96 @@ from Hughes et al.).
 First of all we need to calculate the mean values for weight at each yearly age 
 band:
 
+
 ```r
-meanage <- dh.meanByAge(
+mean_age <- dh.meanByGroup(
 	df = "data", 
 	outcome = "weight", 
-	age_var = "age", 
-	conns = conns)
+	group_var = "age")
 ```
 
 ```
-## Error: 'dh.meanByAge' has been removed from this package. 
-##     Use dh.meanByAge instead. See help('Defunct')
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 ```r
-meanage %>% print(n = Inf)
+mean_age %>% print(n = Inf)
 ```
 
 ```
-## Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'print': object 'meanage' not found
+## # A tibble: 55 × 3
+##    cohort   age  mean
+##    <chr>  <dbl> <dbl>
+##  1 alspac     0  4.64
+##  2 alspac     1  8.78
+##  3 alspac     2 12.8 
+##  4 alspac     3 16.1 
+##  5 alspac     4 17.0 
+##  6 alspac     5 18.4 
+##  7 alspac     6 20.3 
+##  8 alspac     7 24.3 
+##  9 alspac     8 26.5 
+## 10 alspac     9 30.5 
+## 11 alspac    10 35.1 
+## 12 alspac    11 38.8 
+## 13 alspac    12 43.6 
+## 14 alspac    13 49.3 
+## 15 alspac    14 54.6 
+## 16 alspac    15 61.3 
+## 17 alspac    16 63.5 
+## 18 alspac    17 67.0 
+## 19 alspac    18 67.7 
+## 20 alspac    19 70.8 
+## 21 alspac    20 71.8 
+## 22 bcg        0  5.11
+## 23 bcg        1  8.88
+## 24 bcg        2 13.3 
+## 25 bcg        3 15.4 
+## 26 bcg        4 16.4 
+## 27 bcg        5 18.6 
+## 28 bib        0  4.46
+## 29 bib        1  8.11
+## 30 bib        2 13.3 
+## 31 bib        3 16.0 
+## 32 bib        4 17.1 
+## 33 bib        5 18.7 
+## 34 bib        6 22.4 
+## 35 bib        7 27.8 
+## 36 probit     0  4.98
+## 37 probit     1  8.66
+## 38 probit     2 14.0 
+## 39 probit     3 16.4 
+## 40 probit     4 16.8 
+## 41 probit     5 17.8 
+## 42 probit     6 20.8 
+## 43 probit     7 23.6 
+## 44 probit     8 28.0 
+## 45 probit     9 34.6 
+## 46 probit    10 36.1 
+## 47 probit    11 39.8 
+## 48 probit    12 42.1 
+## 49 probit    13 47.1 
+## 50 probit    14 54.0 
+## 51 probit    15 60.1 
+## 52 probit    16 62.4 
+## 53 probit    17 63.2 
+## 54 probit    18 61.6 
+## 55 probit    19 61.0
 ```
 
 Now we have the values locally, we can use any r package to plot these. I
 like to use ggplot:
 
+
 ```r
 palette <- c("#264653", "#2a9d8f", "#E9C46A", "#F4A261", "#E76F51")
 
-meanage.plot <- ggplot() + 
-  geom_line(data = meanage, aes(x = age, y = mean, colour = cohort), size = 0.8) +
+mean_age.plot <- ggplot() + 
+  geom_line(data = mean_age, aes(x = age, y = mean, colour = cohort), size = 0.8) +
   scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
   xlab("Child age") +
   ylab("Observed weight (KG)") +
@@ -257,16 +392,18 @@ meanage.plot <- ggplot() +
 ```
 
 ```
-## Error in fortify(data): object 'meanage' not found
+## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 ```
 
 ```r
-meanage.plot
+mean_age.plot
 ```
 
-```
-## Error in eval(expr, envir, enclos): object 'meanage.plot' not found
-```
+##![mean age plot](mean-age.png)
+
 Q: Looking at these two plots, What are your initial thoughts about the pattern of 
 weight change over time?
 
@@ -280,12 +417,21 @@ extract descriptives in a more usable format.
 ```r
 stats <- dh.getStats(
 	df = "data", 
-	vars = "sex", 
-	conns = conns)
+	vars = "sex")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 ```r
@@ -293,7 +439,21 @@ stats
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'stats' not found
+## $categorical
+## # A tibble: 0 × 10
+## # ℹ 10 variables: variable <chr>, cohort <chr>, category <chr>, value <dbl>, cohort_n <int>, valid_n <dbl>,
+## #   missing_n <dbl>, perc_valid <dbl>, perc_missing <dbl>, perc_total <dbl>
+## 
+## $continuous
+## # A tibble: 5 × 15
+##   variable cohort    mean std.dev perc_5 perc_10 perc_25 perc_50 perc_75 perc_90 perc_95 valid_n cohort_n missing_n
+##   <chr>    <chr>    <dbl>   <dbl>  <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>     <dbl>
+## 1 sex      alspac    0.49     0.5      0       0       0       0       1       1       1  129681   129681         0
+## 2 sex      bcg       0.48     0.5      0       0       0       0       1       1       1   12724    12724         0
+## 3 sex      bib       0.49     0.5      0       0       0       0       1       1       1   68864    68864         0
+## 4 sex      probit    0.48     0.5      0       0       0       0       1       1       1  191224   191224         0
+## 5 sex      combined  0.49     0.5      0       0       0       0       1       1       1  402493   402493         0
+## # ℹ 1 more variable: missing_perc <dbl>
 ```
 This gives us a list with two elements corresponding to the continuous and categorical
 variables. As we didn't request stats for any continuous variables, the first list is 
@@ -311,14 +471,13 @@ We can use the function dh.getRmStats to extract this info. Note that the min an
 ages are based on the 5th and 95th percentiles as DataSHIELD doesn't will not return
 true minimum and maximums due to disclosure issues.
 
+
 ```r
 rm_stats <- dh.getRmStats(
 	df = "data",
 	outcome = "weight",
 	id_var = "id", 
-	age_var = "age", 
-	conns = conns
-)
+	age_var = "age")
 ```
 
 ```
@@ -340,26 +499,84 @@ Before we can get started, we need to make sure that our id variable is an
 integer. If we don't, it breaks. First we create a new object which is an 
 integer version of our ID. We then join this back to our main dataframe.
 
+
 ```r
 ds.asInteger(
 	x.name = "data$id", 
-	newobj = "id_int", 
-  datasources	= conns)
+	newobj = "id_int")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $is.object.created
+## [1] "A data object <id_int> has been created in all specified data sources"
+## 
+## $validity.check
+## [1] "<id_int> appears valid in all sources"
 ```
 
 ```r
-ds.cbind(
-	x = c("data", "id_int"),
-	newobj = "data", 
-  datasources	= conns)
+ds.dataFrame(
+	x = c("data$id", "data$age", "data$sex", "data$ethnicity", 
+	      "data$father_socialclass", "data$mother_education", "data$weight",
+	      "id_int"),
+	stringsAsFactors = F,
+	newobj = "data")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $validity.check
+## [1] "<data> appears valid in all sources"
 ```
 
 ## Specifying the model
@@ -394,6 +611,7 @@ of the trajectory varies between individuals. This is called a random slope mode
 Here we start with a random intercept model. Understand what you are doing is
 the difficult bit; fitting the model is straightfoward:
 
+
 ```r
 model1.fit <- ds.lmerSLMA(
 	dataName = "data",
@@ -402,7 +620,8 @@ model1.fit <- ds.lmerSLMA(
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 ```r
@@ -410,7 +629,151 @@ model1.fit$output.summary
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'model1.fit' not found
+## $study1
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: weight ~ 1 + age + sex + age * sex + (1 | id_int)
+##    Data: dataDF
+## Weights: weights.to.use
+##  Offset: offset.to.use
+## Control: control.obj
+## 
+## REML criterion at convergence: 839458.6
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+##     NA     NA     NA     NA     NA 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id_int   (Intercept) 14.77    3.843   
+##  Residual             31.68    5.628   
+## Number of obs: 129681, groups:  id_int, 14216
+## 
+## Fixed effects:
+##              Estimate Std. Error t value
+## (Intercept)  3.869135   0.056184  68.866
+## age          3.534366   0.004078 866.797
+## sex          0.336620   0.080317   4.191
+## age:sex     -0.200629   0.005789 -34.655
+## 
+## Correlation of Fixed Effects:
+##         (Intr) age    sex   
+## age     -0.445              
+## sex     -0.700  0.311       
+## age:sex  0.313 -0.704 -0.443
+## 
+## $study2
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: weight ~ 1 + age + sex + age * sex + (1 | id_int)
+##    Data: dataDF
+## Weights: weights.to.use
+##  Offset: offset.to.use
+## Control: control.obj
+## 
+## REML criterion at convergence: 54369.4
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+##     NA     NA     NA     NA     NA 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id_int   (Intercept) 1.250    1.118   
+##  Residual             3.692    1.921   
+## Number of obs: 12724, groups:  id_int, 951
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  6.03409    0.06151  98.097
+## age          2.85790    0.01411 202.581
+## sex         -0.54661    0.09028  -6.055
+## age:sex      0.03661    0.02049   1.787
+## 
+## Correlation of Fixed Effects:
+##         (Intr) age    sex   
+## age     -0.455              
+## sex     -0.681  0.310       
+## age:sex  0.313 -0.688 -0.456
+## 
+## $study3
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: weight ~ 1 + age + sex + age * sex + (1 | id_int)
+##    Data: dataDF
+## Weights: weights.to.use
+##  Offset: offset.to.use
+## Control: control.obj
+## 
+## REML criterion at convergence: 292805.1
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+##     NA     NA     NA     NA     NA 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id_int   (Intercept) 0.6142   0.7837  
+##  Residual             3.6480   1.9100  
+## Number of obs: 68864, groups:  id_int, 13445
+## 
+## Fixed effects:
+##              Estimate Std. Error t value
+## (Intercept)  5.089372   0.016491 308.613
+## age          3.119718   0.005986 521.136
+## sex         -0.394888   0.023685 -16.672
+## age:sex      0.004995   0.008556   0.584
+## 
+## Correlation of Fixed Effects:
+##         (Intr) age    sex   
+## age     -0.528              
+## sex     -0.696  0.368       
+## age:sex  0.369 -0.700 -0.529
+## 
+## $study4
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: weight ~ 1 + age + sex + age * sex + (1 | id_int)
+##    Data: dataDF
+## Weights: weights.to.use
+##  Offset: offset.to.use
+## Control: control.obj
+## 
+## REML criterion at convergence: 1138299
+## 
+## Scaled residuals: 
+##    Min     1Q Median     3Q    Max 
+##     NA     NA     NA     NA     NA 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  id_int   (Intercept)  3.402   1.844   
+##  Residual             20.521   4.530   
+## Number of obs: 191224, groups:  id_int, 17046
+## 
+## Fixed effects:
+##              Estimate Std. Error  t value
+## (Intercept)  4.689392   0.026376  177.793
+## age          3.455656   0.003041 1136.282
+## sex          0.013923   0.038018    0.366
+## age:sex     -0.240527   0.004382  -54.889
+## 
+## Correlation of Fixed Effects:
+##         (Intr) age    sex   
+## age     -0.381              
+## sex     -0.694  0.264       
+## age:sex  0.264 -0.694 -0.381
+## 
+## $input.beta.matrix.for.SLMA
+##             betas study 1 betas study 2 betas study 3 betas study 4
+## (Intercept)     3.8691347    6.03408780   5.089372058    4.68939189
+## age             3.5343657    2.85790465   3.119717700    3.45565555
+## sex             0.3366204   -0.54660715  -0.394887544    0.01392347
+## age:sex        -0.2006292    0.03661021   0.004995405   -0.24052747
+## 
+## $input.se.matrix.for.SLMA
+##             ses study 1 ses study 2 ses study 3 ses study 4
+## (Intercept) 0.056183657  0.06151162 0.016491091 0.026375527
+## age         0.004077501  0.01410748 0.005986375 0.003041196
+## sex         0.080317421  0.09027731 0.023685373 0.038017878
+## age:sex     0.005789246  0.02049084 0.008556005 0.004382080
 ```
 
 ## Exploring the output
@@ -419,48 +782,68 @@ directly from the model object.
 
 Fixed effects coefficients for each cohort are here:
 
+
 ```r
 model1.fit$betamatrix.valid
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'model1.fit' not found
+##             betas study 1 betas study 2 betas study 3 betas study 4
+## (Intercept)     3.8691347    6.03408780   5.089372058    4.68939189
+## age             3.5343657    2.85790465   3.119717700    3.45565555
+## sex             0.3366204   -0.54660715  -0.394887544    0.01392347
+## age:sex        -0.2006292    0.03661021   0.004995405   -0.24052747
 ```
 The pooled estimates are here:
+
 
 ```r
 model1.fit$SLMA.pooled.ests.matrix
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'model1.fit' not found
+##              pooled.ML      se.ML pooled.REML    se.REML  pooled.FE       se.FE
+## (Intercept)  4.9201754 0.38859060   4.9202557 0.44896972  4.9643913 0.013250416
+## age          3.2421628 0.13538495   3.2420998 0.15635197  3.4176657 0.002229407
+## sex         -0.1477761 0.17066919  -0.1477464 0.19787562 -0.2576757 0.019061879
+## age:sex     -0.1008701 0.06092812  -0.1006258 0.07037899 -0.1873971 0.003195114
 ```
 And the details of the random effects are here:
+
 
 ```r
 model1.fit$output.summary$study1$varcor
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'model1.fit' not found
+##  Groups   Name        Std.Dev.
+##  id_int   (Intercept) 3.8426  
+##  Residual             5.6282
 ```
 
 ## A neater way
 I find these objects a little fiddly to work with (you may not). You can also 
 use the dsHelper function to extract the coefficients. 
 
+
 ```r
 model1.coef <- dh.lmTab(
 	model = model1.fit, 
-	type = "lmer", 
+	type = "lmer_slma", 
 	coh_names = names(conns), 
 	ci_format = "separate", 
-	direction = "wide"
-)
+	direction = "wide")
 ```
 
 ```
-## Error in isTRUE(lhs): object 'model1.fit' not found
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
 ```
 
 Let's explore there in more detail
@@ -468,6 +851,7 @@ Let's explore there in more detail
 ### Fixed effects
 The fixed effects are analogous to your coefficients from a linear regression
 model.
+
 
 ```r
 model1.coef$fixed
@@ -479,6 +863,7 @@ model1.coef$fixed
 If we use dh.lmTab it allows us to manipulate our output more easily. For 
 example you might want to split the fixed effects by cohort:
 
+
 ```r
 model1.coef$fixed %>% group_by(cohort) %>%
 group_split()
@@ -489,6 +874,7 @@ group_split()
 ```
 
 Or you might want to just select the pooled results:
+
 
 ```r
 model1.coef$fixed %>% dplyr::filter(cohort == "combined")
@@ -506,8 +892,9 @@ mean intercept for the sample.
 However, there are not returned by DataSHIELD as they could be disclosive. 
 Instead we can view the standard deviation of these residuals:
 
+
 ```r
-model1.coef$random_sd
+model1.coef$random
 ```
 
 ```
@@ -517,20 +904,7 @@ model1.coef$random_sd
 If we take ALSPAC as an example, we have an overall (mean) intercept of 3.87,
 and a standard deviation of 3.84. This indicates considerable variability
 between individual intercepts. If you had specified more than one random effect 
-(e.g. slope) this would also be displayed here. You could also view the 
-correlation between your random effects (output$random_cor).
-
-We can also see the standard deviation of the residual error, ie the difference 
-between observed values and predicted values within subject.
-
-```r
-model1.coef$resid_sd
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'model1.coef' not found
-```
-
+(e.g. slope) this would also be displayed here. We can also see the standard deviation of the residual error, ie the difference between observed values and predicted values within subject.
 
 ## Plotting the trajectories
 In order to plot trajectories, we first need to get model predicted values of weight. In 
@@ -543,16 +917,17 @@ We want to visualise the trajectories for both males and females between ages
 0 and 25. In our reference dataframe, we therefore create values for age between
 0 and 25 at 0.1 intervals, repeated for sex == 0 (males) and sex == 1 (females).
 
+
 ```r
 new_data_m <- tibble(
 	age = seq(0, 25, by = 0.1), 
-	"age:sex1" = age*0,
-	sex1 = 0)
+	"age:sex" = age*0,
+	sex = 0)
 
 new_data_f <- tibble(
 	age = seq(0, 25, by = 0.11), 
-	"age:sex1" = age*1,
-	sex1 = 1)
+	"age:sex" = age*1,
+	sex = 1)
 
 pred_data <- bind_rows(new_data_m, new_data_f)
 ```
@@ -560,25 +935,52 @@ pred_data <- bind_rows(new_data_m, new_data_f)
 If we look at this object we have created, it has all the values of the 
 model variables at which we want to predict weight:
 
+
 ```r
 pred_data
+```
+
+```
+## # A tibble: 479 × 3
+##      age `age:sex`   sex
+##    <dbl>     <dbl> <dbl>
+##  1   0           0     0
+##  2   0.1         0     0
+##  3   0.2         0     0
+##  4   0.3         0     0
+##  5   0.4         0     0
+##  6   0.5         0     0
+##  7   0.6         0     0
+##  8   0.7         0     0
+##  9   0.8         0     0
+## 10   0.9         0     0
+## # ℹ 469 more rows
 ```
 
 We can then use this reference data and our model object to get predicted values.
 Note that we now have four more columns appended to our reference data containing
 predicted values, standard error of predictions and confidence intervals.
 
+
 ```r
 plotdata <- dh.predictLmer(
 	model = model1.fit,
-	newdata = pred_data,
-	coh_names = names(conns)
-)
+	new_data = pred_data,
+	coh_names = names(conns))
 ```
 
 ```
-## Error in dh.predictLmer(model = model1.fit, newdata = pred_data, coh_names = names(conns)): object 'model1.fit' not found
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
 ```
+
+
 
 ```r
 plotdata
@@ -593,13 +995,13 @@ predicted values for all cohorts between ages 0 and 25. However many of the coho
 don't have data between those ages, so we might not want to plot beyond
 where there is data. We can trim our predicted data to the available ages.
 
+
 ```r
 plot_trim <- dh.trimPredData(
 	pred = plotdata,
 	coh_names = c("alspac", "bcg", "bib", "probit", "combined"),
 	min = rep(0, 5), 
-	max = c(20, 5, 5, 20, 20)
-)
+	max = c(20, 5, 5, 20, 20))
 ```
 
 ```
@@ -608,13 +1010,14 @@ plot_trim <- dh.trimPredData(
 
 Next we set sex as a factor to make the plot clearer:
 
+
 ```r
 plot_trim <- plot_trim %>%
-mutate(sex = factor(sex1, levels = c(0, 1), labels = c("Male", "Female")))
+mutate(sex = factor(sex, levels = c(0, 1), labels = c("Male", "Female")))
 ```
 
 ```
-## Error in mutate(., sex = factor(sex1, levels = c(0, 1), labels = c("Male", : object 'plot_trim' not found
+## Error in mutate(., sex = factor(sex, levels = c(0, 1), labels = c("Male", : object 'plot_trim' not found
 ```
 
 It would also be nice to be able to overlay the predicted trajectory with 
@@ -624,46 +1027,62 @@ as a local object. This allows us to build more flexible plots.
 
 Each row of the created object represents the anomyised values of a subject.
 
+
 ```r
 observed <- dh.getAnonPlotData(
 	df = "data",
-	v1 = "age", 
-	v2 = "weight", 
-	conns = conns
-)
+	var_1 = "age", 
+	var_2 = "weight")
 ```
 
 ```
-## Error in dh.getAnonPlotData(df = "data", v1 = "age", v2 = "weight", conns = conns): unused arguments (v1 = "age", v2 = "weight")
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
+
 
 ```r
 observed
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'observed' not found
+## # A tibble: 804,986 × 3
+##    cohort    age weight
+##    <chr>   <dbl>  <dbl>
+##  1 alspac  0.130   4.93
+##  2 alspac  0.604   7.37
+##  3 alspac  3.89   18.5 
+##  4 alspac  7.64   26.5 
+##  5 alspac  8.57   30.4 
+##  6 alspac 10.8    39.4 
+##  7 alspac 13.0    56.8 
+##  8 alspac 17.8    84.4 
+##  9 alspac  1.00    9.79
+## 10 alspac  1.36   10.1 
+## # ℹ 804,976 more rows
 ```
 
 Now we are ready to plot the pooled trajectories. We use the function
 "sample_frac" to only take 1% of the observed values. You can play around with
 this value, but if you use too many the graph becomes unreadable.
 
+
 ```r
 ggplot() + 
   geom_point(
-  	data = sample_frac(observed, .01) %>% filter(cohort == "combined"), 
+  	data = sample_frac(observed, .01) %>% dplyr::filter(cohort == "combined"), 
   	aes(x = age, y = weight), 
   	alpha = 0.4, 
   	size = 0.1) +
   geom_line(
-  	data = plot_trim %>% filter(cohort == "combined"), 
+  	data = plot_trim %>% dplyr::filter(cohort == "combined"), 
   	aes(x = age, y = predicted, colour = sex), size = 0.8) +
   geom_ribbon(
-  	data = plot_trim %>% filter(cohort == "combined" & sex == "Male"), 
+  	data = plot_trim %>% dplyr::filter(cohort == "combined" & sex == "Male"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   geom_ribbon(
-  	data = plot_trim %>% filter(cohort == "combined" & sex == "Female"), 
+  	data = plot_trim %>% dplyr::filter(cohort == "combined" & sex == "Female"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
   scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
@@ -673,26 +1092,27 @@ ggplot() +
 ```
 
 ```
-## Error in sample_frac(observed, 0.01): object 'observed' not found
+## Error in dplyr::filter(., cohort == "combined"): object 'plot_trim' not found
 ```
 
 We can also plot the trajectories for each cohort separately:
 
+
 ```r
 ggplot() + 
   geom_point(
-  	data = sample_frac(observed, .01) %>% filter(cohort != "combined"), 
+  	data = sample_frac(observed, .01) %>% dplyr::filter(cohort != "combined"), 
   	aes(x = age, y = weight), 
   	alpha = 0.4, 
   	size = 0.1) +
   geom_line(
-  	data = plot_trim %>% filter(cohort != "combined"), 
+  	data = plot_trim %>% dplyr::filter(cohort != "combined"), 
   	aes(x = age, y = predicted, colour = sex), size = 0.8) +
   geom_ribbon(
-  	data = plot_trim %>% filter(cohort != "combined" & sex == "Male"), 
+  	data = plot_trim %>% dplyr::filter(cohort != "combined" & sex == "Male"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   geom_ribbon(
-  	data = plot_trim %>% filter(cohort != "combined" & sex == "Female"), 
+  	data = plot_trim %>% dplyr::filter(cohort != "combined" & sex == "Female"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   facet_wrap(~cohort) +
   scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
@@ -703,7 +1123,7 @@ ggplot() +
 ```
 
 ```
-## Error in sample_frac(observed, 0.01): object 'observed' not found
+## Error in dplyr::filter(., cohort != "combined"): object 'plot_trim' not found
 ```
 
 Q: Looking at the plots, how well do you think our model fits the data?
@@ -719,33 +1139,66 @@ function of a transformation of age.
 Let's start by creating a new variable which is age^2, and see if this provides
 a better fit. We create the variable, and join it back in our main data frame.
 
+
 ```r
 ds.make(
 	toAssign = "data$age^2", 
-	newobj = "age_2", 
-	datasources = conns
-)
+	newobj = "age_2")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $is.object.created
+## [1] "A data object <age_2> has been created in all specified data sources"
+## 
+## $validity.check
+## [1] "<age_2> appears valid in all sources"
 ```
 
 ```r
 ds.dataFrame(
 	x = c("data", "age_2"), 
-	newobj = "data", 
-	datasources = conns
-)
+	newobj = "data")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $validity.check
+## [1] "<data> appears valid in all sources"
 ```
 Now we are going to simply repeat the steps before, but using this transformed
 variable instead of the original age variable.
 
 First we run the model:
+
 
 ```r
 age_2.fit <- ds.lmerSLMA(
@@ -755,25 +1208,27 @@ age_2.fit <- ds.lmerSLMA(
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 Now we create a dataframe of the values of the fixed effects at which we want
 to predict weight. Note that as we have transformed our age term, we need to add 
 this transformed version of the variable to our reference data.
 
+
 ```r
 pred_ref_2a <- tibble(
 	age = seq(0, 25, by = 0.1), 
 	age_2 = age^2,
-	"age_2:sex1" = age_2*0,
-	sex1 = 0)
+	"age_2:sex" = age_2*0,
+	sex = 0)
 
 pred_ref_2b <- tibble(
 	age = seq(0, 25, by = 0.11), 
 	age_2 = age^2,
-	"age_2:sex1" = age_2*1,
-	sex1 = 1)
+	"age_2:sex" = age_2*1,
+	sex = 1)
 
 pred_ref_2 <- bind_rows(pred_ref_2a, pred_ref_2b)
 ```
@@ -781,51 +1236,61 @@ pred_ref_2 <- bind_rows(pred_ref_2a, pred_ref_2b)
 Again we get the predicted values, trim them at the ages of the observed
 data and set sex as a factor.
 
+
 ```r
 pred_data_2 <- dh.predictLmer(
 	model = age_2.fit,
-	newdata = pred_ref_2,
-	coh_names = names(conns)
-)
+	new_data = pred_ref_2,
+	coh_names = names(conns))
 ```
 
 ```
-## Error in dh.predictLmer(model = age_2.fit, newdata = pred_ref_2, coh_names = names(conns)): object 'age_2.fit' not found
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
 ```
+
 
 ```r
 pred_data_2_trim <- dh.trimPredData(
 	pred = pred_data_2,
 	coh_names = c("alspac", "bcg", "bib", "probit", "combined"),
 	min = rep(0, 5), 
-	max = c(20, 5, 5, 20, 20)
-)
+	max = c(20, 5, 5, 20, 20))
 ```
 
 ```
 ## Error in dh.trimPredData(pred = pred_data_2, coh_names = c("alspac", "bcg", : object 'pred_data_2' not found
 ```
 
+
+
 ```r
 pred_data_2_trim <- pred_data_2_trim %>%
-mutate(sex = factor(sex1, levels = c(0, 1), labels = c("Male", "Female")))
+mutate(sex = factor(sex, levels = c(0, 1), labels = c("Male", "Female")))
 ```
 
 ```
-## Error in mutate(., sex = factor(sex1, levels = c(0, 1), labels = c("Male", : object 'pred_data_2_trim' not found
+## Error in mutate(., sex = factor(sex, levels = c(0, 1), labels = c("Male", : object 'pred_data_2_trim' not found
 ```
 
 Let's plot this against the observed data and see if it fits any better:
 
+
 ```r
 ggplot() + 
   geom_point(
-  	data = sample_frac(observed, .01) %>% filter(cohort == "combined"), 
+  	data = sample_frac(observed, .01) %>% dplyr::filter(cohort == "combined"), 
   	aes(x = age, y = weight), 
   	alpha = 0.4, 
   	size = 0.1) +
   geom_line(
-  	data = pred_data_2_trim %>% filter(cohort == "combined"), 
+  	data = pred_data_2_trim %>% dplyr::filter(cohort == "combined"), 
   	aes(x = age, y = predicted, colour = sex), size = 0.8) +
   scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
   scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
@@ -835,8 +1300,9 @@ ggplot() +
 ```
 
 ```
-## Error in sample_frac(observed, 0.01): object 'observed' not found
+## Error in dplyr::filter(., cohort == "combined"): object 'pred_data_2_trim' not found
 ```
+
 Hmmm. We now have a non-linear trajectory, but it still doesn't look a great fit.
 We haven't looked at any fit statistics or residuals yet, but from the eye it 
 clearly doesn't fit the data. It also doesn't seem to capture the sex differences
@@ -875,7 +1341,8 @@ ds.assign(
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 ```r
@@ -883,23 +1350,110 @@ dh.dropCols(
 	df = "data", 
 	vars = "age", 
 	type = "remove", 
-	new_df_name = "data", 
-  conns = conns)
+	new_df_name = "data")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## Warning in dh.dropCols(df = "data", vars = "age", type = "remove", new_df_name = "data"): Please use `new_obj` instead of
+## `new_df_name`
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $alspac
+## $alspac$is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $alspac$validity.check
+## [1] "<data> appears valid in all sources"
+## 
+## 
+## $bcg
+## $bcg$is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $bcg$validity.check
+## [1] "<data> appears valid in all sources"
+## 
+## 
+## $bib
+## $bib$is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $bib$validity.check
+## [1] "<data> appears valid in all sources"
+## 
+## 
+## $probit
+## $probit$is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $probit$validity.check
+## [1] "<data> appears valid in all sources"
 ```
 
 ```r
 ds.cbind(
 	x = c("data", "age"), 
-	newobj = "data", 
-  datasources = conns)
+	newobj = "data")
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## $is.object.created
+## [1] "A data object <data> has been created in all specified data sources"
+## 
+## $validity.check
+## [1] "<data> appears valid in all sources"
 ```
 
 ### Create transformations of age term
@@ -908,38 +1462,213 @@ We could do the transformations manually, but this would be a bit cumbersome.
 We can insted use the function ds.makeAgePolys to create transformations of age.
 Here we use the following powers: -2, -1, -0.5, log, 0.5, 2, 3. 
 
+
 ```r
 dh.makeAgePolys(
 	df = "data", 
-	agevars = "age", 
+	age_var = "age", 
 	poly_names = c("m_2", "m_1", "m_0_5", "log", "0_5", "2", "3"), 
 	poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"))
 ```
 
 ```
-## Error: `age_var` must not be NULL.
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+## The following transformations of age have been created in
+##     dataframe: data 
+## 
+##  agem_2 agem_1 agem_0_5 age0_5 age2 age3 age_log
 ```
 
 We can check this has worked, and see the mean values for these new variables.
 
+
 ```r
 poly_summary <- dh.getStats(
 	df = "data", 
-	vars = c("agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3")) 
+	vars = c("agem_2", "agem_1", "agem_0_5", "age_log", "age0_5", "age2", "age3")) 
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 ```r
 poly_summary$continuous %>%
-select(cohort, variable, mean, std.dev) %>%
+dplyr::select(cohort, variable, mean, std.dev) %>%
 print(n = Inf)
 ```
 
 ```
-## Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'print': object 'poly_summary' not found
+## # A tibble: 35 × 4
+##    cohort   variable    mean std.dev
+##    <chr>    <chr>      <dbl>   <dbl>
+##  1 alspac   age_log     2.13    1.3 
+##  2 bcg      age_log     1.25    0.67
+##  3 bib      age_log     0.98    0.73
+##  4 probit   age_log     1.4     1.19
+##  5 alspac   age0_5     69.2    86.8 
+##  6 bcg      age0_5      6.86    8.19
+##  7 bib      age0_5      5.25    8.85
+##  8 probit   age0_5     34.4    72.0 
+##  9 alspac   age2      889.   1393.  
+## 10 bcg      age2       27.0    39.2 
+## 11 bib      age2       22.6    46.0 
+## 12 probit   age2      447.   1125.  
+## 13 alspac   age3        0.78    2.12
+## 14 bcg      age3       -0.04    1.69
+## 15 bib      age3       -0.92    2.15
+## 16 probit   age3       -0.21    2.07
+## 17 alspac   agem_0_5    1.48    2.59
+## 18 bcg      agem_0_5    1.68    2.45
+## 19 bib      agem_0_5    2.95    3.54
+## 20 probit   agem_0_5    2       2.65
+## 21 alspac   agem_1      8.89   26.7 
+## 22 bcg      agem_1      8.84   26.0 
+## 23 bib      agem_1     21.2    38.6 
+## 24 probit   agem_1     11.0    28.0 
+## 25 alspac   agem_2    792.   2688.  
+## 26 bcg      agem_2    754.   2628.  
+## 27 bib      agem_2   1945.   3942.  
+## 28 probit   agem_2    905.   2845.  
+## 29 combined age0_5     39.8  1150   
+## 30 combined age2      504.      2.18
+## 31 combined age3       -0.01    1.23
+## 32 combined age_log     1.56   73.8 
+## 33 combined agem_0_5    1.99    2.84
+## 34 combined agem_1     12.0    30.0 
+## 35 combined agem_2   1042.   3037.
 ```
 
 ## Identifying the best fitting model
@@ -958,17 +1687,19 @@ transformations we created above.
 First we try to find the best shape of trajectory, so we create model formulae
 just with the age terms.
 
+
 ```r
 weight_form <- dh.makeLmerForm(
   outcome = "weight", 
-  idvar = "id_int", 
-  agevars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"), 
+  id_var = "id_int", 
+  age_vars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"), 
   random = "intercept")
 ```
 
 ```
-## Error in dh.makeLmerForm(outcome = "weight", idvar = "id_int", agevars = c("age", : unused arguments (idvar = "id_int", agevars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"))
+## Error in checkCharacter(age_vars): could not find function "checkCharacter"
 ```
+
 
 ```r
 weight_form %>% 
@@ -994,11 +1725,16 @@ skipped this here for simplicity but it is possible to do this in DS.
 
 This will take a few minutes as we are fitting 28 different models.
 
+
 ```r
 poly.fit <- dh.lmeMultPoly(
 	df = "data",
-	formulae = weight_form$formulae, 
+	formulae = weight_form$formula, 
   poly_names = weight_form$polys)
+```
+
+```
+## Error in dh.lmeMultPoly(df = "data", formulae = weight_form$formula, poly_names = weight_form$polys): object 'weight_form' not found
 ```
 
 ```
@@ -1006,6 +1742,7 @@ poly.fit <- dh.lmeMultPoly(
 ```
 
 There are some converegence warnings. We can see details here:
+
 
 ```r
 poly.fit$convergence
@@ -1020,6 +1757,7 @@ each study, the average rank of that model across all studies and
 the summed negative log likelihood. The model with the lowest summed 
 log-likelhood across studies contains two powers: age^0.5 & age^2.
 
+
 ```r
 poly.fit$fit
 ```
@@ -1032,6 +1770,7 @@ In this scenario we are trying to fit the same model to all cohorts. In other sc
 you might want to fit a different model to different cohorts. You could still
 use this table as a reference for the best fitting model, for example for
 alspac:
+
 
 
 ```r
@@ -1050,6 +1789,7 @@ Now we can fit our final model, including sex and the interaction with the age
 terms. We aren't worrying about other covariates in this example, but of course
 you could include them.
 
+
 ```r
 final.fit <- ds.lmerSLMA(
 	dataName = "data",
@@ -1057,7 +1797,8 @@ final.fit <- ds.lmerSLMA(
 ```
 
 ```
-## Error: There are some DataSHIELD errors, list them with datashield.errors()
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
 ```
 
 ## Making plots
@@ -1066,22 +1807,23 @@ need to create our age transformations in the new data to get the predicted
 values for weight at each age.
 
 
+
 ```r
 pred_ref_final_m <- tibble(
 	age = seq(0, 25, by = 0.1), 
 	age0_5 = age^0.5,
 	age2 = age^2, 
-	sex1 = 0,
-	"age0_5:sex1" = age0_5*sex1, 
-  "age2:sex1" = age2*sex1)
+	sex = 0,
+	"age0_5:sex" = age0_5*sex, 
+  "age2:sex" = age2*sex)
 
 pred_ref_final_f <- tibble(
 	age = seq(0, 25, by = 0.1), 
 	age0_5 = age^0.5,
 	age2 = age^2, 
-	sex1 = 1,
-	"age0_5:sex1" = age0_5*sex1, 
-  "age2:sex1" = age2*sex1)
+	sex = 1,
+	"age0_5:sex" = age0_5*sex, 
+  "age2:sex" = age2*sex)
 
 pred_ref_final <- bind_rows(pred_ref_final_m, pred_ref_final_f)
 ```
@@ -1089,17 +1831,26 @@ pred_ref_final <- bind_rows(pred_ref_final_m, pred_ref_final_f)
 Again we get the predicted values, trim them at the ages of the observed
 data and set sex as a factor.
 
+
 ```r
 pred_ref_final <- dh.predictLmer(
 	model = final.fit,
-	newdata = pred_ref_final,
+	new_data = pred_ref_final,
 	coh_names = names(conns)
 )
 ```
 
 ```
-## Error in dh.predictLmer(model = final.fit, newdata = pred_ref_final, coh_names = names(conns)): object 'final.fit' not found
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
 ```
+
 
 ```r
 pred_ref_final_trim <- dh.trimPredData(
@@ -1119,32 +1870,34 @@ pred_ref_final_trim <- dh.trimPredData(
 ## ! `..1` must be of size 502 or 1, not size 0.
 ```
 
+
 ```r
 pred_ref_final_trim <- pred_ref_final_trim %>%
-mutate(sex = factor(sex1, levels = c(0, 1), labels = c("Male", "Female")))
+mutate(sex = factor(sex, levels = c(0, 1), labels = c("Male", "Female")))
 ```
 
 ```
-## Error in mutate(., sex = factor(sex1, levels = c(0, 1), labels = c("Male", : object 'pred_ref_final_trim' not found
+## Error in mutate(., sex = factor(sex, levels = c(0, 1), labels = c("Male", : object 'pred_ref_final_trim' not found
 ```
 
 And now we can make some plots
 
+
 ```r
 ggplot() + 
   geom_point(
-  	data = sample_frac(observed, .01) %>% filter(cohort == "combined"), 
+  	data = sample_frac(observed, .01) %>% dplyr::filter(cohort == "combined"), 
   	aes(x = age, y = weight), 
   	alpha = 0.4, 
   	size = 0.1) +
   geom_line(
-  	data = pred_ref_final_trim %>% filter(cohort == "combined"), 
+  	data = pred_ref_final_trim %>% dplyr::filter(cohort == "combined"), 
   	aes(x = age, y = predicted, colour = sex), size = 0.8) +
   geom_ribbon(
-  	data = pred_ref_final_trim %>% filter(cohort == "combined" & sex == "Male"), 
+  	data = pred_ref_final_trim %>% dplyr::filter(cohort == "combined" & sex == "Male"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   geom_ribbon(
-  	data = pred_ref_final_trim %>% filter(cohort == "combined" & sex == "Female"), 
+  	data = pred_ref_final_trim %>% dplyr::filter(cohort == "combined" & sex == "Female"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
   scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
@@ -1154,26 +1907,27 @@ ggplot() +
 ```
 
 ```
-## Error in sample_frac(observed, 0.01): object 'observed' not found
+## Error in dplyr::filter(., cohort == "combined"): object 'pred_ref_final_trim' not found
 ```
 
 We can also plot the trajectories by cohort
 
+
 ```r
 ggplot() + 
   geom_point(
-  	data = sample_frac(observed, .01) %>% filter(cohort != "combined"), 
+  	data = sample_frac(observed, .01) %>% dplyr::filter(cohort != "combined"), 
   	aes(x = age, y = weight), 
   	alpha = 0.4, 
   	size = 0.1) +
   geom_line(
-  	data = pred_ref_final_trim %>% filter(cohort != "combined"), 
+  	data = pred_ref_final_trim %>% dplyr::filter(cohort != "combined"), 
   	aes(x = age, y = predicted, colour = sex), size = 0.8) +
   geom_ribbon(
-  	data = pred_ref_final_trim %>% filter(cohort != "combined" & sex == "Male"), 
+  	data = pred_ref_final_trim %>% dplyr::filter(cohort != "combined" & sex == "Male"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   geom_ribbon(
-  	data = pred_ref_final_trim %>% filter(cohort != "combined" & sex == "Female"), 
+  	data = pred_ref_final_trim %>% dplyr::filter(cohort != "combined" & sex == "Female"), 
   	aes(x = age, ymin = low_ci, ymax = upper_ci), alpha = 0.1) +
   facet_wrap(~cohort) +
   scale_x_continuous(limit = c(0, 20), breaks = seq(0, 20, 5), expand = c(0, 0)) + 
@@ -1184,7 +1938,7 @@ ggplot() +
 ```
 
 ```
-## Error in sample_frac(observed, 0.01): object 'observed' not found
+## Error in dplyr::filter(., cohort != "combined"): object 'pred_ref_final_trim' not found
 ```
 
 Great, this looks like a much better fit. We have captured the initial growth,
@@ -1202,18 +1956,166 @@ First we get mean observed values for weight between different age bands.
 The 'intervals' argument specifies how we want to bin our age variable. Again 
 this takes a few minutes to run.
 
+
 ```r
-observed_by_age <- dh.meanByAge(
+observed_by_age <- dh.meanByGroup(
 	df = "data", 
 	outcome = "weight", 
-	age_var = "age", 
+	group_var = "age", 
 	intervals = c(0, 1, 1, 2, 3, 5, 6, 10, 11, 15, 16, 18)
 )
 ```
 
 ```
-## Error: 'dh.meanByAge' has been removed from this package. 
-##     Use dh.meanByAge instead. See help('Defunct')
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+##  Data in all studies were valid 
+## 
+## Study 1 :  No errors reported from this study
+## Study 2 :  No errors reported from this study
+## Study 3 :  No errors reported from this study
+## Study 4 :  No errors reported from this study
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+##  Data in all studies were valid 
+## 
+## Study 1 :  No errors reported from this study
+## Study 2 :  No errors reported from this study
+## Study 3 :  No errors reported from this study
+## Study 4 :  No errors reported from this study
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+##  Data in all studies were valid 
+## 
+## Study 1 :  No errors reported from this study
+## Study 2 :  No errors reported from this study
+## Study 3 :  No errors reported from this study
+## Study 4 :  No errors reported from this study
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+##  Data in all studies were valid 
+## 
+## Study 1 :  No errors reported from this study
+## Study 2 :  No errors reported from this study
+## Study 3 :  No errors reported from this study
+## Study 4 :  No errors reported from this study
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+##  Data in all studies were valid 
+## 
+## Study 1 :  No errors reported from this study
+## Study 2 :  No errors reported from this study
+## Study 3 :  No errors reported from this study
+## Study 4 :  No errors reported from this study
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## 
+##  Data in all studies were valid 
+## 
+## Study 1 :  No errors reported from this study
+## Study 2 :  No errors reported from this study
+## Study 3 :  No errors reported from this study
+## Study 4 :  No errors reported from this study
+```
+
+```
+## [-------------------------------------------------------------------------------------] 0% / 0s
+```
+
+```
+## Error in `separate()`:
+## ! `!!enquo(col)` must select exactly one column.
 ```
 
 ```r
@@ -1226,6 +2128,7 @@ observed_by_age
 
 We rename our column to 'observed':
 
+
 ```r
 obs <- observed_by_age %>%
 dplyr::rename(observed = mean)
@@ -1236,6 +2139,7 @@ dplyr::rename(observed = mean)
 ```
 
 Now we get the average predicted values between the same age bands
+
 
 ```r
 pred_by_age <- pred_ref_final_trim %>%
@@ -1260,6 +2164,8 @@ summarise(
 ## Error in mutate(., group = case_when(age > 0 & age <= 1 ~ "0_1", age >= : object 'pred_ref_final_trim' not found
 ```
 
+
+
 ```r
 pred_by_age
 ```
@@ -1273,6 +2179,7 @@ the difference between the two. We can also use the confidence intervals to
 calculate upper and lower bounds of the residual. You can see that model fit 
 isn't great for PROBIT towards the extremes. For other cohorts, the looks pretty
 good.
+
 
 ```r
 res_tab <- left_join(obs, pred_by_age, by = c("group", "cohort")) %>%
@@ -1296,6 +2203,7 @@ set_names(names(conns))
 ```
 ## Error in left_join(obs, pred_by_age, by = c("group", "cohort")): object 'obs' not found
 ```
+
 
 ```r
 res_tab
