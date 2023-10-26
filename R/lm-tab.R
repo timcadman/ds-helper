@@ -25,7 +25,7 @@
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
 #' 
-#' @importFrom checkmate check_list check_set_equal makeAssertCollection
+#' @importFrom checkmate assert_string assert_set_equal makeAssertCollection 
 #' @importFrom tibble tibble
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom rlang arg_match .data
@@ -173,23 +173,16 @@ lm_tab_check_args <- function(model, type, direction, ci_format, family,
   
   error_messages <- makeAssertCollection()
   
-  assert(
-    check_list(model),
-    check_choice(type, c("glm_ipd", "glm_slma", "lmer_slma")), 
-    check_choice(direction, c("long", "wide")), 
-    check_choice(ci_format, c("paste", "separate")), 
-    check_choice(family, c("gaussian", "binomial")), 
-    add = error_messages, 
-    combine = "and"
-  )
+  checkmate::assert_list(model, add = error_messages)
+  checkmate::assert_choice(type, c("glm_ipd", "glm_slma", "lmer_slma"), add = error_messages)
+  checkmate::assert_choice(direction, c("long", "wide"), add = error_messages)
+  checkmate::assert_choice(ci_format, c("paste", "separate"), add = error_messages)
+  checkmate::assert_choice(family, c("gaussian", "binomial"), add = error_messages)
   
   if(type %in% c("glm_slma", "lmer_slma")){
-    
-    assert(
-      check_string(coh_names), 
-      check_set_equal(length(coh_names), model$num.valid.studies),
-      add = error_messages
-    )
+   
+  checkmate::assert_string(coh_names, add = error_messages)
+  checkmate::assert_set_equal(length(coh_names), model["num.valid.studies"], add = error_messages) 
     
     if (exponentiate == TRUE & family == "gaussian") {
       warning("It is not recommended to exponentiate coefficients from linear
@@ -198,7 +191,7 @@ lm_tab_check_args <- function(model, type, direction, ci_format, family,
     
     if (type == "lmer_slma"){
       
-      assert_choice(family, "gaussian")
+      checkmate::assert_choice(family, "gaussian", add = error_messages)
       
     }
     
