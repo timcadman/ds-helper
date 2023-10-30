@@ -7,11 +7,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 ```{r settings, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(results = "hide")
 options(datashield.progress = FALSE)
 options(datashield.progress.clear = TRUE)
-knitr::opts_chunk$set(message = FALSE)
-knitr::opts_chunk$set(results = FALSE)
-knitr::opts_chunk$set(warning = FALSE)
 options(knitr.duplicate.label = "allow")
 ```
 
@@ -84,7 +84,9 @@ profile = "xenon")
 logindata <- builder$build()
 
 conns <- DSI::datashield.login(logins = logindata, assign = TRUE, symbol = "data")
+```
 
+```{r results = "hold"}
 ds.colnames("data")
 ```
 
@@ -100,7 +102,8 @@ dh.renameVars(
   df = "data",
   current_names = c("ethnicity", "father_socialclass"), 
   new_names = c("race", "paternal_class"))
-
+```
+```{r results = "hold"}
 ds.colnames("data")
 ```
 
@@ -113,7 +116,8 @@ dh.dropCols(
   df = "data", 
   vars = "mother_education", 
   type = "remove")
-
+```
+```{r results = "hold"}
 ds.colnames("data")
 ```
 
@@ -124,7 +128,8 @@ dh.dropCols(
   df = "data", 
   vars = c("id", "age", "sex", "weight"), 
   type = "keep")
-
+```
+```{r results = "hold"}
 ds.colnames("data")
 ```
 
@@ -161,7 +166,8 @@ dh.makeStrata(
   band_action = "ge_l", 
   id_var = "id", 
   new_obj = "height_data")
-
+```
+```{r results = "hold"}
 ds.colnames("height_data")
 ```
 
@@ -179,7 +185,8 @@ ds.merge(
   by.y = "id", 
   all.x = TRUE, 
   newobj = "data")
-
+```
+```{r results = "hold"}
 ds.colnames("data")
 ```
 
@@ -205,7 +212,13 @@ dh.makeIQR(
   type = "split",
   new_obj = "data")
 
+```
+
+```{r results = "hold"}
 ds.colnames("data")
+```
+
+```{r results = "hold"}
 ds.summary("data$weight_iqr_s")
 ```
 
@@ -219,7 +232,9 @@ the argument `type` to choose whether to keep or remove the variables listed in
 dh.tidyEnv(
   obj = "data",
   type = "keep")
+```
 
+```{r results = "hold"}
 ds.ls()
 ```
 
@@ -233,10 +248,13 @@ if you change the order of steps in a script). This function allows you to
 identify the column numbers of a vector of column names, like so:
 
 ```{r}
-dh.findVarsIndex(
+indices <- dh.findVarsIndex(
   df = "data",
-  vars = c("sex", "age", "weight")
-)
+  vars = c("sex", "age", "weight"))
+```
+
+```{r results = "hold"}
+indices
 ```
 
 # Describing data
@@ -251,14 +269,13 @@ missingness).
 Here we describe multiple variables using dh.getStats():
 
 ```{r}
-test <- dh.getStats(
+stats <- dh.getStats(
   df = "data",
   vars = c("age", "sex", "weight")
 )
-
-ds.colnames("data")
-
-test$categorical %>% select(variable, cohort, valid_n, missing_n, perc_missing)
+```
+```{r results = "hold"}
+stats
 ```
 
 The output is a list of two tibbles, corresponding to categorical and continuous
@@ -284,7 +301,7 @@ dh.lmTab(
 For manuscripts we may want to include confidence intervals in brackets after
 the point estimate. We can specify this with the argument "ci_format":
 
-```{r}
+```{r results = "hold"}
 dh.lmTab(
   model = output, 
   type = "glm_ipd", 
@@ -304,7 +321,11 @@ we check the class of all variables. The column "discrepancy" summarises
 whether there are differences across studies.
 
 ```{r}
-dh.classDiscrepancy(df = "data")
+disc <- dh.classDiscrepancy(df = "data")
+```
+
+```{r results = "hold"}
+disc
 ```
 
 ## Checking non-missing data using dh.anyData()
@@ -313,10 +334,12 @@ set of covariates in all analyses. We can use dh.anyData() to check which
 cohortsh have at least some data on given variables.
 
 ```{r}
-dh.anyData(
+available <- dh.anyData(
   df = "data",
-  vars = c("age", "sex", "weight")
-)
+  vars = c("age", "sex", "weight"))
+```
+```{r results = "hold"}
+available
 ```
 
 # Creating a dataset for analysis using dh.defineCases()
@@ -331,9 +354,15 @@ dh.defineCases(
   vars = c("age", "sex", "weight"),
   type = "all", 
   new_obj = "data_on_all_vars")
-
-ds.table("data_on_all_vars")$output.list$TABLE_rvar.by.study_counts
+```
+```{r}
+cases_all <- ds.table("data_on_all_vars")$output.list$TABLE_rvar.by.study_counts
 ``` 
+
+```{r results = "hold"}
+cases_all
+```
+
 The data we have here is not the best to illustrate this function, as 
 there is no missing data.
 
@@ -345,9 +374,15 @@ dh.defineCases(
   vars = c("age", "sex", "weight"),
   type = "any", 
   new_obj = "data_on_any_vars")
-
-ds.table("data_on_any_vars")$output.list$TABLE_rvar.by.study_counts
+```
+```{r}
+cases_any <- ds.table("data_on_any_vars")$output.list$TABLE_rvar.by.study_counts
 ``` 
+
+```{r  results = "hold"}
+ cases_any
+```
+
 Again, we can't see the differences because all subjects have data on all
 variables. However, lets assume that we want to create an subset of our data
 restricted to participants with data on at least one of these variables. We 
@@ -356,12 +391,15 @@ can then use ds.dataFrameSubset in conjuncture with the vector we created:
 ```{r}
 ds.dataFrameSubset(
   df.name = "data", 
-  V1.name = "data_on_any_vars", 
+  V1.name = "data_on_all_vars", 
   V2.name = "1", 
   Boolean.operator = "==", 
-  newobj = "analysis_df")
+  newobj = "complete_df")
 ```
-
+```{r results = "hold"}
+ds.dim("data")
+ds.dim("complete_df")
+```
 
 # Miscellaneous functions
 
@@ -407,12 +445,12 @@ The output consists of a list with two elements. The first element ("model") is
 a list with the output from metafor. The length will be the number of variables
 meta-analysed:
 
-```{r}
+```{r results = "hold"}
 str(meta_analysed$model)
 ```
 
 The second element ("coefficients") is a summary table:
-```{r}
+```{r results = "hold"}
 meta_analysed$coefs
 ```
 
