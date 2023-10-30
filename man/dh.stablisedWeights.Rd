@@ -6,8 +6,10 @@
 \usage{
 dh.stablisedWeights(
   glm_object = NULL,
-  outcome_df = NULL,
-  outcome_var = NULL,
+  responder_df = NULL,
+  responder_var = NULL,
+  non_responder_level,
+  responder_level,
   new_obj = NULL,
   conns = NULL
 )
@@ -15,9 +17,15 @@ dh.stablisedWeights(
 \arguments{
 \item{glm_object}{A fitted ds.glmSLMA object.}
 
-\item{outcome_df}{A serverside data frame containing the outcome variable.}
+\item{responder_df}{A serverside data frame containing the responder variable.}
 
-\item{outcome_var}{Character vector of outcome variable within `outcome_df`.}
+\item{responder_var}{Character vector of outcome variable within `responder_df`.}
+
+\item{non_responder_level}{Character vector indicating level of `responder_var` corresponding to
+non-responders.}
+
+\item{responder_level}{Character vector indicating level of `responder_var` corresponding to
+responders.}
 
 \item{new_obj}{A character string for the name of the new object to store stabilized weights.}
 
