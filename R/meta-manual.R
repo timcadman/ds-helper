@@ -38,7 +38,8 @@ dh.metaManual <- function(model = NULL, method = "ML") {
         sei = model$sematrix.valid[x, ],
         method = "ML"
       )
-    }) %>% set_names(dimnames(model$betamatrix.valid)[[1]])
+    }) %>%
+    set_names(dimnames(model$betamatrix.valid)[[1]])
 
   coefs <- tibble(
     term = dimnames(model$betamatrix.valid)[[1]],

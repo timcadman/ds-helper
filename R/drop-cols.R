@@ -34,7 +34,7 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = NULL, type = NULL,
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
+
   if (is.null(new_obj)) {
     new_obj <- df
   }
@@ -61,82 +61,81 @@ dh.dropCols <- function(df = NULL, vars = NULL, new_obj = NULL, type = NULL,
   }
 
   type <- match.arg(type, c("remove", "keep"))
-  
-  if(length(vars) == 1 & type == "keep"){
-    
+
+  if (length(vars) == 1 & type == "keep") {
     ds.make(toAssign = paste0(df, "$", vars), "tmp_obj", datasources = conns)
-    ds.dataFrame(x = c(df, "tmp_obj"), newobj = df, datasources = conns, 
-                 stringsAsFactors = F)
-    
+    ds.dataFrame(
+      x = c(df, "tmp_obj"), newobj = df, datasources = conns,
+      stringsAsFactors = F
+    )
+
     vars <- c(vars, "tmp_obj")
   }
 
   var_position <- dh.findVarsIndex(
-    df = df, 
+    df = df,
     vars = vars,
     conns = conns,
-    checks = F)
-  
-  .makeLengthVectors(df = df, conns = conns)
-  
-  if (type == "keep"){
+    checks = F
+  )
 
+  .makeLengthVectors(df = df, conns = conns)
+
+  if (type == "keep") {
     var_position %>%
       imap(
         ~ ds.dataFrameSubset(
-          df.name = df, 
-          V1.name = "ONES",  
+          df.name = df,
+          V1.name = "ONES",
           V2.name = "ONES",
-          Boolean.operator = "==", 
-          keep.cols = .x, 
-          newobj = new_obj, 
-          datasources = conns[.y]))
-        
-  } else if(type == "remove"){
-    
+          Boolean.operator = "==",
+          keep.cols = .x,
+          newobj = new_obj,
+          datasources = conns[.y]
+        )
+      )
+  } else if (type == "remove") {
     var_position %>%
       imap(
-        ~ds.dataFrameSubset(
-          df.name = df, 
-          V1.name = "ONES",  
+        ~ ds.dataFrameSubset(
+          df.name = df,
+          V1.name = "ONES",
           V2.name = "ONES",
-          Boolean.operator = "==", 
-          rm.cols = .x, 
-          newobj = new_obj, 
-          datasources = conns[.y]))
-    
+          Boolean.operator = "==",
+          rm.cols = .x,
+          newobj = new_obj,
+          datasources = conns[.y]
+        )
+      )
   }
-  
 }
 
 #' Automates process of creating vector of 1s for each study at correct length
-#' 
+#'
 #' @template df
 #' @template conns
-#' 
-#' @noRd 
-.makeLengthVectors <- function(df, conns){
-  
+#'
+#' @noRd
+.makeLengthVectors <- function(df, conns) {
   cally <- call("dimDS", df)
   dimensions <- DSI::datashield.aggregate(conns, cally) %>%
-    map_int(~.x[[1]])
-  
+    map_int(~ .x[[1]])
+
   dimensions %>%
-    imap(function(.x, .y){
-      
+    imap(function(.x, .y) {
       calltext <- call(
-        "repDS", 
-        x1.transmit = "1", 
+        "repDS",
+        x1.transmit = "1",
         times.transmit = paste0(.x),
-        length.out.transmit = "NA", 
+        length.out.transmit = "NA",
         each.transmit = "1",
         x1.includes.characters = FALSE,
-        source.x1 = "clientside", 
+        source.x1 = "clientside",
         source.times = "clientside",
         source.length.out = "clientside",
-        source.each = "clientside")
-      
+        source.each = "clientside"
+      )
+
       DSI::datashield.assign(conns[.y], "ONES", calltext)
     })
 }
-  

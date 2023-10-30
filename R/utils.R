@@ -13,7 +13,7 @@
 #' @noRd
 .isDefined <- function(df = NULL, vars = NULL, conns = NULL) {
   isDefined(obj = df, datasources = conns)
-  
+
   if (!is.null(vars)) {
     paste0(df, "$", vars) %>%
       map(~ isDefined(obj = .x, datasources = conns))
@@ -67,10 +67,10 @@ extract <- function(input) {
 #'
 isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
   inputobj <- unlist(obj)
-  
+
   for (i in 1:length(inputobj)) {
     extractObj <- extract(inputobj[i])
-    
+
     if (is.na(extractObj$holders)) {
       cally <- call("exists", extractObj$elements)
       out <- DSI::datashield.aggregate(datasources, cally)
@@ -79,7 +79,7 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
       cally <- call("exists", extractObj$elements, dfname)
       out <- DSI::datashield.aggregate(datasources, cally)
     }
-    
+
     if (error.message == TRUE & any(out == FALSE)) {
       stop("The input object ", inputobj[i], " is not defined in ", paste(names(which(out == FALSE)), collapse = ", "), "!", call. = FALSE)
     } else {
@@ -102,9 +102,9 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' @noRd
 .checkDataAvailable <- function(df, var, conns) {
   cohort <- . <- NULL
-  
+
   missing_col_name <- paste0(var, "_missing")
-  
+
   check_missing <- ds.isNA(
     x = paste0(df, "$", var),
     datasources = conns
@@ -115,7 +115,7 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
       names_to = "cohort",
       values_to = missing_col_name
     )
-  
+
   if (any(check_missing[missing_col_name] == TRUE)) {
     warning(
       "Cohort(s) '",
@@ -126,7 +126,7 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
       "and will be excluded from the analysis"
     )
   }
-  
+
   return(check_missing)
 }
 
@@ -136,15 +136,13 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' @param boole_string Argument string to be converted to operators.
 #' @importFrom dplyr case_when
 #' @noRd
-.convertBooleText <- function(boole_string){
-  
+.convertBooleText <- function(boole_string) {
   op_symbol <- case_when(
     boole_string == "g_l" ~ c(">", "<"),
     boole_string == "ge_le" ~ c(">=", "<="),
     boole_string == "g_le" ~ c(">", "<="),
     boole_string == "ge_l" ~ c(">=", "<")
   )
-  
 }
 
 #' Creates a reference tibble indicating subsets & variable to create. Used in
@@ -159,32 +157,33 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' @importFrom tibble tibble
 #' @importFrom stringr str_replace_all
 #' @noRd
-.makeBooleRef <- function(
-  lower_vals, lower_op, upper_vals, upper_op,  boole_prefix = "boole_",
-  subset_prefix = "subset_"){
-  
+.makeBooleRef <- function(lower_vals, lower_op, upper_vals, upper_op, boole_prefix = "boole_",
+                          subset_prefix = "subset_") {
   . <- suffix <- boole_name <- subset_name <- NULL
-  
+
   out <- tibble(
     value_1 = lower_vals,
     op_1 = lower_op,
     value_2 = upper_vals,
-    op_2 = upper_op) %>%
+    op_2 = upper_op
+  ) %>%
     mutate(
       suffix = seq(1, length(.)),
       boole_name = paste0(boole_prefix, suffix),
-      subset_name = paste0(subset_prefix, suffix)) %>%
+      subset_name = paste0(subset_prefix, suffix)
+    ) %>%
     mutate(across(
       c(boole_name, subset_name),
       ~ str_replace_all(
         string = .,
         pattern = "-",
-        replacement = "m"))) %>%
+        replacement = "m"
+      )
+    )) %>%
     mutate(
-      boole_short = paste0("bl_", seq(1, length(boole_name))), 
+      boole_short = paste0("bl_", seq(1, length(boole_name))),
       subset_short = paste0("sb_", seq(1, length(subset_name)))
     )
-  
 }
 
 #' Create a variable indicating whether two conditions are met.
@@ -205,30 +204,29 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' @noRd
 .BooleTwoConditions <- function(df, var, value_1, op_1, value_2, op_2, newobj, conns) {
   symbol <- number <- . <- NULL
-  
+
   op_ref <- tibble(
     symbol = c("==", "!=", "<", "<=", ">", ">="),
     number = seq(1, 6, 1)
   )
-  
+
   get_op_number <- function(op) {
     op_ref %>%
       dplyr::filter(symbol == op) %>%
       dplyr::select(number) %>%
       pull()
   }
-  
+
   op_1_num <- get_op_number(op = op_1)
   op_2_num <- get_op_number(op = op_2)
-  
+
   calltext <- call("BooleDS", paste0(df, "$", var), value_1, op_1_num, "0", TRUE)
   DSI::datashield.assign(conns, "boole_1", calltext)
-  
+
   calltext <- call("BooleDS", paste0(df, "$", var), value_2, op_2_num, "0", TRUE)
   DSI::datashield.assign(conns, "boole_2", calltext)
-  
+
   DSI::datashield.assign(conns, newobj, as.symbol("boole_1*boole_2"))
-  
 }
 
 #' Check whether a provided binary vector (output from ds.Boole) has
@@ -246,14 +244,13 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' @noRd
 .checkDisclosure <- function(bin_vec, conns) {
   observations <- . <- NULL
-  
-  if(utils::packageVersion("dsBaseClient") == "6.1.0"){
-    
+
+  if (utils::packageVersion("dsBaseClient") == "6.1.0") {
     coh_ref <- tibble(
       coh_num = as.character(seq(1, length(names(conns)))),
       cohort = names(conns)
     )
-    
+
     n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
       as_tibble(rownames = "levels") %>%
       pivot_longer(
@@ -262,35 +259,31 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
         values_to = "observations"
       ) %>%
       left_join(., coh_ref, by = "coh_num")
-    
-  } else{
-    
+  } else {
     n_obs <- ds.table(bin_vec, datasources = conns)$output.list$TABLE_rvar.by.study_counts %>%
       as_tibble(rownames = "levels") %>%
       pivot_longer(
         cols = c(-levels),
         names_to = "cohort",
         values_to = "observations"
-      ) 
-    
+      )
   }
-  
-      
-  if(n_obs %>% dplyr::filter(levels == 1) %>% nrow == 0){
-    
+
+
+  if (n_obs %>% dplyr::filter(levels == 1) %>% nrow() == 0) {
     replace_all_missing <- n_obs %>%
       mutate(
         levels = "1",
-        observations = 0)
-    
+        observations = 0
+      )
+
     n_obs <- bind_rows(n_obs, replace_all_missing)
-    
   }
-  
+
   n_obs <- n_obs %>%
     dplyr::filter(levels == 1) %>%
     dplyr::select(-levels)
-  
+
   min_obs <- ds.listDisclosureSettings(datasources = conns)$ds.disclosure.settings %>%
     map_df(~ .$nfilter.subset) %>%
     pivot_longer(
@@ -298,13 +291,13 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
       names_to = "cohort",
       values_to = "min_obs"
     )
-  
+
   disclosure_ref <- left_join(n_obs, min_obs, by = "cohort") %>%
     mutate(
       boole_short = bin_vec,
       enough_obs = ifelse(observations > min_obs, TRUE, FALSE)
     )
-  
+
   return(disclosure_ref)
 }
 
@@ -328,23 +321,23 @@ isDefined <- function(datasources = NULL, obj = NULL, error.message = TRUE) {
 #' @noRd
 .removeTempObjs <- function(start_objs, others_to_keep, conns) {
   out_to_keep <- NULL
-  
+
   end_objs <- ds.ls(datasources = conns)
-  
+
   remove_ref <- tibble(
     start_clean = start_objs %>% map(~ .x$objects.found),
     end_clean = end_objs %>% map(~ .x$objects.found)
   )
-  
+
   to_keep <- remove_ref %>%
     pmap(function(start_clean, end_clean) {
       start_clean[start_clean %in% end_clean == TRUE]
     })
-  
+
   to_keep <- to_keep %>% map(function(x) {
     c(x, others_to_keep)
   })
-  
+
   to_keep %>%
     imap(
       ~ dh.tidyEnv(obj = .x, type = "keep", conns = conns[.y])

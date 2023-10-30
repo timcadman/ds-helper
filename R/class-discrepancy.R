@@ -52,7 +52,7 @@ dh.classDiscrepancy <- function(df = NULL, vars = NULL, conns = NULL, checks = T
     map_df(function(x) {
       calltext <- call("classDS", x)
       datashield.aggregate(conns, calltext) %>%
-        lapply(function(x){
+        lapply(function(x) {
           paste(x, collapse = ",")
         })
     })

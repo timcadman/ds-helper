@@ -180,7 +180,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
       )
     )) %>%
     mutate(
-      boole_short = paste0("bl_", seq(1, length(boole_name))), 
+      boole_short = paste0("bl_", seq(1, length(boole_name))),
       subset_short = paste0("sb_", seq(1, length(subset_name)))
     )
 
@@ -344,35 +344,36 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
         datasources = conns[cohort]
       )
     })
-  
+
   ## The last step is to rename created variables with correct suffix
   suffix_ref <- reshape_ref %>%
     dplyr::select(cohort, suffix, value_1, value_2) %>%
     mutate(suffix = paste0(".", suffix))
-  
+
   var_ref <- c(var_to_subset, age_var, keep_vars)
-  
+
   rename_ref_coh <- suffix_ref %>%
-    group_by(cohort) 
-  
+    group_by(cohort)
+
   tmp_names <- group_keys(rename_ref_coh) %>%
     unlist()
-  
+
   rename_ref <- rename_ref_coh %>%
-    group_split %>%
-    map(~expand.grid(.$suffix, var_ref)) %>%
+    group_split() %>%
+    map(~ expand.grid(.$suffix, var_ref)) %>%
     set_names(tmp_names) %>%
     bind_rows(.id = "cohort") %>%
     dplyr::rename(suffix = Var1, var = Var2) %>%
     left_join(., suffix_ref, by = c("cohort", "suffix")) %>%
     mutate(
-      old_name = paste0(var, suffix), 
-      new_name = paste0(var, ".", value_1, "_", value_2)) %>%
+      old_name = paste0(var, suffix),
+      new_name = paste0(var, ".", value_1, "_", value_2)
+    ) %>%
     group_by(cohort)
-  
+
   rename_ref %>%
-    pmap(function(cohort, old_name, new_name, ...){
-       dh.renameVars(
+    pmap(function(cohort, old_name, new_name, ...) {
+      dh.renameVars(
         df = new_obj,
         current_names = old_name,
         new_names = new_name,
@@ -392,11 +393,12 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   )
 
   created <- rename_ref %>%
-    ungroup %>%
+    ungroup() %>%
     distinct(cohort, value_1, value_2) %>%
     dplyr::rename(
-      lower_band = value_1, 
-      upper_band = value_2) %>%
+      lower_band = value_1,
+      upper_band = value_2
+    ) %>%
     arrange(cohort)
 
   message("DONE", appendLF = TRUE)
@@ -483,8 +485,8 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 
   if (length(unique(var_class)) > 1) {
     stop("`var_to_subset` does not have the same class in all studies.", call. = FALSE)
-  } 
-  
+  }
+
   cally <- call("classDS", paste0(df, "$", age_var))
   age_var_class <- DSI::datashield.aggregate(conns, cally)
 
@@ -529,7 +531,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     df = df,
     vars = c(age_var, var_to_subset),
     type = "all",
-    new_obj = "subset_def", 
+    new_obj = "subset_def",
     conns = conns,
     checks = FALSE
   )
@@ -540,10 +542,9 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     V2.name = "1",
     Boolean.operator = "==",
     keep.NAs = FALSE,
-    newobj = "df_slim", 
+    newobj = "df_slim",
     datasources = conns
-  )  
-
+  )
 }
 
 #' Sorts the subsets. This is necessary because it determines how multiple rows
@@ -611,7 +612,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   ds.dataFrame(
     x = c(sorted_subset, "variable_suffix"),
     newobj = "subset_w_suffix",
-    datasources = conns, 
+    datasources = conns,
     stringsAsFactors = FALSE
   )
 
@@ -672,7 +673,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     datasources = conns,
     newobj = "df_tmp",
     check.rows = FALSE,
-    check.names = FALSE, 
+    check.names = FALSE,
     stringsAsFactors = FALSE
   )
 
