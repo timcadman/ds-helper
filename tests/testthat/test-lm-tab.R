@@ -14,26 +14,53 @@ nstudy <- paste0("study", seq(1, slma.fit$num.valid.studies))
 ################################################################################
 # check_args
 ################################################################################
-test_that("check_args returns an error when arguments are incorrect", {
+
+## ---- Incorrect: glm_ipd -----------------------------------------------------
+test_that("check_args returns an error when arguments are incorrect: glm_ipd", {
   expect_error(
     lm_tab_check_args(
-      model = 99, type = 99, direction = 99,
-      ci_format = "asdasd", family = 99, coh_names = 99
+      model = ipd.fit, type = 99, direction = 99,
+      ci_format = "asdasd", family = 99, coh_names = 99, exponentiate = 99
     ),
-    "5 assertions failed:\n * Variable 'model': Must be of type 'list', not 'double'.\n * Variable 'type': Must be element of set\n * {'glm_ipd','glm_slma','lmer_slma'}, but types do not match (numeric\n * != character).\n * Variable 'direction': Must be element of set {'long','wide'}, but\n * types do not match (numeric != character).\n * Variable 'ci_format': Must be element of set {'paste','separate'},\n * but is 'asdasd'.\n * Variable 'family': Must be element of set {'gaussian','binomial'},\n * but types do not match (numeric != character).",
+    "4 assertions failed:\n * Variable 'type': Must be element of set\n * {'glm_ipd','glm_slma','lmer_slma'}, but types do not match (numeric\n * != character).\n * Variable 'direction': Must be element of set {'long','wide'}, but\n * types do not match (numeric != character).\n * Variable 'ci_format': Must be element of set {'paste','separate'},\n * but is 'asdasd'.\n * Variable 'family': Must be element of set {'gaussian','binomial'},\n * but types do not match (numeric != character).",
     fixed = TRUE
   )
 })
 
-test_that("check_args doesn't return an error if arguments are correct", {
+## ---- Incorrect: lmer_slma ---------------------------------------------------
+test_that("check_args returns an error when arguments are incorrect: lmer_slma", {
+  expect_error(
+    lm_tab_check_args(
+      model = slma.fit, type = "lmer_slma", direction = 99,
+      ci_format = "asdasd", family = "binomial", coh_names = 99, exponentiate = 99
+    ),
+    "5 assertions failed:\n * Variable 'direction': Must be element of set {'long','wide'}, but\n * types do not match (numeric != character).\n * Variable 'ci_format': Must be element of set {'paste','separate'},\n * but is 'asdasd'.\n * Variable 'coh_names': Must be of type 'character', not 'double'.\n * Variable 'length(coh_names)': Must be equal to set {'8'}, but is\n * {'1'}.\n * Variable 'family': Must be element of set {'gaussian'}, but is\n * 'binomial'.",
+    fixed = TRUE
+  )
+})
+
+## ---- Correct: glm_ipd -------------------------------------------------------
+test_that("check_args doesn't return an error if arguments are correct: glm_slma", {
   expect_true(
     lm_tab_check_args(
-      model = list("test"), type = "glm_ipd", direction = "wide",
+      model = ipd.fit, type = "glm_ipd", direction = "wide",
       ci_format = "paste", family = "binomial",
-      coh_names = c("test_1", "test_2")
+      coh_names = coh_names, exponentiate = TRUE
     )
   )
 })
+
+## ---- Correct, lmer_slma -----------------------------------------------------
+test_that("check_args doesn't return an error if arguments are correct: lmer_slma", {
+  expect_true(
+    lm_tab_check_args(
+      model = slma.fit, type = "lmer_slma", direction = "wide",
+      ci_format = "paste", family = "gaussian",
+      coh_names = coh_names, exponentiate = FALSE
+    )
+  )
+})
+
 
 ################################################################################
 # extract_ipd
