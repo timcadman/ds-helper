@@ -147,7 +147,7 @@ get_coefficient_names <- function(coefs) {
 #' @noRd
 check_new_data_cols <- function(new_data, coef_names){
   
-  check_subset(coef_names, colnames(new_data))
+  checkmate::check_subset(coef_names, colnames(new_data))
   
 }
 
