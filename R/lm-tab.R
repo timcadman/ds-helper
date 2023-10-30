@@ -156,6 +156,9 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 #' @noRd
 lm_tab_check_args <- function(model, type, direction, ci_format, family,
                               coh_names, exponentiate) {
+  
+  n_studies <- NULL
+  
   error_messages <- makeAssertCollection()
 
   checkmate::assert_list(model, add = error_messages)
