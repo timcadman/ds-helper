@@ -7,6 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r settings, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(results = "hide")
+options(datashield.progress = FALSE)
+options(datashield.progress.clear = TRUE)
+options(knitr.duplicate.label = "allow")
+```
+
 # Introduction
 
 ## Overview
@@ -143,7 +152,7 @@ conns <- DSI::datashield.login(logins = logindata, assign = T, symbol = "data")
 We can check that this has worked. You should see that each cohort has one 
 dataframe called "data", which contains 7 variables.
 
-```{r summarise-data}
+```{r summarise-data, results = "hold"}
 ds.summary("data")
 ```
 We wont be using all of the variables today, however if you want to come back 
@@ -158,7 +167,7 @@ We can make scatter plots with age on the x-axis and weight on the y-axis.
 Note that the values that you see are anonymised - they are a non-disclosive
 approximation of the original values.
 
-```{r scatter}
+```{r scatter, results = "hold"}
 ds.scatterPlot(x = "data$age", y = "data$weight")
 ```
 
@@ -177,7 +186,8 @@ mean_age <- dh.meanByGroup(
 	df = "data", 
 	outcome = "weight", 
 	group_var = "age")
-
+```
+```{r, results = "hold"}
 mean_age %>% print(n = Inf)
 ```
 
@@ -188,12 +198,14 @@ like to use ggplot:
 palette <- c("#264653", "#2a9d8f", "#E9C46A", "#F4A261", "#E76F51")
 
 mean_age.plot <- ggplot() + 
-  geom_line(data = mean_age, aes(x = age, y = mean, colour = cohort), size = 0.8) +
+  geom_line(data = mean_age, aes(x = age, y = mean, colour = cohort), linewidth = 0.8) +
   scale_y_continuous(limit = c(0, 80), breaks = seq(0, 80, 20), expand = c(0, 0)) +
   xlab("Child age") +
   ylab("Observed weight (KG)") +
   scale_colour_manual(values = palette)
+```
 
+```{r, results = "hold"}
 mean_age.plot
 ```
 
@@ -210,7 +222,8 @@ extract descriptives in a more usable format.
 stats <- dh.getStats(
 	df = "data", 
 	vars = "sex")
-
+```
+```{r, results = "hold"}
 stats
 ```
 This gives us a list with two elements corresponding to the continuous and categorical
@@ -235,7 +248,8 @@ rm_stats <- dh.getRmStats(
 	outcome = "weight",
 	id_var = "id", 
 	age_var = "age")
-
+```
+```{r, results = "hold"}
 rm_stats
 ```
 
@@ -296,8 +310,9 @@ model1.fit <- ds.lmerSLMA(
 	dataName = "data",
   formula = "weight ~ 1 + age + sex + age*sex + (1|id_int)", 
   datasources = conns)
+```
 
-
+```{r, results = "hold"}
 model1.fit$output.summary
 ```
 
@@ -307,17 +322,17 @@ directly from the model object.
 
 Fixed effects coefficients for each cohort are here:
 
-```{r model-1-fixed}
+```{r model-1-fixed, results = "hold"}
 model1.fit$betamatrix.valid
 ```
 The pooled estimates are here:
 
-```{r model-1-pooled}
+```{r model-1-pooled, results = "hold"}
 model1.fit$SLMA.pooled.ests.matrix
 ```
 And the details of the random effects are here:
 
-```{r model-1-random}
+```{r model-1-random, results = "hold"}
 model1.fit$output.summary$study1$varcor
 ```
 
@@ -340,20 +355,20 @@ Let's explore there in more detail
 The fixed effects are analogous to your coefficients from a linear regression
 model.
 
-```{r lm-tab-fixed}
+```{r lm-tab-fixed, results = "hold"}
 model1.coef$fixed
 ```
 If we use dh.lmTab it allows us to manipulate our output more easily. For 
 example you might want to split the fixed effects by cohort:
 
-```{r lm-tab-fixed-cohort}
+```{r lm-tab-fixed-cohort, results = "hold"}
 model1.coef$fixed %>% group_by(cohort) %>%
 group_split()
 ```
 
 Or you might want to just select the pooled results:
 
-```{r lm-tab-fixed-pooled}
+```{r lm-tab-fixed-pooled, results = "hold"}
 model1.coef$fixed %>% dplyr::filter(cohort == "combined")
 ```
 
@@ -365,7 +380,7 @@ mean intercept for the sample.
 However, there are not returned by DataSHIELD as they could be disclosive. 
 Instead we can view the standard deviation of these residuals:
 
-```{r lm-tab-random}
+```{r lm-tab-random, results = "hold"}
 model1.coef$random
 ```
 
@@ -402,7 +417,7 @@ pred_data <- bind_rows(new_data_m, new_data_f)
 If we look at this object we have created, it has all the values of the 
 model variables at which we want to predict weight:
 
-```{r view-new-data-1}
+```{r view-new-data-1, results = "hold"}
 pred_data
 ```
 
@@ -417,8 +432,7 @@ plotdata <- dh.predictLmer(
 	coh_names = names(conns))
 ```
 
-
-```{r view-model-1-predicted}
+```{r view-model-1-predicted, results = "hold"}
 plotdata
 ```
 
@@ -433,6 +447,10 @@ plot_trim <- dh.trimPredData(
 	coh_names = c("alspac", "bcg", "bib", "probit", "combined"),
 	min = rep(0, 5), 
 	max = c(20, 5, 5, 20, 20))
+```
+
+```{r, results = "hold"}
+plot_trim
 ```
 
 Next we set sex as a factor to make the plot clearer:
@@ -456,7 +474,7 @@ observed <- dh.getAnonPlotData(
 	var_2 = "weight")
 ```
 
-```{r view-observed}
+```{r view-observed, results = "hold"}
 observed
 ```
 
@@ -464,7 +482,7 @@ Now we are ready to plot the pooled trajectories. We use the function
 "sample_frac" to only take 1% of the observed values. You can play around with
 this value, but if you use too many the graph becomes unreadable.
 
-```{r plot-model-1-pooled}
+```{r plot-model-1-pooled, results = "hold"}
 ggplot() + 
   geom_point(
   	data = sample_frac(observed, .01) %>% dplyr::filter(cohort == "combined"), 
@@ -489,7 +507,7 @@ ggplot() +
 
 We can also plot the trajectories for each cohort separately:
 
-```{r plot-model-1-cohort}
+```{r plot-model-1-cohort, results = "hold"}
 ggplot() + 
   geom_point(
   	data = sample_frac(observed, .01) %>% dplyr::filter(cohort != "combined"), 
@@ -593,7 +611,7 @@ mutate(sex = factor(sex, levels = c(0, 1), labels = c("Male", "Female")))
 
 Let's plot this against the observed data and see if it fits any better:
 
-```{r plot-model-2}
+```{r plot-model-2, results = "hold"}
 ggplot() + 
   geom_point(
   	data = sample_frac(observed, .01) %>% dplyr::filter(cohort == "combined"), 
@@ -676,7 +694,9 @@ We can check this has worked, and see the mean values for these new variables.
 poly_summary <- dh.getStats(
 	df = "data", 
 	vars = c("agem_2", "agem_1", "agem_0_5", "age_log", "age0_5", "age2", "age3")) 
+```
 
+```{r , results = "hold"}
 poly_summary$continuous %>%
 dplyr::select(cohort, variable, mean, std.dev) %>%
 print(n = Inf)
@@ -706,7 +726,7 @@ weight_form <- dh.makeLmerForm(
   random = "intercept")
 ```
 
-```{r view-lmer-form}
+```{r view-lmer-form, results = "hold"}
 weight_form %>% 
 head(10)
 ```
@@ -739,7 +759,7 @@ poly.fit <- dh.lmeMultPoly(
 
 There are some converegence warnings. We can see details here:
 
-```{r view-convergence}
+```{r view-convergence, results = "hold"}
 poly.fit$convergence
 ```
 
@@ -748,7 +768,7 @@ each study, the average rank of that model across all studies and
 the summed negative log likelihood. The model with the lowest summed 
 log-likelhood across studies contains two powers: age^0.5 & age^2.
 
-```{r view-fit}
+```{r view-fit, results = "hold"}
 poly.fit$fit
 ```
 
@@ -758,7 +778,7 @@ use this table as a reference for the best fitting model, for example for
 alspac:
 
 
-```{r view-alspac-fit}
+```{r view-alspac-fit, results = "hold"}
 poly.fit$fit %>%
 select(model, alspac) %>%
 arrange(desc(alspac))
@@ -829,7 +849,7 @@ mutate(sex = factor(sex, levels = c(0, 1), labels = c("Male", "Female")))
 
 And now we can make some plots
 
-```{r plot-model-3-pooled}
+```{r plot-model-3-pooled, results = "hold"}
 ggplot() + 
   geom_point(
   	data = sample_frac(observed, .01) %>% dplyr::filter(cohort == "combined"), 
@@ -854,7 +874,7 @@ ggplot() +
 
 We can also plot the trajectories by cohort
 
-```{r plot-model-3-cohort}
+```{r plot-model-3-cohort, results = "hold"}
 ggplot() + 
   geom_point(
   	data = sample_frac(observed, .01) %>% dplyr::filter(cohort != "combined"), 
@@ -900,7 +920,9 @@ observed_by_age <- dh.meanByGroup(
 	group_var = "age", 
 	intervals = c(0, 1, 1, 2, 3, 5, 6, 10, 11, 15, 16, 18)
 )
+```
 
+```{r, results = "hold"}
 observed_by_age
 ```
 
@@ -933,7 +955,7 @@ summarise(
 ```
 
 
-```{r view-predicted-by-age}
+```{r view-predicted-by-age, results = "hold"}
 pred_by_age
 ```
 
@@ -962,6 +984,6 @@ group_split %>%
 set_names(names(conns))
 ```
 
-```{r view-residuals}
+```{r view-residuals, results = "hold"}
 res_tab
 ```
