@@ -165,8 +165,8 @@ lm_tab_check_args <- function(model, type, direction, ci_format, family,
   checkmate::assert_choice(family, c("gaussian", "binomial"), add = error_messages)
 
   if (type %in% c("glm_slma", "lmer_slma")) {
-    checkmate::assert_string(coh_names, add = error_messages)
-    checkmate::assert_set_equal(length(coh_names), model["num.valid.studies"], add = error_messages)
+    checkmate::assert_character(coh_names, add = error_messages)
+    checkmate::assert_set_equal(length(coh_names), model[["num.valid.studies"]], add = error_messages)
 
     if (exponentiate == TRUE & family == "gaussian") {
       warning("It is not recommended to exponentiate coefficients from linear
