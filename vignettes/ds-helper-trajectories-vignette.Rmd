@@ -403,10 +403,6 @@ rm_stats <- dh.getRmStats(
 	age_var = "age")
 ```
 
-```
-## Error in dh.getRmStats(df = "data", outcome = "weight", id_var = "id", : could not find function "dh.getRmStats"
-```
-
 ```r
 rm_stats
 ```
@@ -695,17 +691,6 @@ model1.coef <- dh.lmTab(
 	direction = "wide")
 ```
 
-```
-## Error: Assertion on 'model' failed. function (msg) 
-## msgs <<- c(msgs, msg).
-
-## Error: Assertion on 'model' failed. function () 
-## msgs.
-
-## Error: Assertion on 'model' failed. function () 
-## length(msgs) == 0.
-```
-
 Let's explore there in more detail
 
 ### Fixed effects
@@ -921,17 +906,6 @@ plotdata <- dh.predictLmer(
 	model = model1.fit,
 	new_data = pred_data,
 	coh_names = names(conns))
-```
-
-```
-## Error: Assertion on 'model' failed. function (msg) 
-## msgs <<- c(msgs, msg).
-
-## Error: Assertion on 'model' failed. function () 
-## msgs.
-
-## Error: Assertion on 'model' failed. function () 
-## length(msgs) == 0.
 ```
 
 
@@ -1164,17 +1138,6 @@ pred_data_2 <- dh.predictLmer(
 	coh_names = names(conns))
 ```
 
-```
-## Error: Assertion on 'model' failed. function (msg) 
-## msgs <<- c(msgs, msg).
-
-## Error: Assertion on 'model' failed. function () 
-## msgs.
-
-## Error: Assertion on 'model' failed. function () 
-## length(msgs) == 0.
-```
-
 
 ```r
 pred_data_2_trim <- dh.trimPredData(
@@ -1253,9 +1216,9 @@ dh.dropCols(
 	df = "data", 
 	vars = "age", 
 	type = "remove", 
-	new_df_name = "data")
+	new_obj = "data")
 
-ds.cbind(
+ds.dataFrame(
 	x = c("data", "age"), 
 	newobj = "data")
 ```
@@ -1353,12 +1316,8 @@ just with the age terms.
 weight_form <- dh.makeLmerForm(
   outcome = "weight", 
   id_var = "id_int", 
-  age_vars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"), 
+  age_vars = c("age", "agem_2", "agem_1", "agem_0_5", "age_log", "age0_5", "age2", "age3"), 
   random = "intercept")
-```
-
-```
-## Error in checkCharacter(age_vars): could not find function "checkCharacter"
 ```
 
 
@@ -1374,13 +1333,13 @@ head(10)
 ##  1 age,agem_2      weight~1+ age+agem_2 + (1|id_int)     
 ##  2 age,agem_1      weight~1+ age+agem_1 + (1|id_int)     
 ##  3 age,agem_0_5    weight~1+ age+agem_0_5 + (1|id_int)   
-##  4 age,logage      weight~1+ age+logage + (1|id_int)     
+##  4 age,age_log     weight~1+ age+age_log + (1|id_int)    
 ##  5 age,age0_5      weight~1+ age+age0_5 + (1|id_int)     
 ##  6 age,age2        weight~1+ age+age2 + (1|id_int)       
 ##  7 age,age3        weight~1+ age+age3 + (1|id_int)       
 ##  8 agem_2,agem_1   weight~1+ agem_2+agem_1 + (1|id_int)  
 ##  9 agem_2,agem_0_5 weight~1+ agem_2+agem_0_5 + (1|id_int)
-## 10 agem_2,logage   weight~1+ agem_2+logage + (1|id_int)
+## 10 agem_2,age_log  weight~1+ agem_2+age_log + (1|id_int)
 ```
 
 This has created a table where each row (a total of 28) contains the 
@@ -1419,18 +1378,18 @@ poly.fit$convergence
 
 ```
 ## # A tibble: 28 × 4
-##    poly            completed message                                                              all_converged
-##    <chr[1d]>       <chr>     <chr>                                                                <lgl>        
-##  1 age,agem_2      TRUE      <NA>                                                                 TRUE         
-##  2 age,agem_1      TRUE      <NA>                                                                 TRUE         
-##  3 age,agem_0_5    TRUE      <NA>                                                                 TRUE         
-##  4 age,logage      FALSE     There are some DataSHIELD errors, list them with datashield.errors() NA           
-##  5 age,age0_5      TRUE      <NA>                                                                 TRUE         
-##  6 age,age2        TRUE      <NA>                                                                 TRUE         
-##  7 age,age3        TRUE      <NA>                                                                 TRUE         
-##  8 agem_2,agem_1   TRUE      <NA>                                                                 FALSE        
-##  9 agem_2,agem_0_5 TRUE      <NA>                                                                 FALSE        
-## 10 agem_2,logage   FALSE     There are some DataSHIELD errors, list them with datashield.errors() NA           
+##    poly            completed message all_converged
+##    <chr[1d]>       <chr>     <chr>   <lgl>        
+##  1 age,agem_2      TRUE      <NA>    TRUE         
+##  2 age,agem_1      TRUE      <NA>    TRUE         
+##  3 age,agem_0_5    TRUE      <NA>    TRUE         
+##  4 age,age_log     TRUE      <NA>    TRUE         
+##  5 age,age0_5      TRUE      <NA>    TRUE         
+##  6 age,age2        TRUE      <NA>    TRUE         
+##  7 age,age3        TRUE      <NA>    TRUE         
+##  8 agem_2,agem_1   TRUE      <NA>    FALSE        
+##  9 agem_2,agem_0_5 TRUE      <NA>    FALSE        
+## 10 agem_2,age_log  TRUE      <NA>    TRUE         
 ## # ℹ 18 more rows
 ```
 
@@ -1446,18 +1405,18 @@ poly.fit$fit
 
 ```
 ## # A tibble: 28 × 6
-##    model           alspac     bcg      bib   probit   sum_log
-##    <chr[1d]>        <dbl>   <dbl>    <dbl>    <dbl>     <dbl>
-##  1 age0_5,age2   -413072. -25053. -136400. -555192. -1129718.
-##  2 age,age2      -414380. -24847. -135066. -562074. -1136366.
-##  3 age0_5,age3   -418867. -25055. -136595. -557293. -1137810.
-##  4 age,age3      -414581. -25326. -138701. -560576. -1139183.
-##  5 age,age0_5    -418305. -25019. -135347. -569398. -1148069.
-##  6 age,agem_0_5  -420377. -26508. -142164. -570741. -1159790.
-##  7 age,agem_1    -420403. -26741. -143292. -570683. -1161119.
-##  8 age,agem_2    -420409. -26825. -143753. -570701. -1161687.
-##  9 age2,age3     -420299. -28151. -160084. -580176. -1188710.
-## 10 agem_0_5,age2 -429885. -29926. -161971. -588452. -1210234.
+##    model          alspac     bcg      bib   probit   sum_log
+##    <chr>           <dbl>   <dbl>    <dbl>    <dbl>     <dbl>
+##  1 age0_5,age2  -413072. -25053. -136400. -555192. -1129718.
+##  2 age,age2     -414380. -24847. -135066. -562074. -1136366.
+##  3 age0_5,age3  -418867. -25055. -136595. -557293. -1137810.
+##  4 age,age3     -414581. -25326. -138701. -560576. -1139183.
+##  5 age,age0_5   -418305. -25019. -135347. -569398. -1148069.
+##  6 age,age_log  -419968. -25864. -139284. -570858. -1155973.
+##  7 age,agem_0_5 -420377. -26508. -142164. -570741. -1159790.
+##  8 age,agem_1   -420403. -26741. -143292. -570683. -1161119.
+##  9 age,agem_2   -420409. -26825. -143753. -570701. -1161687.
+## 10 age_log,age2 -419517. -27708. -151222. -565902. -1164349.
 ## # ℹ 18 more rows
 ```
 
@@ -1476,18 +1435,18 @@ arrange(desc(alspac))
 
 ```
 ## # A tibble: 28 × 2
-##    model           alspac
-##    <chr[1d]>        <dbl>
-##  1 age0_5,age2   -413072.
-##  2 age,age2      -414380.
-##  3 age,age3      -414581.
-##  4 age,age0_5    -418305.
-##  5 age0_5,age3   -418867.
-##  6 age2,age3     -420299.
-##  7 age,agem_0_5  -420377.
-##  8 age,agem_1    -420403.
-##  9 age,agem_2    -420409.
-## 10 agem_0_5,age2 -429885.
+##    model          alspac
+##    <chr>           <dbl>
+##  1 age0_5,age2  -413072.
+##  2 age,age2     -414380.
+##  3 age,age3     -414581.
+##  4 age,age0_5   -418305.
+##  5 age0_5,age3  -418867.
+##  6 age_log,age2 -419517.
+##  7 age,age_log  -419968.
+##  8 age2,age3    -420299.
+##  9 age,agem_0_5 -420377.
+## 10 age,agem_1   -420403.
 ## # ℹ 18 more rows
 ```
 
@@ -1543,17 +1502,6 @@ pred_ref_final <- dh.predictLmer(
 )
 ```
 
-```
-## Error: Assertion on 'model' failed. function (msg) 
-## msgs <<- c(msgs, msg).
-
-## Error: Assertion on 'model' failed. function () 
-## msgs.
-
-## Error: Assertion on 'model' failed. function () 
-## length(msgs) == 0.
-```
-
 
 ```r
 pred_ref_final_trim <- dh.trimPredData(
@@ -1562,15 +1510,6 @@ pred_ref_final_trim <- dh.trimPredData(
 	min = rep(0, 5), 
 	max = c(20, 5, 5, 20, 20)
 )
-```
-
-```
-## Error in `pmap()`:
-## ℹ In index: 1.
-## Caused by error in `dplyr::filter()`:
-## ℹ In argument: `cohort == coh_ref & between(age, min, max)`.
-## Caused by error:
-## ! `..1` must be of size 502 or 1, not size 0.
 ```
 
 
@@ -1605,9 +1544,7 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-```
-## Error: Must request at least one colour from a hue palette.
-```
+![plot of chunk plot-model-3-pooled](plot-model-3-pooled-1.png)
 
 We can also plot the trajectories by cohort
 
@@ -1636,9 +1573,7 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-```
-## Error: Must request at least one colour from a hue palette.
-```
+![plot of chunk plot-model-3-cohort](plot-model-3-cohort-1.png)
 
 Great, this looks like a much better fit. We have captured the initial growth,
 followed by a reduction in growth rate at age 5 followed by an increase into
@@ -1663,11 +1598,6 @@ observed_by_age <- dh.meanByGroup(
 	group_var = "age", 
 	intervals = c(0, 1, 1, 2, 3, 5, 6, 10, 11, 15, 16, 18)
 )
-```
-
-```
-## Error in `separate()`:
-## ! `!!enquo(col)` must select exactly one column.
 ```
 
 

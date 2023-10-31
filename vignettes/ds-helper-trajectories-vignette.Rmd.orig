@@ -668,9 +668,9 @@ dh.dropCols(
 	df = "data", 
 	vars = "age", 
 	type = "remove", 
-	new_df_name = "data")
+	new_obj = "data")
 
-ds.cbind(
+ds.dataFrame(
 	x = c("data", "age"), 
 	newobj = "data")
 ```
@@ -723,7 +723,7 @@ just with the age terms.
 weight_form <- dh.makeLmerForm(
   outcome = "weight", 
   id_var = "id_int", 
-  age_vars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"), 
+  age_vars = c("age", "agem_2", "agem_1", "agem_0_5", "age_log", "age0_5", "age2", "age3"), 
   random = "intercept")
 ```
 
