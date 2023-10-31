@@ -6,7 +6,7 @@
 #'
 #' @template df
 #' @param vars Character vector of columns within `df` to transform.
-#' @param type Use "combine" to transform the variable based on the combined IQR 
+#' @param type Use "combine" to transform the variable based on the combined IQR
 #' across all cohorts specified in `conns`, or "split" to transform based on the
 #' within-cohort IQR.
 #' @template conns
@@ -15,7 +15,7 @@
 #' @param new_df_name Retired argument. Please use `new_obj' instead.
 #'
 #' @return Server-side object specified in `df` with transformed variables added
-#' as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s" 
+#' as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s"
 #' if type is "split".
 #'
 #' @importFrom dsBaseClient ds.colnames ds.dataFrame ds.make ds.class ds.mean
@@ -56,7 +56,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
   }
 
   type <- ifelse(type == "combined", "combine", type)
-  
+
   type <- match.arg(type)
 
   df_vars <- paste0(df, "$", vars)
@@ -105,10 +105,9 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
       newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
-      check.names = FALSE, 
+      check.names = FALSE,
       stringsAsFactors = FALSE
     )
-    
   } else if (type == "combine") {
 
     ## ---- Identify cohorts which are all missing -----------------------------
@@ -184,7 +183,7 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
       newobj = new_obj,
       datasources = conns,
       DataSHIELD.checks = FALSE,
-      check.names = FALSE, 
+      check.names = FALSE,
       stringsAsFactors = FALSE
     )
   }

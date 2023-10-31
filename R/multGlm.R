@@ -1,7 +1,7 @@
 #' Loop multiple GLM models and handle errors & non-convergence
 #'
-#' This function allows you to fit different glm models to different cohorts, 
-#' for example if you want to include different covariates for different 
+#' This function allows you to fit different glm models to different cohorts,
+#' for example if you want to include different covariates for different
 #' cohorts.
 #'
 #' @importFrom dplyr %>% bind_cols mutate filter
@@ -14,55 +14,54 @@
 #' @param vary_df Option to provide different df for different models. Default
 #' is FALSE.
 #' @param family Family to use in glm models. Default is "gaussian".
+#' @param weights Optional, serverside object containing weights to be used in the model.
 #' @template checks
 #' @template conns
 #'
 #' @return Tibble containing five columns:
-#' * model = Description of model fit, taken from `model_name`. 
+#' * model = Description of model fit, taken from `model_name`.
 #' * formula = Formula for this model, taken from `formulae`.
 #' * cohort = Cohort for which this model was fit, taken from `cohort`.
-#' * fit = Output from glm model. 
+#' * fit = Output from glm model.
 #' * converged = Logical; whether or not the model converged/fit'.
 #'
 #' @family analysis functions
 #' @md
 #'
 #' @export
-dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL, 
-                       vary_df = F, family = "gaussian"){
+dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
+                       vary_df = F, family = "gaussian", weights = NULL) {
   formulae <- model_names <- cohort <- converged <- NULL
-  
+
   if (vary_df == F & is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
-  
+
   if (is.null(ref)) {
     stop("`ref` must not be NULL.", call. = FALSE)
   }
-  
+
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-  
+
   ## ---- Sort out df ----------------------------------------------------------
-  if(vary_df == F){
-    
+  if (vary_df == F) {
     ref <- ref %>% mutate(df = df)
-    
   }
-  
+
   ## ---- Run the models -------------------------------------------------------
   suppressWarnings(
     models <- ref %>%
-      pmap(function(formula, cohort, df, ...){
-        
+      pmap(function(formula, cohort, df, weight_obj, ...) {
         tryCatch(
           {
             dsBaseClient::ds.glmSLMA(
-              formula = unlist(formula), 
-              dataName = df, 
-              family = family, 
+              formula = unlist(formula),
+              dataName = df,
+              family = family,
               combine.with.metafor = TRUE,
+              weights = weights,
               datasources = conns[cohort]
             )
           },
@@ -73,29 +72,30 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
         )
       })
   )
-  
+
   ## ---- Identify models which failed completely ------------------------------
   fail_tmp <- models %>%
-    map(~ .[[1]][[1]][[1]]) %>% 
+    map(~ .[[1]][[1]][[1]]) %>%
     str_detect("POTENTIALLY DISCLOSIVE|failed", negate = TRUE)
-  
+
   out <- ref %>%
     mutate(
-      fit = models, 
-      converged = fail_tmp)
-  
+      fit = models,
+      converged = fail_tmp
+    )
+
   problems <- out %>%
     dplyr::filter(converged == FALSE)
-    
+
   ## ---- Summarise convergence info ---------------------------------------------
   if (all(out$converged == FALSE)) {
     warning("All models failed. Check 'convergence' table for more details")
   }
-  
+
   if (any(out$converged == TRUE) & any(out$converged == FALSE)) {
     warning("Some models threw an error message. Check 'converged' column for
       more details")
   }
-  
+
   return(out)
 }

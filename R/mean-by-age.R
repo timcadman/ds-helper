@@ -22,6 +22,6 @@ NULL
 #'
 #' @export
 dh.meanByAge <- function(...) {
-    .Defunct(msg = "'dh.meanByAge' has been removed from this package. 
+  .Defunct(msg = "'dh.meanByAge' has been removed from this package.
     Use dh.meanByAge instead. See help('Defunct')")
-  }
+}

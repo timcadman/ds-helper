@@ -38,9 +38,9 @@ dh.findVarsIndex <- function(df = NULL, vars = NULL, conns = NULL,
   }
 
   cols <- datashield.aggregate(conns, call("colnamesDS", df))
-  
+
   out <- cols %>% map(~ which(.x %in% vars == TRUE))
-  
+
   names(out) <- names(conns)
 
   return(out)

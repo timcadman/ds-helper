@@ -41,7 +41,7 @@ is "wide"}
 \item{digits}{Optionally, the number of decimal places to round output to. 
 Default is 2.}
 
-\item{exp}{Optionally, specify whether estimates from binomial models should
+\item{exponentiate}{Optionally, specify whether estimates from binomial models should
 be exponentiated, ie returned as odds ratios. This argument is ignored if
 \code{type} is "gaussian".}
 }

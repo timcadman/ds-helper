@@ -10,7 +10,8 @@ dh.multGLM(
   checks = TRUE,
   conns = NULL,
   vary_df = F,
-  family = "gaussian"
+  family = "gaussian",
+  weights = NULL
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ function. Default is TRUE.}
 is FALSE.}
 
 \item{family}{Family to use in glm models. Default is "gaussian".}
+
+\item{weights}{Optional, serverside object containing weights to be used in the model.}
 }
 \value{
 Tibble containing five columns:
