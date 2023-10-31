@@ -231,7 +231,7 @@ approximation of the original values.
 ds.scatterPlot(x = "data$age", y = "data$weight")
 ```
 
-![plot of chunk scatter](figure/scatter-1.png)
+![plot of chunk scatter](scatter-1.png)
 
 ```
 ## [1] "Split plot created"
@@ -340,7 +340,7 @@ mean_age.plot <- ggplot() +
 mean_age.plot
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2](unnamed-chunk-2-1.png)
 
 Q: Looking at these two plots, What are your initial thoughts about the pattern of 
 weight change over time?
@@ -401,6 +401,10 @@ rm_stats <- dh.getRmStats(
 	outcome = "weight",
 	id_var = "id", 
 	age_var = "age")
+```
+
+```
+## Error in dh.getRmStats(df = "data", outcome = "weight", id_var = "id", : could not find function "dh.getRmStats"
 ```
 
 ```r
@@ -691,6 +695,17 @@ model1.coef <- dh.lmTab(
 	direction = "wide")
 ```
 
+```
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
+```
+
 Let's explore there in more detail
 
 ### Fixed effects
@@ -908,6 +923,17 @@ plotdata <- dh.predictLmer(
 	coh_names = names(conns))
 ```
 
+```
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
+```
+
 
 ```r
 plotdata
@@ -1039,7 +1065,7 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-![plot of chunk plot-model-1-pooled](figure/plot-model-1-pooled-1.png)
+![plot of chunk plot-model-1-pooled](plot-model-1-pooled-1.png)
 
 We can also plot the trajectories for each cohort separately:
 
@@ -1068,7 +1094,7 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-![plot of chunk plot-model-1-cohort](figure/plot-model-1-cohort-1.png)
+![plot of chunk plot-model-1-cohort](plot-model-1-cohort-1.png)
 
 Q: Looking at the plots, how well do you think our model fits the data?
 
@@ -1138,6 +1164,17 @@ pred_data_2 <- dh.predictLmer(
 	coh_names = names(conns))
 ```
 
+```
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
+```
+
 
 ```r
 pred_data_2_trim <- dh.trimPredData(
@@ -1174,7 +1211,7 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-![plot of chunk plot-model-2](figure/plot-model-2-1.png)
+![plot of chunk plot-model-2](plot-model-2-1.png)
 
 Hmmm. We now have a non-linear trajectory, but it still doesn't look a great fit.
 We haven't looked at any fit statistics or residuals yet, but from the eye it 
@@ -1318,6 +1355,10 @@ weight_form <- dh.makeLmerForm(
   id_var = "id_int", 
   age_vars = c("age", "agem_2", "agem_1", "agem_0_5", "logage", "age0_5", "age2", "age3"), 
   random = "intercept")
+```
+
+```
+## Error in checkCharacter(age_vars): could not find function "checkCharacter"
 ```
 
 
@@ -1502,6 +1543,17 @@ pred_ref_final <- dh.predictLmer(
 )
 ```
 
+```
+## Error: Assertion on 'model' failed. function (msg) 
+## msgs <<- c(msgs, msg).
+
+## Error: Assertion on 'model' failed. function () 
+## msgs.
+
+## Error: Assertion on 'model' failed. function () 
+## length(msgs) == 0.
+```
+
 
 ```r
 pred_ref_final_trim <- dh.trimPredData(
@@ -1510,6 +1562,15 @@ pred_ref_final_trim <- dh.trimPredData(
 	min = rep(0, 5), 
 	max = c(20, 5, 5, 20, 20)
 )
+```
+
+```
+## Error in `pmap()`:
+## ℹ In index: 1.
+## Caused by error in `dplyr::filter()`:
+## ℹ In argument: `cohort == coh_ref & between(age, min, max)`.
+## Caused by error:
+## ! `..1` must be of size 502 or 1, not size 0.
 ```
 
 
@@ -1544,7 +1605,9 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-![plot of chunk plot-model-3-pooled](figure/plot-model-3-pooled-1.png)
+```
+## Error: Must request at least one colour from a hue palette.
+```
 
 We can also plot the trajectories by cohort
 
@@ -1573,7 +1636,9 @@ ggplot() +
   labs(colour = "Sex")
 ```
 
-![plot of chunk plot-model-3-cohort](figure/plot-model-3-cohort-1.png)
+```
+## Error: Must request at least one colour from a hue palette.
+```
 
 Great, this looks like a much better fit. We have captured the initial growth,
 followed by a reduction in growth rate at age 5 followed by an increase into
@@ -1598,6 +1663,11 @@ observed_by_age <- dh.meanByGroup(
 	group_var = "age", 
 	intervals = c(0, 1, 1, 2, 3, 5, 6, 10, 11, 15, 16, 18)
 )
+```
+
+```
+## Error in `separate()`:
+## ! `!!enquo(col)` must select exactly one column.
 ```
 
 
