@@ -1369,7 +1369,7 @@ poly.fit <- dh.lmeMultPoly(
 ## Error in dh.lmeMultPoly(df = "data", formulae = weight_form$formulae, : object 'weight_form' not found
 ```
 
-There are some converegence warnings. We can see details here:
+There are some convergence warnings. We can see details here:
 
 
 ```r
