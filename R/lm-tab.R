@@ -156,9 +156,8 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 #' @noRd
 lm_tab_check_args <- function(model, type, direction, ci_format, family,
                               coh_names, exponentiate) {
-  
   n_studies <- NULL
-  
+
   error_messages <- makeAssertCollection()
 
   checkmate::assert_list(model, add = error_messages)
@@ -168,7 +167,6 @@ lm_tab_check_args <- function(model, type, direction, ci_format, family,
   checkmate::assert_choice(family, c("gaussian", "binomial"), add = error_messages)
 
   if (type %in% c("glm_slma", "lmer_slma")) {
-    
     n_studies <- model[["num.valid.studies"]]
     checkmate::assert_character(coh_names, add = error_messages)
     checkmate::assert_set_equal(length(coh_names), n_studies, add = error_messages)
