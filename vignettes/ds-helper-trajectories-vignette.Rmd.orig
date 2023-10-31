@@ -159,7 +159,7 @@ ds.summary("data")
 We wont be using all of the variables today, however if you want to come back 
 and use this data to try out more complicated models we'll keep it online.
   
-# PART 1: VISUALISING THE DATA
+# Part 1: Visualising the data
 
 ## Scatter plots of child weight by age
 Let's start off by looking at our repeated measures weight data for each cohort.
@@ -254,7 +254,7 @@ rm_stats <- dh.getRmStats(
 rm_stats
 ```
 
-# PART 2: FITTING A SIMPLE LINEAR TRAJECTORY
+# Part 2: Fitting a simple linear trajectory
 
 ## Trajectory models: prep
 Before we can get started, we need to make sure that our id variable is an 
@@ -534,7 +534,7 @@ ggplot() +
 
 Q: Looking at the plots, how well do you think our model fits the data?
 
-# PART 3: FITTING A NON-LINEAR TRAJECTORY USING A TRANSFORMATION OF THE AGE TERM
+# Part 3: Fitting a non-linear trajectory using a transformation of the age term
 The previous model doesn't look great to me, especially around age 5 where 
 there looks to be a distinct non-linearity in the trajectory which we are not 
 capturing.
@@ -634,7 +634,7 @@ We haven't looked at any fit statistics or residuals yet, but from the eye it
 clearly doesn't fit the data. It also doesn't seem to capture the sex differences
 we would expect. We can do better than this.
 
-# PART 4: FRACTIONAL POLYNOMIALS
+# Part 4: Fractional polynomials
 Using one transformation of age allowed one 'bend' in the trajectory. However,
 the problem we saw with the previous model is that natural growth 
 trajectories often have multiple bends. 
@@ -987,4 +987,9 @@ set_names(names(conns))
 
 ```{r view-residuals, results = "hold"}
 res_tab
+```
+
+Finish by logging out of the demo server
+```{r}
+datashield.logout(conns)
 ```

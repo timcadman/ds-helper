@@ -454,6 +454,11 @@ The second element ("coefficients") is a summary table:
 meta_analysed$coefs
 ```
 
+Finish by logging out of the demo server
+```{r}
+datashield.logout(conns)
+```
+
 
 
 
