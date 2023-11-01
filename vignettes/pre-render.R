@@ -12,7 +12,3 @@ knitr::knit("vignettes/ds-helper-trajectories-vignette.Rmd.orig",
 knitr::knit("vignettes/Troubleshooting.Rmd.orig",
             output = "vignettes/Troubleshooting.Rmd"
 )
-
-knitr::knit("vignettes/test.Rmd.orig",
-            output = "vignettes/test.Rmd"
-)
