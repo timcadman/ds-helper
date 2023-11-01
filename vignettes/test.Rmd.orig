@@ -1,0 +1,54 @@
+---
+title: "Conducting mixed effect/trajectory analysis using DataSHIELD"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conducting mixed effect/trajectory analysis using DataSHIELD}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r settings, echo = FALSE}
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+knitr::opts_chunk$set(results = "hide")
+options(datashield.progress = FALSE)
+options(datashield.progress.clear = TRUE)
+options(knitr.duplicate.label = "allow")
+knitr::opts_chunk$set(fig.path = "")
+```
+
+```{r load-packages}
+library(dsBaseClient)
+library(DSI)
+library(DSMolgenisArmadillo)
+library(dsHelper)
+library(tidyverse)
+```
+
+```{r login}
+url <- "https://armadillo-demo.molgenis.net/"
+token <- armadillo.get_token(url)
+  
+builder <- DSI::newDSLoginBuilder()
+
+builder$append(
+server = "alspac",
+url = url,
+table = "trajectories/data/alspac",
+token = token,
+driver = "ArmadilloDriver", 
+profile = "xenon")
+
+logindata <- builder$build()
+
+conns <- DSI::datashield.login(logins = logindata, assign = T, symbol = "data")
+```
+  
+```{r scatter-test, results = "hold"}
+ds.scatterPlot(x = "data$age", y = "data$weight")
+```
+
+Finish by logging out of the demo server
+```{r}
+datashield.logout(conns)
+```
