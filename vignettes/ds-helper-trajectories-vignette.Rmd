@@ -166,8 +166,8 @@ ds.summary("data")
 ## [1] 7
 ## 
 ## $alspac$`variables held`
-## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
-## [6] "mother_education"   "weight"            
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass" "mother_education"  
+## [7] "weight"            
 ## 
 ## 
 ## $bcg
@@ -181,8 +181,8 @@ ds.summary("data")
 ## [1] 7
 ## 
 ## $bcg$`variables held`
-## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
-## [6] "mother_education"   "weight"            
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass" "mother_education"  
+## [7] "weight"            
 ## 
 ## 
 ## $bib
@@ -196,8 +196,8 @@ ds.summary("data")
 ## [1] 7
 ## 
 ## $bib$`variables held`
-## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
-## [6] "mother_education"   "weight"            
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass" "mother_education"  
+## [7] "weight"            
 ## 
 ## 
 ## $probit
@@ -211,8 +211,8 @@ ds.summary("data")
 ## [1] 7
 ## 
 ## $probit$`variables held`
-## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass"
-## [6] "mother_education"   "weight"
+## [1] "id"                 "age"                "sex"                "ethnicity"          "father_socialclass" "mother_education"  
+## [7] "weight"
 ```
 We wont be using all of the variables today, however if you want to come back 
 and use this data to try out more complicated models we'll keep it online.
@@ -340,7 +340,7 @@ mean_age.plot <- ggplot() +
 mean_age.plot
 ```
 
-![plot of chunk unnamed-chunk-2](unnamed-chunk-2-1.png)
+![plot of chunk mean-by-age-plot-1](mean-by-age-plot-1.png)
 
 Q: Looking at these two plots, What are your initial thoughts about the pattern of 
 weight change over time?
@@ -365,19 +365,18 @@ stats
 ```
 ## $categorical
 ## # A tibble: 0 × 10
-## # ℹ 10 variables: variable <chr>, cohort <chr>, category <chr>, value <dbl>, cohort_n <int>, valid_n <dbl>,
-## #   missing_n <dbl>, perc_valid <dbl>, perc_missing <dbl>, perc_total <dbl>
+## # ℹ 10 variables: variable <chr>, cohort <chr>, category <chr>, value <dbl>, cohort_n <int>, valid_n <dbl>, missing_n <dbl>, perc_valid <dbl>,
+## #   perc_missing <dbl>, perc_total <dbl>
 ## 
 ## $continuous
 ## # A tibble: 5 × 15
-##   variable cohort    mean std.dev perc_5 perc_10 perc_25 perc_50 perc_75 perc_90 perc_95 valid_n cohort_n missing_n
-##   <chr>    <chr>    <dbl>   <dbl>  <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>     <dbl>
-## 1 sex      alspac    0.49     0.5      0       0       0       0       1       1       1  129681   129681         0
-## 2 sex      bcg       0.48     0.5      0       0       0       0       1       1       1   12724    12724         0
-## 3 sex      bib       0.49     0.5      0       0       0       0       1       1       1   68864    68864         0
-## 4 sex      probit    0.48     0.5      0       0       0       0       1       1       1  191224   191224         0
-## 5 sex      combined  0.49     0.5      0       0       0       0       1       1       1  402493   402493         0
-## # ℹ 1 more variable: missing_perc <dbl>
+##   variable cohort    mean std.dev perc_5 perc_10 perc_25 perc_50 perc_75 perc_90 perc_95 valid_n cohort_n missing_n missing_perc
+##   <chr>    <chr>    <dbl>   <dbl>  <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>     <dbl>        <dbl>
+## 1 sex      alspac    0.49     0.5      0       0       0       0       1       1       1  129681   129681         0            0
+## 2 sex      bcg       0.48     0.5      0       0       0       0       1       1       1   12724    12724         0            0
+## 3 sex      bib       0.49     0.5      0       0       0       0       1       1       1   68864    68864         0            0
+## 4 sex      probit    0.48     0.5      0       0       0       0       1       1       1  191224   191224         0            0
+## 5 sex      combined  0.49     0.5      0       0       0       0       1       1       1  402493   402493         0            0
 ```
 This gives us a list with two elements corresponding to the continuous and categorical
 variables. As we didn't request stats for any continuous variables, the first list is 

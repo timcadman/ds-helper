@@ -1,0 +1,56 @@
+---
+title: "test"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{test}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+
+```r
+library(dsBaseClient)
+library(DSI)
+library(DSMolgenisArmadillo)
+library(dsHelper)
+library(tidyverse)
+```
+
+
+```r
+url <- "https://armadillo-demo.molgenis.net/"
+token <- armadillo.get_token(url)
+  
+builder <- DSI::newDSLoginBuilder()
+
+builder$append(
+server = "alspac",
+url = url,
+table = "trajectories/data/alspac",
+token = token,
+driver = "ArmadilloDriver", 
+profile = "xenon")
+
+logindata <- builder$build()
+
+conns <- DSI::datashield.login(logins = logindata, assign = T, symbol = "data")
+```
+  
+
+```r
+ds.scatterPlot(x = "data$age", y = "data$weight")
+```
+
+![plot of chunk scatter-test](scatter-test-1.png)
+
+```
+## [1] "Split plot created"
+```
+
+Finish by logging out of the demo server
+
+```r
+datashield.logout(conns)
+```

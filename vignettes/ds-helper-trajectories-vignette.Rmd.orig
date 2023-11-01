@@ -195,7 +195,7 @@ mean_age %>% print(n = Inf)
 Now we have the values locally, we can use any r package to plot these. I
 like to use ggplot:
 
-```{r mean-by-age-plot}
+```{r mean-by-age-prep}
 palette <- c("#264653", "#2a9d8f", "#E9C46A", "#F4A261", "#E76F51")
 
 mean_age.plot <- ggplot() + 
@@ -206,7 +206,7 @@ mean_age.plot <- ggplot() +
   scale_colour_manual(values = palette)
 ```
 
-```{r, results = "hold"}
+```{r mean-by-age-plot, results = "hold"}
 mean_age.plot
 ```
 
