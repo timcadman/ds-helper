@@ -28,8 +28,7 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
-#' @importFrom checkmate assert_string assert_character assert_choice 
-#' reportAssertions makeAssertCollection
+#' @importFrom checkmate assert_string assert_character assert_choice reportAssertions makeAssertCollection
 #'
 #' @family trajectory functions
 #'
