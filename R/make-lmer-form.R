@@ -61,7 +61,7 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
 #'
 #' @noRd
 lmer_form_check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions) {
-  error_messages <- makeAssertCollection()
+  error_messages <- checkmate::makeAssertCollection()
 
   checkmate::assert_string(outcome, add = error_messages)
   checkmate::assert_string(id_var, add = error_messages)
