@@ -40,25 +40,25 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
     ## Check no objects to removed have character length >20
     obj_lengths <- tibble(
       obj = obj,
-      length = obj %>% map_int(nchar))
-    
-    obj_valid <- obj_lengths %>%  
+      length = obj %>% map_int(nchar)
+    )
+
+    obj_valid <- obj_lengths %>%
       dplyr::filter(length < 20) %>%
       pull(obj)
-    
-    obj_not_valid <- obj_lengths %>%  
-      dplyr::filter(length >= 20) 
-    
+
+    obj_not_valid <- obj_lengths %>%
+      dplyr::filter(length >= 20)
+
     if (nrow(obj_not_valid > 0)) {
       warning(paste0("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
            due to risk of malicious code. These objects have not been removed: \n\n", as.character(obj_not_valid$value)), call. = FALSE)
     }
-    
-    obj_valid %>% 
-      map(
-        ~ds.rm(x.names = .x, datasources = conns)
-      )
 
+    obj_valid %>%
+      map(
+        ~ ds.rm(x.names = .x, datasources = conns)
+      )
   } else if (type == "keep") {
     objects <- names(conns) %>%
       map(
@@ -77,13 +77,13 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
       imap(~ mutate(., cohort = .y)) %>%
       bind_rows() %>%
       mutate(length = value %>% map_int(nchar))
-    
-    obj_valid <- vars_tibble %>%  
-      dplyr::filter(length < 20) 
-    
-    obj_not_valid <- vars_tibble %>%  
-      dplyr::filter(length >= 20) 
-    
+
+    obj_valid <- vars_tibble %>%
+      dplyr::filter(length < 20)
+
+    obj_not_valid <- vars_tibble %>%
+      dplyr::filter(length >= 20)
+
     if (nrow(obj_not_valid > 0)) {
       warning(paste0("You are attempting to remove objects with name(s) longer than 20 characters. DS does not permit this
            due to risk of malicious code. These objects have not been removed.", as.character(obj_not_valid$value)), call. = FALSE)

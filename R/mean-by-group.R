@@ -10,7 +10,7 @@
 #' @importFrom dsBaseClient ds.meanSdGp
 #' @importFrom purrr map
 #' @importFrom tibble as_tibble
-#' @importFrom dplyr bind_rows %>% slice 
+#' @importFrom dplyr bind_rows %>% slice
 #' @importFrom tidyr separate
 #'
 #' @template conns
@@ -73,24 +73,20 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
       "meanSdGpDS(", paste0(df, "$", outcome), ",",
       "age_round", ")"
     )
-    
+
     mean_tmp <- DSI::datashield.aggregate(conns, as.symbol(calltext))
     ## ---- Deal with disclosure issues ----------------------------------------
     warnings <- .checkDisclosureMeanGp(mean_tmp)
-    
-    if(nrow(warnings$issues) > 0){
-      
-      warning(
-"The following cohorts have at least one group with between 1 and 2 observations 
-so it is not possible to return grouped values. Try collapsing some categories or 
-re-run the function using the `intervals` argument. \n\n", 
-      
-paste0(warnings$issues$cohort, collapse = ", ")
 
-)
-      
+    if (nrow(warnings$issues) > 0) {
+      warning(
+        "The following cohorts have at least one group with between 1 and 2 observations
+so it is not possible to return grouped values. Try collapsing some categories or
+re-run the function using the `intervals` argument. \n\n",
+        paste0(warnings$issues$cohort, collapse = ", ")
+      )
     }
-    
+
     ## ---- Now put into neat long format -------------------------------------------------------
     out <- warnings$no_issues_data %>%
       map(function(x) {
@@ -104,7 +100,7 @@ paste0(warnings$issues$cohort, collapse = ", ")
     ## ---- Remove temporary objects ------------------------------------------------------------
     dh.tidyEnv(
       obj = c("age_tmp", "age_round"),
-      type = "remove", 
+      type = "remove",
       conns = conns
     )
   } else if (!is.null(intervals)) {
@@ -151,71 +147,72 @@ paste0(warnings$issues$cohort, collapse = ", ")
       pmap(function(condition, varname) {
         DSI::datashield.assign(conns, varname, as.symbol(condition))
       })
-    
+
     ## Check disclosure issues
     disclosure <- assign_conditions$varname %>%
-      map(~.checkDisclosure(., conns = conns)) %>%
+      map(~ .checkDisclosure(., conns = conns)) %>%
       set_names(assign_conditions$varname) %>%
       bind_rows(.id = "variable")
-    
+
 
     no_obs <- disclosure %>% dplyr::filter(enough_obs == FALSE)
-    
-    if(nrow(no_obs) > 0){
-      
+
+    if (nrow(no_obs) > 0) {
       warning(paste(capture.output({
         cat("These cohorts have no observations within the following
               intervals and will be excluded\n\n")
-        no_obs %>% dplyr::select(variable, cohort) %>%
+        no_obs %>%
+          dplyr::select(variable, cohort) %>%
           print(n = Inf)
       }), collapse = "\n"))
-
     }
-    
+
     valid_obs <- disclosure %>% dplyr::filter(enough_obs == TRUE)
-    
+
     ## We then use these vectors to summarise mean observed height at the age
     ## periods we are interested in.
     obs_by_agecat_comb <- valid_obs %>%
-      pmap(function(variable, cohort, ...){
-        
+      pmap(function(variable, cohort, ...) {
         ds.meanSdGp(
           x = paste0(df, "$", outcome),
           y = variable,
           type = "split",
-          datasources = conns[cohort])
+          datasources = conns[cohort]
+        )
       })
-    
+
 
     ## Now we take these values and put them into a neater table
     out <- obs_by_agecat_comb %>%
-      map(function(x){
-        
+      map(function(x) {
         tibble(
           group = dimnames(x$Mean_gp_study)[[1]],
           mean = as.numeric(x$Mean_gp_study),
-          std.dev = as.numeric(x$StDev_gp_study), 
+          std.dev = as.numeric(x$StDev_gp_study),
           nvalid = as.numeric(x$Nvalid_gp_study),
-          cohort = colnames(x$Mean_gp_study)) 
+          cohort = colnames(x$Mean_gp_study)
+        )
       }) %>%
       bind_rows() %>%
-      separate(group, into = c("group", "level"), sep="_(?=[^_]+$)") %>%
+      separate(group, into = c("group", "level"), sep = "_(?=[^_]+$)") %>%
       pivot_wider(
-        names_from = "level", 
-        values_from = c("nvalid", "mean", "std.dev")) %>%
+        names_from = "level",
+        values_from = c("nvalid", "mean", "std.dev")
+      ) %>%
       dplyr::rename(
-        "nvalid" = nvalid_2, 
-        "nmissing" = nvalid_1, 
+        "nvalid" = nvalid_2,
+        "nmissing" = nvalid_1,
         "mean" = mean_2,
-        "std.dev" = std.dev_2) %>%
+        "std.dev" = std.dev_2
+      ) %>%
       mutate(group = str_remove(group, "grp_")) %>%
       dplyr::select(cohort, group, mean, std.dev, nvalid, nmissing)
-    
-        
+
+
     ## ---- Remove temporary objects -------------------------------------------
     dh.tidyEnv(
       obj = c(cats$new_df_name, assign_conditions$varname),
-      type = "remove", 
+      type = "remove",
       conns = conns
     )
   }
@@ -225,24 +222,26 @@ paste0(warnings$issues$cohort, collapse = ", ")
 
 
 #' Internal function to check disclosure issues in this function
-#' 
+#'
 #' @param mean_gp output from ds.meanSdGp
-#' 
+#'
 #' @importFrom purrr map
 #' @importFrom tibble tibble
 #' @importFrom dplyr %>% bind_rows filter
 #' @noRd
-.checkDisclosureMeanGp <- function(mean_gp){
-  
-  warnings <- mean_gp %>% map(function(x){
-    tibble(warning = !is.null(x$Warning))}) %>%
+.checkDisclosureMeanGp <- function(mean_gp) {
+  warnings <- mean_gp %>%
+    map(function(x) {
+      tibble(warning = !is.null(x$Warning))
+    }) %>%
     bind_rows(.id = "cohort")
-  
-  issues <- warnings %>% dplyr::filter(warning == TRUE)  
-  no_issues <- mean_gp[!names(mean_gp) %in% issues$cohort] 
-  
+
+  issues <- warnings %>% dplyr::filter(warning == TRUE)
+  no_issues <- mean_gp[!names(mean_gp) %in% issues$cohort]
+
   return(list(
-    summary = warnings, 
-    issues = issues, 
-    no_issues_data = no_issues))
+    summary = warnings,
+    issues = issues,
+    no_issues_data = no_issues
+  ))
 }
