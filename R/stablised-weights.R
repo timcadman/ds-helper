@@ -155,7 +155,7 @@ predict_values <- function(glm_object) {
 get_proportions <- function(responder_df, outcome_var) {
   proportions <- ds.table(
     paste0(responder_df, "$", outcome_var),
-    useNA = "always"
+    useNA = "no"
   )
 
   return(proportions)
