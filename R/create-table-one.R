@@ -347,10 +347,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     stop(
       "The following categorical variables are included in 'vars'
       but do not have a corresponding labels for all categories provided in
-      `cat_labs`\n\n"
+      `cat_labs`\n\n", unique(missing_cats$variable)
     )
 
-    print(missing_cats)
+
   }
 }
 
