@@ -92,7 +92,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     }
   }
 
-  if (nrow(stats$continuous) > 0) {
+  if (nrow(stats_sub_vars$continuous) > 0) {
     stats_cont <- .formatContStats(stats_sub_coh, cont_format, sig_digits)
   }
 
