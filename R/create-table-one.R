@@ -52,7 +52,7 @@
 dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
                               cat_labs = NULL, type = NULL, coh_labs = NULL,
                               coh_direction = "cols", cont_format = "med_iqr",
-                              inc_missing = NULL, sig_digits = 2,
+                              inc_missing = NULL, sig_digits = 3,
                               perc_denom = NULL) {
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <-
