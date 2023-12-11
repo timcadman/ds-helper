@@ -51,7 +51,7 @@
 #' @export
 dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
                               cat_labs = NULL, type = NULL, coh_labs = NULL,
-                              coh_direction = "cols", cont_format = "med_iqr",
+                              coh_direction = "cols", cont_format = NULL,
                               inc_missing = NULL, sig_digits = 3,
                               perc_denom = NULL) {
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
