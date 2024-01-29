@@ -33,7 +33,7 @@ Creates a serverside dataframe containing the rows from `original_df`
 that are not contained in `final_df`
 }
 \description{
-When writing a paper often we need to exclude various participants for 
-various reasons. Then we will need a df with all of these excluded 
+When writing a paper often we need to exclude various participants for
+various reasons. Then we will need a df with all of these excluded
 participants. This is one way to do it.
 }

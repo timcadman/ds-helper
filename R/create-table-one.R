@@ -319,7 +319,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     mutate(value = ifelse(is.na(category),
       paste0(missing, " (", missing_perc, ")"), value
     )) %>%
-    dplyr::select(cohort, variable, category, value)
+    dplyr::select(cohort, variable, category, value)  %>%
+    mutate(category = case_when(
+      category == "med_iqr" ~ "Median \u00b1 (IQR)",
+      category == "mean_sd" ~ "Mean \u00b1 SD"))
 
   return(out)
 }

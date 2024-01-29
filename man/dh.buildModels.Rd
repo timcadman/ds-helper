@@ -14,8 +14,8 @@ dh.buildModels(avail_exp = NULL, avail_cov = NULL, avail_out = NULL)
 \item{avail_out}{Output from `dh.anyData` detailing available outcomes  for each cohort.}
 }
 \value{
-A tibble containing four columns: (i) cohort, (ii) exposure, (iii) outcome, (iv) 
-regression formula with these combinations. Optionally contains fifth column with list of 
+A tibble containing four columns: (i) cohort, (ii) exposure, (iii) outcome, (iv)
+regression formula with these combinations. Optionally contains fifth column with list of
 covariates if `avail_cov` is not null.
 }
 \description{
@@ -27,7 +27,7 @@ The function performs the following steps:
   1. Summarizes available exposure and outcome variables.
   2. Combines available exposure and outcome variables for all cohorts.
   3. Tidies up the combinations.
-  4. If covariates are available, it splits combinations by cohort, adds covariates, and creates 
+  4. If covariates are available, it splits combinations by cohort, adds covariates, and creates
   formulas.
   5. Returns the constructed models or formulas.
 }

@@ -12,7 +12,8 @@ dh.lmTab(
   ci_format = NULL,
   family = "gaussian",
   digits = 2,
-  exponentiate = FALSE
+  exponentiate = FALSE,
+  extract_random = FALSE
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ Default is 2.}
 \item{exponentiate}{Optionally, specify whether estimates from binomial models should
 be exponentiated, ie returned as odds ratios. This argument is ignored if
 \code{type} is "gaussian".}
+
+\item{extract_random}{Optionally, specify whether to return random effects in mixed effects models.}
 }
 \value{
 A tibble. When \code{direction} is "wide" & \code{ci_format} is "paste", this

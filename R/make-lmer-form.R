@@ -45,7 +45,7 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
   formula_random <- .make_random_effects(random, age_vars, id_var)
 
   out <- tibble(
-    polys = combn(age_vars, 2, paste, collapse = ","),
+    polys = c(combn(age_vars, 2, paste, collapse = ","), age_vars),
     formula = paste(
       paste0(outcome, "~1+"),
       formula_fixed, "+", formula_random
