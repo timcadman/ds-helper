@@ -90,7 +90,7 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
     }
 
     obj_valid %>% pmap(function(cohort, value, ...) {
-      ds.rm(x.names = value, datasources = conns[cohort])
+      ds.rm(x.name = value, datasources = conns[cohort])
     })
   }
 }
