@@ -31,56 +31,37 @@
 #' @export
 dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
                        vary_df = F, family = "gaussian", weights = NULL) {
-  formulae <- model_names <- cohort <- converged <- NULL
-
-  if (vary_df == F & is.null(df)) {
-    stop("`df` must not be NULL.", call. = FALSE)
-  }
-
-  if (is.null(ref)) {
-    stop("`ref` must not be NULL.", call. = FALSE)
-  }
+  formulae <- model_names <- cohort <- converged <- error_message <- NULL
 
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
-  ## ---- Sort out df ----------------------------------------------------------
-  if (vary_df == F) {
-    ref <- ref %>% mutate(df = df)
-  }
+  
+   multCheckArgs(df, ref, vary_df)
 
   ## ---- Run the models -------------------------------------------------------
   suppressWarnings(
-    models <- ref %>%
-      pmap(function(formula, cohort, df, weight_obj, ...) {
+    glm_out <- ref %>%
+      pmap(function(formula, cohort, weight_obj, ...) {
+        
         tryCatch(
-          {
-            dsBaseClient::ds.glmSLMA(
-              formula = unlist(formula),
-              dataName = df,
-              family = family,
-              combine.with.metafor = TRUE,
-              weights = weights,
-              datasources = conns[cohort]
-            )
-          },
-          error = function(error_message) {
-            out <- list("failed", error_message)
-            return(out)
-          }
+          {multGlmWraper(formula, df, family, weights, cohort, conns)},
+          error = multHandleError(error_message)
         )
+        
       })
   )
+   
+formula = ref$formula
 
   ## ---- Identify models which failed completely ------------------------------
-  fail_tmp <- models %>%
+  fail_tmp <- glm_out %>%
     map(~ .[[1]][[1]][[1]]) %>%
     str_detect("POTENTIALLY DISCLOSIVE|failed", negate = TRUE)
 
   out <- ref %>%
     mutate(
-      fit = models,
+      fit = glm_out,
       converged = fail_tmp
     )
 
@@ -98,4 +79,34 @@ dh.multGLM <- function(df = NULL, ref = NULL, checks = TRUE, conns = NULL,
   }
 
   return(out)
+}
+
+multCheckArgs <- function(df, ref, vary_df){
+  
+  if (vary_df == F & is.null(df)) {
+    stop("`df` must not be NULL.", call. = FALSE)
+  }
+  
+  if (is.null(ref)) {
+    stop("`ref` must not be NULL.", call. = FALSE)
+  }
+  
+}
+
+multHandleError <- function(error_message){
+  out <- list("failed", error_message)
+  return(out)
+}
+
+multGlmWraper <- function(formula, df, family, weights, cohort, conns){
+  
+  ds.glmSLMA(
+    formula = unlist(formula),
+    dataName = df,
+    family = family,
+    combine.with.metafor = TRUE,
+    weights = weights,
+    datasources = conns[cohort]
+  )
+  
 }

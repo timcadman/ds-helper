@@ -14,7 +14,7 @@ dh.predictLmer(model = NULL, new_data = NULL, coh_names = NULL)
 `new_data` must be identical to those in `model`, and all variables included
 in `model` must be present in `new_data`.}
 
-\item{coh_names}{Please specify 'conns' instead. 
+\item{coh_names}{Please specify 'conns' instead.
 Vector of cohort names. These must be in the order that
 cohorts were specified in `model`.}
 }

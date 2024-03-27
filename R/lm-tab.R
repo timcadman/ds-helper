@@ -24,6 +24,7 @@
 #' @param exponentiate Optionally, specify whether estimates from binomial models should
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
 #' `type` is "gaussian".
+#' @param extract_random Optionally, specify whether to return random effects in mixed effects models.
 #'
 #' @importFrom checkmate assert_string assert_set_equal makeAssertCollection
 #' @importFrom tibble tibble
@@ -62,7 +63,7 @@
 dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
                      direction = NULL, ci_format = NULL,
                      family = "gaussian", digits = 2,
-                     exponentiate = FALSE) {
+                     exponentiate = FALSE, extract_random = FALSE) {
   Estimate <- cohort <- se <- pooled.ML <- se.ML <- value <- coefficient <-
     variable <- est <- lowci <- uppci <- pvalue <- . <- stddev <- NULL
 
@@ -93,11 +94,14 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     coh_ns <- extract_ns_lmer(model, nstudy)
     coh_coefs <- add_ns_slma(coh_ns, coh_coefs, coh_names)
 
+    if(extract_random){
     random <- extract_random(model, coh_names, nstudy)
     random <- rename_intercept(random, col_name = "var1")
 
     random <- random %>%
       mutate(across(stddev, ~ round(., digits)))
+    
+    }
   }
 
   if (type %in% c("glm_slma", "lmer_slma")) {
@@ -138,12 +142,26 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   coefs <- rename_intercept(coefs, col_name = "variable")
 
   if (type == "lmer_slma") {
-    return(
+    
+    if(extract_random){
+      
+      return(
       list(
         fixed = coefs,
         random = random
       )
     )
+      
+      } else{
+        
+        return(
+          list(
+            fixed = coefs
+          )
+        )
+        
+      }
+      
   } else {
     return(coefs)
   }
@@ -363,7 +381,7 @@ extract_ns_lmer <- function(model, nstudy) {
 extract_random <- function(model, coh_names, nstudy) {
   random_extracted <- nstudy %>%
     map(function(x) {
-      model$output.summary[[x]]$varcor %>%
+      model$output.summary[[x]]$varcor$child_id_int %>%
         as.data.frame() %>%
         as_tibble() %>%
         dplyr::select(

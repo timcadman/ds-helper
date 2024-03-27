@@ -1,5 +1,6 @@
 #' Function in progress to meta-analyse separate models.
 #'
+#' @param input Character; "fit" to use the output from ds.glmSLMA; "stats" to use the output from ds.lmTab.
 #' @param ref Tibble, output from dh.multGlm.
 #' @param exp Logical, whether to exponentiate coefficients after meta-analysis
 #' @param method Method of meta-analysing coefficients.
@@ -18,11 +19,11 @@
 #' @importFrom tibble tibble
 #'
 #' @export
-dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
+dh.metaSepModels <- function(input = "fit", ref = NULL, exp = NULL, method = NULL,
                              output = "both") {
   exposure <- variable <- cohort <- . <- est <- lowci <- uppci <-
     model_id <- n_obs <- se <- NULL
-
+  
   method <- arg_match(
     arg = method,
     values = c("DL", "HE", "HS", "HSk", "SJ", "ML", "REML", "EB", "PM", "GENQ")
@@ -34,6 +35,9 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
   )
 
   if (output %in% c("meta", "both") == TRUE) {
+    
+    if(input == "fit"){
+    
     ## ---- Get coefficients -----------------------------------------------------
     model_coefs <- ref %>%
       pmap(function(cohort, fit, ...) {
@@ -50,6 +54,12 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
       }) %>%
       set_names(ref$model_id) %>%
       bind_rows(.id = "model_id")
+    
+    } else{
+      
+      model_coefs <- ref
+      
+    }
 
     ## ---- Create tibble respecting grouping order ------------------------------
     model_holder <- model_coefs %>%
@@ -82,13 +92,13 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
           se = meta$se,
           lowci = meta$ci.lb,
           uppci = meta$ci.ub,
-          i2 = round(meta$I2, 2),
-          t2 = round(meta$tau2, 2),
-          q = round(meta$QE, 2),
-          q_p = round(meta$QEp, 2),
-          k = round(meta$k, 2),
-          p = round(meta$p, 2),
-          t2_se = round(meta$se.tau2, 2),
+          i2 = meta$I2,
+          t2 = meta$tau2,
+          q = meta$QE,
+          q_p = meta$QEp,
+          k = meta$k,
+          p = meta$pval,
+          t2_se = meta$se.tau2,
           n_coh = meta$k
         )
       }) %>%
@@ -146,6 +156,7 @@ dh.metaSepModels <- function(ref = NULL, exp = NULL, method = NULL,
     out <- coh.out
   } else if (output == "meta") {
     out <- ma.out
+    return(out)
   }
 
   if (exp == TRUE) {

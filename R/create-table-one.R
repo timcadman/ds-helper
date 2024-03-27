@@ -51,8 +51,8 @@
 #' @export
 dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
                               cat_labs = NULL, type = NULL, coh_labs = NULL,
-                              coh_direction = "cols", cont_format = "med_iqr",
-                              inc_missing = NULL, sig_digits = 2,
+                              coh_direction = "cols", cont_format = NULL,
+                              inc_missing = NULL, sig_digits = 3,
                               perc_denom = NULL) {
   variable <- . <- cat_label <- var_label <- cohort <- value <- data_type <-
     miss_n_perc <- category <- coh_label <- avail_stats <- vars_list <-
@@ -92,7 +92,7 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     }
   }
 
-  if (nrow(stats$continuous) > 0) {
+  if (nrow(stats_sub_vars$continuous) > 0) {
     stats_cont <- .formatContStats(stats_sub_coh, cont_format, sig_digits)
   }
 
@@ -319,7 +319,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     mutate(value = ifelse(is.na(category),
       paste0(missing, " (", missing_perc, ")"), value
     )) %>%
-    dplyr::select(cohort, variable, category, value)
+    dplyr::select(cohort, variable, category, value)  %>%
+    mutate(category = case_when(
+      category == "med_iqr" ~ "Median \u00b1 (IQR)",
+      category == "mean_sd" ~ "Mean \u00b1 SD"))
 
   return(out)
 }
@@ -347,10 +350,10 @@ dh.createTableOne <- function(stats = NULL, vars = NULL, var_labs = NULL,
     stop(
       "The following categorical variables are included in 'vars'
       but do not have a corresponding labels for all categories provided in
-      `cat_labs`\n\n"
+      `cat_labs`\n\n", unique(missing_cats$variable)
     )
 
-    print(missing_cats)
+
   }
 }
 

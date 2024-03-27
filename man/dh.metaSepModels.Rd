@@ -4,9 +4,17 @@
 \alias{dh.metaSepModels}
 \title{Function in progress to meta-analyse separate models.}
 \usage{
-dh.metaSepModels(ref = NULL, exp = NULL, method = NULL, output = "both")
+dh.metaSepModels(
+  input = "fit",
+  ref = NULL,
+  exp = NULL,
+  method = NULL,
+  output = "both"
+)
 }
 \arguments{
+\item{input}{Character; "fit" to use the output from ds.glmSLMA; "stats" to use the output from ds.lmTab.}
+
 \item{ref}{Tibble, output from dh.multGlm.}
 
 \item{exp}{Logical, whether to exponentiate coefficients after meta-analysis}

@@ -19,7 +19,7 @@ dh.makeIQR(
 
 \item{vars}{Character vector of columns within `df` to transform.}
 
-\item{type}{Use "combine" to transform the variable based on the combined IQR 
+\item{type}{Use "combine" to transform the variable based on the combined IQR
 across all cohorts specified in `conns`, or "split" to transform based on the
 within-cohort IQR.}
 
@@ -34,7 +34,7 @@ function. Default is TRUE.}
 }
 \value{
 Server-side object specified in `df` with transformed variables added
-as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s" 
+as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s"
 if type is "split".
 }
 \description{

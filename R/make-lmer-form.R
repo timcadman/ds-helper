@@ -28,8 +28,7 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom utils combn
-#' @importFrom checkmate assert_string assert_character assert_choice
-#' reportAssertions makeAssertCollection
+#' @importFrom checkmate assert_string assert_character assert_choice reportAssertions makeAssertCollection
 #'
 #' @family trajectory functions
 #'
@@ -38,6 +37,7 @@
 #' @export
 dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
                             random = NULL, fixed = NULL, age_interactions = NULL) {
+  
   lmer_form_check_args(outcome, id_var, age_vars, random, fixed, age_interactions)
 
   formula_fixed <- make_fixed_effects(age_vars, fixed, age_interactions)
@@ -45,7 +45,7 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
   formula_random <- .make_random_effects(random, age_vars, id_var)
 
   out <- tibble(
-    polys = combn(age_vars, 2, paste, collapse = ","),
+    polys = c(combn(age_vars, 2, paste, collapse = ","), age_vars),
     formula = paste(
       paste0(outcome, "~1+"),
       formula_fixed, "+", formula_random
@@ -62,7 +62,7 @@ dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
 #'
 #' @noRd
 lmer_form_check_args <- function(outcome, id_var, age_vars, random, fixed, age_interactions) {
-  error_messages <- makeAssertCollection()
+  error_messages <- checkmate::makeAssertCollection()
 
   checkmate::assert_string(outcome, add = error_messages)
   checkmate::assert_string(id_var, add = error_messages)
@@ -88,13 +88,12 @@ lmer_form_check_args <- function(outcome, id_var, age_vars, random, fixed, age_i
 make_fixed_effects <- function(age_vars, fixed, age_interactions) {
   poly_fixed <- NULL
 
-  polynomial_terms <- combn(age_vars, 2, paste, collapse = "+")
+  polynomial_terms <- c(combn(age_vars, 2, paste, collapse = "+"), age_vars)
 
   if (!is.null(age_interactions)) {
-    age_interactions <- combn(
-      paste0(age_interactions, "*", age_vars), 2, paste,
-      collapse = "+"
-    )
+    age_interactions <- c(
+      combn(paste0(age_interactions, "*", age_vars), 2, paste, collapse = "+"), 
+      paste0(age_interactions, "*", age_vars))
   }
 
   if (!is.null(fixed)) {

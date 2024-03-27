@@ -26,7 +26,7 @@ Z score serverside within specified bands
 }
 \description{
 Especially with mental health outcomes, we often want to transform raw scores
-into z-scores, but within certain age bands (e.g. measurement occasion or 
+into z-scores, but within certain age bands (e.g. measurement occasion or
 per year). This function does this.
 }
 \seealso{

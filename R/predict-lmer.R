@@ -44,7 +44,7 @@ dh.predictLmer <- function(model = NULL, new_data = NULL, coh_names = NULL) {
   coefs_formatted <- format_split_coefficients(coefs_by_cohort)
 
   products <- calculate_products(coefs_formatted, coef_names, new_data_sub)
-  predictions <- calculate_predictions(products, new_data_sub)
+  predictions <- calculate_predictions(products)
   vcov_by_cohort <- extract_vcov(model, coh_names)
   se <- calculate_standard_errors(model, new_data_sub, vcov_by_cohort)
   se_combined <- set_combined_as_null(se, new_data)
@@ -110,7 +110,8 @@ extract_coefficients <- function(model, coh_names) {
     type = "lmer_slma",
     coh_names = coh_names,
     direction = "long",
-    ci_format = "separate"
+    ci_format = "separate", 
+    digits = 10
   )
   return(coefs)
 }
@@ -229,7 +230,7 @@ calculate_products <- function(formatted_coefficients, coef_names, new_data_sub)
 #' @param new_data The data frame of new data.
 #' @return list of vectors of predicted values.
 #' @noRd
-calculate_predictions <- function(products, new_data_sub) {
+calculate_predictions <- function(products) {
   pred <- products %>%
     map(~ rowSums(.x))
 
