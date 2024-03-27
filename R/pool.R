@@ -109,8 +109,6 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @noRd
  tidyCoefs <- function(coefs, m){
    
-   imputation <- cohort <- variable <- est <- se <- n_obs <- NULL
-   
    tidied <- coefs %>%
      set_names(paste0("imputation_",1:m)) %>%
      bind_rows(.id = "imputation") %>%
@@ -128,8 +126,6 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #'
 #' @noRd
  splitCoefs <- function(tidied_coefs){
-   
-   cohort <- variable <- NULL
    
    split_coefs <- tidied_coefs %>% 
      group_by(cohort, variable) %>%
@@ -193,6 +189,7 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #'
 #' @details This function calculates the pooled standard error using Rubin's rules.
 #'
+#' @importFrom base sum
 #' @noRd
  rubinPooledSe <- function(within_var, between_var, m){
    
@@ -212,6 +209,7 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' # Example usage:
 #' rubinZ(1.2, 0.3)
 #'
+#' @importFrom base abs
 #' @noRd
  rubinZ <- function(pooled_mean, pooled_se){
    
@@ -225,8 +223,6 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @return The p-value.
 #'
 #' @details This function calculates the p-value using Rubin's rules.
-#' 
-#' @importFrom stats pnorm
 #'
 #' @noRd
  rubinP <- function(z_value){
@@ -246,12 +242,8 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @details This function creates a tibble of pooled coefficients using Rubin's rules.
 #'
 #' @importFrom dplyr tibble
-#' @importFrom stats qnorm
 #' @noRd
  makeRubinTable <- function(coefs, m, exponentiate){
-   
-   pooled_mean <- within_var <- between_var <- pooled_se <- z_value <- low_ci <-
-     upp_ci <- NULL
    
    rubinTable <- tibble(
      variable = coefs$variable[[1]], 
