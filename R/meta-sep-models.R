@@ -1,6 +1,5 @@
 #' Function in progress to meta-analyse separate models.
 #'
-#' @param input Character; either "fit" if input is glm object, or "coefs" if input is table of coefficients returned by dh.lmTab.
 #' @param ref Tibble, output from dh.multGlm.
 #' @param exp Logical, whether to exponentiate coefficients after meta-analysis
 #' @param method Method of meta-analysing coefficients.
@@ -92,13 +91,13 @@ dh.metaSepModels <- function(input = "fit", ref = NULL, exp = NULL, method = NUL
           se = meta$se,
           lowci = meta$ci.lb,
           uppci = meta$ci.ub,
-          i2 = round(meta$I2, 2),
-          t2 = round(meta$tau2, 2),
-          q = round(meta$QE, 2),
-          q_p = round(meta$QEp, 2),
-          k = round(meta$k, 2),
-          p = round(meta$p, 2),
-          t2_se = round(meta$se.tau2, 2),
+          i2 = meta$I2,
+          t2 = meta$tau2,
+          q = meta$QE,
+          q_p = meta$QEp,
+          k = meta$k,
+          p = meta$pval,
+          t2_se = meta$se.tau2,
           n_coh = meta$k
         )
       }) %>%
