@@ -13,7 +13,7 @@ dh.metaSepModels(
 )
 }
 \arguments{
-\item{input}{Character; either "fit" if input is glm object, or "coefs" if input is table of coefficients returned by dh.lmTab.}
+\item{input}{Character; "fit" to use the output from ds.glmSLMA; "stats" to use the output from ds.lmTab.}
 
 \item{ref}{Tibble, output from dh.multGlm.}
 

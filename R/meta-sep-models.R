@@ -1,5 +1,6 @@
 #' Function in progress to meta-analyse separate models.
 #'
+#' @param input Character; "fit" to use the output from ds.glmSLMA; "stats" to use the output from ds.lmTab.
 #' @param ref Tibble, output from dh.multGlm.
 #' @param exp Logical, whether to exponentiate coefficients after meta-analysis
 #' @param method Method of meta-analysing coefficients.
