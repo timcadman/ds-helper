@@ -19,6 +19,7 @@
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom purrr map
+#' @export
 dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = NULL, 
                     exponentiate = FALSE){
   
