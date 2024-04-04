@@ -84,6 +84,7 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @importFrom purrr map
 #' @noRd
  getCoefs <- function(imputed_glm, type, coh_names, family){
+   cohort <- NULL
    
    coefs <- imputed_glm %>%
      map(
@@ -93,9 +94,14 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
          family = family,
          coh_names = coh_names, 
          direction = "wide",
-         ci_format = "separate") %>%
-         dplyr::filter(cohort != "combined"))
-   
+         ci_format = "separate")
+     )
+    
+       if(type == "glm_slma"){
+         coefs <- coefs %>%
+          dplyr::filter(cohort != "combined")
+    }
+       
  }
 
 #' Tidy coefficients data frames.
