@@ -22,14 +22,13 @@
 #' @export
 dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = NULL, 
                     exponentiate = FALSE){
-  
   poolCheckArgs(imputed_glm, type, coh_names, family, exponentiate)
   
   m <- length(imputed_glm)
   
   coefs <- getCoefs(imputed_glm, type, coh_names, family)
   tidied_coefs <- tidyCoefs(coefs, m)
-  split_coefs <- splitCoefs(tidied_coefs)
+  split_coefs <- splitCoefs(tidied_coefs, type, coh_names)
   
   out <- split_coefs %>% 
     map(~makeRubinTable(coefs = .x, m = m, exponentiate = exponentiate)) %>%
@@ -61,6 +60,12 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
   
   checkmate::assert_list(imputed_glm, add = error_messages)
   checkmate::assert_true(length(imputed_glm) > 1, add = error_messages)
+  
+  if(type == "glm_ipd" & length(coh_names) >1){
+    warning("Your input type is `glm_ipd` but you have provided >1 cohort name. Did you intend this?
+    It is recommended that the regression model is performed separately on each cohort, then estimates
+    pooled and (if applicable) meta-analysed")
+}
   
   if (exponentiate == TRUE & family == "gaussian") {
     warning("It is not recommended to exponentiate coefficients from linear
@@ -96,11 +101,13 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
          direction = "wide",
          ci_format = "separate")
      )
-    
-       if(type == "glm_slma"){
-         coefs <- coefs %>%
-          dplyr::filter(cohort != "combined")
-    }
+   
+      if(type == "glm_slma"){
+         coefs <- list(coefs) %>%
+           map(~dplyr::filter(., cohort != "combined"))
+      }
+   
+   return(coefs)
        
  }
 
@@ -134,13 +141,19 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' equals the number of imputed datasets.
 #'
 #' @noRd
- splitCoefs <- function(tidied_coefs){
+ splitCoefs <- function(tidied_coefs, type, coh_names){
    
    cohort <- variable <- NULL
    
+   if(type == "glm_slma"){
    split_coefs <- tidied_coefs %>% 
      group_by(cohort, variable) %>%
      group_split()
+   
+   } else if (type == "glm_ipd"){
+     split_coefs <- list(tidied_coefs) %>% 
+       map(~mutate(., cohort = coh_names))
+   }
    
    return(split_coefs)
    
