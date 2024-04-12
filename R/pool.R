@@ -99,7 +99,8 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
          family = family,
          coh_names = coh_names, 
          direction = "wide",
-         ci_format = "separate")
+         ci_format = "separate", 
+         digits = 20)
      )
    
       if(type == "glm_slma"){
@@ -144,17 +145,16 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
  splitCoefs <- function(tidied_coefs, type, coh_names){
    
    cohort <- variable <- NULL
+
+    if (type == "glm_ipd"){
+      tidied_coefs <- tidied_coefs %>% 
+       mutate(., cohort = coh_names) 
+   }
    
-   if(type == "glm_slma"){
    split_coefs <- tidied_coefs %>% 
      group_by(cohort, variable) %>%
      group_split()
-   
-   } else if (type == "glm_ipd"){
-     split_coefs <- list(tidied_coefs) %>% 
-       map(~mutate(., cohort = coh_names))
-   }
-   
+
    return(split_coefs)
    
  }
