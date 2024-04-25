@@ -58,8 +58,6 @@ dh.meanByGroup <- function(df = NULL, outcome = NULL, group_var = NULL,
   ## the binning variable it is quite quick
 
   if (is.null(intervals)) {
-
-
     ## ---- First we round up the age variable -----------------------------------------------
     DSI::datashield.assign(
       conns, "age_tmp", as.symbol(paste0(df, "$", group_var, "+0.5"))
@@ -104,7 +102,6 @@ re-run the function using the `intervals` argument. \n\n",
       conns = conns
     )
   } else if (!is.null(intervals)) {
-
     ## ---- This is the harder one -------------------------------------------------------------------
 
     ## First we need to create a table defining our age bands.

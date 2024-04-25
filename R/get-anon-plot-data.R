@@ -84,10 +84,10 @@ dh.getAnonPlotData <- function(df = NULL, var_1 = NULL, var_2 = NULL,
 
     out <- scatter %>%
       map(~
-      tibble(
-        x = .[[1]],
-        y = .[[2]]
-      )) %>%
+        tibble(
+          x = .[[1]],
+          y = .[[2]]
+        )) %>%
       bind_rows(.id = "cohort") %>%
       dplyr::rename(
         !!quo_name(var_1) := x,

@@ -383,7 +383,6 @@ check with ds.class \n\n",
   ################################################################################
 
   if (nrow(fact_ref) > 0) {
-
     ## ---- Combined value for each level of variables -----------------------------
     levels_comb <- stats_cat %>%
       group_by(variable, category) %>%

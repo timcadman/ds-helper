@@ -222,7 +222,6 @@ dh.quartileSplit <- function(df = NULL, var = NULL, new_obj = NULL, band_action 
 
   quant_ref %>%
     pmap(function(var_name, cohort, boole_short, ...) {
-
       ## We recode all values of 0 (ie not in the quartile) to NA
       ds.recodeValues(
         var.name = boole_short,

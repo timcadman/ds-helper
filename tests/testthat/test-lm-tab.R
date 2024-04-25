@@ -298,7 +298,7 @@ test_that("Check that extract_ns_lmer returns vector with correct integers", {
 #     c("cohort", "group", "var1", "var2", "stddev")
 #   )
 # })
-# 
+#
 # test_that("Check that extract_random returns correct data types", {
 #   expect_equal(
 #     extract_random(lmer.fit, coh_names, nstudy) %>%

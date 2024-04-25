@@ -109,7 +109,6 @@ dh.makeIQR <- function(df = NULL, vars = NULL, type = c("combine", "split"),
       stringsAsFactors = FALSE
     )
   } else if (type == "combine") {
-
     ## ---- Identify cohorts which are all missing -----------------------------
     missing <- expand.grid(vars, names(conns)) %>%
       set_names(c("variable", "cohort")) %>%

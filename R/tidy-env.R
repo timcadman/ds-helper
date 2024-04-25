@@ -36,7 +36,6 @@ dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
   }
 
   if (type == "remove") {
-
     ## Check no objects to removed have character length >20
     obj_lengths <- tibble(
       obj = obj,

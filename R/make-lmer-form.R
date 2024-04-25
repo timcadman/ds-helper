@@ -37,7 +37,6 @@
 #' @export
 dh.makeLmerForm <- function(outcome = NULL, id_var = NULL, age_vars = NULL,
                             random = NULL, fixed = NULL, age_interactions = NULL) {
-  
   lmer_form_check_args(outcome, id_var, age_vars, random, fixed, age_interactions)
 
   formula_fixed <- make_fixed_effects(age_vars, fixed, age_interactions)
@@ -92,8 +91,9 @@ make_fixed_effects <- function(age_vars, fixed, age_interactions) {
 
   if (!is.null(age_interactions)) {
     age_interactions <- c(
-      combn(paste0(age_interactions, "*", age_vars), 2, paste, collapse = "+"), 
-      paste0(age_interactions, "*", age_vars))
+      combn(paste0(age_interactions, "*", age_vars), 2, paste, collapse = "+"),
+      paste0(age_interactions, "*", age_vars)
+    )
   }
 
   if (!is.null(fixed)) {

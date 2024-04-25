@@ -563,7 +563,6 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #' @noRd
 .sortSubset <- function(mult_action, nearest_value, subset_name, age_var, newobj, conns) {
   if (mult_action == "nearest") {
-
     ## Make a variable specifying distance between age of measurement and prefered
     ## value (provided by "mult_vals")
 
@@ -602,7 +601,6 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
 #'
 #' @noRd
 .reshapeSubset <- function(sorted_subset, id_var, age_var, var_to_subset, var_suffix, conns, newobj, keep_vars) {
-
   # We need a vector the length of our subset with an integer value describing
   # the name of the subset. We use this to create our final variables names
 
