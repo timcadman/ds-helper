@@ -13,29 +13,27 @@
 #' `type` is "gaussian".
 #' @return A tibble containing Rubin's pooled estimates and confidence intervals.
 #'
-#' @details This function performs Rubin's pooling on a list of imputed generalized linear models. 
-#' It extracts coefficients using specified parameters, tidies the coefficients, and then performs 
+#' @details This function performs Rubin's pooling on a list of imputed generalized linear models.
+#' It extracts coefficients using specified parameters, tidies the coefficients, and then performs
 #' pooling.
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom purrr map
 #' @export
-dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = NULL, 
-                    exponentiate = FALSE){
+dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = NULL,
+                    exponentiate = FALSE) {
   poolCheckArgs(imputed_glm, type, coh_names, family, exponentiate)
-  
+
   m <- length(imputed_glm)
-  
   coefs <- getCoefs(imputed_glm, type, coh_names, family)
-  tidied_coefs <- tidyCoefs(coefs, m)
+  tidied_coefs <- tidyCoefs(coefs, m, type)
   split_coefs <- splitCoefs(tidied_coefs, type, coh_names)
-  
-  out <- split_coefs %>% 
-    map(~makeRubinTable(coefs = .x, m = m, exponentiate = exponentiate)) %>%
+
+  out <- split_coefs %>%
+    map(~ makeRubinTable(coefs = .x, m = m, exponentiate = exponentiate)) %>%
     bind_rows()
-  
+
   return(out)
-  
 }
 
 #' Check arguments for dh.pool function.
@@ -54,26 +52,24 @@ dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = 
 #'
 #' @importFrom checkmate assert_list assert_true
 #' @noRd
-poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
-  
+poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate) {
   error_messages <- makeAssertCollection()
-  
+
   checkmate::assert_list(imputed_glm, add = error_messages)
   checkmate::assert_true(length(imputed_glm) > 1, add = error_messages)
-  
-  if(type == "glm_ipd" & length(coh_names) >1){
+
+  if (type == "glm_ipd" & length(coh_names) > 1) {
     warning("Your input type is `glm_ipd` but you have provided >1 cohort name. Did you intend this?
     It is recommended that the regression model is performed separately on each cohort, then estimates
     pooled and (if applicable) meta-analysed")
-}
-  
+  }
+
   if (exponentiate == TRUE & family == "gaussian") {
     warning("It is not recommended to exponentiate coefficients from linear
             regression: argument is ignored")
   }
-  
+
   return(reportAssertions(error_messages))
-  
 }
 
 #' Extract coefficients from imputed generalized linear models.
@@ -85,32 +81,38 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @return A list of data frames containing coefficients.
 #'
 #' @details This function extracts coefficients from each imputed generalized linear model
-#' 
+#'
 #' @importFrom purrr map
 #' @noRd
- getCoefs <- function(imputed_glm, type, coh_names, family){
-   cohort <- NULL
-   
-   coefs <- imputed_glm %>%
-     map(
-       ~dh.lmTab(
-         model = .x, 
-         type = type, 
-         family = family,
-         coh_names = coh_names, 
-         direction = "wide",
-         ci_format = "separate", 
-         digits = 20)
-     )
-   
-      if(type == "glm_slma"){
-         coefs <- list(coefs) %>%
-           map(~dplyr::filter(., cohort != "combined"))
-      }
-   
-   return(coefs)
-       
- }
+getCoefs <- function(imputed_glm, type, coh_names, family) {
+  cohort <- NULL
+
+  coefs <- imputed_glm %>%
+    map(
+      ~ dh.lmTab(
+        model = .x,
+        type = type,
+        family = family,
+        coh_names = coh_names,
+        direction = "wide",
+        ci_format = "separate",
+        digits = 20
+      )
+    )
+
+  if (type == "glm_slma") {
+    coefs <- list(coefs) %>%
+      map(~ dplyr::filter(., cohort != "combined"))
+  }
+
+  if (type == "lmer_slma") {
+    coefs <- coefs %>%
+      map(~ .$fixed) %>%
+      map(~ dplyr::filter(., cohort != "combined"))
+  }
+
+  return(coefs)
+}
 
 #' Tidy coefficients data frames.
 #'
@@ -122,57 +124,52 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #'
 #' @importFrom dplyr bind_rows select
 #' @noRd
- tidyCoefs <- function(coefs, m){
-   
-   imputation <- cohort <- variable <- est <- se <- n_obs <- NULL
-   
-   tidied <- coefs %>%
-     set_names(paste0("imputation_",1:m)) %>%
-     bind_rows(.id = "imputation") %>%
-     dplyr::select(imputation, cohort, variable, est, se, n_obs)
- }
+tidyCoefs <- function(coefs, m, type) {
+  imputation <- cohort <- variable <- est <- se <- n_obs <- NULL
+
+  tidied <- coefs %>%
+    set_names(paste0("imputation_", 1:m)) %>%
+    bind_rows(.id = "imputation") %>%
+    dplyr::select(imputation, cohort, variable, est, se, n_obs)
+}
 
 #' Split tidied coefficients data frame.
 #'
 #' @param tidied_coefs A tidied data frame of coefficients.
 #' @return A list of tibbles, split by cohort and variable.
 #'
-#' @details This function splits the tidied coefficients tibble into a list of tibbles based on 
+#' @details This function splits the tidied coefficients tibble into a list of tibbles based on
 #' cohort and variable, ie it creates one tibble per cohort and variable, where the number of rows
 #' equals the number of imputed datasets.
 #'
 #' @noRd
- splitCoefs <- function(tidied_coefs, type, coh_names){
-   
-   cohort <- variable <- NULL
+splitCoefs <- function(tidied_coefs, type, coh_names) {
+  cohort <- variable <- NULL
 
-    if (type == "glm_ipd"){
-      tidied_coefs <- tidied_coefs %>% 
-       mutate(., cohort = coh_names) 
-   }
-   
-   split_coefs <- tidied_coefs %>% 
-     group_by(cohort, variable) %>%
-     group_split()
+  if (type == "glm_ipd") {
+    tidied_coefs <- tidied_coefs %>%
+      mutate(., cohort = coh_names)
+  }
 
-   return(split_coefs)
-   
- }
+  split_coefs <- tidied_coefs %>%
+    group_by(cohort, variable) %>%
+    group_split()
+
+  return(split_coefs)
+}
 
 #' Calculate the Rubin's pooled mean.
 #'
 #' @param coefs A tibble containing coefficients.
 #' @return The pooled mean of coefficients.
 #'
-#' @details This function calculates the pooled mean using Rubin's rules from a tibble of 
+#' @details This function calculates the pooled mean using Rubin's rules from a tibble of
 #' coefficients.
 #'
 #' @noRd
- rubinMean <- function(coefs){
-   
-   return(mean(coefs$est))
-   
-   }
+rubinMean <- function(coefs) {
+  return(mean(coefs$est))
+}
 
 #' Calculate the Rubin's within-imputation variance.
 #'
@@ -182,11 +179,9 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @details This function calculates the within-imputation variance using Rubin's rules.
 #'
 #' @noRd
- rubinWithinVar <- function(coefs){
-   
-   return(mean(coefs$se^2))
-   
- }
+rubinWithinVar <- function(coefs) {
+  return(mean(coefs$se^2))
+}
 
 #' Calculate the Rubin's between-imputation variance.
 #'
@@ -198,11 +193,9 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @details This function calculates the between-imputation variance using Rubin's rules.
 #'
 #' @noRd
- rubinBetweenVar <- function(coefs, means, m){
-   
-   return(sum((coefs$est - means)^2) / (m - 1))
-   
- }
+rubinBetweenVar <- function(coefs, means, m) {
+  return(sum((coefs$est - means)^2) / (m - 1))
+}
 
 #' Calculate the Rubin's pooled standard error.
 #'
@@ -214,11 +207,9 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @details This function calculates the pooled standard error using Rubin's rules.
 #'
 #' @noRd
- rubinPooledSe <- function(within_var, between_var, m){
-   
-   return(within_var + between_var + (between_var/m))
-   
- }
+rubinPooledSe <- function(within_var, between_var, m) {
+  return(within_var + between_var + (between_var / m))
+}
 
 #' Calculate the Rubin's Z statistic.
 #'
@@ -233,11 +224,9 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' rubinZ(1.2, 0.3)
 #'
 #' @noRd
- rubinZ <- function(pooled_mean, pooled_se){
-   
-   return(pooled_mean / pooled_se)
-   
- }
+rubinZ <- function(pooled_mean, pooled_se) {
+  return(pooled_mean / pooled_se)
+}
 
 #' Calculate the Rubin's p-value.
 #'
@@ -248,11 +237,9 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @importFrom stats pnorm
 #'
 #' @noRd
- rubinP <- function(z_value){
-   
-   return(2 * pnorm(-abs(z_value)))
-   
- }
+rubinP <- function(z_value) {
+  return(2 * pnorm(-abs(z_value)))
+}
 
 #' Create a tibble of coefficients using Rubin's rules.
 #'
@@ -267,28 +254,26 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate){
 #' @importFrom dplyr tibble
 #' @importFrom stats qnorm
 #' @noRd
- makeRubinTable <- function(coefs, m, exponentiate){
-   pooled_mean <- within_var <- between_var <- pooled_se <- z_value <- low_ci <- upp_ci <- NULL
-   rubinTable <- tibble(
-     variable = coefs$variable[[1]], 
-     cohort = coefs$cohort[[1]],
-     n_obs = coefs$n_obs[[1]],
-     pooled_mean = rubinMean(coefs),
-     within_var = rubinWithinVar(coefs),
-     between_var = rubinBetweenVar(coefs, pooled_mean, m),
-     pooled_se = rubinPooledSe(within_var, between_var, m),
-     z_value = rubinZ(pooled_mean, pooled_se), 
-     p_value = rubinP(z_value), 
-     low_ci = pooled_mean - qnorm(0.975) * pooled_se, 
-     upp_ci = pooled_mean + qnorm(0.975) * pooled_se)
-   
-   if(exponentiate){
-     
-     rubinTable <- rubinTable %>%
-       mutate(across(c(pooled_mean, low_ci, upp_ci), ~exp(.)))
+makeRubinTable <- function(coefs, m, exponentiate) {
+  pooled_mean <- within_var <- between_var <- pooled_se <- z_value <- low_ci <- upp_ci <- NULL
+  rubinTable <- tibble(
+    variable = coefs$variable[[1]],
+    cohort = coefs$cohort[[1]],
+    n_obs = coefs$n_obs[[1]],
+    pooled_mean = rubinMean(coefs),
+    within_var = rubinWithinVar(coefs),
+    between_var = rubinBetweenVar(coefs, pooled_mean, m),
+    pooled_se = rubinPooledSe(within_var, between_var, m),
+    z_value = rubinZ(pooled_mean, pooled_se),
+    p_value = rubinP(z_value),
+    low_ci = pooled_mean - qnorm(0.975) * pooled_se,
+    upp_ci = pooled_mean + qnorm(0.975) * pooled_se
+  )
 
-   }
-   
-   return(rubinTable)
-   
- }
+  if (exponentiate) {
+    rubinTable <- rubinTable %>%
+      mutate(across(c(pooled_mean, low_ci, upp_ci), ~ exp(.)))
+  }
+
+  return(rubinTable)
+}
