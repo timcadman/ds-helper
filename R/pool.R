@@ -144,7 +144,7 @@ tidyCoefs <- function(coefs, m, type) {
 #'
 #' @noRd
 splitCoefs <- function(tidied_coefs, type, coh_names) {
-  cohort <- variable <- NULL
+  cohort <- variable <- . <- NULL
 
   if (type == "glm_ipd") {
     tidied_coefs <- tidied_coefs %>%
