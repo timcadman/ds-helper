@@ -76,9 +76,11 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
   if (checks == TRUE) {
-    .isDefined(df = df, conns = conns)
+    conns_exist <- unlist(ds.exists(df))
+    excluded <- names(conns)[!conns_exist]
+    conns <- conns[conns_exist]
+    warning(paste0("Cohorts ", excluded, " have been excluded as they do not contain data frame ", df), call. = F)
   }
   # Not checking whether variable exists because function will show NA if it
   # doesnt
