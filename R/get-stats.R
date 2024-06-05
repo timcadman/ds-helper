@@ -69,7 +69,6 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
   ################################################################################
   # 1. First checks
   ################################################################################
-  browser()
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
