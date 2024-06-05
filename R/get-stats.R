@@ -69,6 +69,7 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
   ################################################################################
   # 1. First checks
   ################################################################################
+  browser()
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
@@ -77,7 +78,7 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     conns <- datashield.connections_find()
   }
   if (checks == TRUE) {
-    conns_exist <- unlist(ds.exists(df))
+    conns_exist <- unlist(ds.exists(df, conns))
     excluded <- names(conns)[!conns_exist]
     conns <- conns[conns_exist]
     if(length(excluded) > 0){
