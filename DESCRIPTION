@@ -34,7 +34,8 @@ Imports:
   metafor,
   checkmate,
   lme4, 
-  tidyselect
+  tidyselect, 
+  arrow (>= 16.1.0)
 Suggests:
   knitr,
   rmarkdown,

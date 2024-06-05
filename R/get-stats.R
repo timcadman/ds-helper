@@ -59,6 +59,7 @@
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find datashield.aggregate
 #' @importFrom utils capture.output
+#' @import arrow
 #'
 #' @md
 #'
