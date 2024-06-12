@@ -1,7 +1,7 @@
 Package: dsHelper
 Type: Package
 Title: Helper Functions for Use with 'DataSHIELD'
-Version: 1.4
+Version: 1.5
 Description: Often we need to automate things with 'DataSHIELD'. These functions help to do that.
 Authors@R: 
   c(person(given= "Tim", 
@@ -50,4 +50,4 @@ BugReports: https://github.com/lifecycle-project/ds-helper/issues/
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
