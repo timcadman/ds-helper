@@ -110,7 +110,7 @@ extract_coefficients <- function(model, coh_names) {
     type = "lmer_slma",
     coh_names = coh_names,
     direction = "long",
-    ci_format = "separate", 
+    ci_format = "separate",
     digits = 10
   )
   return(coefs)

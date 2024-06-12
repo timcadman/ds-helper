@@ -36,7 +36,7 @@ A tibble containing Rubin's pooled estimates and confidence intervals.
 Perform Rubin's pooling on a list of imputed generalized linear models.
 }
 \details{
-This function performs Rubin's pooling on a list of imputed generalized linear models. 
-It extracts coefficients using specified parameters, tidies the coefficients, and then performs 
+This function performs Rubin's pooling on a list of imputed generalized linear models.
+It extracts coefficients using specified parameters, tidies the coefficients, and then performs
 pooling.
 }

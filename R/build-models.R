@@ -171,7 +171,7 @@ make_exp_out_cov_form <- function(comb_with_covariates) {
   outcome <- exposure <- covariates <- NULL
 
   formula <- comb_with_covariates %>%
-    rowwise %>%
+    rowwise() %>%
     mutate(formula = paste(outcome, "~1+", exposure, "+", paste(unlist(covariates), collapse = "+")))
 
   return(formula)

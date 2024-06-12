@@ -23,7 +23,7 @@ dh.metaSepModels <- function(input = "fit", ref = NULL, exp = NULL, method = NUL
                              output = "both") {
   exposure <- variable <- cohort <- . <- est <- lowci <- uppci <-
     model_id <- n_obs <- se <- NULL
-  
+
   method <- arg_match(
     arg = method,
     values = c("DL", "HE", "HS", "HSk", "SJ", "ML", "REML", "EB", "PM", "GENQ")
@@ -35,30 +35,25 @@ dh.metaSepModels <- function(input = "fit", ref = NULL, exp = NULL, method = NUL
   )
 
   if (output %in% c("meta", "both") == TRUE) {
-    
-    if(input == "fit"){
-    
-    ## ---- Get coefficients -----------------------------------------------------
-    model_coefs <- ref %>%
-      pmap(function(cohort, fit, ...) {
-        dh.lmTab(
-          model = fit,
-          coh_names = cohort,
-          type = "glm_slma",
-          ci_format = "separate",
-          direction = "wide",
-          family = "binomial",
-          digits = 50
-        ) %>%
-          dplyr::filter(cohort != "combined")
-      }) %>%
-      set_names(ref$model_id) %>%
-      bind_rows(.id = "model_id")
-    
-    } else{
-      
+    if (input == "fit") {
+      ## ---- Get coefficients -----------------------------------------------------
+      model_coefs <- ref %>%
+        pmap(function(cohort, fit, ...) {
+          dh.lmTab(
+            model = fit,
+            coh_names = cohort,
+            type = "glm_slma",
+            ci_format = "separate",
+            direction = "wide",
+            family = "binomial",
+            digits = 50
+          ) %>%
+            dplyr::filter(cohort != "combined")
+        }) %>%
+        set_names(ref$model_id) %>%
+        bind_rows(.id = "model_id")
+    } else {
       model_coefs <- ref
-      
     }
 
     ## ---- Create tibble respecting grouping order ------------------------------

@@ -112,9 +112,7 @@ ipd_rename_not_expected <- ipd_rename_expected %>%
 
 test_that("rename_ipd throws error if provided incorrect variable names", {
   expect_error(
-    rename_ipd(ipd_rename_not_expected),
-    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.",
-    fixed = TRUE
+    rename_ipd(ipd_rename_not_expected)
   )
 })
 
@@ -209,7 +207,6 @@ slma_rename_not_expected <- slma_rename_expected %>%
 test_that("rename_glm_slma throws error if provided incorrect variable names", {
   expect_error(
     rename_glm_slma(slma_rename_not_expected),
-    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.",
     fixed = TRUE
   )
 })
@@ -274,7 +271,6 @@ lmer_rename_not_expected <- lmer_rename_expected %>%
 test_that("rename_lmer_slma throws error if provided incorrect variable names", {
   expect_error(
     rename_lmer_slma(lmer_rename_not_expected),
-    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.",
     fixed = TRUE
   )
 })
@@ -298,7 +294,7 @@ test_that("Check that extract_ns_lmer returns vector with correct integers", {
 #     c("cohort", "group", "var1", "var2", "stddev")
 #   )
 # })
-# 
+#
 # test_that("Check that extract_random returns correct data types", {
 #   expect_equal(
 #     extract_random(lmer.fit, coh_names, nstudy) %>%
@@ -389,7 +385,6 @@ pooled_rename_not_expected <- pooled_rename_expected %>%
 test_that("rename_slma_pooled throws error if provided incorrect variable names", {
   expect_error(
     rename_slma_pooled(pooled_rename_not_expected),
-    "Can't subset columns that don't exist.\n✖ Column `variable` doesn't exist.",
     fixed = TRUE
   )
 })

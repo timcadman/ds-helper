@@ -59,6 +59,7 @@
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find datashield.aggregate
 #' @importFrom utils capture.output
+#' @import arrow
 #'
 #' @md
 #'
@@ -73,16 +74,16 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     stop("`df` must not be NULL.", call. = FALSE)
   }
 
-  if (is.null(vars)) {
-    stop("`vars` must not be NULL.", call. = FALSE)
-  }
-
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
   if (checks == TRUE) {
-    .isDefined(df = df, conns = conns)
+    conns_exist <- unlist(ds.exists(df, conns))
+    excluded <- names(conns)[!conns_exist]
+    conns <- conns[conns_exist]
+    if (length(excluded) > 0) {
+      warning(paste0("Cohorts ", excluded, " have been excluded as they do not contain data frame ", df), call. = F)
+    }
   }
   # Not checking whether variable exists because function will show NA if it
   # doesnt
@@ -94,6 +95,10 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     out_cont <- outcome <- same_levels <- se <- stat <-
     stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
     perc_valid <- perc_total <- Ntotal <- disclosure_fail <- NULL
+
+  if (is.null(df)) {
+    vars <- .define_default_vars(df, conns)
+  }
 
   ################################################################################
   # 1. Remove duplicate variables
@@ -383,7 +388,6 @@ check with ds.class \n\n",
   ################################################################################
 
   if (nrow(fact_ref) > 0) {
-
     ## ---- Combined value for each level of variables -----------------------------
     levels_comb <- stats_cat %>%
       group_by(variable, category) %>%
@@ -545,6 +549,21 @@ check with ds.class \n\n",
 
   return(out)
 }
+
+
+#' Define Default Variables
+#'
+#' This function takes a list of connections as input and returns a vector of unique column names across all connections.
+#'
+#' @param conns A list of connections to data sources.
+#' @return A character vector containing unique column names across all connections.
+#' @noRd
+.define_default_vars <- function(df, conns) {
+  all_cols <- ds.colnames(df, conns)
+  unique_cols <- unique(unlist(all_cols))
+  return(unique_cols)
+}
+
 
 #' Extracts stats using table function
 #'

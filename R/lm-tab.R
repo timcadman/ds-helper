@@ -94,13 +94,12 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     coh_ns <- extract_ns_lmer(model, nstudy)
     coh_coefs <- add_ns_slma(coh_ns, coh_coefs, coh_names)
 
-    if(extract_random){
-    random <- extract_random(model, coh_names, nstudy)
-    random <- rename_intercept(random, col_name = "var1")
+    if (extract_random) {
+      random <- extract_random(model, coh_names, nstudy)
+      random <- rename_intercept(random, col_name = "var1")
 
-    random <- random %>%
-      mutate(across(stddev, ~ round(., digits)))
-    
+      random <- random %>%
+        mutate(across(stddev, ~ round(., digits)))
     }
   }
 
@@ -142,26 +141,20 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
   coefs <- rename_intercept(coefs, col_name = "variable")
 
   if (type == "lmer_slma") {
-    
-    if(extract_random){
-      
+    if (extract_random) {
       return(
-      list(
-        fixed = coefs,
-        random = random
-      )
-    )
-      
-      } else{
-        
-        return(
-          list(
-            fixed = coefs
-          )
+        list(
+          fixed = coefs,
+          random = random
         )
-        
-      }
-      
+      )
+    } else {
+      return(
+        list(
+          fixed = coefs
+        )
+      )
+    }
   } else {
     return(coefs)
   }

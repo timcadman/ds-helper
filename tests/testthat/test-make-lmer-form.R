@@ -36,8 +36,10 @@ test_that("make_fixed_effects returns correct string with interaction terms", {
       fixed = c("fixed_1", "fixed_2"),
       age_interactions = "fixed_1"
     ),
-    c("test_age_1+test_age_2+fixed_1+fixed_2+fixed_1*test_age_1+fixed_1*test_age_2",
+    c(
+      "test_age_1+test_age_2+fixed_1+fixed_2+fixed_1*test_age_1+fixed_1*test_age_2",
       "test_age_1+fixed_1+fixed_2+fixed_1*test_age_1",
-      "test_age_2+fixed_1+fixed_2+fixed_1*test_age_2")
+      "test_age_2+fixed_1+fixed_2+fixed_1*test_age_2"
+    )
   )
 })
