@@ -81,7 +81,7 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     conns_exist <- unlist(ds.exists(df, conns))
     excluded <- names(conns)[!conns_exist]
     conns <- conns[conns_exist]
-    if(length(excluded) > 0){
+    if (length(excluded) > 0) {
       warning(paste0("Cohorts ", excluded, " have been excluded as they do not contain data frame ", df), call. = F)
     }
   }
@@ -95,8 +95,8 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
     out_cont <- outcome <- same_levels <- se <- stat <-
     stats_tmp <- stats_wide <- std.dev <- type <- type_w_null <- . <-
     perc_valid <- perc_total <- Ntotal <- disclosure_fail <- NULL
-  
-  if(is.null(df)){
+
+  if (is.null(df)) {
     vars <- .define_default_vars(df, conns)
   }
 
@@ -558,7 +558,7 @@ check with ds.class \n\n",
 #' @param conns A list of connections to data sources.
 #' @return A character vector containing unique column names across all connections.
 #' @noRd
-.define_default_vars <- function(df, conns){
+.define_default_vars <- function(df, conns) {
   all_cols <- ds.colnames(df, conns)
   unique_cols <- unique(unlist(all_cols))
   return(unique_cols)
