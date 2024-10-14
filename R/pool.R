@@ -208,7 +208,7 @@ rubinBetweenVar <- function(coefs, means, m) {
 #'
 #' @noRd
 rubinPooledSe <- function(within_var, between_var, m) {
-  return(within_var + between_var + (between_var / m))
+  return(sqrt(within_var + between_var + (between_var / m)))
 }
 
 #' Calculate the Rubin's Z statistic.
