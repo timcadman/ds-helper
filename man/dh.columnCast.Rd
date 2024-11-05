@@ -31,7 +31,7 @@ Tibble with a summary of the successful and failed casts
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 This function allowed you to change the class of variables within a data frame. It was depricated
-because you can now use \code{dsTidyverseClient::ds.mutate} which is much quicker and has greater
+because you can now use \code{dsTidyverseClient::ds.mutate()} which is much quicker and has greater
 flexibility.
 }
 \keyword{internal}

@@ -38,8 +38,8 @@ function. Default is TRUE.}
 Server-side data frame the specified subset of columns.
 }
 \description{
-. This function allowed you to subset a data frame by column names. It was deprecated
-because you can now use \code{dsTidyverseClient::ds.select} which is much quicker and has greater
+This function allowed you to subset a data frame by column names. It was deprecated
+because you can now use \code{dsTidyverseClient::ds.select()} which is much quicker and has greater
 flexibility.
 }
 \keyword{internal}

@@ -42,7 +42,7 @@ criteria weren't met.
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
 This function allowed you to describe whether a had non-missing values for a set of variables. It
-was depricated because you can now use \code{dsTidyverseClient::ds.filter} to create a subset
+was depricated because you can now use \code{dsTidyverseClient::ds.filter()} to create a subset
 of a data frame matching multiple conditions.
 }
 \keyword{internal}
