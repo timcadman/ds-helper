@@ -1,9 +1,11 @@
 #' Casts column classes of a table
 #'
-#' This function allows you to specify the desired classes for a some variables
-#' of a dataframe. The resulting dataframe will have the same column order as
-#' the input one. If multiple columns are to be casted but only one objective class
-#' is provided, it will be reused for all the selected columns.
+#' @description 
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' This function allowed you to change the class of variables within a data frame. It was depricated
+#' because you can now use \code{dsTidyverseClient::ds.mutate} which is much quicker and has greater
+#' flexibility.
 #'
 #' @template df
 #' @param target_vars Character vector specifying which columns are to be casted to new classes.
@@ -14,10 +16,11 @@
 #' @importFrom dsBaseClient ds.asFactor ds.asCharacter ds.asNumeric ds.asInteger ds.colnames ds.dim ds.rep ds.dataFrameSubset ds.cbind
 #' @importFrom DSI datashield.connections_find
 #' @importFrom utils tail
-#'
 #' @return Tibble with a summary of the successful and failed casts
+#' @keywords internal
 #' @export
 dh.columnCast <- function(df = NULL, target_vars = NULL, target_class = NULL, conns = NULL, checks = TRUE) {
+  lifecycle::deprecate_warn("1.6.0", "dh.columnCast()", "dsTidyverseClient::ds.mutate()")
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

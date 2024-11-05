@@ -28,8 +28,10 @@ function. Default is TRUE.}
 Tibble with a summary of the successful and failed casts
 }
 \description{
-This function allows you to specify the desired classes for a some variables
-of a dataframe. The resulting dataframe will have the same column order as
-the input one. If multiple columns are to be casted but only one objective class
-is provided, it will be reused for all the selected columns.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function allowed you to change the class of variables within a data frame. It was depricated
+because you can now use \code{dsTidyverseClient::ds.mutate} which is much quicker and has greater
+flexibility.
 }
+\keyword{internal}
