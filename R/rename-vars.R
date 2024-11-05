@@ -1,7 +1,9 @@
 #' Rename one or more columns within a serverside data frame
 #'
-#' This function is an analogue of `dplyr::rename` which allows you to rename
-#' columns of a serverside data frame.
+#' @description 
+#' `r lifecycle::badge("deprecated")`
+#' This function was an analogue of \code{dplyr::rename()}. It was deprecated because you can now use
+#' \code{dsTidyverseClient::ds.rename()} which is much quicker and more flexible.
 #'
 #' @template conns
 #' @template df
@@ -11,16 +13,14 @@
 #' @template checks
 #' @return Data frame specified in `df` is returned server-side with variables
 #' renamed.
-#'
 #' @importFrom dsBaseClient ds.assign ds.dataFrame
 #' @importFrom purrr map pmap
 #' @importFrom DSI datashield.connections_find
-#'
-#' @family data manipulation functions
-#'
+#' @keywords internal
 #' @export
 dh.renameVars <- function(df = NULL, current_names = NULL, new_names,
                           conns = NULL, checks = TRUE) {
+  lifecycle::deprecate_warn("1.6.0", "dh.renameVars()", "dsTidyverseClient::ds.rename()")
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }

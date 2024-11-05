@@ -2,7 +2,6 @@
 #'
 #' @description 
 #' `r lifecycle::badge("deprecated")`
-#' 
 #' This function allowed you to change the class of variables within a data frame. It was depricated
 #' because you can now use \code{dsTidyverseClient::ds.mutate()} which is much quicker and has greater
 #' flexibility.

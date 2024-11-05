@@ -45,10 +45,7 @@ The formula used is: value\link{subject} / (75th percentile - 25th percentile).
 \seealso{
 Other data manipulation functions: 
 \code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeStrata}()},
 \code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()},
 \code{\link{dh.zByGroup}()}
 }
 \concept{data manipulation functions}

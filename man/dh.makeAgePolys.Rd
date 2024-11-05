@@ -38,7 +38,6 @@ specified in \code{df}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#superseded}{\figure{lifecycle-superseded.svg}{options: alt='[Superseded]'}}}{\strong{[Superseded]}}
-
 When we do trajectory analyses using fractional polynomials we often want
 to try models with different combinations of age polynomials. This function
 creates multiple transformations of an age variable to different powers. We recommend moving to
@@ -55,10 +54,7 @@ Other trajectory functions:
 
 Other data manipulation functions: 
 \code{\link{dh.makeIQR}()},
-\code{\link{dh.makeStrata}()},
 \code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()},
 \code{\link{dh.zByGroup}()}
 }
 \concept{data manipulation functions}

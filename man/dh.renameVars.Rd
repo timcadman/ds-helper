@@ -30,16 +30,8 @@ Data frame specified in \code{df} is returned server-side with variables
 renamed.
 }
 \description{
-This function is an analogue of \code{dplyr::rename} which allows you to rename
-columns of a serverside data frame.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+This function was an analogue of \code{dplyr::rename()}. It was deprecated because you can now use
+\code{dsTidyverseClient::ds.rename()} which is much quicker and more flexible.
 }
-\seealso{
-Other data manipulation functions: 
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.makeStrata}()},
-\code{\link{dh.quartileSplit}()},
-\code{\link{dh.tidyEnv}()},
-\code{\link{dh.zByGroup}()}
-}
-\concept{data manipulation functions}
+\keyword{internal}

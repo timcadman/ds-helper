@@ -40,10 +40,7 @@ Other trajectory functions:
 Other data manipulation functions: 
 \code{\link{dh.makeAgePolys}()},
 \code{\link{dh.makeIQR}()},
-\code{\link{dh.makeStrata}()},
-\code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()}
+\code{\link{dh.quartileSplit}()}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}
