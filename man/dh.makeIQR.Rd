@@ -40,7 +40,7 @@ if type is "split".
 \description{
 This function scales variables by their interquartile range. IQR is
 calulcated either within cohort or using the combined IQR across cohorts.
-The formula used is: value\link{subject} / (75th percentile - 25th percentile).
+The formula used is: value_subject / (75th percentile - 25th percentile).
 }
 \seealso{
 Other data manipulation functions: 
