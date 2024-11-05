@@ -1,26 +1,13 @@
 #' Creates strata of a repeated measures variable within specified age or time
 #' bands
 #'
-#' For many analyses you may want to create strata of repeated measures data
-#' within specified bands. For example, you may have BMI measures between ages
-#' 0-18, but want to create a variable for each subject which is their BMI
-#' between ages 9-11. This function automates this process.
-#'
-#' The steps here are equivalent to the following dplyr chain:
-#'
-#' df %>%
-#' group_by(band, id) %>%
-#' arrange() %<%
-#' slice(1)
-#'
-#' One of the complexities of this operation is how to deal with cases where
-#' subjects have multiple observations within a specified band. This is handled
-#' by first sorting the group so that the required value is first. When the
-#' data is reshaped to wide format all but the first value for subjects with
-#' multiple observations within a band are dropped.
-#'
-#' Note that for big datasets this will take a long time to run.
-#'
+#' @description 
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' This function attempted to replicate the process of \code{dplyr::arrange() |> dplyr::group_by() |> 
+#' dplyr::sort()}. It was deprecated because the same operation can be done much more quickly and flexibly
+#' using \code{dsTidyverseClient::ds.arrange() |> dsTidyverseClient::ds.group_by() |> 
+#' dsTidyverseClient::ds.slice()}.
 #' @template df
 #' @template id_var
 #' @param var_to_subset Character specifying variable in `df` to stratify
@@ -64,8 +51,6 @@
 #' added to the data frame representing these variables within the strata
 #' created.
 #'
-#' @family data manipulation functions
-#'
 #' @importFrom dsBaseClient ds.colnames ds.asNumeric ds.assign ds.Boole
 #'             ds.dataFrame ds.ls ds.make ds.dataFrameSort ds.dataFrameSubset
 #'             ds.listDisclosureSettings ds.mean ds.merge ds.reShape ds.isNA
@@ -77,13 +62,14 @@
 #' @importFrom magrittr %<>%
 #' @importFrom DSI datashield.connections_find
 #' @importFrom rlang :=
-#'
+#' @keywords internal
 #' @md
-#'
 #' @export
 dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subset = NULL, bands = NULL, # nolint
                           mult_action = NULL, mult_vals = NULL, keep_vars = NULL, new_obj = NULL,
                           band_action = NULL, conns = NULL, checks = TRUE, df_name = NULL) {
+  lifecycle::deprecate_warn("1.6.0", "dh.dropCols()", details = "Please use the following functions 
+                            from dsTidyverseClient: ds.arrange(), ds.group_by() and ds.slice()")
   op <- tmp <- dfs <- new_subset_name <- value <- cohort <- varname <- new_df_name <-
     available <- bmi_to_subset <- ref_val <- enough_obs <- boole_name <- subset_name <- wide_name <-
     end_objs <- . <- nearest_value <- age <- subset_short <- suffix <- value_1 <- value_2 <- Var1 <-

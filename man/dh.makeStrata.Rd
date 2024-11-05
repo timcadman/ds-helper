@@ -24,7 +24,7 @@ dh.makeStrata(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{id_var}{Character giving the name of the column within `df` which 
+\item{id_var}{Character giving the name of the column within \code{df} which
 uniquely identifies each subject.}
 
 \item{age_var}{Character specifying age or time variable in \code{df}.}
@@ -66,7 +66,7 @@ band
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{df_name}{Retired argument name. Please use `new_obj' instead.}
@@ -85,35 +85,11 @@ added to the data frame representing these variables within the strata
 created.
 }
 \description{
-For many analyses you may want to create strata of repeated measures data
-within specified bands. For example, you may have BMI measures between ages
-0-18, but want to create a variable for each subject which is their BMI
-between ages 9-11. This function automates this process.
-}
-\details{
-The steps here are equivalent to the following dplyr chain:
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
-df \%>\%
-group_by(band, id) \%>\%
-arrange() \%<\%
-slice(1)
-
-One of the complexities of this operation is how to deal with cases where
-subjects have multiple observations within a specified band. This is handled
-by first sorting the group so that the required value is first. When the
-data is reshaped to wide format all but the first value for subjects with
-multiple observations within a band are dropped.
-
-Note that for big datasets this will take a long time to run.
+This function attempted to replicate the process of \code{dplyr::arrange() |> dplyr::group_by() |> 
+dplyr::sort()}. It was deprecated because the same operation can be done much more quickly and flexibly
+using \code{dsTidyverseClient::ds.arrange() |> dsTidyverseClient::ds.group_by() |> 
+dsTidyverseClient::ds.slice()}.
 }
-\seealso{
-Other data manipulation functions: 
-\code{\link{dh.dropCols}()},
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()},
-\code{\link{dh.zByGroup}()}
-}
-\concept{data manipulation functions}
+\keyword{internal}

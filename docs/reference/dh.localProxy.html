@@ -20,7 +20,7 @@ code."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathj
     
     <a class="navbar-brand me-2" href="../index.html">dsHelper</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,7 @@ code.</p>
 
 
 <dt>checks</dt>
-<dd><p>Logical; if TRUE checks are performed prior to running the 
+<dd><p>Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.</p></dd>
 
 </dl></div>
@@ -93,19 +93,19 @@ function. Default is TRUE.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Creates a local proxy dataframe. Stops function if `df` doesn't exist
+<p>Creates a local proxy dataframe. Stops function if <code>df</code> doesn't exist
 or contains variables with inconsistent class across cohorts.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>If you have a dataframe "D" with columns LAB_TSC, DIS_CVA and
 DIS_DIAB, normally you would need to write:</p>
-<p>`ds.summary("D$LAB_TSC")` with the variable name spelled correctly
+<p><code>ds.summary("D$LAB_TSC")</code> with the variable name spelled correctly
 (no autocomplete!) and remember quotation marks. However after running this
 function you can type:</p>
-<p>`ds.summary(D$` and hit tab, and the list of variables will be displayed.
+<p><code>ds.summary(D$</code> and hit tab, and the list of variables will be displayed.
 Choose one and hit enter to finish up with:</p>
-<p>`ds.summary(D$LAB_TSC)` - no quotation marks needed either!</p>
+<p><code>ds.summary(D$LAB_TSC)</code> - no quotation marks needed either!</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

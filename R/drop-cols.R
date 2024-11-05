@@ -1,8 +1,11 @@
 #' Removes columns from a serverside data frame
 #'
-#' Often we want to remove variables from a dataframe. This function
-#' allows you to specify the variables you either want to remove or keep and
-#' and creates a new dataframe with only the required variables.
+#' @description 
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' This function allowed you to subset a data frame by column names. It was deprecated
+#' because you can now use \code{dsTidyverseClient::ds.select()} which is much quicker and has greater
+#' flexibility.
 #'
 #' @template conns
 #' @template df
@@ -15,11 +18,8 @@
 #' kept in the data frame and all others are removed.
 #' @template checks
 #' @param new_df_name Retired argument name. Please use `new_obj' instead.
-#'
+#' @keywords internal
 #' @return Server-side data frame the specified subset of columns.
-#'
-#' @family data manipulation functions
-#'
 #' @importFrom dsBaseClient ds.asNumeric ds.colnames ds.dataFrameSubset ds.make
 #' @importFrom purrr imap map
 #' @importFrom dplyr %>%
@@ -29,6 +29,7 @@
 #' @export
 dh.dropCols <- function(df = NULL, vars = NULL, new_obj = NULL, type = NULL,
                         conns = NULL, checks = TRUE, new_df_name = NULL) {
+  lifecycle::deprecate_warn("1.6.0", "dh.dropCols()", "dsTidyverseClient::ds.select()")
   . <- NULL
 
   if (is.null(conns)) {

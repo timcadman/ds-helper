@@ -19,12 +19,12 @@ dh.stablisedWeights(
 
 \item{responder_df}{A serverside data frame containing the responder variable.}
 
-\item{responder_var}{Character vector of outcome variable within `responder_df`.}
+\item{responder_var}{Character vector of outcome variable within \code{responder_df}.}
 
-\item{non_responder_level}{Character vector indicating level of `responder_var` corresponding to
+\item{non_responder_level}{Character vector indicating level of \code{responder_var} corresponding to
 non-responders.}
 
-\item{responder_level}{Character vector indicating level of `responder_var` corresponding to
+\item{responder_level}{Character vector indicating level of \code{responder_var} corresponding to
 responders.}
 
 \item{new_obj}{A character string for the name of the new object to store stabilized weights.}
@@ -32,7 +32,7 @@ responders.}
 \item{conns}{DataSHIELD connections object.}
 }
 \value{
-Stabilized weights assigned as serverside object `new_obj`
+Stabilized weights assigned as serverside object \code{new_obj}
 }
 \description{
 This calculates stablised inverse probability weights. Currently only works with a binary
@@ -40,10 +40,12 @@ outcome variable.
 }
 \details{
 The function performs the following steps:
-  1. Generate predicted values from the GLM model.
-  2. Calculate proportions of a binary outcome using the outcome data.
-  3. Format the proportions data for analysis.
-  4. Create stabilized weights using the formatted proportions and GLM predictions.
+\enumerate{
+\item Generate predicted values from the GLM model.
+\item Calculate proportions of a binary outcome using the outcome data.
+\item Format the proportions data for analysis.
+\item Create stabilized weights using the formatted proportions and GLM predictions.
+}
 }
 \note{
 Currently only works with binary outcome variable.

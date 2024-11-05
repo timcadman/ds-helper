@@ -9,8 +9,8 @@ dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 \arguments{
 \item{obj}{Server-side objects that you want to either keep or remove.}
 
-\item{type}{Either "remove" to remove objects specified in `obj` or "keep" to
-keep objects specified in `obj` and remove everything else.}
+\item{type}{Either "remove" to remove objects specified in \code{obj} or "keep" to
+keep objects specified in \code{obj} and remove everything else.}
 
 \item{conns}{DataSHIELD connections object.}
 }
@@ -18,17 +18,10 @@ keep objects specified in `obj` and remove everything else.}
 None. Objects are removed from the server-side environnment.
 }
 \description{
-This is a wrapper around ds.rm to allow you to remove multiple objects
-in one call.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This was a wrapper around ds.rm intended to allow the removal of multiple objects
+in one call. It was deprecated because we realised that this was already possible with
+\code{ds.rm()}
 }
-\seealso{
-Other data manipulation functions: 
-\code{\link{dh.dropCols}()},
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.makeStrata}()},
-\code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()},
-\code{\link{dh.zByGroup}()}
-}
-\concept{data manipulation functions}
+\keyword{internal}

@@ -16,22 +16,22 @@ dh.trimPredData(
 \item{pred}{Tibble of predicted values returned by dh.predictLmer.}
 
 \item{coh_names}{Character Vector of cohort names corresponding to cohorts
-included in `pred`.}
+included in \code{pred}.}
 
-\item{age}{Character specifying name of the age variable in `pred`.}
+\item{age}{Character specifying name of the age variable in \code{pred}.}
 
 \item{min}{Vector of minimum values of age with length equal to number of
-cohorts in `pred`.}
+cohorts in \code{pred}.}
 
 \item{max}{Vector of maximum values of age with length equal to number of
-cohorts in `pred`.}
+cohorts in \code{pred}.}
 }
 \value{
-`pred` is returned as a tibble with predicted values outside of
-`min` and `max` removed.
+\code{pred} is returned as a tibble with predicted values outside of
+\code{min} and \code{max} removed.
 }
 \description{
-This is to be used in conjuncture with `ds.predictLmer`. The new data frame
+This is to be used in conjuncture with \code{ds.predictLmer}. The new data frame
 used for prediction may contain age or time values not present in the
 original data. This allows you to remove all predicted values beyond a
 minimum and maximum age. This ensures that plots only show predict values

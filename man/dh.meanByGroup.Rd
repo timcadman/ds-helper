@@ -16,26 +16,26 @@ dh.meanByGroup(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{outcome}{String specifying outcome variable within `df`.}
+\item{outcome}{String specifying outcome variable within \code{df}.}
 
 \item{group_var}{String specifying grouping variable within 'df'.}
 
 \item{intervals}{Optionally, numeric vector defining how to stratify
-`group_var`. Values should specify alternately lower and upper values for
-each strata. If NULL, `outcome` is summarised by every unique value of
-`group_var`.}
+\code{group_var}. Values should specify alternately lower and upper values for
+each strata. If NULL, \code{outcome} is summarised by every unique value of
+\code{group_var}.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
-Tibble containing mean values for each strata of `group_var`.
+Tibble containing mean values for each strata of \code{group_var}.
 }
 \description{
-This has similar functionality to `tapply` or the dplyr chain `group_by` %>%
-`summarise`. It offers additional flexilibity over `ds.tapply` in that it
+This has similar functionality to \code{tapply} or the dplyr chain \code{group_by} \%>\%
+\code{summarise}. It offers additional flexilibity over \code{ds.tapply} in that it
 allows you to specify upper and lower values for each strata. By contrast,
 ds.tapply will produce a summary based on every unique value of the grouping
 variable, which may not always be what is required.
@@ -45,7 +45,6 @@ Other descriptive functions:
 \code{\link{dh.anyData}()},
 \code{\link{dh.classDiscrepancy}()},
 \code{\link{dh.createTableOne}()},
-\code{\link{dh.defineCases}()},
 \code{\link{dh.getStats}()},
 \code{\link{dh.lmTab}()}
 }

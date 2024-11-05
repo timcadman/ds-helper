@@ -16,7 +16,7 @@ are included."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
     
     <a class="navbar-brand me-2" href="../index.html">dsHelper</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,13 +92,13 @@ are included.</p>
 
 <dt>var_labs</dt>
 <dd><p>Tibble with two columns: 'variable' containing the
-names of the variables specified in `vars`, and 'var_label' containing the
+names of the variables specified in <code>vars</code>, and 'var_label' containing the
 replacement labels for these variables.</p></dd>
 
 
 <dt>cat_labs</dt>
 <dd><p>Tibble with three columns: 'variable' containing the
-names of the categorical variables specified in `vars`, 'category'
+names of the categorical variables specified in <code>vars</code>, 'category'
 containing the categories of these variabels, and "cat_label" containing
 the replacement category labels for these variables.</p></dd>
 
@@ -112,12 +112,12 @@ returned.</p></dd>
 
 <dt>coh_labs</dt>
 <dd><p>Tibble with two columns: 'cohort' containing the names
-of all cohorts included in `stats`, and 'cohort_labs' containing the
+of all cohorts included in <code>stats</code>, and 'cohort_labs' containing the
 replacement labels for these cohorts.</p></dd>
 
 
 <dt>coh_direction</dt>
-<dd><p>Character specifying direction of data if `type` is
+<dd><p>Character specifying direction of data if <code>type</code> is
 'cohort' or 'both'. Use 'rows' to return cohorts as rows and variable as
 columns, or use 'cols' to return cohorts as columns and variables as rows.
 Defauls is "col".</p></dd>
@@ -149,9 +149,9 @@ cases or 'total' for total cases.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Tibble containing formatted summary statistics. If `coh_direction` is
+<p>Tibble containing formatted summary statistics. If <code>coh_direction</code> is
 'cols', the tibble will contain four columns: 'cohort', 'variable',
-'category' &amp; value. If `coh_direction` is rows, the tibble will contain the
+'category' &amp; value. If <code>coh_direction</code> is rows, the tibble will contain the
 column 'cohort' as well as as columns for all continuous variables and all
 categories of categorical variables.</p>
     </div>
@@ -160,7 +160,6 @@ categories of categorical variables.</p>
     <div class="dont-index"><p>Other descriptive functions: 
 <code><a href="dh.anyData.html">dh.anyData</a>()</code>,
 <code><a href="dh.classDiscrepancy.html">dh.classDiscrepancy</a>()</code>,
-<code><a href="dh.defineCases.html">dh.defineCases</a>()</code>,
 <code><a href="dh.getStats.html">dh.getStats</a>()</code>,
 <code><a href="dh.lmTab.html">dh.lmTab</a>()</code>,
 <code><a href="dh.meanByGroup.html">dh.meanByGroup</a>()</code></p></div>

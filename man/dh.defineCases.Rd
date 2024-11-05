@@ -18,42 +18,31 @@ dh.defineCases(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector of columns within `df` to form definition set.}
+\item{vars}{Character vector of columns within \code{df} to form definition set.}
 
 \item{type}{Character specifying how to define cases. Use "any" to describe
-subjects with data on any of `vars`, and "all" to describe subjects with data
+subjects with data on any of \code{vars}, and "all" to describe subjects with data
 on all of `vars.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{newobj}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
 Server-side vector defining whether subject meets criteria defined by
-`vars` and `type`. 1 indicates that criteria were met, 0 indicates that
+\code{vars} and \code{type}. 1 indicates that criteria were met, 0 indicates that
 criteria weren't met.
 }
 \description{
-In an analysis you may want to subset your dataset to contain only subjects
-meeting a specific criteria, e.g. data on at least one outcome or data on all
-exposures. This function automates this operation by describing whether a
-subject has non-missing values for any or all of a set of given variables.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function allowed you to describe whether a had non-missing values for a set of variables. It
+was depricated because you can now use \code{dsTidyverseClient::ds.filter()} to create a subset
+of a data frame matching multiple conditions.
 }
-\details{
-This function replaces the deprecated dh.subjHasData.
-}
-\seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()},
-\code{\link{dh.meanByGroup}()}
-}
-\concept{descriptive functions}
+\keyword{internal}

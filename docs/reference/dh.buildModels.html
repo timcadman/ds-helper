@@ -12,7 +12,7 @@ available exposure and outcome variables, and optionally available covariates.">
     
     <a class="navbar-brand me-2" href="../index.html">dsHelper</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,15 +65,15 @@ available exposure and outcome variables, and optionally available covariates.</
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>avail_exp</dt>
-<dd><p>Output from `dh.anyData` detailing available exposures for each cohort.</p></dd>
+<dd><p>Output from <code>dh.anyData</code> detailing available exposures for each cohort.</p></dd>
 
 
 <dt>avail_cov</dt>
-<dd><p>Output from `dh.anyData` detailing available exposures for each cohort (optional).</p></dd>
+<dd><p>Output from <code>dh.anyData</code> detailing available exposures for each cohort (optional).</p></dd>
 
 
 <dt>avail_out</dt>
-<dd><p>Output from `dh.anyData` detailing available outcomes  for each cohort.</p></dd>
+<dd><p>Output from <code>dh.anyData</code> detailing available outcomes  for each cohort.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -82,18 +82,17 @@ available exposure and outcome variables, and optionally available covariates.</
 
 <p>A tibble containing four columns: (i) cohort, (ii) exposure, (iii) outcome, (iv)
 regression formula with these combinations. Optionally contains fifth column with list of
-covariates if `avail_cov` is not null.</p>
+covariates if <code>avail_cov</code> is not null.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function performs the following steps:
-  1. Summarizes available exposure and outcome variables.
-  2. Combines available exposure and outcome variables for all cohorts.
-  3. Tidies up the combinations.
-  4. If covariates are available, it splits combinations by cohort, adds covariates, and creates
-  formulas.
-  5. Returns the constructed models or formulas.</p>
-    </div>
+    <p>The function performs the following steps:</p><ol><li><p>Summarizes available exposure and outcome variables.</p></li>
+<li><p>Combines available exposure and outcome variables for all cohorts.</p></li>
+<li><p>Tidies up the combinations.</p></li>
+<li><p>If covariates are available, it splits combinations by cohort, adds covariates, and creates
+formulas.</p></li>
+<li><p>Returns the constructed models or formulas.</p></li>
+</ol></div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

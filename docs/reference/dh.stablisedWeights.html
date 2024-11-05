@@ -12,7 +12,7 @@ outcome variable."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/aja
     
     <a class="navbar-brand me-2" href="../index.html">dsHelper</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,16 +81,16 @@ outcome variable.</p>
 
 
 <dt>responder_var</dt>
-<dd><p>Character vector of outcome variable within `responder_df`.</p></dd>
+<dd><p>Character vector of outcome variable within <code>responder_df</code>.</p></dd>
 
 
 <dt>non_responder_level</dt>
-<dd><p>Character vector indicating level of `responder_var` corresponding to
+<dd><p>Character vector indicating level of <code>responder_var</code> corresponding to
 non-responders.</p></dd>
 
 
 <dt>responder_level</dt>
-<dd><p>Character vector indicating level of `responder_var` corresponding to
+<dd><p>Character vector indicating level of <code>responder_var</code> corresponding to
 responders.</p></dd>
 
 
@@ -106,16 +106,17 @@ responders.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Stabilized weights assigned as serverside object `new_obj`</p>
+<p>Stabilized weights assigned as serverside object <code>new_obj</code></p>
+
+
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function performs the following steps:
-  1. Generate predicted values from the GLM model.
-  2. Calculate proportions of a binary outcome using the outcome data.
-  3. Format the proportions data for analysis.
-  4. Create stabilized weights using the formatted proportions and GLM predictions.</p>
-    </div>
+    <p>The function performs the following steps:</p><ol><li><p>Generate predicted values from the GLM model.</p></li>
+<li><p>Calculate proportions of a binary outcome using the outcome data.</p></li>
+<li><p>Format the proportions data for analysis.</p></li>
+<li><p>Create stabilized weights using the formatted proportions and GLM predictions.</p></li>
+</ol></div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>Currently only works with binary outcome variable.</p>

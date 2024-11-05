@@ -9,17 +9,17 @@ dh.findVarsIndex(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector of columns within `df` for which to return the
+\item{vars}{Character vector of columns within \code{df} for which to return the
 indices.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
-Client-side list of indices corresponding to `vars`, where the length
-of the list corresponds to the number of cohorts included in `conns`.
+Client-side list of indices corresponding to \code{vars}, where the length
+of the list corresponds to the number of cohorts included in \code{conns}.
 }
 \description{
 Some DataSHIELD functions require column indices as parameters. This is

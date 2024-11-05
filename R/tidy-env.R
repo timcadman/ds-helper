@@ -1,7 +1,11 @@
 #' Remove multiple objects from the serverside environment
 #'
-#' This is a wrapper around ds.rm to allow you to remove multiple objects
-#' in one call.
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' This was a wrapper around ds.rm intended to allow the removal of multiple objects
+#' in one call. It was deprecated because we realised that this was already possible with
+#' \code{ds.rm()}
 #'
 #' @param conns DataSHIELD connections object.
 #' @param obj Server-side objects that you want to either keep or remove.
@@ -14,11 +18,10 @@
 #' @importFrom dsBaseClient ds.rm ds.ls
 #' @importFrom dplyr %>%
 #' @importFrom DSI datashield.connections_find
-#'
-#' @family data manipulation functions
-#'
+#' @keywords internal
 #' @export
 dh.tidyEnv <- function(obj = NULL, type = NULL, conns = NULL) {
+  lifecycle::deprecate_warn("1.6.0", "dh.tidyEnv()", "dsBaseClient::ds.rm()")
   . <- value <- NULL
 
   if (is.null(obj)) {

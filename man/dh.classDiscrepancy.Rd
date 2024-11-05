@@ -10,12 +10,12 @@ dh.classDiscrepancy(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Optionally, a character vector specifying columns within `df` to
+\item{vars}{Optionally, a character vector specifying columns within \code{df} to
 describe. If NULL all variables will be included.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
@@ -34,7 +34,6 @@ the class of each variable.
 Other descriptive functions: 
 \code{\link{dh.anyData}()},
 \code{\link{dh.createTableOne}()},
-\code{\link{dh.defineCases}()},
 \code{\link{dh.getStats}()},
 \code{\link{dh.lmTab}()},
 \code{\link{dh.meanByGroup}()}

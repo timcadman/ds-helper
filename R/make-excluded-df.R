@@ -1,8 +1,12 @@
 #' Given df-A & df-B, creates a new df which is the rows in A but not in B
 #'
-#' When writing a paper often we need to exclude various participants for
-#' various reasons. Then we will need a df with all of these excluded
-#' participants. This is one way to do it.
+#' @description 
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' Often we need to exclude participants in an analysis. This function created a 
+#' dataframe containing participants in \code{original_df} but not in \code{final_df}. It was 
+#' deprecated because you can now use \code{dsTidyverseClient::ds.filter}, which is much quicker
+#' and more flexible.
 #'
 #' @param original_df Dataframe containing the full sample
 #' @param final_df Dataframe containing the included sample
@@ -11,15 +15,14 @@
 #' @template id_var
 #' @template new_obj
 #' @template conns
-#'
 #' @return Creates a serverside dataframe containing the rows from `original_df`
 #' that are not contained in `final_df`
-#'
 #' @importFrom utils head
-#'
+#' @keywords internal
 #' @export
 dh.makeExcludedDf <- function(original_df, final_df, id_var = "child_id", new_obj,
                               type = "wide", conns = NULL) {
+  lifecycle::deprecate_warn("1.6.0", "dh.makeExcludedDf()", "dsTidyverseClient::ds.filter()")
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }

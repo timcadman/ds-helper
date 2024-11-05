@@ -18,22 +18,26 @@ dh.makeExcludedDf(
 
 \item{final_df}{Dataframe containing the included sample}
 
-\item{id_var}{Character giving the name of the column within `df` which 
+\item{id_var}{Character giving the name of the column within \code{df} which
 uniquely identifies each subject.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
-\item{type}{Specifies type of dataframe in `original_df`. Either 'long' or
+\item{type}{Specifies type of dataframe in \code{original_df}. Either 'long' or
 'wide'. NOTE NOT CURRENTLY FUNCTIONAL - ONLY WORKS FOR WIDE.}
 
 \item{conns}{DataSHIELD connections object.}
 }
 \value{
-Creates a serverside dataframe containing the rows from `original_df`
-that are not contained in `final_df`
+Creates a serverside dataframe containing the rows from \code{original_df}
+that are not contained in \code{final_df}
 }
 \description{
-When writing a paper often we need to exclude various participants for
-various reasons. Then we will need a df with all of these excluded
-participants. This is one way to do it.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Often we need to exclude participants in an analysis. This function created a
+dataframe containing participants in \code{original_df} but not in \code{final_df}. It was
+deprecated because you can now use \code{dsTidyverseClient::ds.filter}, which is much quicker
+and more flexible.
 }
+\keyword{internal}

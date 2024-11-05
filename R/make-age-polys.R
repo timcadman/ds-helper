@@ -1,9 +1,14 @@
 #' Produces multiple transformations of the age term for fractional polynomial
 #' analyses
 #'
+#' @description
+#' `r lifecycle::badge("superseded")`
+#' 
 #' When we do trajectory analyses using fractional polynomials we often want
 #' to try models with different combinations of age polynomials. This function
-#' creates multiple transformations of an age variable to different powers.
+#' creates multiple transformations of an age variable to different powers. We recommend moving to 
+#' \code{dsTidyverseClient::ds.mutate()} which is quicker, although would require a few more lines 
+#' of code.
 #'
 #' @template conns
 #' @template df
@@ -31,6 +36,7 @@ dh.makeAgePolys <- function(df = NULL, age_var = NULL,
                             poly_form = c("^-2", "^-1", "^-0.5", "log", "^0.5", "^2", "^3"),
                             poly_names = c("_m_2", "_m_1", "_m_0_5", "log", "_0_5", "_2", "_3"),
                             conns = NULL, checks = TRUE, agevars = NULL) {
+  lifecycle::signal_stage("superseded", "dh.makeAgePolys()")
   df <- df
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)

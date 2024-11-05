@@ -9,11 +9,11 @@ dh.anyData(df = NULL, vars = NULL, conns = NULL, checks = TRUE)
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector of columns within `df`.}
+\item{vars}{Character vector of columns within \code{df}.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
@@ -31,7 +31,6 @@ generates a look-up table with this information.
 Other descriptive functions: 
 \code{\link{dh.classDiscrepancy}()},
 \code{\link{dh.createTableOne}()},
-\code{\link{dh.defineCases}()},
 \code{\link{dh.getStats}()},
 \code{\link{dh.lmTab}()},
 \code{\link{dh.meanByGroup}()}
