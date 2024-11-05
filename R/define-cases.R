@@ -22,8 +22,6 @@
 #' `vars` and `type`. 1 indicates that criteria were met, 0 indicates that
 #' criteria weren't met.
 #'
-#' @family descriptive functions
-#'
 #' @importFrom dsBaseClient ds.Boole ds.make ds.asNumeric ds.replaceNA
 #' @importFrom DSI datashield.connections_find
 #' @importFrom purrr map

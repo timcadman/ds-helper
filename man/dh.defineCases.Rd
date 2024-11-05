@@ -45,14 +45,4 @@ This function allowed you to describe whether a had non-missing values for a set
 was depricated because you can now use \code{dsTidyverseClient::ds.filter} to create a subset
 of a data frame matching multiple conditions.
 }
-\seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()},
-\code{\link{dh.meanByGroup}()}
-}
-\concept{descriptive functions}
 \keyword{internal}

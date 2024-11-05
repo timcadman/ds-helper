@@ -34,7 +34,6 @@ the class of each variable.
 Other descriptive functions: 
 \code{\link{dh.anyData}()},
 \code{\link{dh.createTableOne}()},
-\code{\link{dh.defineCases}()},
 \code{\link{dh.getStats}()},
 \code{\link{dh.lmTab}()},
 \code{\link{dh.meanByGroup}()}

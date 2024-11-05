@@ -35,7 +35,8 @@ Imports:
   checkmate,
   lme4, 
   tidyselect, 
-  arrow (>= 16.1.0)
+  arrow (>= 16.1.0), 
+  lifecycle
 Suggests:
   knitr,
   rmarkdown,

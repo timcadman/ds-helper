@@ -50,7 +50,6 @@ Other trajectory functions:
 \code{\link{dh.zByGroup}()}
 
 Other data manipulation functions: 
-\code{\link{dh.dropCols}()},
 \code{\link{dh.makeIQR}()},
 \code{\link{dh.makeStrata}()},
 \code{\link{dh.quartileSplit}()},

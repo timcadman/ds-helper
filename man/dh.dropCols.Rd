@@ -38,18 +38,8 @@ function. Default is TRUE.}
 Server-side data frame the specified subset of columns.
 }
 \description{
-Often we want to remove variables from a dataframe. This function
-allows you to specify the variables you either want to remove or keep and
-and creates a new dataframe with only the required variables.
+. This function allowed you to subset a data frame by column names. It was deprecated
+because you can now use \code{dsTidyverseClient::ds.select} which is much quicker and has greater
+flexibility.
 }
-\seealso{
-Other data manipulation functions: 
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.makeStrata}()},
-\code{\link{dh.quartileSplit}()},
-\code{\link{dh.renameVars}()},
-\code{\link{dh.tidyEnv}()},
-\code{\link{dh.zByGroup}()}
-}
-\concept{data manipulation functions}
+\keyword{internal}
