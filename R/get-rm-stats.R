@@ -75,7 +75,7 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NU
   ds.asFactorSimple(paste0(df, "$", id_var), "id_fact", datasources = conns)
 
   ds.tapply.assign(
-    X.name = "data$weight",
+    X.name = paste0(df, "$", outcome),
     INDEX.names = "id_fact",
     FUN.name = "N",
     newobj = "id_summary",
