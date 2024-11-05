@@ -39,6 +39,7 @@ Server-side data frame the specified subset of columns.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 This function allowed you to subset a data frame by column names. It was deprecated
 because you can now use \code{dsTidyverseClient::ds.select()} which is much quicker and has greater
 flexibility.

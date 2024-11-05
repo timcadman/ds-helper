@@ -34,6 +34,7 @@ that are not contained in \code{final_df}
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 Often we need to exclude participants in an analysis. This function created a
 dataframe containing participants in \code{original_df} but not in \code{final_df}. It was
 deprecated because you can now use \code{dsTidyverseClient::ds.filter}, which is much quicker

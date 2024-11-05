@@ -38,6 +38,7 @@ specified in \code{df}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#superseded}{\figure{lifecycle-superseded.svg}{options: alt='[Superseded]'}}}{\strong{[Superseded]}}
+
 When we do trajectory analyses using fractional polynomials we often want
 to try models with different combinations of age polynomials. This function
 creates multiple transformations of an age variable to different powers. We recommend moving to

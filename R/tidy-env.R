@@ -2,6 +2,7 @@
 #'
 #' @description
 #' `r lifecycle::badge("deprecated")`
+#' 
 #' This was a wrapper around ds.rm intended to allow the removal of multiple objects
 #' in one call. It was deprecated because we realised that this was already possible with
 #' \code{ds.rm()}

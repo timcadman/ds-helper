@@ -2,6 +2,7 @@
 #'
 #' @description 
 #' `r lifecycle::badge("deprecated")`
+#' 
 #' This function was an analogue of \code{dplyr::rename()}. It was deprecated because you can now use
 #' \code{dsTidyverseClient::ds.rename()} which is much quicker and more flexible.
 #'

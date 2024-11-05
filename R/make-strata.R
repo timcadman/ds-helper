@@ -3,6 +3,7 @@
 #'
 #' @description 
 #' `r lifecycle::badge("deprecated")`
+#' 
 #' This function attempted to replicate the process of \code{dplyr::arrange() |> dplyr::group_by() |> 
 #' dplyr::sort()}. It was deprecated because the same operation can be done much more quickly and flexibly
 #' using \code{dsTidyverseClient::ds.arrange() |> dsTidyverseClient::ds.group_by() |> 

@@ -19,6 +19,7 @@ None. Objects are removed from the server-side environnment.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 This was a wrapper around ds.rm intended to allow the removal of multiple objects
 in one call. It was deprecated because we realised that this was already possible with
 \code{ds.rm()}

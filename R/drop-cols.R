@@ -2,6 +2,7 @@
 #'
 #' @description 
 #' `r lifecycle::badge("deprecated")`
+#' 
 #' This function allowed you to subset a data frame by column names. It was deprecated
 #' because you can now use \code{dsTidyverseClient::ds.select()} which is much quicker and has greater
 #' flexibility.

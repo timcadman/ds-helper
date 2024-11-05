@@ -31,6 +31,7 @@ renamed.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 This function was an analogue of \code{dplyr::rename()}. It was deprecated because you can now use
 \code{dsTidyverseClient::ds.rename()} which is much quicker and more flexible.
 }

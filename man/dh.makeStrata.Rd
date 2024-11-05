@@ -86,6 +86,7 @@ created.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
 This function attempted to replicate the process of \code{dplyr::arrange() |> dplyr::group_by() |> 
 dplyr::sort()}. It was deprecated because the same operation can be done much more quickly and flexibly
 using \code{dsTidyverseClient::ds.arrange() |> dsTidyverseClient::ds.group_by() |> 

@@ -2,6 +2,7 @@
 #'
 #' @description 
 #' `r lifecycle::badge("deprecated")`
+#' 
 #' Often we need to exclude participants in an analysis. This function created a 
 #' dataframe containing participants in \code{original_df} but not in \code{final_df}. It was 
 #' deprecated because you can now use \code{dsTidyverseClient::ds.filter}, which is much quicker
