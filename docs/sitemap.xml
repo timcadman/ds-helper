@@ -85,6 +85,9 @@
     <loc>/reference/dh.makeLmerForm.html</loc>
   </url>
   <url>
+    <loc>/reference/dh.makeOutcome.html</loc>
+  </url>
+  <url>
     <loc>/reference/dh.makeStrata.html</loc>
   </url>
   <url>
@@ -131,6 +134,9 @@
   </url>
   <url>
     <loc>/reference/dsHelper-defunct.html</loc>
+  </url>
+  <url>
+    <loc>/reference/dsHelper-package.html</loc>
   </url>
   <url>
     <loc>/reference/extract.html</loc>

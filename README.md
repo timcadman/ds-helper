@@ -5,14 +5,10 @@ DataSHIELD helper functions
 status](https://www.r-pkg.org/badges/version/dsHelper)](https://CRAN.R-project.org/package=dsHelper)
 [![Codecov test
 coverage](https://codecov.io/gh/lifecycle-project/ds-helper/branch/master/graph/badge.svg)](https://app.codecov.io/gh/lifecycle-project/ds-helper?branch=master)
-[![Build
-Status](https://dev.azure.com/sidohaakma/datashield-packages/_apis/build/status/lifecycle-project.ds-helper?branchName=master)](https://dev.azure.com/sidohaakma/datashield-packages/_build/latest?definitionId=4&branchName=master)
 
-This is a set of functions to automate processes in ‘DataSHIELD’ to make
-data manipulation and analysis easier. They are very much a work in
-progress! If you have written functions that would also be useful to
-other DS users drop me an email and we can incorporate them in the
-package.
+This is a set of functions to make processes of data manipulation and analysis more user-friendly.
+Some of these have now been deprecated in favour of functions from [dsTidyverse](https://github.com/molgenis/ds-tidyverse-client), which are much quicker and more 
+flexible.
 
 ## Install
 
@@ -37,7 +33,7 @@ library(dsHelper)
 
 If you find any bugs, would like to request additional functionality or
 have written functions you would like to be included in the package
-please contact me at <t.cadman@bristol.ac.uk>.
+please contact me at <t.j.cadman@umcg.nl>.
 
 ## Troubleshooting
 

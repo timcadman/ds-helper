@@ -18,7 +18,7 @@ with ggplot2)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/l
     
     <a class="navbar-brand me-2" href="../index.html">dsHelper</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,15 +84,15 @@ with ggplot2).</p>
 
 
 <dt>var_1</dt>
-<dd><p>Character giving the name of a column within `df` for which to
+<dd><p>Character giving the name of a column within <code>df</code> for which to
 extract anonymised data.</p></dd>
 
 
 <dt>var_2</dt>
-<dd><p>Optionally, character specifying a second column within `df`.
-If a column is specified then scatter plot data will be returned with `var_1`
-as the explanatory variable and `var_2` as the outcome variable. Default is
-NULL which returns anonymised data only for `var_1`.</p></dd>
+<dd><p>Optionally, character specifying a second column within <code>df</code>.
+If a column is specified then scatter plot data will be returned with <code>var_1</code>
+as the explanatory variable and <code>var_2</code> as the outcome variable. Default is
+NULL which returns anonymised data only for <code>var_1</code>.</p></dd>
 
 
 <dt>conns</dt>
@@ -100,7 +100,7 @@ NULL which returns anonymised data only for `var_1`.</p></dd>
 
 
 <dt>checks</dt>
-<dd><p>Logical; if TRUE checks are performed prior to running the 
+<dd><p>Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.</p></dd>
 
 </dl></div>
@@ -109,7 +109,7 @@ function. Default is TRUE.</p></dd>
     
 
 <p>A tibble in long format containing columns 'cohort', 'var_1' and
-optionally `var_2`. The values for `var1` and `var_2` are the anonymised
+optionally <code>var_2</code>. The values for <code>var1</code> and <code>var_2</code> are the anonymised
 data points.</p>
     </div>
     <div class="section level2">
