@@ -39,13 +39,11 @@ Server-side vector defining whether subject meets criteria defined by
 criteria weren't met.
 }
 \description{
-In an analysis you may want to subset your dataset to contain only subjects
-meeting a specific criteria, e.g. data on at least one outcome or data on all
-exposures. This function automates this operation by describing whether a
-subject has non-missing values for any or all of a set of given variables.
-}
-\details{
-This function replaces the deprecated dh.subjHasData.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+This function allowed you to describe whether a had non-missing values for a set of variables. It
+was depricated because you can now use \code{dsTidyverseClient::ds.filter} to create a subset
+of a data frame matching multiple conditions.
 }
 \seealso{
 Other descriptive functions: 
@@ -57,3 +55,4 @@ Other descriptive functions:
 \code{\link{dh.meanByGroup}()}
 }
 \concept{descriptive functions}
+\keyword{internal}

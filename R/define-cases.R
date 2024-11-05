@@ -1,12 +1,12 @@
 #' Indicates whether each subject has any or all of the variables contained
 #' within a set
 #'
-#' In an analysis you may want to subset your dataset to contain only subjects
-#' meeting a specific criteria, e.g. data on at least one outcome or data on all
-#' exposures. This function automates this operation by describing whether a
-#' subject has non-missing values for any or all of a set of given variables.
-#'
-#' This function replaces the deprecated dh.subjHasData.
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#' 
+#' This function allowed you to describe whether a had non-missing values for a set of variables. It 
+#' was depricated because you can now use \code{dsTidyverseClient::ds.filter} to create a subset
+#' of a data frame matching multiple conditions.
 #'
 #' @template conns
 #' @template df
@@ -29,10 +29,11 @@
 #' @importFrom purrr map
 #' @importFrom dplyr %>%
 #' @importFrom rlang arg_match
-#'
+#' @keywords internal
 #' @export
 dh.defineCases <- function(df = NULL, vars = NULL, type = NULL, new_obj = NULL,
                            conns = NULL, checks = FALSE, newobj = NULL) {
+  lifecycle::deprecate_warn("1.6.0", "dh.defineCases()", "dsTidyverseClient::ds.filter()")
   if (is.null(df)) {
     stop("`df` must not be NULL.", call. = FALSE)
   }
