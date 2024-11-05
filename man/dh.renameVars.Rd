@@ -15,22 +15,22 @@ dh.renameVars(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{current_names}{Character vector of columns within `df` to rename.}
+\item{current_names}{Character vector of columns within \code{df} to rename.}
 
 \item{new_names}{Character vector giving the new names for the columns
-specified in `current_names`.}
+specified in \code{current_names}.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
-Data frame specified in `df` is returned server-side with variables
+Data frame specified in \code{df} is returned server-side with variables
 renamed.
 }
 \description{
-This function is an analogue of `dplyr::rename` which allows you to rename
+This function is an analogue of \code{dplyr::rename} which allows you to rename
 columns of a serverside data frame.
 }
 \seealso{

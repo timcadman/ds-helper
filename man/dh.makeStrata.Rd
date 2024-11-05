@@ -24,7 +24,7 @@ dh.makeStrata(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{id_var}{Character giving the name of the column within `df` which 
+\item{id_var}{Character giving the name of the column within \code{df} which
 uniquely identifies each subject.}
 
 \item{age_var}{Character specifying age or time variable in \code{df}.}
@@ -66,7 +66,7 @@ band
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{df_name}{Retired argument name. Please use `new_obj' instead.}

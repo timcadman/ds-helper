@@ -19,12 +19,12 @@ mentioned. Help pages for deprecated functions are available at
 }
 \section{\code{dh.makeOutcome}}{
 
-For \code{dh.makeOutcome}, use \code{\link{dh.makeStrata}}.
+For \code{dh.makeOutcome}, use \code{\link[=dh.makeStrata]{dh.makeStrata()}}.
 }
 
 \section{\code{dh.meanByAge}}{
 
-For \code{dh.meanByAge}, use \code{\link{dh.meanByGroup}}.
+For \code{dh.meanByAge}, use \code{\link[=dh.meanByGroup]{dh.meanByGroup()}}.
 }
 
 \keyword{internal}

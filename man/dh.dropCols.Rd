@@ -17,19 +17,19 @@ dh.dropCols(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector specifying columns within `df` to be removed or
+\item{vars}{Character vector specifying columns within \code{df} to be removed or
 kept.}
 
 \item{new_obj}{Optionally, character specifying name for new server-side
 data frame. Default is to return original data frame with columns removed.}
 
-\item{type}{Character specifying how to treat `vars`. If "remove" these
+\item{type}{Character specifying how to treat \code{vars}. If "remove" these
 variables are removed from the data frame, if "keep" these variables are
 kept in the data frame and all others are removed.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{new_df_name}{Retired argument name. Please use `new_obj' instead.}

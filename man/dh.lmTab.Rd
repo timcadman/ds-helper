@@ -39,7 +39,7 @@ is "wide"}
 "glm_ipd" or "glm_slma". Options are "gaussian" or "binomial", with default
 "gaussian".}
 
-\item{digits}{Optionally, the number of decimal places to round output to. 
+\item{digits}{Optionally, the number of decimal places to round output to.
 Default is 2.}
 
 \item{exponentiate}{Optionally, specify whether estimates from binomial models should

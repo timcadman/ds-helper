@@ -50,4 +50,5 @@ BugReports: https://github.com/lifecycle-project/ds-helper/issues/
 VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)

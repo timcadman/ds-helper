@@ -17,8 +17,8 @@
 NULL
 
 #' @rdname dsHelper-defunct
-#' @section \code{dh.meanByAge}:
-#' For \code{dh.meanByAge}, use \code{\link{dh.meanByGroup}}.
+#' @section `dh.meanByAge`:
+#' For `dh.meanByAge`, use [dh.meanByGroup()].
 #'
 #' @export
 dh.meanByAge <- function(...) {

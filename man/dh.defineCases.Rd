@@ -18,24 +18,24 @@ dh.defineCases(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector of columns within `df` to form definition set.}
+\item{vars}{Character vector of columns within \code{df} to form definition set.}
 
 \item{type}{Character specifying how to define cases. Use "any" to describe
-subjects with data on any of `vars`, and "all" to describe subjects with data
+subjects with data on any of \code{vars}, and "all" to describe subjects with data
 on all of `vars.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{newobj}{Retired argument name. Please use `new_obj' instead.}
 }
 \value{
 Server-side vector defining whether subject meets criteria defined by
-`vars` and `type`. 1 indicates that criteria were met, 0 indicates that
+\code{vars} and \code{type}. 1 indicates that criteria were met, 0 indicates that
 criteria weren't met.
 }
 \description{

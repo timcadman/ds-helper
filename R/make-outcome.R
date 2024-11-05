@@ -23,8 +23,8 @@
 NULL
 
 #' @rdname dsHelper-defunct
-#' @section \code{dh.makeOutcome}:
-#' For \code{dh.makeOutcome}, use \code{\link{dh.makeStrata}}.
+#' @section `dh.makeOutcome`:
+#' For `dh.makeOutcome`, use [dh.makeStrata()].
 #'
 #' @export
 dh.makeOutcome <- function(...) {

@@ -9,8 +9,8 @@ dh.tidyEnv(obj = NULL, type = NULL, conns = NULL)
 \arguments{
 \item{obj}{Server-side objects that you want to either keep or remove.}
 
-\item{type}{Either "remove" to remove objects specified in `obj` or "keep" to
-keep objects specified in `obj` and remove everything else.}
+\item{type}{Either "remove" to remove objects specified in \code{obj} or "keep" to
+keep objects specified in \code{obj} and remove everything else.}
 
 \item{conns}{DataSHIELD connections object.}
 }

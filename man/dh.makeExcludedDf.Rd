@@ -18,19 +18,19 @@ dh.makeExcludedDf(
 
 \item{final_df}{Dataframe containing the included sample}
 
-\item{id_var}{Character giving the name of the column within `df` which 
+\item{id_var}{Character giving the name of the column within \code{df} which
 uniquely identifies each subject.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
-\item{type}{Specifies type of dataframe in `original_df`. Either 'long' or
+\item{type}{Specifies type of dataframe in \code{original_df}. Either 'long' or
 'wide'. NOTE NOT CURRENTLY FUNCTIONAL - ONLY WORKS FOR WIDE.}
 
 \item{conns}{DataSHIELD connections object.}
 }
 \value{
-Creates a serverside dataframe containing the rows from `original_df`
-that are not contained in `final_df`
+Creates a serverside dataframe containing the rows from \code{original_df}
+that are not contained in \code{final_df}
 }
 \description{
 When writing a paper often we need to exclude various participants for

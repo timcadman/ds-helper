@@ -7,16 +7,16 @@
 dh.buildModels(avail_exp = NULL, avail_cov = NULL, avail_out = NULL)
 }
 \arguments{
-\item{avail_exp}{Output from `dh.anyData` detailing available exposures for each cohort.}
+\item{avail_exp}{Output from \code{dh.anyData} detailing available exposures for each cohort.}
 
-\item{avail_cov}{Output from `dh.anyData` detailing available exposures for each cohort (optional).}
+\item{avail_cov}{Output from \code{dh.anyData} detailing available exposures for each cohort (optional).}
 
-\item{avail_out}{Output from `dh.anyData` detailing available outcomes  for each cohort.}
+\item{avail_out}{Output from \code{dh.anyData} detailing available outcomes  for each cohort.}
 }
 \value{
 A tibble containing four columns: (i) cohort, (ii) exposure, (iii) outcome, (iv)
 regression formula with these combinations. Optionally contains fifth column with list of
-covariates if `avail_cov` is not null.
+covariates if \code{avail_cov} is not null.
 }
 \description{
 This function constructs exposure-outcome models for each cohort using
@@ -24,10 +24,12 @@ available exposure and outcome variables, and optionally available covariates.
 }
 \details{
 The function performs the following steps:
-  1. Summarizes available exposure and outcome variables.
-  2. Combines available exposure and outcome variables for all cohorts.
-  3. Tidies up the combinations.
-  4. If covariates are available, it splits combinations by cohort, adds covariates, and creates
-  formulas.
-  5. Returns the constructed models or formulas.
+\enumerate{
+\item Summarizes available exposure and outcome variables.
+\item Combines available exposure and outcome variables for all cohorts.
+\item Tidies up the combinations.
+\item If covariates are available, it splits combinations by cohort, adds covariates, and creates
+formulas.
+\item Returns the constructed models or formulas.
+}
 }

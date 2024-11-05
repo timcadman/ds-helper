@@ -16,22 +16,22 @@ dh.getAnonPlotData(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{var_1}{Character giving the name of a column within `df` for which to
+\item{var_1}{Character giving the name of a column within \code{df} for which to
 extract anonymised data.}
 
-\item{var_2}{Optionally, character specifying a second column within `df`.
-If a column is specified then scatter plot data will be returned with `var_1`
-as the explanatory variable and `var_2` as the outcome variable. Default is
-NULL which returns anonymised data only for `var_1`.}
+\item{var_2}{Optionally, character specifying a second column within \code{df}.
+If a column is specified then scatter plot data will be returned with \code{var_1}
+as the explanatory variable and \code{var_2} as the outcome variable. Default is
+NULL which returns anonymised data only for \code{var_1}.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
 A tibble in long format containing columns 'cohort', 'var_1' and
-optionally `var_2`. The values for `var1` and `var_2` are the anonymised
+optionally \code{var_2}. The values for \code{var1} and \code{var_2} are the anonymised
 data points.
 }
 \description{

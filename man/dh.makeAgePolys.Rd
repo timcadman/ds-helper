@@ -18,23 +18,23 @@ dh.makeAgePolys(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{age_var}{Character specifying age variable within `df` to transform.}
+\item{age_var}{Character specifying age variable within \code{df} to transform.}
 
-\item{poly_form}{Character vector of powers by which to transform `age_var`.}
+\item{poly_form}{Character vector of powers by which to transform \code{age_var}.}
 
 \item{poly_names}{Character vector of names for the created variables. Must
-the same length and order as `poly_form`.}
+the same length and order as \code{poly_form}.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{agevars}{Retired argument name. Please use `age_var' instead.}
 }
 \value{
 Transformations of age are added as columns to server-side object
-specified in `df`.
+specified in \code{df}.
 }
 \description{
 When we do trajectory analyses using fractional polynomials we often want

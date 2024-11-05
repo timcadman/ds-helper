@@ -11,12 +11,12 @@ dh.getStats(df = NULL, vars = NULL, digits = 2, conns = NULL, checks = TRUE)
 
 \item{vars}{Character vector of columns within \code{df} to summarise.}
 
-\item{digits}{Optionally, the number of decimal places to round output to. 
+\item{digits}{Optionally, the number of decimal places to round output to.
 Default is 2.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{

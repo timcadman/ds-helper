@@ -17,30 +17,30 @@ dh.makeIQR(
 \arguments{
 \item{df}{Character specifying a server-side data frame.}
 
-\item{vars}{Character vector of columns within `df` to transform.}
+\item{vars}{Character vector of columns within \code{df} to transform.}
 
 \item{type}{Use "combine" to transform the variable based on the combined IQR
-across all cohorts specified in `conns`, or "split" to transform based on the
+across all cohorts specified in \code{conns}, or "split" to transform based on the
 within-cohort IQR.}
 
 \item{new_obj}{Character specifying name for created serverside object.}
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 
 \item{new_df_name}{Retired argument. Please use `new_obj' instead.}
 }
 \value{
-Server-side object specified in `df` with transformed variables added
+Server-side object specified in \code{df} with transformed variables added
 as columns. Variables have suffix "_iqr_c" if type is "combine", or "_iqr_s"
 if type is "split".
 }
 \description{
 This function scales variables by their interquartile range. IQR is
 calulcated either within cohort or using the combined IQR across cohorts.
-The formula used is: value[subject] / (75th percentile - 25th percentile).
+The formula used is: value\link{subject} / (75th percentile - 25th percentile).
 }
 \seealso{
 Other data manipulation functions: 

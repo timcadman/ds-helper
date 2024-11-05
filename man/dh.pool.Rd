@@ -15,10 +15,10 @@ dh.pool(
 \arguments{
 \item{imputed_glm}{A list of imputed generalized linear models.}
 
-\item{type}{Character specifying type of object provided in `model`. Can be
+\item{type}{Character specifying type of object provided in \code{model}. Can be
 either "glm_ipd", "glm_slma" or "lmer_slma".}
 
-\item{coh_names}{Character vector of cohorts included in `imputed_glm`. Note this
+\item{coh_names}{Character vector of cohorts included in \code{imputed_glm}. Note this
 must be in the same order as the cohorts were included in the model.}
 
 \item{family}{Specifies the family used in the analysis where type is
@@ -27,7 +27,7 @@ must be in the same order as the cohorts were included in the model.}
 
 \item{exponentiate}{Optionally, specify whether estimates from binomial models should
 be exponentiated, ie returned as odds ratios. This argument is ignored if
-`type` is "gaussian".}
+\code{type} is "gaussian".}
 }
 \value{
 A tibble containing Rubin's pooled estimates and confidence intervals.

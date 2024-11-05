@@ -11,11 +11,11 @@ dh.localProxy(df = NULL, conns = NULL, checks = TRUE)
 
 \item{conns}{DataSHIELD connections object.}
 
-\item{checks}{Logical; if TRUE checks are performed prior to running the 
+\item{checks}{Logical; if TRUE checks are performed prior to running the
 function. Default is TRUE.}
 }
 \value{
-Creates a local proxy dataframe. Stops function if `df` doesn't exist
+Creates a local proxy dataframe. Stops function if \code{df} doesn't exist
 or contains variables with inconsistent class across cohorts.
 }
 \description{
@@ -30,12 +30,12 @@ code.
 If you have a dataframe "D" with columns LAB_TSC, DIS_CVA and
 DIS_DIAB, normally you would need to write:
 
-`ds.summary("D$LAB_TSC")` with the variable name spelled correctly
+\code{ds.summary("D$LAB_TSC")} with the variable name spelled correctly
 (no autocomplete!) and remember quotation marks. However after running this
 function you can type:
 
-`ds.summary(D$` and hit tab, and the list of variables will be displayed.
+\verb{ds.summary(D$} and hit tab, and the list of variables will be displayed.
 Choose one and hit enter to finish up with:
 
-`ds.summary(D$LAB_TSC)` - no quotation marks needed either!
+\code{ds.summary(D$LAB_TSC)} - no quotation marks needed either!
 }

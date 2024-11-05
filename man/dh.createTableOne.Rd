@@ -24,11 +24,11 @@ dh.createTableOne(
 \item{vars}{Variable to be included in table.}
 
 \item{var_labs}{Tibble with two columns: 'variable' containing the
-names of the variables specified in `vars`, and 'var_label' containing the
+names of the variables specified in \code{vars}, and 'var_label' containing the
 replacement labels for these variables.}
 
 \item{cat_labs}{Tibble with three columns: 'variable' containing the
-names of the categorical variables specified in `vars`, 'category'
+names of the categorical variables specified in \code{vars}, 'category'
 containing the categories of these variabels, and "cat_label" containing
 the replacement category labels for these variables.}
 
@@ -38,10 +38,10 @@ cohort-specific stats will be returned, if "both" then everything will be
 returned.}
 
 \item{coh_labs}{Tibble with two columns: 'cohort' containing the names
-of all cohorts included in `stats`, and 'cohort_labs' containing the
+of all cohorts included in \code{stats}, and 'cohort_labs' containing the
 replacement labels for these cohorts.}
 
-\item{coh_direction}{Character specifying direction of data if `type` is
+\item{coh_direction}{Character specifying direction of data if \code{type} is
 'cohort' or 'both'. Use 'rows' to return cohorts as rows and variable as
 columns, or use 'cols' to return cohorts as columns and variables as rows.
 Defauls is "col".}
@@ -61,9 +61,9 @@ to. Default is 2.}
 cases or 'total' for total cases.}
 }
 \value{
-Tibble containing formatted summary statistics. If `coh_direction` is
+Tibble containing formatted summary statistics. If \code{coh_direction} is
 'cols', the tibble will contain four columns: 'cohort', 'variable',
-'category' & value. If `coh_direction` is rows, the tibble will contain the
+'category' & value. If \code{coh_direction} is rows, the tibble will contain the
 column 'cohort' as well as as columns for all continuous variables and all
 categories of categorical variables.
 }
