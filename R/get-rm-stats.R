@@ -24,34 +24,34 @@
 dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NULL, conns = NULL) {
   . <- n_meas_5 <- n_meas_95 <- n_meas_med <- variable <- perc_5 <- perc_95 <- cohort <- min_age <-
     max_age <- valid_n <- NULL
-
+  
   if (is.null(df)) {
     stop("Please provide the name of a datashield dataframe")
   }
-
+  
   if (is.null(outcome)) {
     stop("Please provide the name of your outcome variable")
   }
-
+  
   if (is.null(id_var)) {
     stop("Please provide the name of id variable in df")
   }
-
+  
   if (is.null(age_var)) {
     stop("Please provide the name of your age variable in df")
   }
-
+  
   if (is.null(conns)) {
     conns <- datashield.connections_find()
   }
-
+  
   ## ---- First get overall stats for some of the easy ones -------------------------------------------
   stats <- dh.getStats(
     df = df,
     vars = c(outcome, age_var),
     conns = conns
   )
-
+  
   ## ---- Age range of participants -------------------------------------------------------------------
   age_ranges <- stats$continuous %>%
     dplyr::filter(variable == age_var) %>%
@@ -60,30 +60,35 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NU
       max_age = perc_95
     ) %>%
     dplyr::select(cohort, min_age, max_age)
-
+  
   ## ---- Total number of outcome measurements -------------------------------------
   outcome_n <- stats$continuous %>%
     dplyr::filter(variable == outcome) %>%
-    dplyr::select(cohort, n_obs = valid_n)
-
-
+    dplyr::select(cohort, n_obs = valid_n, n_obs_na = missing_n)
+  
+  
   ## ---- Total number of unique participants ----------------------------------------
-
+  
   # First, we use ds.tapply.assign to summarise the number of observations for each
   # subject. The length of this created object then gives us the number of subjects.
-
-  ds.asFactorSimple(paste0(df, "$", id_var), "id_fact", datasources = conns)
-
+  
+  coh_inc <- stats$continuous %>%
+    dplyr::filter(variable == outcome & !is.na(mean) & cohort != "combined") |>
+    pull(cohort) |>
+    unique()
+  
+  ds.asFactorSimple(paste0(df, "$", id_var), "id_fact", datasources = conns[coh_inc])
+  
   ds.tapply.assign(
     X.name = paste0(df, "$", outcome),
     INDEX.names = "id_fact",
     FUN.name = "N",
     newobj = "id_summary",
-    datasources = conns
+    datasources = conns[coh_inc]
   )
-
-  n_subjects <- DSI::datashield.aggregate(conns, call("lengthDS", "id_summary$N")) %>%
-    setNames(names(conns)) %>%
+  
+  n_subjects <- DSI::datashield.aggregate(conns[coh_inc], call("lengthDS", "id_summary$N")) %>%
+    setNames(coh_inc) %>%
     bind_rows() %>%
     mutate(combined = rowSums(.)) %>%
     pivot_longer(
@@ -91,31 +96,41 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NU
       names_to = "cohort",
       values_to = "n_participants"
     )
-
+  
+  ds.unique("id_fact", newobj = "unique_ids")
+  
+  n_participants_total <- ds.length("unique_ids") %>%
+    map(as_tibble) %>%
+    bind_rows(.id = "cohort") %>%
+    mutate(cohort = str_remove(cohort, "length of unique_ids in ")) %>%
+    mutate(cohort = str_remove(cohort, "total all studies ")) %>%
+    dplyr::rename(n_participants_total = value)
+  
+  
   ## ---- Median number of weight measurements per child ----------------------------------------
-
+  
   # We can use the ds.quantileMean function with the object we created above to get the
   # median number of measurements per child.
-
+  
   ds.asNumeric("id_summary$N", "id_summary_num", datasources = conns)
-
+  
   quants <- DSI::datashield.aggregate(conns, as.symbol("quantileMeanDS(id_summary_num)"))
-
+  
   weight_med_iqr <- quants %>%
     bind_rows(.id = "cohort") %>%
     select(cohort, "5%", "50%", "95%") %>%
     rename(n_meas_med = "50%", n_meas_5 = "5%", n_meas_95 = "95%")
-
+  
   ## Get the combined version using weighted sum
   lengths <- DSI::datashield.aggregate(conns, call("lengthDS", "id_summary_num"))
   numNAs <- DSI::datashield.aggregate(conns, "numNaDS(id_summary_num)")
-
+  
   valid_n <- list(lengths, numNAs) %>% pmap(~ .x - .y)
-
+  
   weights <- unlist(valid_n) / sum(unlist(valid_n))
-
+  
   weighted_quant <- list(quants, weights) %>% pmap(~ .x * .y)
-
+  
   sum_quant <- weighted_quant %>%
     pmap(function(...) {
       sum(c(...))
@@ -124,13 +139,16 @@ dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NU
     rename(n_meas_med = "50%", n_meas_5 = "5%", n_meas_95 = "95%") %>%
     mutate(cohort = "combined") %>%
     select(cohort, n_meas_med, n_meas_5, n_meas_95)
-
+  
   quant_out <- bind_rows(weight_med_iqr, sum_quant)
-
+  
   ## ---- Create final output -------------------------------------------------------------------
   out <- left_join(age_ranges, outcome_n, by = "cohort") %>%
     left_join(., n_subjects, by = "cohort") %>%
-    left_join(., quant_out, by = "cohort")
-
+    left_join(., quant_out, by = "cohort") %>%
+    left_join(., n_participants_total, by = "cohort") %>%
+    mutate(n_participants = if_else(is.na(n_participants), 0, n_participants)) %>%
+    mutate(n_participants_na = n_participants_total - n_participants)
+  
   return(out)
 }
