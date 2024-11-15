@@ -11,7 +11,8 @@ dh.multGLM(
   conns = NULL,
   vary_df = F,
   family = "gaussian",
-  weights = NULL
+  weights = NULL,
+  type
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ is FALSE.}
 \item{family}{Family to use in glm models. Default is "gaussian".}
 
 \item{weights}{Optional, serverside object containing weights to be used in the model.}
+
+\item{type}{Type of model to run. Either "glm_slma" for fixed effects or "lmer_slma" for mixed
+effects.}
 }
 \value{
 Tibble containing five columns:
