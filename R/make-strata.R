@@ -553,8 +553,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
     ## value (provided by "mult_vals")
 
     calltext <- paste0(
-      "((", subset_name, "$", age_var, "-", nearest_value, ")", "^2",
-      ")", "^0.5"
+      "abs(", subset_name, "$", age_var, "-", nearest_value, ")"
     )
 
     DSI::datashield.assign(conns, "difference_val", as.symbol(calltext))
@@ -590,7 +589,7 @@ dh.makeStrata <- function(df = NULL, id_var = NULL, age_var = NULL, var_to_subse
   # We need a vector the length of our subset with an integer value describing
   # the name of the subset. We use this to create our final variables names
 
-  calltext <- paste0("(", sorted_subset, "$", age_var, "*0)+", var_suffix)
+  calltext <- paste(var_suffix)
   DSI::datashield.assign(conns, "variable_suffix", as.symbol(calltext))
 
   ds.dataFrame(
