@@ -74,7 +74,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   if (type == "glm_ipd") {
     coefs <- extract_ipd(model)
-    coefs <- rename_ipd(coefs)
+    coefs <- rename_ipd(coefs, family)
     coefs <- add_ns_ipd(coefs, model)
   }
 
@@ -224,7 +224,7 @@ rename_ipd <- function(coefs, family) {
     renamed <- coefs %>%
       dplyr::select("variable",
         est = "Estimate", se = "Std. Error",
-        pvalue = "p-value", lowci = "low0.95CI.LM", uppci = "high0.95CI.LM"
+        pvalue = "p-value", lowci = "low0.95CI.LP", uppci = "high0.95CI.LP"
       )
     }
 

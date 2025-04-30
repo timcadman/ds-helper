@@ -106,8 +106,8 @@ ipd_rename_expected_binomial <- tibble(
   "Std. Error" = rnorm(1),
   "z-value" = rnorm(1),
   "p-value" = rnorm(1),
-  "low0.95CI.LM" = rnorm(1),
-  "high0.95CI.LM" = rnorm(1)
+  "low0.95CI.LP" = rnorm(1),
+  "high0.95CI.LP" = rnorm(1)
 )
 
 test_that("Check that rename_ipd returns correct column names", {
