@@ -117,7 +117,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     coefs <- add_ci(coefs)
   }
 
-  if (exponentiate == TRUE & family == "binomial" & direction == "long") {
+  if (exponentiate == TRUE & family == "binomial") {
     coefs <- coefs %>%
       mutate(across(c(est, lowci, uppci), ~ exp(.)))
   }
