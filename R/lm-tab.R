@@ -213,12 +213,20 @@ extract_ipd <- function(model, type) {
 #' @return tibble with 6 columns: "variable", "est", "se", "pvalue", "lowci",
 #' "uppci".
 #' @noRd
-rename_ipd <- function(coefs) {
+rename_ipd <- function(coefs, family) {
+  if(family == "gaussian") {
   renamed <- coefs %>%
     dplyr::select("variable",
       est = "Estimate", se = "Std. Error",
       pvalue = "p-value", lowci = "low0.95CI", uppci = "high0.95CI"
     )
+  } else if(family == "binomial") {
+    renamed <- coefs %>%
+      dplyr::select("variable",
+        est = "Estimate", se = "Std. Error",
+        pvalue = "p-value", lowci = "low0.95CI.LM", uppci = "high0.95CI.LM"
+      )
+    }
 
   return(renamed)
 }

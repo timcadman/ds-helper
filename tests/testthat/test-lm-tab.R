@@ -100,9 +100,26 @@ ipd_rename_expected <- tibble(
   "high0.95CI" = rnorm(1)
 )
 
+ipd_rename_expected_binomial <- tibble(
+  "variable" = "test",
+  "Estimate" = rnorm(1),
+  "Std. Error" = rnorm(1),
+  "z-value" = rnorm(1),
+  "p-value" = rnorm(1),
+  "low0.95CI.LM" = rnorm(1),
+  "high0.95CI.LM" = rnorm(1)
+)
+
 test_that("Check that rename_ipd returns correct column names", {
   expect_equal(
-    colnames(rename_ipd(ipd_rename_expected)),
+    colnames(rename_ipd(ipd_rename_expected, family = "gaussian")),
+    c("variable", "est", "se", "pvalue", "lowci", "uppci")
+  )
+})
+
+test_that("Check that rename_ipd returns correct column names", {
+  expect_equal(
+    colnames(rename_ipd(ipd_rename_expected_binomial, family = "binomial")),
     c("variable", "est", "se", "pvalue", "lowci", "uppci")
   )
 })
