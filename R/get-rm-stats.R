@@ -2,8 +2,8 @@
 #' which it would be useful to report in papers.
 #'
 #' @importFrom dplyr %>% mutate across
-#' @importFrom dsBaseClient ds.summary ds.asFactorSimple ds.tapply.assign ds.tapply
-#'
+#' @importFrom dsBaseClient ds.summary ds.asFactorSimple ds.tapply.assign ds.tapply ds.unique
+#' @importFrom dplyr if_else
 #' @param df datashield dataframe
 #' @param outcome name of outcome variable in df
 #' @param id_var name of id variable in df
@@ -23,7 +23,7 @@
 #' @export
 dh.getRmStats <- function(df = NULL, outcome = NULL, id_var = NULL, age_var = NULL, conns = NULL) {
   . <- n_meas_5 <- n_meas_95 <- n_meas_med <- variable <- perc_5 <- perc_95 <- cohort <- min_age <-
-    max_age <- valid_n <- NULL
+    max_age <- valid_n <- missing_n <- value <- n_participants <- NULL
   
   if (is.null(df)) {
     stop("Please provide the name of a datashield dataframe")

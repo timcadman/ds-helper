@@ -74,7 +74,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
 
   if (type == "glm_ipd") {
     coefs <- extract_ipd(model)
-    coefs <- rename_ipd(coefs)
+    coefs <- rename_ipd(coefs, family)
     coefs <- add_ns_ipd(coefs, model)
   }
 
@@ -117,7 +117,7 @@ dh.lmTab <- function(model = NULL, type = NULL, coh_names = NULL,
     coefs <- add_ci(coefs)
   }
 
-  if (exponentiate == TRUE & family == "binomial" & direction == "long") {
+  if (exponentiate == TRUE & family == "binomial") {
     coefs <- coefs %>%
       mutate(across(c(est, lowci, uppci), ~ exp(.)))
   }
@@ -213,12 +213,20 @@ extract_ipd <- function(model, type) {
 #' @return tibble with 6 columns: "variable", "est", "se", "pvalue", "lowci",
 #' "uppci".
 #' @noRd
-rename_ipd <- function(coefs) {
+rename_ipd <- function(coefs, family) {
+  if(family == "gaussian") {
   renamed <- coefs %>%
     dplyr::select("variable",
       est = "Estimate", se = "Std. Error",
       pvalue = "p-value", lowci = "low0.95CI", uppci = "high0.95CI"
     )
+  } else if(family == "binomial") {
+    renamed <- coefs %>%
+      dplyr::select("variable",
+        est = "Estimate", se = "Std. Error",
+        pvalue = "p-value", lowci = "low0.95CI.LP", uppci = "high0.95CI.LP"
+      )
+    }
 
   return(renamed)
 }
