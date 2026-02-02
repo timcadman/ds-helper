@@ -125,20 +125,18 @@ dh.getStats <- function(df = NULL, vars = NULL, digits = 2, conns = NULL,
   ################################################################################
   # 3. Check variable has the same class in each cohort
   ################################################################################
-
   ## We need to distinguish between variables which are NULL and variables which
   ## really have a different class.
   real_disc <- check_class %>%
     select(-variable, -discrepancy) %>%
     replace(. == "NULL", NA) %>%
     pmap_chr(function(...) {
-      c(...) %>%
-        n_distinct(na.rm = TRUE)
-    }) %>%
+      as.character(c(...) %>%
+      n_distinct(na.rm = TRUE))
+      }) %>%
     bind_cols(check_class, disc = .) %>%
     mutate(disc = ifelse(disc > 1, "yes", "no")) %>%
     dplyr::filter(disc == "yes")
-
 
   if (nrow(real_disc) > 0) {
     stop(
