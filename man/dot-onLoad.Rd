@@ -7,9 +7,9 @@
 .onLoad(libname, pkgname)
 }
 \arguments{
-\item{pkgname}{package name}
+\item{libname}{path to library where the package is installed}
 
-\item{name}{of the library}
+\item{pkgname}{package name}
 }
 \description{
 Initialization functions to do init actions
