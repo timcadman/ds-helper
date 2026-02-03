@@ -1,6 +1,6 @@
 #' Initialization functions to do init actions
 #'
-#' @param name of the library
+#' @param libname path to library where the package is installed
 #' @param pkgname package name
 #'
 #' @importFrom utils globalVariables
