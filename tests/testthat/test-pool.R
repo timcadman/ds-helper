@@ -66,6 +66,67 @@ test_that("makeRubinTable exponentiates the estimate and CI but not the standard
 })
 
 ################################################################################
+# dh.pool: exponentiate for gaussian models
+################################################################################
+
+## ---- The warning promises the argument is ignored, so it must be ------------
+test_that("dh.pool ignores exponentiate for gaussian models", {
+  args <- list(
+    imputed_glm = rep(list(slma.fit), 3), type = "glm_slma",
+    family = "gaussian", coh_names = slma_cohs
+  )
+
+  plain <- do.call(dh.pool, c(args, exponentiate = FALSE))
+  expd <- suppressWarnings(do.call(dh.pool, c(args, exponentiate = TRUE)))
+
+  expect_equal(expd$pooled_mean, plain$pooled_mean)
+  expect_equal(expd$low_ci, plain$low_ci)
+  expect_equal(expd$upp_ci, plain$upp_ci)
+})
+
+## ---- ...and the user must still be told -------------------------------------
+test_that("dh.pool warns when exponentiate is requested for gaussian models", {
+  expect_warning(
+    dh.pool(
+      imputed_glm = rep(list(slma.fit), 3), type = "glm_slma",
+      family = "gaussian", coh_names = slma_cohs, exponentiate = TRUE
+    ),
+    "not recommended to exponentiate"
+  )
+})
+
+## ---- family is validated up front, by dh.pool, not deep inside dh.lmTab -----
+test_that("dh.pool rejects an unsupported family before fitting anything", {
+  err <- tryCatch(
+    dh.pool(
+      imputed_glm = rep(list(slma.fit), 3), type = "glm_slma",
+      family = "poisson", coh_names = slma_cohs, exponentiate = TRUE
+    ),
+    error = function(e) e
+  )
+
+  expect_match(conditionMessage(err), "family")
+
+  # Without an up-front check the failure surfaces from inside map(dh.lmTab),
+  # wrapped by purrr as "In index: 1", which points the user at dsHelper
+  # internals rather than at the argument they got wrong.
+  expect_false(grepl("In index", conditionMessage(err), fixed = TRUE))
+})
+
+## ---- Binomial models must be unaffected -------------------------------------
+test_that("dh.pool still exponentiates for binomial models", {
+  args <- list(
+    imputed_glm = rep(list(slma.fit), 3), type = "glm_slma",
+    family = "binomial", coh_names = slma_cohs
+  )
+
+  plain <- do.call(dh.pool, c(args, exponentiate = FALSE))
+  expd <- do.call(dh.pool, c(args, exponentiate = TRUE))
+
+  expect_equal(expd$pooled_mean, exp(plain$pooled_mean))
+})
+
+################################################################################
 # dh.pool: glm_slma
 ################################################################################
 

@@ -10,7 +10,7 @@
 #' "gaussian".
 #' @param exponentiate Optionally, specify whether estimates from binomial models should
 #' be exponentiated, ie returned as odds ratios. This argument is ignored if
-#' `type` is "gaussian".
+#' `family` is "gaussian".
 #' @return A tibble containing Rubin's pooled estimates and confidence intervals.
 #'
 #' @details This function performs Rubin's pooling on a list of imputed generalized linear models.
@@ -23,6 +23,10 @@
 dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = NULL,
                     exponentiate = FALSE) {
   poolCheckArgs(imputed_glm, type, coh_names, family, exponentiate)
+
+  if (family != "binomial") {
+    exponentiate <- FALSE
+  }
 
   m <- length(imputed_glm)
   coefs <- getCoefs(imputed_glm, type, coh_names, family)
@@ -50,13 +54,14 @@ dh.pool <- function(imputed_glm = NULL, type = NULL, coh_names = NULL, family = 
 #'
 #' @details This function checks the validity of arguments passed to the dh.pool function.
 #'
-#' @importFrom checkmate assert_list assert_true
+#' @importFrom checkmate assert_list assert_true assert_choice
 #' @noRd
 poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate) {
   error_messages <- makeAssertCollection()
 
   checkmate::assert_list(imputed_glm, add = error_messages)
   checkmate::assert_true(length(imputed_glm) > 1, add = error_messages)
+  checkmate::assert_choice(family, c("gaussian", "binomial"), add = error_messages)
 
   if (type == "glm_ipd" & length(coh_names) > 1) {
     warning("Your input type is `glm_ipd` but you have provided >1 cohort name. Did you intend this?
@@ -64,7 +69,7 @@ poolCheckArgs <- function(imputed_glm, type, coh_names, family, exponentiate) {
     pooled and (if applicable) meta-analysed")
   }
 
-  if (exponentiate == TRUE & family == "gaussian") {
+  if (exponentiate == TRUE & family != "binomial") {
     warning("It is not recommended to exponentiate coefficients from linear
             regression: argument is ignored")
   }
