@@ -51,7 +51,7 @@
 #' @importFrom tibble as_tibble tibble
 #' @importFrom dplyr %>% arrange group_by group_map summarise summarize ungroup
 #' left_join bind_rows rename filter mutate_at vars distinct add_row n_distinct
-#' @importFrom purrr map flatten_dbl pmap pmap_chr
+#' @importFrom purrr map map_chr flatten_dbl pmap pmap_chr
 #' @importFrom tidyr replace_na
 #' @importFrom dsBaseClient ds.length ds.dim ds.levels
 #' @importFrom stringr str_detect
@@ -166,14 +166,14 @@ check with ds.class \n\n",
     check_levels <- fact_exist %>%
       group_by(variable) %>%
       group_split() %>%
+      set_names(map_chr(., ~ .x$variable[[1]])) %>%
       map(
         .,
         ~ pmap(., function(variable, cohort, ...) {
           cally <- paste0("levelsDS(", df, "$", variable, ")")
           datashield.aggregate(conns[cohort], as.symbol(cally))[[1]]$Levels
         })
-      ) %>%
-      set_names(sort(unique(fact_exist$variable)))
+      )
 
     ## ---- Check whether these levels are identical for all cohorts ---------------
     level_ref <- check_levels %>%
@@ -481,6 +481,7 @@ check with ds.class \n\n",
       dplyr::filter(stat == "EstimatedVar") %>%
       group_by(variable, stat) %>%
       group_split() %>%
+      set_names(map_chr(., ~ .x$variable[[1]])) %>%
       map(
         ~ summarise(.,
           GlobalSum = sum(Sum, na.rm = TRUE),
@@ -494,7 +495,6 @@ check with ds.class \n\n",
         )
       ) %>%
       map(~ select(., EstimatedVar, Nvalid, Ntotal)) %>%
-      set_names(sort(unique(cont_ref$variable))) %>%
       bind_rows(.id = "variable") %>%
       mutate(cohort = "combined") %>%
       pivot_longer(
@@ -712,7 +712,7 @@ check with ds.class \n\n",
 #' @param stats output of one of the aforementioned functions.
 #'
 #' @importFrom dplyr %>% group_by group_split bind_rows
-#' @importFrom purrr map set_names
+#' @importFrom purrr map map_chr set_names
 #' @importFrom tibble tibble
 #' @importFrom DSI datashield.aggregate
 #'
@@ -720,16 +720,18 @@ check with ds.class \n\n",
 .tidyStats <- function(ref, stats) {
   variable <- NULL
 
-  cohort_names <- ref %>%
+  ref_split <- ref %>%
     group_by(variable) %>%
-    group_split() %>%
+    group_split()
+
+  cohort_names <- ref_split %>%
     map(~ .$cohort)
 
   out <- list(stats, cohort_names) %>%
     pmap(function(stats, cohort_names) {
       set_names(stats, cohort_names)
     }) %>%
-    set_names(sort(unique(ref$variable))) %>%
+    set_names(map_chr(ref_split, ~ .x$variable[[1]])) %>%
     map(bind_rows, .id = "cohort") %>%
     bind_rows(.id = "variable")
 
