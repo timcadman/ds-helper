@@ -31,11 +31,11 @@ have the same class in all studies. This function produces a tibble showing
 the class of each variable.
 }
 \seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()},
-\code{\link{dh.meanByGroup}()}
+Other descriptive functions:
+\code{\link[=dh.anyData]{dh.anyData()}},
+\code{\link[=dh.createTableOne]{dh.createTableOne()}},
+\code{\link[=dh.getStats]{dh.getStats()}},
+\code{\link[=dh.lmTab]{dh.lmTab()}},
+\code{\link[=dh.meanByGroup]{dh.meanByGroup()}}
 }
 \concept{descriptive functions}

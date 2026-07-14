@@ -42,11 +42,11 @@ This function enables you to fit multiple models with different combinations
 of polynomial terms and compares the fit.
 }
 \seealso{
-Other trajectory functions: 
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()},
-\code{\link{dh.trimPredData}()},
-\code{\link{dh.zByGroup}()}
+Other trajectory functions:
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.makeLmerForm]{dh.makeLmerForm()}},
+\code{\link[=dh.predictLmer]{dh.predictLmer()}},
+\code{\link[=dh.trimPredData]{dh.trimPredData()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 }
 \concept{trajectory functions}

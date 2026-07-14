@@ -46,17 +46,17 @@ creates multiple transformations of an age variable to different powers. We reco
 of code.
 }
 \seealso{
-Other trajectory functions: 
-\code{\link{dh.lmeMultPoly}()},
-\code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()},
-\code{\link{dh.trimPredData}()},
-\code{\link{dh.zByGroup}()}
+Other trajectory functions:
+\code{\link[=dh.lmeMultPoly]{dh.lmeMultPoly()}},
+\code{\link[=dh.makeLmerForm]{dh.makeLmerForm()}},
+\code{\link[=dh.predictLmer]{dh.predictLmer()}},
+\code{\link[=dh.trimPredData]{dh.trimPredData()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 
-Other data manipulation functions: 
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.quartileSplit}()},
-\code{\link{dh.zByGroup}()}
+Other data manipulation functions:
+\code{\link[=dh.makeIQR]{dh.makeIQR()}},
+\code{\link[=dh.quartileSplit]{dh.quartileSplit()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}

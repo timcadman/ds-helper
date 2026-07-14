@@ -28,11 +28,11 @@ variables is time-consuming and at risk of error. This function automatically
 generates a look-up table with this information.
 }
 \seealso{
-Other descriptive functions: 
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()},
-\code{\link{dh.meanByGroup}()}
+Other descriptive functions:
+\code{\link[=dh.classDiscrepancy]{dh.classDiscrepancy()}},
+\code{\link[=dh.createTableOne]{dh.createTableOne()}},
+\code{\link[=dh.getStats]{dh.getStats()}},
+\code{\link[=dh.lmTab]{dh.lmTab()}},
+\code{\link[=dh.meanByGroup]{dh.meanByGroup()}}
 }
 \concept{descriptive functions}

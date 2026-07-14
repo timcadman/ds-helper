@@ -56,9 +56,9 @@ quartile of the original variable. Participants with no measurement within
 a quartile will be assigned NA.
 }
 \seealso{
-Other data manipulation functions: 
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.zByGroup}()}
+Other data manipulation functions:
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.makeIQR]{dh.makeIQR()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 }
 \concept{data manipulation functions}
