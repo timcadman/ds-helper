@@ -29,11 +29,11 @@ effects based on the model coefficients. Standard errors are returned for
 individual cohorts but yet for pooled models.
 }
 \seealso{
-Other trajectory functions: 
-\code{\link{dh.lmeMultPoly}()},
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeLmerForm}()},
-\code{\link{dh.trimPredData}()},
-\code{\link{dh.zByGroup}()}
+Other trajectory functions:
+\code{\link[=dh.lmeMultPoly]{dh.lmeMultPoly()}},
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.makeLmerForm]{dh.makeLmerForm()}},
+\code{\link[=dh.trimPredData]{dh.trimPredData()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 }
 \concept{trajectory functions}

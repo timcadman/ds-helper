@@ -12,13 +12,18 @@ Often we need to automate things with 'DataSHIELD'. These functions help to do t
 Useful links:
 \itemize{
   \item \url{https://github.com/lifecycle-project/ds-helper/}
-  \item \url{https: //lifecycle-project.github.io/ds-helper/}
+  \item https: //lifecycle-project.github.io/ds-helper/
   \item Report bugs at \url{https://github.com/lifecycle-project/ds-helper/issues/}
 }
 
 }
 \author{
 \strong{Maintainer}: Tim Cadman \email{t.cadman@bristol.ac.uk} (\href{https://orcid.org/0000-0002-7682-5645}{ORCID})
+
+Authors:
+\itemize{
+  \item Tim Cadman \email{t.cadman@bristol.ac.uk} (\href{https://orcid.org/0000-0002-7682-5645}{ORCID})
+}
 
 Other contributors:
 \itemize{

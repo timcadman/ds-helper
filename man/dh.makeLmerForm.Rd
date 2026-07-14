@@ -49,11 +49,11 @@ formulae for multiple fractional polynomial models which can be used as
 input to the \code{formulae} argument in \code{dh.lmeMultPoly}.
 }
 \seealso{
-Other trajectory functions: 
-\code{\link{dh.lmeMultPoly}()},
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.predictLmer}()},
-\code{\link{dh.trimPredData}()},
-\code{\link{dh.zByGroup}()}
+Other trajectory functions:
+\code{\link[=dh.lmeMultPoly]{dh.lmeMultPoly()}},
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.predictLmer]{dh.predictLmer()}},
+\code{\link[=dh.trimPredData]{dh.trimPredData()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 }
 \concept{trajectory functions}

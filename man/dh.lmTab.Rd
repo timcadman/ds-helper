@@ -82,11 +82,11 @@ the coefficients in a useable format. This function extracts coefficients for
 ds.glm, ds.glmSLMA and ds.lmerSLMA objects.
 }
 \seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.meanByGroup}()}
+Other descriptive functions:
+\code{\link[=dh.anyData]{dh.anyData()}},
+\code{\link[=dh.classDiscrepancy]{dh.classDiscrepancy()}},
+\code{\link[=dh.createTableOne]{dh.createTableOne()}},
+\code{\link[=dh.getStats]{dh.getStats()}},
+\code{\link[=dh.meanByGroup]{dh.meanByGroup()}}
 }
 \concept{descriptive functions}

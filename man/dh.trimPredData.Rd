@@ -38,11 +38,11 @@ minimum and maximum age. This ensures that plots only show predict values
 over a range where there was actually data.
 }
 \seealso{
-Other trajectory functions: 
-\code{\link{dh.lmeMultPoly}()},
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()},
-\code{\link{dh.zByGroup}()}
+Other trajectory functions:
+\code{\link[=dh.lmeMultPoly]{dh.lmeMultPoly()}},
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.makeLmerForm]{dh.makeLmerForm()}},
+\code{\link[=dh.predictLmer]{dh.predictLmer()}},
+\code{\link[=dh.zByGroup]{dh.zByGroup()}}
 }
 \concept{trajectory functions}

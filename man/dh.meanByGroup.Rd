@@ -41,11 +41,11 @@ ds.tapply will produce a summary based on every unique value of the grouping
 variable, which may not always be what is required.
 }
 \seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()}
+Other descriptive functions:
+\code{\link[=dh.anyData]{dh.anyData()}},
+\code{\link[=dh.classDiscrepancy]{dh.classDiscrepancy()}},
+\code{\link[=dh.createTableOne]{dh.createTableOne()}},
+\code{\link[=dh.getStats]{dh.getStats()}},
+\code{\link[=dh.lmTab]{dh.lmTab()}}
 }
 \concept{descriptive functions}

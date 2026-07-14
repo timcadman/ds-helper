@@ -74,11 +74,11 @@ table which can then be included in a manuscript. Flexible formatting options
 are included.
 }
 \seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.getStats}()},
-\code{\link{dh.lmTab}()},
-\code{\link{dh.meanByGroup}()}
+Other descriptive functions:
+\code{\link[=dh.anyData]{dh.anyData()}},
+\code{\link[=dh.classDiscrepancy]{dh.classDiscrepancy()}},
+\code{\link[=dh.getStats]{dh.getStats()}},
+\code{\link[=dh.lmTab]{dh.lmTab()}},
+\code{\link[=dh.meanByGroup]{dh.meanByGroup()}}
 }
 \concept{descriptive functions}

@@ -67,11 +67,11 @@ dh.getStats will return the variable for that cohort with all NAs. See
 'value' for details of returned statistics.
 }
 \seealso{
-Other descriptive functions: 
-\code{\link{dh.anyData}()},
-\code{\link{dh.classDiscrepancy}()},
-\code{\link{dh.createTableOne}()},
-\code{\link{dh.lmTab}()},
-\code{\link{dh.meanByGroup}()}
+Other descriptive functions:
+\code{\link[=dh.anyData]{dh.anyData()}},
+\code{\link[=dh.classDiscrepancy]{dh.classDiscrepancy()}},
+\code{\link[=dh.createTableOne]{dh.createTableOne()}},
+\code{\link[=dh.lmTab]{dh.lmTab()}},
+\code{\link[=dh.meanByGroup]{dh.meanByGroup()}}
 }
 \concept{descriptive functions}

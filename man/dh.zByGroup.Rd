@@ -30,17 +30,17 @@ into z-scores, but within certain age bands (e.g. measurement occasion or
 per year). This function does this.
 }
 \seealso{
-Other trajectory functions: 
-\code{\link{dh.lmeMultPoly}()},
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeLmerForm}()},
-\code{\link{dh.predictLmer}()},
-\code{\link{dh.trimPredData}()}
+Other trajectory functions:
+\code{\link[=dh.lmeMultPoly]{dh.lmeMultPoly()}},
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.makeLmerForm]{dh.makeLmerForm()}},
+\code{\link[=dh.predictLmer]{dh.predictLmer()}},
+\code{\link[=dh.trimPredData]{dh.trimPredData()}}
 
-Other data manipulation functions: 
-\code{\link{dh.makeAgePolys}()},
-\code{\link{dh.makeIQR}()},
-\code{\link{dh.quartileSplit}()}
+Other data manipulation functions:
+\code{\link[=dh.makeAgePolys]{dh.makeAgePolys()}},
+\code{\link[=dh.makeIQR]{dh.makeIQR()}},
+\code{\link[=dh.quartileSplit]{dh.quartileSplit()}}
 }
 \concept{data manipulation functions}
 \concept{trajectory functions}
