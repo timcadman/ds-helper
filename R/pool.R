@@ -101,7 +101,7 @@ getCoefs <- function(imputed_glm, type, coh_names, family) {
     )
 
   if (type == "glm_slma") {
-    coefs <- list(coefs) %>%
+    coefs <- coefs %>%
       map(~ dplyr::filter(., cohort != "combined"))
   }
 
