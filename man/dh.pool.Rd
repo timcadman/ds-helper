@@ -27,7 +27,7 @@ must be in the same order as the cohorts were included in the model.}
 
 \item{exponentiate}{Optionally, specify whether estimates from binomial models should
 be exponentiated, ie returned as odds ratios. This argument is ignored if
-\code{type} is "gaussian".}
+\code{family} is "gaussian".}
 }
 \value{
 A tibble containing Rubin's pooled estimates and confidence intervals.
